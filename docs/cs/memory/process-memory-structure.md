@@ -1,0 +1,499 @@
+---
+tags:
+  - Memory
+  - Process
+  - Linux
+  - Stack
+  - Heap
+---
+
+# 프로세스 메모리 구조 완벽 이해
+
+## 들어가며
+
+DevOps/SRE 엔지니어로서 메모리 문제를 디버깅할 때, "왜 RSS와 실제 사용량이 다르지?", "왜 메모리를 해제했는데도 OS에 반환되지 않지?"와 같은 의문을 가져본 적이 있을 것입니다. 이는 프로세스 메모리 구조를 제대로 이해하지 못했기 때문입니다.
+
+## 프로세스 메모리 레이아웃
+
+일반적으로 프로세스가 사용하는 메모리는 `코드영역`, `데이터영역`, `스택`, `힙` 으로 나뉩니다. 각 영역은 고유한 목적과 특성을 가지고 있습니다.
+
+```
+High Address (0xFFFFFFFF)
+┌─────────────────────┐
+│   Kernel Space      │ (1GB on 32-bit, much larger on 64-bit)
+├─────────────────────┤ 
+│   Stack            │ ↓ (grows downward)
+│                    │
+│   ...              │ (random gap for security)
+│                    │
+│   Memory Mapped    │ (shared libraries, mmap files)
+│   Region           │
+│                    │
+│   ...              │ (random gap for security)
+│                    │
+│   Heap             │ ↑ (grows upward)
+├─────────────────────┤ brk
+│   BSS Segment      │ (uninitialized data)
+├─────────────────────┤
+│   Data Segment     │ (initialized data)
+├─────────────────────┤
+│   Text Segment     │ (code)
+└─────────────────────┘
+Low Address (0x00000000)
+```
+
+## 코드영역 (Text Segment)
+
+코드영역은 실제 컴파일된 기계어 명령어가 저장되는 읽기 전용 메모리 영역입니다. CPU는 Program Counter (PC) 레지스터가 가리키는 주소의 명령어를 순차적으로 실행합니다.
+
+```c
+// example.c
+int main() {
+    int a = 10;      // mov DWORD PTR [rbp-4], 10
+    int b = 20;      // mov DWORD PTR [rbp-8], 20
+    return a + b;    // mov eax, DWORD PTR [rbp-4]
+                     // add eax, DWORD PTR [rbp-8]
+                     // ret
+}
+```
+
+컴파일 후 확인:
+```bash
+# 코드 영역 확인
+$ objdump -d example
+
+0000000000401126 <main>:
+  401126:       55                      push   %rbp
+  401127:       48 89 e5                mov    %rsp,%rbp
+  40112a:       c7 45 fc 0a 00 00 00    movl   $0xa,-0x4(%rbp)
+  401131:       c7 45 f8 14 00 00 00    movl   $0x14,-0x8(%rbp)
+  ...
+
+# 실행 중인 프로세스의 메모리 맵 확인
+$ cat /proc/<pid>/maps | grep r-xp
+00400000-00401000 r-xp 00000000 08:01 1234 /path/to/example
+```
+
+**특징:**
+- **읽기 전용**: 보안과 공유를 위해 쓰기 금지
+- **공유 가능**: 같은 프로그램의 여러 인스턴스가 공유
+- **페이지 캐시**: 파일 시스템에서 로드되므로 [page cache](page-cache.md) 사용
+
+## 데이터영역 (Data & BSS Segment)
+
+데이터영역은 전역변수와 정적변수가 저장되는 공간으로, 초기화 여부에 따라 두 부분으로 나뉩니다.
+
+```c
+// Data Segment (초기화된 전역/정적 변수)
+int global_initialized = 100;        // .data section
+static int static_initialized = 200; // .data section
+const char* str = "Hello, World!";   // 문자열 리터럴은 .rodata
+
+// BSS Segment (초기화되지 않은 전역/정적 변수)  
+int global_uninitialized;           // .bss section (0으로 초기화)
+static int static_uninitialized;    // .bss section (0으로 초기화)
+static int array[10000];            // .bss section (모두 0)
+
+int main() {
+    static int local_static = 300;  // .data section (함수 내 static)
+    return 0;
+}
+```
+
+메모리 효율성:
+```bash
+# size 명령으로 각 섹션 크기 확인
+$ size example
+   text    data     bss     dec     hex filename
+   1234     568   40008   41810    a352 example
+
+# BSS는 실행 파일에 공간을 차지하지 않음 (0으로 초기화만 약속)
+# 실행 시 커널이 0으로 초기화된 페이지 할당
+```
+
+## 스택 (Stack)
+
+스택은 함수 호출 정보, 지역 변수, 함수 매개변수를 저장하는 LIFO(Last In First Out) 구조의 메모리 영역입니다.
+
+### 스택 프레임 구조
+
+```c
+void function_b(int x, int y) {
+    int local_b = x + y;
+    // ...
+}
+
+void function_a() {
+    int local_a = 10;
+    function_b(20, 30);
+}
+
+int main() {
+    function_a();
+    return 0;
+}
+```
+
+스택 메모리 레이아웃:
+```
+High Address
+┌─────────────────────┐
+│  main's return addr │
+├─────────────────────┤ ← main's frame
+│  saved rbp          │
+│  (alignment)        │
+├─────────────────────┤
+│  function_a's       │
+│  return address     │
+├─────────────────────┤ ← function_a's frame
+│  saved rbp          │
+│  local_a = 10       │
+├─────────────────────┤
+│  argument y = 30    │
+│  argument x = 20    │
+│  function_b's       │
+│  return address     │
+├─────────────────────┤ ← function_b's frame (current)
+│  saved rbp          │ ← rbp (frame pointer)
+│  local_b            │
+├─────────────────────┤ ← rsp (stack pointer)
+│  (available)        │
+↓                     ↓
+Low Address
+```
+
+### 스레드와 스택
+
+각 스레드는 독립적인 스택을 가집니다. 자세한 내용은 [멀티스레드 스택 메모리](multithread-stack-memory.md)를 참조하세요.
+
+```c
+#include <pthread.h>
+#include <stdio.h>
+
+void* thread_function(void* arg) {
+    int thread_local = 42;  // 이 스레드의 스택에 저장
+    printf("Thread stack variable: %p\n", &thread_local);
+    return NULL;
+}
+
+int main() {
+    pthread_t thread1, thread2;
+    pthread_attr_t attr;
+    size_t stacksize;
+    
+    pthread_attr_init(&attr);
+    pthread_attr_getstacksize(&attr, &stacksize);
+    printf("Default thread stack size: %zu MB\n", stacksize / 1024 / 1024);
+    
+    // 보통 8MB가 기본값 (ulimit -s)
+    pthread_create(&thread1, NULL, thread_function, NULL);
+    pthread_create(&thread2, NULL, thread_function, NULL);
+    
+    // 각 스레드는 서로 다른 스택 주소를 출력
+}
+```
+
+### 스택 제한과 모니터링
+
+```bash
+# 스택 크기 제한 확인
+$ ulimit -s
+8192  # 8MB
+
+# 프로세스별 스택 사용량 확인
+$ cat /proc/<pid>/status | grep -I stack
+VmStk:      136 kB
+
+# 스레드별 스택 확인
+$ cat /proc/<pid>/maps | grep stack
+7ffff7fff000-7ffff8000000 rw-p 00000000 00:00 0 [stack]
+7ffff77ff000-7ffff7800000 rw-p 00000000 00:00 0 [stack:12345] # thread 12345
+```
+
+**스택 오버플로우 방지:**
+```c
+// 재귀 함수에서 스택 오버플로우 위험
+void recursive(int depth) {
+    char large_array[8192];  // 8KB 지역 변수
+    if (depth > 0) {
+        recursive(depth - 1);
+    }
+}
+
+// 대신 힙 사용 권장
+void safe_recursive(int depth) {
+    char* large_array = malloc(8192);
+    if (depth > 0) {
+        safe_recursive(depth - 1);
+    }
+    free(large_array);
+}
+```
+
+## 힙 (Heap)
+
+힙은 동적 메모리 할당이 일어나는 영역으로, 가장 복잡하고 문제가 많이 발생하는 영역입니다.
+
+### 힙 메모리 할당 메커니즘
+
+```c
+#include <unistd.h>
+#include <stdlib.h>
+
+int main() {
+    // 작은 할당: glibc malloc이 내부 풀에서 관리
+    void* small = malloc(64);      // tcache/fastbin에서 할당
+    void* medium = malloc(1024);   // smallbin에서 할당
+    
+    // 큰 할당: mmap 사용 (기본 128KB 이상)
+    void* large = malloc(1024 * 1024);  // mmap으로 직접 할당
+    
+    // brk 시스템 콜로 힙 확장
+    void* current_brk = sbrk(0);
+    printf("Current program break: %p\n", current_brk);
+    
+    // 메모리 해제
+    free(small);   // 바로 OS에 반환하지 않고 풀에 보관
+    free(medium);  // 재사용을 위해 캐시
+    free(large);   // munmap으로 즉시 OS에 반환
+}
+```
+
+### glibc malloc 내부 구조
+
+```
+Heap Organization:
+┌─────────────────────────────────┐
+│         Main Arena              │
+├─────────────────────────────────┤
+│ Tcache (Thread Cache)           │ ← Per-thread, 64개 항목
+│ ├─ 16 bytes bin                 │
+│ ├─ 32 bytes bin                 │
+│ └─ ...                          │
+├─────────────────────────────────┤
+│ Fastbins                        │ ← 단일 연결 리스트, 빠른 할당
+│ ├─ 16-88 bytes (10 bins)       │
+├─────────────────────────────────┤
+│ Small bins                      │ ← 이중 연결 리스트
+│ ├─ < 1024 bytes (62 bins)      │
+├─────────────────────────────────┤
+│ Large bins                      │ ← 정렬된 이중 연결 리스트
+│ ├─ >= 1024 bytes (63 bins)     │
+├─────────────────────────────────┤
+│ Unsorted bin                    │ ← 임시 보관소
+├─────────────────────────────────┤
+│ Top chunk                       │ ← 힙의 끝 부분
+└─────────────────────────────────┘
+```
+
+### 메모리 단편화 문제
+
+```c
+// 외부 단편화 예시
+void* a = malloc(1000);  // 1KB 할당
+void* b = malloc(1000);  // 1KB 할당
+void* c = malloc(1000);  // 1KB 할당
+free(b);                 // 중간 해제 → 구멍 발생
+
+void* d = malloc(2000);  // 2KB 필요 → b 자리에 못 들어감
+// 결과: 1KB 빈 공간이 있지만 사용 불가
+
+// 내부 단편화 예시
+void* e = malloc(7);     // 7바이트 요청
+// 실제: 16바이트 청크 할당 (메타데이터 + 정렬)
+// 9바이트 낭비
+```
+
+## 메모리 매핑 영역
+
+동적 라이브러리와 mmap된 파일이 위치하는 영역입니다:
+
+```c
+#include <sys/mman.h>
+#include <fcntl.h>
+
+int main() {
+    // 파일 매핑
+    int fd = open("largefile.dat", O_RDONLY);
+    void* file_map = mmap(NULL, 1024*1024*100,  // 100MB
+                         PROT_READ, MAP_PRIVATE,
+                         fd, 0);
+    
+    // 익명 매핑 (대용량 메모리 할당)
+    void* anon_map = mmap(NULL, 1024*1024*1024,  // 1GB
+                         PROT_READ | PROT_WRITE,
+                         MAP_PRIVATE | MAP_ANONYMOUS,
+                         -1, 0);
+    
+    // 공유 메모리
+    int shm_fd = shm_open("/myshm", O_CREAT | O_RDWR, 0666);
+    void* shared_map = mmap(NULL, 4096,
+                           PROT_READ | PROT_WRITE,
+                           MAP_SHARED, shm_fd, 0);
+}
+```
+
+## 실제 프로세스 메모리 분석
+
+### /proc/<pid>/maps 읽기
+
+```bash
+$ cat /proc/self/maps
+# 주소범위          권한 오프셋 디바이스 inode 경로
+00400000-00452000 r-xp 00000000 08:01 1234 /usr/bin/bash     # 코드
+00651000-00652000 r--p 00051000 08:01 1234 /usr/bin/bash     # 읽기 전용 데이터
+00652000-0065b000 rw-p 00052000 08:01 1234 /usr/bin/bash     # 데이터
+0065b000-00666000 rw-p 00000000 00:00 0                      # BSS
+00e03000-00f50000 rw-p 00000000 00:00 0 [heap]              # 힙
+7ffff7a1c000-7ffff7bd2000 r-xp 00000000 08:01 5678 /lib/libc.so.6  # 공유 라이브러리
+7ffffffde000-7ffffffff000 rw-p 00000000 00:00 0 [stack]      # 스택
+```
+
+### pmap을 통한 상세 분석
+
+```bash
+$ pmap -x <pid>
+Address           Kbytes     RSS   Dirty Mode  Mapping
+00400000             328     176       0 r-x-- /usr/bin/bash
+00651000               4       4       4 r---- /usr/bin/bash
+00652000              36      36      36 rw--- /usr/bin/bash
+0065b000              44      44      44 rw---   [ anon ]
+00e03000            1324     892     892 rw---   [ anon ]  # heap
+...
+total kB         123456   45678   12345
+```
+
+## Kubernetes/Container 환경에서의 고려사항
+
+### 컨테이너 메모리 제한과 프로세스
+
+```yaml
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: app
+    resources:
+      limits:
+        memory: "512Mi"  # 컨테이너 전체 메모리 제한
+```
+
+컨테이너 내부에서 확인:
+```bash
+# 잘못된 방법: 호스트 전체 메모리 보임
+$ free -h
+              total        used        free
+Mem:           31Gi        20Gi        11Gi
+
+# 올바른 방법: cgroup 제한 확인
+$ cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+536870912  # 512Mi
+
+# 현재 사용량
+$ cat /sys/fs/cgroup/memory/memory.usage_in_bytes
+234567890  # ~224Mi
+```
+
+더 자세한 내용은 [Cgroup과 컨테이너 메모리 격리](cgroup-container-memory.md)를 참조하세요.
+
+### 언어별 메모리 관리 차이
+
+```python
+# Python: 메모리를 OS에 잘 반환하지 않음
+import psutil
+process = psutil.Process()
+
+large_list = [0] * 10000000  # 대량 할당
+print(f"RSS: {process.memory_info().rss / 1024 / 1024:.2f} MB")  # 400MB
+
+del large_list  # 삭제
+import gc; gc.collect()  # GC 강제 실행
+
+print(f"RSS: {process.memory_info().rss / 1024 / 1024:.2f} MB")  # 여전히 350MB+
+# Python은 메모리를 풀에 보관, OS에 반환하지 않음
+```
+
+```go
+// Go: GOMEMLIMIT으로 메모리 반환 제어
+package main
+
+import (
+    "runtime"
+    "runtime/debug"
+)
+
+func main() {
+    // 메모리 제한 설정
+    debug.SetMemoryLimit(512 * 1024 * 1024)  // 512MB
+    
+    // 대량 할당
+    data := make([]byte, 100*1024*1024)  // 100MB
+    
+    // 사용 후 nil 할당
+    data = nil
+    runtime.GC()  // GC 실행
+    
+    // Go는 메모리를 OS에 반환 (scavenger가 주기적으로 실행)
+}
+```
+
+언어별 상세 전략은 [언어별 메모리 관리 전략](language-memory-management.md)을 참조하세요.
+
+## 메모리 문제 디버깅 체크리스트
+
+### 1. RSS가 계속 증가하는 경우
+
+```bash
+# 메모리 맵 변화 추적
+while true; do
+    cat /proc/<pid>/status | grep VmRSS
+    sleep 1
+done
+
+# 어느 영역이 증가하는지 확인
+cat /proc/<pid>/smaps | grep -A 1 "heap\|stack"
+```
+
+### 2. 메모리 누수 의심
+
+```bash
+# Valgrind 사용 (C/C++)
+valgrind --leak-check=full --show-leak-kinds=all ./program
+
+# Go의 경우 pprof 사용
+curl http://localhost:6060/debug/pprof/heap > heap.prof
+go tool pprof heap.prof
+
+# Python의 경우 tracemalloc
+python -m tracemalloc myapp.py
+```
+
+### 3. OOM Kill 방지
+
+```bash
+# OOM Score 확인
+cat /proc/<pid>/oom_score
+cat /proc/<pid>/oom_score_adj
+
+# 중요 프로세스 보호
+echo -200 > /proc/<pid>/oom_score_adj
+```
+
+OOM Killer에 대한 자세한 내용은 [OOM Killer와 Cgroup 메모리 제한](oom-killer.md)을 참조하세요.
+
+## 정리
+
+프로세스 메모리 구조를 이해하는 것은 DevOps/SRE 엔지니어에게 필수적입니다:
+
+1. **코드영역**은 공유되고 읽기 전용이므로 여러 프로세스가 효율적으로 사용
+2. **데이터영역**은 전역 상태를 저장하며, BSS로 초기화 비용 절감
+3. **스택**은 스레드별로 독립적이며, 크기 제한에 주의 필요
+4. **힙**은 동적 할당 영역으로 단편화와 메모리 누수 주의
+5. **메모리 매핑**은 대용량 파일과 공유 메모리에 효율적
+
+## 관련 문서
+
+- [Page Cache 동작 원리와 Kubernetes 환경의 함정](page-cache.md)
+- [멀티스레드 스택 메모리의 진실](multithread-stack-memory.md)
+- [가비지 컬렉션 기초](garbage-collection-basics.md)
+- [JVM 메모리 구조와 GC 튜닝](jvm-memory-gc.md)

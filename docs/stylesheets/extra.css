@@ -1,0 +1,113 @@
+/* Custom styling for the wiki */
+
+/* Mermaid diagram styling */
+.mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 2em 0;
+}
+
+/* Math equation styling */
+.arithmatex {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Code block enhancements */
+.highlight {
+  border-radius: 0.4rem;
+}
+
+/* Admonition custom styling */
+.admonition {
+  border-radius: 0.4rem;
+}
+
+/* Table improvements */
+.md-typeset table:not([class]) {
+  border-radius: 0.4rem;
+  overflow: hidden;
+}
+
+/* Better inline code styling */
+.md-typeset code {
+  border-radius: 0.2rem;
+  padding: 0.1rem 0.3rem;
+}
+
+/* Enhanced blockquote */
+.md-typeset blockquote {
+  border-left: 0.2rem solid var(--md-primary-fg-color);
+  padding-left: 1rem;
+  color: var(--md-default-fg-color--light);
+}
+
+/* Tag styling */
+.md-tag {
+  border-radius: 0.4rem;
+  font-size: 0.85em;
+  padding: 0.125em 0.5em;
+  margin: 0.125em;
+}
+
+/* Korean font optimization */
+body[data-md-language="ko"] {
+  font-family: "Roboto", "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Better spacing for Korean text */
+.md-typeset p,
+.md-typeset ul,
+.md-typeset ol {
+  line-height: 1.7;
+}
+
+/* Custom colors for different admonition types */
+.admonition.tip,
+.admonition.success {
+  border-color: #4caf50;
+}
+
+.admonition.warning,
+.admonition.caution {
+  border-color: #ff9800;
+}
+
+.admonition.danger,
+.admonition.error {
+  border-color: #f44336;
+}
+
+/* Enhanced navigation tabs */
+.md-tabs__item {
+  font-weight: 500;
+}
+
+/* Better search results */
+.md-search-result__title {
+  font-weight: 600;
+}
+
+/* Responsive tables */
+@media screen and (max-width: 768px) {
+  .md-typeset table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* Print optimization */
+@media print {
+  .md-sidebar,
+  .md-header,
+  .md-footer,
+  .md-tabs {
+    display: none;
+  }
+  
+  .md-content {
+    margin: 0;
+    padding: 0;
+  }
+}

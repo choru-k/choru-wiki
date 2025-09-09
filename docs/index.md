@@ -1,51 +1,51 @@
-# Welcome to Choru's Private Wiki
+# Computer Science from Scratch
 
-This is my personal knowledge base powered by MkDocs Material.
+A comprehensive personal wiki documenting core computer science concepts with deep technical insights.
 
-## Quick Links
+## 📚 Main Sections
 
-- [Getting Started](getting-started.md) - Learn how to use this wiki
-- [MkDocs Documentation](https://www.mkdocs.org/) - Official MkDocs docs
-- [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) - Theme documentation
+### [Memory Management](cs/memory/index.md)
+시스템 메모리의 동작 원리부터 언어별 메모리 관리, 컨테이너 환경의 메모리 격리까지 다룹니다.
 
-## Features
+- Process memory structure and virtual memory
+- Language-specific memory management (JVM, GC, etc.)
+- Memory management in Kubernetes and containers
+- OOM Killer and memory pressure monitoring
 
-### Code Blocks with Syntax Highlighting
+### [Process & Thread](cs/process/index.md)
+Linux 커널의 프로세스/스레드 구현부터 스케줄링, 인터럽트 처리까지 심도 있게 탐구합니다.
 
-```python
-def hello_world():
-    print("Hello from MkDocs Material!")
-```
+- Process vs Thread implementation and differences
+- Linux CFS scheduler internals
+- Interrupt handling and CPU isolation
+- Real-world performance optimization
 
-### Admonitions
+## 🏷️ Key Tags
 
-!!! note
-    This wiki uses MkDocs Material theme for beautiful documentation.
+- [#Linux](tags.md#linux) - Linux kernel and system programming
+- [#Memory](tags.md#memory) - Memory management and optimization
+- [#Process](tags.md#process) - Processes and threads
+- [#Kubernetes](tags.md#kubernetes) - Container orchestration
+- [#JVM](tags.md#jvm) - Java Virtual Machine
 
-!!! tip
-    You can use `mkdocs serve` to preview changes locally.
+## 🔍 Quick Navigation
 
-### Task Lists
+이 위키는 상호 참조와 태그 시스템을 통해 관련 주제들을 쉽게 탐색할 수 있도록 구성되어 있습니다.
+각 문서는 관련 개념들과 연결되어 있으며, 태그를 통해 주제별로 묶어서 볼 수 있습니다.
 
-- [x] Set up MkDocs
-- [x] Configure Material theme
-- [ ] Add more content
-- [ ] Customize theme
+## 💡 Learning Paths
 
-### Mermaid Diagrams
+### Beginner Track
+1. [Process Memory Structure](cs/memory/process-memory-structure.md)
+2. [Garbage Collection Basics](cs/memory/garbage-collection-basics.md)
+3. [Process vs Thread - The Linux Truth](cs/process/process-vs-thread-1.md)
 
-```mermaid
-graph LR
-    A[Start] --> B[Write Docs]
-    B --> C[Build]
-    C --> D[Deploy]
-```
+### Intermediate Track
+1. [Linux Scheduling Complete Guide](cs/process/linux-scheduling-1.md)
+2. [JVM Memory Structure & GC Tuning](cs/memory/jvm-memory-gc.md)
+3. [Cgroup and Container Memory Isolation](cs/memory/cgroup-container-memory.md)
 
-## Organization
+---
 
-Feel free to organize your content in any way that makes sense for your needs. Some common categories:
-
-- **Technical Notes** - Programming, DevOps, System Administration
-- **Projects** - Documentation for personal projects
-- **Learning** - Notes from courses, books, tutorials
-- **Reference** - Quick reference guides and cheat sheets
+!!! info "Note"
+    This wiki is continuously updated with new content and improvements.

@@ -1,36 +1,66 @@
-site_name: Choru's Private Wiki
+site_name: Choru's Tech Wiki
 site_url: https://choru-k.github.io/choru-wiki/
 site_author: choru
+site_description: Computer Science, DevOps, and System Programming Knowledge Base
 
 theme:
   name: material
+  language: ko
   palette:
     # Light mode
-    - scheme: default
-      primary: indigo
-      accent: indigo
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: deep purple
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     # Dark mode
-    - scheme: slate
-      primary: indigo
-      accent: indigo
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: deep purple
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
   
+  font:
+    text: Roboto
+    code: Roboto Mono
+  
   features:
+    # Navigation
     - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
     - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
+    - navigation.path
+    - navigation.prune
+    - navigation.indexes
     - navigation.top
+    - navigation.footer
+    # Table of contents
+    - toc.follow
+    - toc.integrate
+    # Search
     - search.highlight
     - search.share
+    - search.suggest
+    # Content
     - content.code.copy
+    - content.code.select
     - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+    - content.action.edit
+    - content.action.view
+    # Header
+    - header.autohide
+    - announce.dismiss
 
 markdown_extensions:
   # Python Markdown
@@ -42,11 +72,15 @@ markdown_extensions:
   - md_in_html
   - toc:
       permalink: true
+      title: Table of Contents
+  - tables
   
   # Python Markdown Extensions
   - pymdownx.arithmatex:
       generic: true
-  - pymdownx.betterem
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
   - pymdownx.emoji:
@@ -54,8 +88,15 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: choru-k
+      repo: choru-wiki
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences:
@@ -65,18 +106,99 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
 
 plugins:
-  - search
+  - search:
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+      lang:
+        - en
+        - ko
+  - tags:
+      tags_file: tags.md
+  # Optional: Blog plugin for future use
+  # - blog:
+  #     blog_dir: blog
+  #     post_date_format: full
+  #     archive_date_format: MMMM yyyy
+  #     categories_allowed:
+  #       - DevOps
+  #       - Programming
+  #       - System
 
 extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/choru-k
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/choru
+  
+  analytics:
+    provider: google
+    property: !ENV GOOGLE_ANALYTICS_KEY
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback! Help us improve this page by
+            using our <a href="..." target="_blank" rel="noopener">feedback form</a>.
+  
+  consent:
+    title: Cookie consent
+    description: >- 
+      We use cookies to recognize your repeated visits and preferences, as well
+      as to measure the effectiveness of our documentation and whether users
+      find what they're searching for. With your consent, you're helping us to
+      make our documentation better.
+
+# Extra JavaScript for LaTeX support
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+# Extra CSS for custom styling
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
+  - Computer Science:
+    - cs/index.md
+    - Memory Management:
+      - cs/memory/index.md
+      - Process Memory Structure: cs/memory/process-memory-structure.md
+      - Multithread Stack Memory: cs/memory/multithread-stack-memory.md
+      - Page Cache Mechanism: cs/memory/page-cache.md
+      - JVM Memory & GC: cs/memory/jvm-memory-gc.md
+      - PSI Memory Monitoring: cs/memory/psi-monitoring.md
+      - Garbage Collection Basics: cs/memory/garbage-collection-basics.md
+      - Cgroup & Container Memory: cs/memory/cgroup-container-memory.md
+      - Language Memory Management: cs/memory/language-memory-management.md
+      - OOM Killer: cs/memory/oom-killer.md
+    - Process & Thread:
+      - cs/process/index.md
+      - "Process vs Thread #1: Linux Clone": cs/process/process-vs-thread-1.md
+      - "Process vs Thread #2: Memory Sharing": cs/process/process-vs-thread-2.md
+      - "Process vs Thread #3: Scheduling": cs/process/process-vs-thread-3.md
+      - "Linux Scheduling #1: Basics": cs/process/linux-scheduling-1.md
+      - "Linux Scheduling #2: CFS": cs/process/linux-scheduling-2.md
+      - "Linux Interrupt #1: Fundamentals": cs/process/linux-interrupt-1.md
+      - "Linux Interrupt #2: ksoftirqd": cs/process/linux-interrupt-2.md
+      - "Linux Interrupt #3: Timer & CPU Isolation": cs/process/linux-interrupt-3.md
+  - Tags: tags.md
+  - Demo: demo.md
