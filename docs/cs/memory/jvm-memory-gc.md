@@ -1,6 +1,14 @@
-# JVM 메모리 구조와 GC 튜닝 실전
+---
+tags:
+  - memory
+  - jvm
+  - garbage-collection
+  - performance
+  - java
+  - kubernetes
+---
 
-**Tags:** `#memory` `#jvm` `#garbage-collection` `#performance` `#java` `#kubernetes`
+# JVM 메모리 구조와 GC 튜닝 실전
 
 ## 들어가며
 

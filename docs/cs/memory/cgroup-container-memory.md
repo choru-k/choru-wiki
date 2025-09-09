@@ -1,6 +1,14 @@
-# Cgroup과 컨테이너 메모리 격리의 비밀
+---
+tags:
+  - memory
+  - cgroup
+  - containers
+  - kubernetes
+  - docker
+  - isolation
+---
 
-**Tags:** `#memory` `#cgroup` `#containers` `#kubernetes` `#docker` `#isolation`
+# Cgroup과 컨테이너 메모리 격리의 비밀
 
 ## 들어가며
 

@@ -1,6 +1,14 @@
-# 멀티스레드 스택 메모리의 진실: 800MB의 함정
+---
+tags:
+  - memory
+  - multithreading
+  - stack
+  - virtual-memory
+  - linux
+  - performance
+---
 
-**Tags:** `#memory` `#multithreading` `#stack` `#virtual-memory` `#linux` `#performance`
+# 멀티스레드 스택 메모리의 진실: 800MB의 함정
 
 ## 들어가며
 

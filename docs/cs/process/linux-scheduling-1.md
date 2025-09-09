@@ -1,3 +1,13 @@
+---
+tags:
+  - Process
+  - Linux
+  - Scheduling
+  - CFS
+  - Context-Switching
+  - Performance
+---
+
 # Linux 스케줄링 완벽 가이드 (1): 스케줄링의 진화와 기본 개념
 
 ---

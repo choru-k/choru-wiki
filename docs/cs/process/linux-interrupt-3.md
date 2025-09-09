@@ -1,3 +1,13 @@
+---
+tags:
+  - Process
+  - Linux
+  - Interrupt
+  - Timer
+  - CPU-Isolation
+  - Realtime
+---
+
 # Linux 인터럽트 처리의 모든 것 (3): 타이머, 시간 관리, 그리고 CPU Isolation
 
 ---

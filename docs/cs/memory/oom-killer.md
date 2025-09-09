@@ -1,6 +1,14 @@
-# OOM Killer와 Cgroup 메모리 제한의 진실
+---
+tags:
+  - memory
+  - oom-killer
+  - cgroup
+  - linux
+  - troubleshooting
+  - kubernetes
+---
 
-**Tags:** `#memory` `#oom-killer` `#cgroup` `#linux` `#troubleshooting` `#kubernetes`
+# OOM Killer와 Cgroup 메모리 제한의 진실
 
 ## 들어가며
 

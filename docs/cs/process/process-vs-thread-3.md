@@ -1,3 +1,13 @@
+---
+tags:
+  - Process
+  - Thread
+  - Scheduling
+  - Signals
+  - Synchronization
+  - Performance
+---
+
 # Process vs Thread 심화 (3): 스케줄링, 시그널, 그리고 실전 선택 가이드
 
 ---

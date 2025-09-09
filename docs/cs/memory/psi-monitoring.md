@@ -1,6 +1,14 @@
-# PSI로 메모리 압력 실시간 모니터링하기
+---
+tags:
+  - memory
+  - monitoring
+  - psi
+  - pressure
+  - performance
+  - automation
+---
 
-**Tags:** `#memory` `#monitoring` `#psi` `#pressure` `#performance` `#automation`
+# PSI로 메모리 압력 실시간 모니터링하기
 
 ## 들어가며
 

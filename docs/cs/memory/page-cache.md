@@ -1,6 +1,14 @@
-# Page Cache 동작 원리와 Kubernetes 환경의 함정
+---
+tags:
+  - memory
+  - page-cache
+  - kubernetes
+  - linux
+  - troubleshooting
+  - performance
+---
 
-**Tags:** `#memory` `#page-cache` `#kubernetes` `#linux` `#troubleshooting` `#performance`
+# Page Cache 동작 원리와 Kubernetes 환경의 함정
 
 ## 들어가며
 

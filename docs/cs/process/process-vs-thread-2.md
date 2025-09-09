@@ -1,3 +1,13 @@
+---
+tags:
+  - Process
+  - Thread
+  - Memory
+  - Virtual-Memory
+  - Shared-Memory
+  - Linux
+---
+
 # Process vs Thread 심화 (2): 메모리 공유와 격리의 실제 구현
 
 ---

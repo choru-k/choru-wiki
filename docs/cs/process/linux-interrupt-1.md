@@ -1,8 +1,14 @@
-# Linux 인터럽트 처리의 모든 것 (1): 인터럽트 이해하기 - 기초부터 아키텍처까지
+---
+tags:
+  - Process
+  - Linux
+  - Interrupt
+  - IRQ
+  - Hardware
+  - Kernel
+---
 
----
-tags: [linux, interrupt, irq, apic, msi, cpu-affinity, interrupt-controller, hardware, kernel, operating-system]
----
+# Linux 인터럽트 처리의 모든 것 (1): 인터럽트 이해하기 - 기초부터 아키텍처까지
 
 ## 들어가며
 

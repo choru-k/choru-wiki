@@ -1,8 +1,14 @@
-# Linux 스케줄링 완벽 가이드 (2): CFS (Completely Fair Scheduler) 깊이 파헤치기
+---
+tags:
+  - Process
+  - Linux
+  - Scheduling
+  - CFS
+  - vruntime
+  - Performance
+---
 
----
-tags: [linux, cfs, vruntime, red-black-tree, scheduler, fair-scheduling, sleeper-fairness, group-scheduling, performance-tuning]
----
+# Linux 스케줄링 완벽 가이드 (2): CFS (Completely Fair Scheduler) 깊이 파헤치기
 
 ## 들어가며
 

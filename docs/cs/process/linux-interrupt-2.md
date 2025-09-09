@@ -1,3 +1,13 @@
+---
+tags:
+  - Process
+  - Linux
+  - Interrupt
+  - Softirq
+  - Tasklet
+  - Performance
+---
+
 # Linux 인터럽트 처리의 모든 것 (2): Top-half, Bottom-half 그리고 ksoftirqd의 비밀
 
 ---

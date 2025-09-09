@@ -1,6 +1,15 @@
-# 언어별 메모리 관리 전략과 Kubernetes 환경의 함정
+---
+tags:
+  - memory
+  - programming-languages
+  - python
+  - go
+  - java
+  - nodejs
+  - kubernetes
+---
 
-**Tags:** `#memory` `#programming-languages` `#python` `#go` `#java` `#nodejs` `#kubernetes`
+# 언어별 메모리 관리 전략과 Kubernetes 환경의 함정
 
 ## 들어가며
 

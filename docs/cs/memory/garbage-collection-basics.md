@@ -1,6 +1,13 @@
-# 가비지 컬렉션 기초: 왜 메모리를 자동으로 관리하는가?
+---
+tags:
+  - memory
+  - garbage-collection
+  - automation
+  - performance
+  - algorithms
+---
 
-**Tags:** `#memory` `#garbage-collection` `#automation` `#performance` `#algorithms`
+# 가비지 컬렉션 기초: 왜 메모리를 자동으로 관리하는가?
 
 ## 들어가며
 

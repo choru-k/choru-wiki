@@ -1,3 +1,13 @@
+---
+tags:
+  - Process
+  - Thread
+  - Linux
+  - Clone
+  - Kernel
+  - System-Programming
+---
+
 # Process vs Thread 심화 (1): Linux의 충격적 진실 - 모든 것은 clone()이다
 
 ---
