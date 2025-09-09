@@ -200,5 +200,21 @@ nav:
       - "Linux Interrupt #1: Fundamentals": cs/process/linux-interrupt-1.md
       - "Linux Interrupt #2: ksoftirqd": cs/process/linux-interrupt-2.md
       - "Linux Interrupt #3: Timer & CPU Isolation": cs/process/linux-interrupt-3.md
+  - Machine Learning:
+    - ml/index.md
+    - Policy Gradient:
+      - REINFORCE: ml/reinforce.md
+      - Actor Critic: ml/actor-critic.md
+      - A2C: ml/a2c.md
+      - GAE: ml/gae.md
+      - TNPG: ml/tnpg.md
+    - Deep Q-Network:
+      - Double DQN: ml/double-dqn.md
+      - Duel DQN: ml/duel-dqn.md
+      - Noisy Net: ml/noisy-net.md
+      - Prioritized Experience Replay: ml/prioritized-experience-replay.md
+    - Advanced Methods:
+      - Rainbow: ml/rainbow.md
+      - Rainbow Distributional: ml/rainbow-distributional.md
   - Tags: tags.md
   - Demo: demo.md
