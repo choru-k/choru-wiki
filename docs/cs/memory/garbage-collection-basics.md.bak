@@ -373,14 +373,14 @@ def memory_hungry():
 
 ```bash
 # 높은 GC 빈도
-$ jstat -gcutil &lt;pid&gt; 1000
+$ jstat -gcutil <pid> 1000
 S0     S1     E      O      M     YGC     YGCT    FGC    FGCT
 0.00  100.00  85.43  95.67  98.12  1523   45.234   89    125.45
 # YGC가 빠르게 증가 = Minor GC 빈번
 # FGC 증가 = Major GC 빈번 (위험!)
 
 # 컨테이너 환경에서
-$ kubectl exec &lt;pod&gt; -- jcmd 1 GC.heap_info
+$ kubectl exec <pod> -- jcmd 1 GC.heap_info
 ```
 
 ## Kubernetes 환경에서의 GC 고려사항

@@ -479,7 +479,7 @@ kubectl exec $POD -- jcmd 1 VM.native_memory
 
 ```java
 // 힙 덤프 생성
-jcmd &lt;pid&gt; GC.heap_dump /tmp/heap.hprof
+jcmd <pid> GC.heap_dump /tmp/heap.hprof
 
 // 또는 OOM 시 자동 덤프
 -XX:+HeapDumpOnOutOfMemoryError
@@ -499,7 +499,7 @@ SELECT * FROM java.util.HashMap$Node WHERE size > 10000
 -XX:NativeMemoryTracking=detail
 
 # 실행 중 확인
-jcmd &lt;pid&gt; VM.native_memory detail
+jcmd <pid> VM.native_memory detail
 
 # 출력 예시
 Native Memory Tracking:
@@ -518,13 +518,13 @@ Total: reserved=2530MB, committed=1893MB
 
 ```bash
 # GC 빈도와 시간
-jstat -gcutil &lt;pid&gt; 1000 10
+jstat -gcutil <pid> 1000 10
 
 # GC 원인
-jcmd &lt;pid&gt; GC.heap_info
+jcmd <pid> GC.heap_info
 
 # 메모리 상태
-jcmd &lt;pid&gt; VM.native_memory summary
+jcmd <pid> VM.native_memory summary
 ```
 
 ### 2. 목표 설정

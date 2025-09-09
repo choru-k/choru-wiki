@@ -299,7 +299,7 @@ spec:
 
 ```bash
 # Pod의 실제 메모리 사용량 확인
-$ cat /sys/fs/cgroup/memory/kubepods/pod&lt;uid&gt;/memory.stat
+$ cat /sys/fs/cgroup/memory/kubepods/pod<uid>/memory.stat
 cache 2147483648         # 2GB Page Cache
 rss 536870912           # 512MB RSS (실제 앱 메모리)
 mapped_file 1073741824  # 1GB 메모리 맵 파일

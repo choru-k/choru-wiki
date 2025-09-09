@@ -101,13 +101,13 @@ pgpgout 654321          # Page out 횟수
 /sys/fs/cgroup/
 └── kubepods.slice/                          # 모든 Pod
     ├── kubepods-guaranteed.slice/           # Guaranteed QoS
-    │   └── kubepods-guaranteed-pod&lt;uid&gt;.slice/
+    │   └── kubepods-guaranteed-pod<uid>.slice/
     │       ├── docker-<container1>.scope/
     │       └── docker-<container2>.scope/
     ├── kubepods-burstable.slice/           # Burstable QoS
-    │   └── kubepods-burstable-pod&lt;uid&gt;.slice/
+    │   └── kubepods-burstable-pod<uid>.slice/
     └── kubepods-besteffort.slice/          # BestEffort QoS
-        └── kubepods-besteffort-pod&lt;uid&gt;.slice/
+        └── kubepods-besteffort-pod<uid>.slice/
 ```
 
 ### QoS별 Cgroup 설정

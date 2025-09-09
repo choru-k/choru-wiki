@@ -448,10 +448,10 @@ done | sort -nrk2 | head -10
 4. **임시 조치**
 ```bash
 # 중요 프로세스 보호
-echo -500 > /proc/&lt;important-pid&gt;/oom_score_adj
+echo -500 > /proc/<important-pid>/oom_score_adj
 
 # 불필요한 프로세스 우선 종료 대상으로
-echo 500 > /proc/&lt;unimportant-pid&gt;/oom_score_adj
+echo 500 > /proc/<unimportant-pid>/oom_score_adj
 ```
 
 ## 정리
