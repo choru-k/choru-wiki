@@ -75,6 +75,7 @@ $ cat /proc/`&lt;pid&gt;`/maps | grep r-xp
 ```
 
 **특징:**
+
 - **읽기 전용**: 보안과 공유를 위해 쓰기 금지
 - **공유 가능**: 같은 프로그램의 여러 인스턴스가 공유
 - **페이지 캐시**: 파일 시스템에서 로드되므로 [page cache](page-cache.md) 사용
@@ -211,6 +212,7 @@ $ cat /proc/&lt;pid&gt;/maps | grep stack
 ```
 
 **스택 오버플로우 방지:**
+
 ```c
 // 재귀 함수에서 스택 오버플로우 위험
 void recursive(int depth) {
