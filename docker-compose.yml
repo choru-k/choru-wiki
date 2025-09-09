@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  mkdocs:
+    image: squidfunk/mkdocs-material:latest
+    container_name: choru-wiki
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/docs
+    command: serve --dev-addr=0.0.0.0:8000
+    environment:
+      - LIVE_RELOAD_SUPPORT=true
+      - FAST_MODE=true
