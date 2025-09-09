@@ -21,7 +21,7 @@ DevOps/SRE 엔지니어로서 메모리 문제를 디버깅할 때, "왜 RSS와 
 High Address (0xFFFFFFFF)
 ┌─────────────────────┐
 │   Kernel Space      │ (1GB on 32-bit, much larger on 64-bit)
-├─────────────────────┤ 
+├─────────────────────┤
 │   Stack            │ ↓ (grows downward)
 │                    │
 │   ...              │ (random gap for security)
@@ -90,7 +90,7 @@ int global_initialized = 100;        // .data section
 static int static_initialized = 200; // .data section
 const char* str = "Hello, World!";   // 문자열 리터럴은 .rodata
 
-// BSS Segment (초기화되지 않은 전역/정적 변수)  
+// BSS Segment (초기화되지 않은 전역/정적 변수)
 int global_uninitialized;           // .bss section (0으로 초기화)
 static int static_uninitialized;    // .bss section (0으로 초기화)
 static int array[10000];            // .bss section (모두 0)
@@ -181,15 +181,15 @@ int main() {
     pthread_t thread1, thread2;
     pthread_attr_t attr;
     size_t stacksize;
-    
+
     pthread_attr_init(&attr);
     pthread_attr_getstacksize(&attr, &stacksize);
     printf("Default thread stack size: %zu MB\n", stacksize / 1024 / 1024);
-    
+
     // 보통 8MB가 기본값 (ulimit -s)
     pthread_create(&thread1, NULL, thread_function, NULL);
     pthread_create(&thread2, NULL, thread_function, NULL);
-    
+
     // 각 스레드는 서로 다른 스택 주소를 출력
 }
 ```
@@ -246,14 +246,14 @@ int main() {
     // 작은 할당: glibc malloc이 내부 풀에서 관리
     void* small = malloc(64);      // tcache/fastbin에서 할당
     void* medium = malloc(1024);   // smallbin에서 할당
-    
+
     // 큰 할당: mmap 사용 (기본 128KB 이상)
     void* large = malloc(1024 * 1024);  // mmap으로 직접 할당
-    
+
     // brk 시스템 콜로 힙 확장
     void* current_brk = sbrk(0);
     printf("Current program break: %p\n", current_brk);
-    
+
     // 메모리 해제
     free(small);   // 바로 OS에 반환하지 않고 풀에 보관
     free(medium);  // 재사용을 위해 캐시
@@ -320,13 +320,13 @@ int main() {
     void* file_map = mmap(NULL, 1024*1024*100,  // 100MB
                          PROT_READ, MAP_PRIVATE,
                          fd, 0);
-    
+
     // 익명 매핑 (대용량 메모리 할당)
     void* anon_map = mmap(NULL, 1024*1024*1024,  // 1GB
                          PROT_READ | PROT_WRITE,
                          MAP_PRIVATE | MAP_ANONYMOUS,
                          -1, 0);
-    
+
     // 공유 메모리
     int shm_fd = shm_open("/myshm", O_CREAT | O_RDWR, 0666);
     void* shared_map = mmap(NULL, 4096,
@@ -427,14 +427,14 @@ import (
 func main() {
     // 메모리 제한 설정
     debug.SetMemoryLimit(512 * 1024 * 1024)  // 512MB
-    
+
     // 대량 할당
     data := make([]byte, 100*1024*1024)  // 100MB
-    
+
     // 사용 후 nil 할당
     data = nil
     runtime.GC()  // GC 실행
-    
+
     // Go는 메모리를 OS에 반환 (scavenger가 주기적으로 실행)
 }
 ```

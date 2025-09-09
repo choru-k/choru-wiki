@@ -23,11 +23,11 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-  
+
   font:
     text: Roboto
     code: Roboto Mono
-  
+
   features:
     # Navigation
     - navigation.instant
@@ -74,7 +74,7 @@ markdown_extensions:
       permalink: true
       title: Table of Contents
   - tables
-  
+
   # Python Markdown Extensions
   - pymdownx.arithmatex:
       generic: true
@@ -138,7 +138,7 @@ extra:
       link: https://github.com/choru-k
     - icon: fontawesome/brands/linkedin
       link: https://linkedin.com/in/choru
-  
+
   analytics:
     provider: google
     property: !ENV GOOGLE_ANALYTICS_KEY
@@ -156,10 +156,10 @@ extra:
           note: >-
             Thanks for your feedback! Help us improve this page by
             using our <a href="..." target="_blank" rel="noopener">feedback form</a>.
-  
+
   consent:
     title: Cookie consent
-    description: >- 
+    description: >-
       We use cookies to recognize your repeated visits and preferences, as well
       as to measure the effectiveness of our documentation and whether users
       find what they're searching for. With your consent, you're helping us to
@@ -178,43 +178,75 @@ extra_css:
 nav:
   - Home: index.md
   - Computer Science:
-    - cs/index.md
-    - Memory Management:
-      - cs/memory/index.md
-      - Process Memory Structure: cs/memory/process-memory-structure.md
-      - Multithread Stack Memory: cs/memory/multithread-stack-memory.md
-      - Page Cache Mechanism: cs/memory/page-cache.md
-      - JVM Memory & GC: cs/memory/jvm-memory-gc.md
-      - PSI Memory Monitoring: cs/memory/psi-monitoring.md
-      - Garbage Collection Basics: cs/memory/garbage-collection-basics.md
-      - Cgroup & Container Memory: cs/memory/cgroup-container-memory.md
-      - Language Memory Management: cs/memory/language-memory-management.md
-      - OOM Killer: cs/memory/oom-killer.md
-    - Process & Thread:
-      - cs/process/index.md
-      - "Process vs Thread #1: Linux Clone": cs/process/process-vs-thread-1.md
-      - "Process vs Thread #2: Memory Sharing": cs/process/process-vs-thread-2.md
-      - "Process vs Thread #3: Scheduling": cs/process/process-vs-thread-3.md
-      - "Linux Scheduling #1: Basics": cs/process/linux-scheduling-1.md
-      - "Linux Scheduling #2: CFS": cs/process/linux-scheduling-2.md
-      - "Linux Interrupt #1: Fundamentals": cs/process/linux-interrupt-1.md
-      - "Linux Interrupt #2: ksoftirqd": cs/process/linux-interrupt-2.md
-      - "Linux Interrupt #3: Timer & CPU Isolation": cs/process/linux-interrupt-3.md
+      - cs/index.md
+      - Memory Management:
+          - cs/memory/index.md
+          - Process Memory Structure: cs/memory/process-memory-structure.md
+          - Multithread Stack Memory: cs/memory/multithread-stack-memory.md
+          - Page Cache Mechanism: cs/memory/page-cache.md
+          - JVM Memory & GC: cs/memory/jvm-memory-gc.md
+          - PSI Memory Monitoring: cs/memory/psi-monitoring.md
+          - Garbage Collection Basics: cs/memory/garbage-collection-basics.md
+          - Cgroup & Container Memory: cs/memory/cgroup-container-memory.md
+          - Language Memory Management: cs/memory/language-memory-management.md
+          - OOM Killer: cs/memory/oom-killer.md
+      - Process & Thread:
+          - cs/process/index.md
+          - "Process vs Thread #1: Linux Clone": cs/process/process-vs-thread-1.md
+          - "Process vs Thread #2: Memory Sharing": cs/process/process-vs-thread-2.md
+          - "Process vs Thread #3: Scheduling": cs/process/process-vs-thread-3.md
+          - "Linux Scheduling #1: Basics": cs/process/linux-scheduling-1.md
+          - "Linux Scheduling #2: CFS": cs/process/linux-scheduling-2.md
+          - "Linux Interrupt #1: Fundamentals": cs/process/linux-interrupt-1.md
+          - "Linux Interrupt #2: ksoftirqd": cs/process/linux-interrupt-2.md
+          - "Linux Interrupt #3: Timer & CPU Isolation": cs/process/linux-interrupt-3.md
+  - DevOps:
+      - Service Mesh:
+          - Istio Traffic Interception: devops/istio-traffic-interception.md
+      - Container:
+          - Dockerfile Best Practices: devops/dockerfile-best-practices.md
+      - Kubernetes:
+          - EKS LoadBalancer Modes: devops/eks-lb-modes.md
+          - Pod Debugging: devops/kubernetes/pod-debugging.md
+          - Graceful Shutdown with Istio: devops/kubernetes/graceful-shutdown-istio.md
+      - Monitoring:
+          - Prometheus Kubernetes CPU Metrics: devops/monitoring/prometheus-kubernetes-cpu-metrics.md
+      - Performance:
+          - CPU Usage Analysis: devops/performance/cpu-usage-analysis.md
+      - Debugging:
+          - ptrace System Call Internals: devops/debugging/ptrace-internals.md
+          - GDB Advanced Debugging: devops/debugging/gdb-advanced-debugging.md
+          - strace System Call Analysis: devops/debugging/strace-debugging.md
+          - Python Library Analysis (so/nm): devops/debugging/python-library-analysis-so-nm.md
+          - Docker Exit 137 Debugging: devops/debugging/docker-exit-137-debugging.md
+  - Database:
+      - RDS:
+          - Auto Increment Strategy: db/rds-auto-increment.md
+      - ProxySQL:
+          - ProxySQL Overview: devops/proxysql.md
+          - Connection Pooling Issues: db/proxysql-connection-pooling.md
+          - Load Test Troubleshooting: db/proxysql-loadtest-issue.md
+  - Algorithms:
+      - LeetCode:
+          - algorithms/leetcode/index.md
+          - Study Methodology: algorithms/leetcode/methodology.md
+          - Problems by Pattern: algorithms/leetcode/patterns.md
+          - Problems by Topic: algorithms/leetcode/topics.md
   - Machine Learning:
-    - ml/index.md
-    - Policy Gradient:
-      - REINFORCE: ml/reinforce.md
-      - Actor Critic: ml/actor-critic.md
-      - A2C: ml/a2c.md
-      - GAE: ml/gae.md
-      - TNPG: ml/tnpg.md
-    - Deep Q-Network:
-      - Double DQN: ml/double-dqn.md
-      - Duel DQN: ml/duel-dqn.md
-      - Noisy Net: ml/noisy-net.md
-      - Prioritized Experience Replay: ml/prioritized-experience-replay.md
-    - Advanced Methods:
-      - Rainbow: ml/rainbow.md
-      - Rainbow Distributional: ml/rainbow-distributional.md
+      - ml/index.md
+      - Policy Gradient:
+          - REINFORCE: ml/reinforce.md
+          - Actor Critic: ml/actor-critic.md
+          - A2C: ml/a2c.md
+          - GAE: ml/gae.md
+          - TNPG: ml/tnpg.md
+      - Deep Q-Network:
+          - Double DQN: ml/double-dqn.md
+          - Duel DQN: ml/duel-dqn.md
+          - Noisy Net: ml/noisy-net.md
+          - Prioritized Experience Replay: ml/prioritized-experience-replay.md
+      - Advanced Methods:
+          - Rainbow: ml/rainbow.md
+          - Rainbow Distributional: ml/rainbow-distributional.md
   - Tags: tags.md
   - Demo: demo.md

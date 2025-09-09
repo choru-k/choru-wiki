@@ -11,11 +11,11 @@ Greedy algorithms make locally optimal choices at each step to find a global opt
 - Requires proof of correctness
 
 ### Classic Problems
-- [134. Gas Station](problems/134-gas-station.md) - Circular array optimization
-- [135. Candy](problems/135-candy.md) - Two-pass greedy
-- [452. Minimum Number of Arrows to Burst Balloons](problems/452-arrows-balloons.md) - Interval scheduling
-- [846. Hand of Straights](problems/846-hand-of-straights.md) - Consecutive grouping
-- [406. Queue Reconstruction by Height](problems/406-queue-reconstruction.md) - Sorting with constraints
+- [134. Gas Station](../problems/134-gas-station.md) - Circular array optimization
+- [135. Candy](../problems/135-candy.md) - Two-pass greedy
+- [452. Minimum Number of Arrows to Burst Balloons](../problems/452-arrows-balloons.md) - Interval scheduling
+- [846. Hand of Straights](../problems/846-hand-of-straights.md) - Consecutive grouping
+- [406. Queue Reconstruction by Height](../problems/406-queue-reconstruction.md) - Sorting with constraints
 
 ### Problem-Solving Tips
 1. Sort the input if order matters
@@ -30,18 +30,18 @@ DP solves complex problems by breaking them into simpler subproblems.
 ### Key Patterns
 
 #### 1. Linear DP
-- [53. Maximum Subarray](problems/53-maximum-subarray.md) - Kadane's algorithm
-- [121. Best Time to Buy and Sell Stock](problems/121-stock.md) - State tracking
-- [413. Arithmetic Slices](problems/413-arithmetic-slices.md) - Sequence DP
+- [53. Maximum Subarray](../problems/53-maximum-subarray.md) - Kadane's algorithm
+- [121. Best Time to Buy and Sell Stock](../problems/121-stock.md) - State tracking
+- [413. Arithmetic Slices](../problems/413-arithmetic-slices.md) - Sequence DP
 
 #### 2. 2D DP
-- [1035. Uncrossed Lines](problems/1035-uncrossed-lines.md) - LCS variant
-- [312. Burst Balloons](problems/312-burst-balloons.md) - Interval DP
-- [1000. Minimum Cost to Merge Stones](problems/1000-merge-stones.md) - Multi-dimensional DP
+- [1035. Uncrossed Lines](../problems/1035-uncrossed-lines.md) - LCS variant
+- [312. Burst Balloons](../problems/312-burst-balloons.md) - Interval DP
+- [1000. Minimum Cost to Merge Stones](../problems/1000-merge-stones.md) - Multi-dimensional DP
 
 #### 3. State Machine DP
-- [123. Best Time to Buy and Sell Stock III](problems/123-stock-iii.md) - Multiple transactions
-- [309. Best Time to Buy and Sell Stock with Cooldown](problems/309-stock-cooldown.md) - State transitions
+- [123. Best Time to Buy and Sell Stock III](../problems/123-stock-iii.md) - Multiple transactions
+- [309. Best Time to Buy and Sell Stock with Cooldown](../problems/309-stock-cooldown.md) - State transitions
 
 ### Problem-Solving Framework
 1. **Define state**: What do we need to know at each step?
@@ -56,10 +56,10 @@ DP solves complex problems by breaking them into simpler subproblems.
 Depth-First Search explores as far as possible before backtracking.
 
 #### Applications
-- [200. Number of Islands](problems/200-number-of-islands.md) - Connected components
-- [236. Lowest Common Ancestor](problems/236-lca-binary-tree.md) - Tree traversal
-- [417. Pacific Atlantic Water Flow](problems/417-water-flow.md) - Multi-source DFS
-- [332. Reconstruct Itinerary](problems/332-reconstruct-itinerary.md) - Eulerian path
+- [200. Number of Islands](../problems/200-number-of-islands.md) - Connected components
+- [236. Lowest Common Ancestor](../problems/236-lca-binary-tree.md) - Tree traversal
+- [417. Pacific Atlantic Water Flow](../problems/417-water-flow.md) - Multi-source DFS
+- [332. Reconstruct Itinerary](../problems/332-reconstruct-itinerary.md) - Eulerian path
 
 #### Templates
 ```python
@@ -87,8 +87,8 @@ def dfs_iterative(start):
 Breadth-First Search explores neighbors level by level.
 
 #### Applications
-- [1293. Shortest Path in Grid](problems/1293-shortest-path-obstacles.md) - Shortest path with constraints
-- [310. Minimum Height Trees](problems/310-minimum-height-trees.md) - Tree center finding
+- [1293. Shortest Path in Grid](../problems/1293-shortest-path-obstacles.md) - Shortest path with constraints
+- [310. Minimum Height Trees](../problems/310-minimum-height-trees.md) - Tree center finding
 - Level-order traversal in trees
 - Shortest path in unweighted graphs
 
@@ -103,12 +103,12 @@ Binary search finds targets in logarithmic time.
 - Find insertion position
 
 #### 2. Binary Search on Answer
-- [1011. Capacity To Ship Packages](problems/1011-ship-packages.md) - Minimize maximum
-- [719. Find K-th Smallest Pair Distance](problems/719-kth-pair-distance.md) - Search on result space
+- [1011. Capacity To Ship Packages](../problems/1011-ship-packages.md) - Minimize maximum
+- [719. Find K-th Smallest Pair Distance](../problems/719-kth-pair-distance.md) - Search on result space
 
 #### 3. Advanced Applications
-- [378. Kth Smallest Element in Sorted Matrix](problems/378-kth-in-matrix.md) - 2D binary search
-- [1060. Missing Element in Sorted Array](problems/1060-missing-element.md) - Binary search with calculation
+- [378. Kth Smallest Element in Sorted Matrix](../problems/378-kth-in-matrix.md) - 2D binary search
+- [1060. Missing Element in Sorted Array](../problems/1060-missing-element.md) - Binary search with calculation
 
 ### Template
 ```python
@@ -127,10 +127,10 @@ def binary_search(left, right, condition):
 Stack problems often involve matching, parsing, or finding next elements.
 
 ### Key Problems
-- [224. Basic Calculator](problems/224-basic-calculator.md) - Expression parsing
-- [239. Sliding Window Maximum](problems/239-sliding-window-max.md) - Monotonic deque
-- [316. Remove Duplicate Letters](problems/316-remove-duplicate.md) - Greedy with stack
-- [496. Next Greater Element](problems/496-next-greater.md) - Classic monotonic stack
+- [224. Basic Calculator](../problems/224-basic-calculator.md) - Expression parsing
+- [239. Sliding Window Maximum](../problems/239-sliding-window-max.md) - Monotonic deque
+- [316. Remove Duplicate Letters](../problems/316-remove-duplicate.md) - Greedy with stack
+- [496. Next Greater Element](../problems/496-next-greater.md) - Classic monotonic stack
 
 ### Monotonic Stack Pattern
 ```python
@@ -153,8 +153,8 @@ Sliding window optimizes subarray/substring problems.
 - Process subarrays of fixed size
 
 ### Variable Window
-- [862. Shortest Subarray with Sum at Least K](problems/862-shortest-subarray.md) - With negative numbers
-- [992. Subarrays with K Different Integers](problems/992-k-different.md) - Exactly K constraint
+- [862. Shortest Subarray with Sum at Least K](../problems/862-shortest-subarray.md) - With negative numbers
+- [992. Subarrays with K Different Integers](../problems/992-k-different.md) - Exactly K constraint
 
 ### Template
 ```python
@@ -185,16 +185,16 @@ def sliding_window(s):
 ## Advanced Data Structures
 
 ### Union-Find (8 problems)
-- [685. Redundant Connection II](problems/685-redundant-connection.md) - Directed graph cycles
-- [1168. Optimize Water Distribution](problems/1168-water-distribution.md) - MST variant
+- [685. Redundant Connection II](../problems/685-redundant-connection.md) - Directed graph cycles
+- [1168. Optimize Water Distribution](../problems/1168-water-distribution.md) - MST variant
 
 ### Segment Tree (5 problems)
-- [308. Range Sum Query 2D - Mutable](problems/308-range-sum-2d.md) - 2D range queries
-- [732. My Calendar III](problems/732-calendar-iii.md) - Interval booking
+- [308. Range Sum Query 2D - Mutable](../problems/308-range-sum-2d.md) - 2D range queries
+- [732. My Calendar III](../problems/732-calendar-iii.md) - Interval booking
 
 ### Trie (4 problems)
-- [421. Maximum XOR of Two Numbers](problems/421-max-xor.md) - Bit manipulation with Trie
-- [642. Design Search Autocomplete](problems/642-autocomplete.md) - Prefix search
+- [421. Maximum XOR of Two Numbers](../problems/421-max-xor.md) - Bit manipulation with Trie
+- [642. Design Search Autocomplete](../problems/642-autocomplete.md) - Prefix search
 
 ## Problem Selection Strategy
 
