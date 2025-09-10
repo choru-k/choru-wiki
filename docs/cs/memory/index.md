@@ -6,6 +6,7 @@
 
 ### 기초 개념
 - [프로세스 메모리 구조 완벽 이해](process-memory-structure.md) - Stack, Heap, Data, Text 영역의 이해
+- [가상 메모리와 페이지 테이블](virtual-memory-page-table.md) - 가상 메모리 시스템의 동작 원리
 - [가비지 컬렉션 기초](garbage-collection-basics.md) - 자동 메모리 관리의 원리
 
 ### 심화 주제

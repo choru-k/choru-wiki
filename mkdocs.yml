@@ -182,6 +182,7 @@ nav:
       - Memory Management:
           - cs/memory/index.md
           - Process Memory Structure: cs/memory/process-memory-structure.md
+          - Virtual Memory & Page Table: cs/memory/virtual-memory-page-table.md
           - Multithread Stack Memory: cs/memory/multithread-stack-memory.md
           - Page Cache Mechanism: cs/memory/page-cache.md
           - JVM Memory & GC: cs/memory/jvm-memory-gc.md
@@ -200,6 +201,26 @@ nav:
           - "Linux Interrupt #1: Fundamentals": cs/process/linux-interrupt-1.md
           - "Linux Interrupt #2: ksoftirqd": cs/process/linux-interrupt-2.md
           - "Linux Interrupt #3: Timer & CPU Isolation": cs/process/linux-interrupt-3.md
+      - Programming:
+          - cs/programming/index.md
+          - Callback Functions: cs/programming/callback.md
+          - Coroutines: cs/programming/coroutine.md
+          - "Event Loop: Single-threaded Concurrency Magic": cs/programming/event-loop.md
+      - Network Programming:
+          - cs/network/index.md
+          - Socket Programming: cs/network/socket.md
+          - "epoll: Linux High-Performance I/O Multiplexing": cs/network/epoll.md
+      - Compilation:
+          - cs/compilation/index.md
+          - "Compilation Guide: From Source to Binary": cs/compilation/compile.md
+          - "Linker: Symbol Resolution to LTO": cs/compilation/linker.md
+          - Header Files & Preprocessing: cs/compilation/header-files.md
+          - Symbol Table: cs/compilation/symbol-table.md
+          - Static Libraries: cs/compilation/static-library.md
+          - Dynamic Libraries: cs/compilation/dynamic-library.md
+      - System Programming:
+          - cs/system/index.md
+          - File Descriptors: cs/system/file-descriptor.md
   - DevOps:
       - Service Mesh:
           - Istio Traffic Interception: devops/istio-traffic-interception.md
