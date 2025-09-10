@@ -15,15 +15,15 @@ tags:
 
 "Dockerfile 작성은 쉽다"고 생각하다가 production에서 고통받은 경험이 있나요? **1GB 넘는 이미지 크기**, **보안 취약점 가득한 base image**, **빌드 시간 30분**과 같은 문제들 말입니다. 
 
-Production-grade 컨테이너 이미지를 구축하려면 단순히 동작하는 것을 넘어서, 보안, 성능, 유지보수성을 모두 고려해야 합니다. 실제 DevOps 팀에서 사용하는 enterprise-level Dockerfile 작성 노하우를 완전히 공개합니다.
+Production-grade 컨테이너 이미지를 구축하려면 단순히 동작하는 것을 넘어서 보안, 성능, 유지보수성을 모두 고려해야 합니다. 실제 DevOps 팀에서 사용하는 enterprise-level Dockerfile 작성 노하우를 완전히 공개합니다.
 
 ## 핵심 원칙과 실전 전략
 
-### 1. Multi-Stage Build: 이미지 크기 혁신
+### 1. Multi-Stage Build: 이미지 크기 혁단적 개선
 
-**문제:** 모든 빌드 도구와 의존성이 최종 이미지에 포함되어 비효율적
+**문제**: 모든 빌드 도구와 의존성이 최종 이미지에 포함되어 비효율적
 
-**해결:** Build stage와 runtime stage 분리
+**해결**: Build stage와 runtime stage 분리
 
 ```dockerfile
 # syntax=docker/dockerfile:1.4
@@ -699,21 +699,21 @@ spec:
 
 ## 정리
 
-Production-ready Dockerfile 작성은 다음 핵심 요소들의 균형입니다:
+Production-ready Dockerfile 작성의 핵심은 다음 요소들의 균형입니다:
 
 1. **Multi-stage builds**: 이미지 크기 최적화와 보안 강화
 2. **Layer caching**: 빌드 시간 단축과 CI/CD 효율성
-3. **Security hardening**: 최소 권한 원칙과 공격 표면 최소화
+3. **Security hardening**: 최소 권한 원칙과 공격 범위 최소화
 4. **Performance optimization**: 런타임 리소스 사용 최적화
 5. **Observability**: 모니터링과 디버깅 지원
 
-**Enterprise 환경에서의 추가 고려사항:**
+**Enterprise 환경에서 추가로 고려할 사항**:
 - **Supply chain security**: SBOM 관리와 의존성 추적
 - **Compliance**: 보안 스캔과 정책 준수
 - **Multi-platform builds**: AMD64/ARM64 크로스 플랫폼 지원
 - **Registry security**: 이미지 서명과 접근 제어
 
-이러한 모범 사례를 따르면, 안전하고 효율적이며 유지보수가 용이한 컨테이너 이미지를 구축할 수 있습니다.
+이러한 모범 사례를 따르면 안전하고 효율적이며 유지보수가 용이한 컨테이너 이미지를 구축할 수 있습니다.
 
 ## 관련 문서
 

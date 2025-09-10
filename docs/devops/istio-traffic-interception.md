@@ -13,9 +13,9 @@ tags:
 
 ## 들어가며
 
-"Istio를 설치했는데 자동으로 모든 트래픽이 sidecar를 지나간다니?" Production에서 Service Mesh를 운영하다 보면 이런 궁금증이 생깁니다. **도대체 어떻게 Pod 내부의 모든 네트워크 트래픽을 Envoy 프록시로 투명하게 라우팅시킬 수 있을까?** 
+"Istio를 설치했는데 자동으로 모든 트래픽이 sidecar를 지나간다는거야?" Production에서 Service Mesh를 운영하다 보면 이런 궁금증이 생깁니다. **도대체 어떻게 Pod 내부의 모든 네트워크 트래픽을 Envoy 프록시로 투명하게 라우팅할 수 있을까?** 
 
-답은 Linux의 netfilter/iptables와 투명 프록시(transparent proxy) 기술에 있습니다. Istio의 마법같은 트래픽 interception을 kernel 수준에서 완전히 해부해보겠습니다.
+답은 Linux의 netfilter/iptables와 투명 프록시(transparent proxy) 기술에 있습니다. Istio의 마법 같은 트래픽 interception을 kernel 수준에서 완전히 땀어보겠습니다.
 
 ## Istio Sidecar Injection 메커니즘
 
@@ -463,14 +463,14 @@ curl-format.txt:
 
 ## 정리
 
-Istio의 투명한 트래픽 인터셉션은 다음 핵심 기술들의 조합입니다:
+Istio의 투명한 트래픽 인터셉션은 다음 핵심 기술들의 조합입니다
 
 1. **iptables REDIRECT**: netfilter hooks를 이용한 패킷 리다이렉션
 2. **SO_ORIGINAL_DST**: 원본 목적지 주소 복원
 3. **Transparent Proxy**: 애플리케이션 무수정으로 프록시 삽입
 4. **Init Container**: 특권 권한으로 네트워크 설정 변경
 
-이 이해를 바탕으로 Service Mesh의 동작 원리를 정확히 파악하고, 성능 최적화와 트러블슈팅에 활용할 수 있습니다.
+이 이해를 바탕으로 Service Mesh의 동작 원리를 정확히 파악하고 성능 최적화와 트러블슈팅에 활용할 수 있습니다.
 
 **Production에서 주의할 점:**
 - Envoy 리소스 사용량 모니터링 필수

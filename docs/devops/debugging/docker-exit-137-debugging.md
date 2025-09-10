@@ -44,7 +44,7 @@ exit_code = 128 + signal_number
 // SIGKILL(9) → 128 + 9 = 137
 ```
 
-**중요한 사실**: Exit Code 137 = SIGKILL 신호 = 누군가 프로세스를 강제로 죽였다
+**중요한 사실**: Exit Code 137 = SIGKILL 신호 = 누군가가 프로세스를 강제로 죽였다는 의미
 
 ## SIGKILL의 다양한 원인들
 
@@ -74,7 +74,7 @@ cat /sys/fs/cgroup/memory/docker/container_id/memory.oom_control
 
 ### 2. SystemD 의존성 문제
 
-이는 실제 생산 환경에서 경험한 복잡한 시나리오입니다:
+실제 Production 환경에서 경험한 복잡한 시나리오입니다:
 
 ```bash
 # systemd 서비스 의존성 확인
@@ -106,7 +106,7 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-nginx가 실패하면 systemd가 myapp에 SIGKILL을 전송:
+nginx가 실패하면 systemd가 myapp에 SIGKILL을 전송합니다:
 ```bash
 # systemd 로그 확인
 journalctl -u myapp.service -f
@@ -153,7 +153,7 @@ du -sh /var/lib/docker/containers/*/
 find /var/lib/docker/containers/ -name "*.log" -exec ls -lh {} \;
 ```
 
-## 체계적인 디버깅 접근법
+## 체계적 디버깅 접근법
 
 ### 1단계: 기본 정보 수집
 

@@ -13,7 +13,7 @@ tags:
 
 ## 들어가며
 
-"배포할 때마다 일부 요청이 실패한다면서?" Production 환경에서 가장 중요한 것 중 하나가 바로 **무중단 배포**입니다. 하지만 Kubernetes, Istio, Load Balancer가 복합적으로 얽힌 환경에서는 완벽한 Graceful Shutdown이 생각보다 복잡합니다. **"정말로 트래픽이 들어오지 않을까?"**라는 의구심이 생기는 이유와 이를 확실하게 검증하는 방법을 살펴보겠습니다.
+"배포할 때마다 일부 요청이 실패한대?" Production 환경에서 가장 중요한 것 중 하나가 바로 **무중단 배포**입니다. 하지만 Kubernetes, Istio, Load Balancer가 복합적으로 얽힌 환경에서는 완벽한 Graceful Shutdown이 생각보다 복잡합니다. **"정말로 트래픽이 안 들어올까?"**라는 의구심이 생기는 이유와 이를 확실하게 검증하는 방법을 살펴보겠습니다.
 
 ## Graceful Shutdown의 복잡성
 
@@ -25,7 +25,7 @@ tags:
 Internet → NLB/ALB → Istio Gateway → Envoy Sidecar → App Container
 ```
 
-각 레이어마다 서로 다른 종료 타이밍과 메커니즘을 가지고 있어 복잡도가 증가합니다:
+각 레이어마다 서로 다른 종료 타이밍과 메커니즘을 가져서 복잡도가 증가합니다:
 
 ```
 Timeline of Graceful Shutdown:
@@ -40,7 +40,7 @@ Timeline of Graceful Shutdown:
 └─────────────────────────────────────────────────────────┘
 ```
 
-## 왜 Kubernetes와 NLB를 믿을 수 없는가?
+## 왜 Kubernetes와 NLB를 믿을 수 없나?
 
 ### 1. Endpoint Propagation 지연
 

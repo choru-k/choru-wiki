@@ -13,9 +13,9 @@ tags:
 
 ## 들어가며
 
-"EKS에서 Service를 LoadBalancer로 노출했더니 Target 수가 500개를 넘어서 AWS 한도에 걸렸다" - 이런 경험이 있나요? 
+"EKS에서 Service를 LoadBalancer로 노출했더니 Target 수가 500개를 넘어서 AWS 한도에 걸렸어" - 이런 경험 있나요? 
 
-AWS Load Balancer Controller의 **IP Mode**와 **Instance Mode**는 근본적으로 다른 트래픽 라우팅 방식을 사용합니다. 각각의 동작 원리, 장단점, 그리고 Production에서 마주치는 실제 문제와 해결책을 깊이 있게 분석해보겠습니다.
+AWS Load Balancer Controller의 **IP Mode**와 **Instance Mode**는 근본적으로 다른 트래픽 라우팅 방식을 사용합니다. 각각의 동작 원리와 장단점, 그리고 Production에서 마주하는 실제 문제와 해결책을 깊이 있게 살펴보겠습니다.
 
 ## AWS Load Balancer Controller 아키텍처
 
@@ -43,7 +43,7 @@ graph TB
     F --> I
 ```
 
-AWS Load Balancer Controller는 Kubernetes `Service`와 `Ingress` 리소스를 감시하여 자동으로 AWS Load Balancer를 생성하고 관리하는 컨트롤러입니다.
+AWS Load Balancer Controller는 Kubernetes `Service`와 `Ingress` 리소스를 감시해서 AWS Load Balancer를 자동으로 생성하고 관리합니다.
 
 ```yaml
 # IngressClass 정의 예시
@@ -141,7 +141,7 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 
 ## IP Mode 심화 분석
 
-### 장점: 최적화된 성능과 정확한 라우팅
+### 장점: 성능 최적화와 정확한 라우팅
 
 ```bash
 # IP Mode에서의 직접적인 Pod 통신
@@ -156,7 +156,7 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 - **정확한 로드 밸런싱**: NLB가 실제 Pod 수만큼 균등 분산
 - **Connection Stickiness**: Client IP가 특정 Pod에 고정 가능
 
-### 단점: Target 수 제한과 복잡성
+### 단점: Target 수 제한과 운영 복잡성
 
 **AWS NLB Target 제한:**
 ```bash
@@ -249,11 +249,11 @@ spec:
 **확장성 이점:**
 - **Target 수 제한 없음**: Node 수만큼만 Target 등록 (보통 10-50개)
 - **Port 무관**: 여러 Port를 사용해도 Target 수 변화 없음
-- **Dynamic Pod Scaling**: Pod 수 변화해도 Target Group 변경 불필요
+- **Dynamic Pod Scaling**: Pod 수가 변해도 Target Group 변경 불필요
 
 ### 단점: 추가 홉과 불균등 분산
 
-**성능 오버헤드:**
+**성능 측면:**
 ```bash
 # iptables 규칙으로 인한 추가 처리
 $ iptables -t nat -L KUBE-SERVICES | grep proxysql
@@ -509,7 +509,7 @@ metadata:
 
 ## 정리
 
-EKS LoadBalancer 모드 선택 가이드:
+EKS LoadBalancer 모드 선택 가이드
 
 ### IP Mode 사용 시기
 - **High-performance 요구**: 낮은 레이턴시가 중요한 서비스
