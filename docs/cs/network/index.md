@@ -12,12 +12,15 @@ tags:
 ## 주요 주제
 
 ### Socket Programming 기초
+
 - [Socket Programming: 네트워크 통신의 핵심 기술](socket.md)
 
 ### I/O 멀티플렉싱
+
 - [epoll: Linux 고성능 I/O 멀티플렉싱의 핵심](epoll.md)
 
 ### 추후 추가 예정
+
 - 비동기 I/O와 이벤트 루프
 - 네트워크 성능 최적화
 - Load Balancing 구현

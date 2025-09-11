@@ -51,6 +51,7 @@ Cgroup Memory Usage 포함 항목:
 ```
 
 실제 확인:
+
 ```bash
 # Docker 컨테이너의 메모리 사용량
 $ docker stats --no-stream
@@ -151,6 +152,7 @@ memory.current  # 현재 사용량
 ```
 
 계층적 보호 계산:
+
 ```
 Parent cgroup:
   memory.low = 4G
@@ -337,6 +339,7 @@ spec:
 ```
 
 대응하는 Cgroup 설정:
+
 ```bash
 # cgroup v2
 memory.low = 536870912    # 512Mi 보호

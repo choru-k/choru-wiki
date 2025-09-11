@@ -70,6 +70,7 @@ if (memory_usage > memory.high) {
 ```
 
 실제 동작 예시:
+
 ```bash
 # 테스트 프로그램
 $ cat test_memory.c
@@ -154,6 +155,7 @@ if (has_capability(CAP_SYS_ADMIN)) {
 ```
 
 실제 확인:
+
 ```bash
 # 현재 프로세스의 OOM 점수 확인
 $ cat /proc/$$/oom_score
@@ -241,6 +243,7 @@ Cgroup Memory Usage 포함 항목:
 ```
 
 실제 확인:
+
 ```bash
 # cgroup v2 메모리 상태
 $ cat /sys/fs/cgroup/my-app/memory.stat
@@ -295,6 +298,7 @@ pagetables 3145728
 ```
 
 해석:
+
 - `total-vm`: 가상 메모리 크기 (실제 사용량 아님)
 - `anon-rss`: 실제 anonymous 메모리 사용량
 - `file-rss`: 파일 백업 메모리 (보통 0)
@@ -314,6 +318,7 @@ full avg10=5.67 avg60=3.45 avg300=2.34 total=567890
 ```
 
 Alert 설정:
+
 ```yaml
 # Prometheus alert
 - alert: HighMemoryPressure
@@ -417,6 +422,7 @@ Facebook은 자체 개발한 oomd로 OOM 문제를 해결했습니다:
 ```
 
 결과:
+
 - 서버 재부팅: 일일 5% → 0.5%
 - 용량 활용도: 10% 증가
 - 서비스 안정성: 대폭 개선
@@ -426,6 +432,7 @@ Facebook은 자체 개발한 oomd로 OOM 문제를 해결했습니다:
 ### 메모리 문제 발생 시
 
 1. **현재 상태 확인**
+
 ```bash
 # cgroup 메모리 상태
 cat /sys/fs/cgroup/*/memory.current
@@ -437,6 +444,7 @@ vmstat 1
 ```
 
 2. **압력 확인**
+
 ```bash
 # PSI 확인
 cat /proc/pressure/memory
@@ -444,6 +452,7 @@ cat /sys/fs/cgroup/*/memory.pressure
 ```
 
 3. **OOM 위험도 확인**
+
 ```bash
 # OOM Score 높은 프로세스 찾기
 for pid in $(ls /proc | grep '^[0-9]'); do 
@@ -454,6 +463,7 @@ done | sort -nrk2 | head -10
 ```
 
 4. **임시 조치**
+
 ```bash
 # 중요 프로세스 보호
 echo -500 > /proc/&lt;important-pid&gt;/oom_score_adj

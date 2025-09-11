@@ -396,7 +396,7 @@ Calculator::multiply&lt;int&gt;(int)
 
 # 2. objdump와 함께 사용
 $ objdump -t cpp_mangling.o | c++filt
-0000000000000000 w    F .text.linkonce.t._ZN10Calculator3addEi	000000000000000a Calculator::add(int)
+0000000000000000 w    F .text.linkonce.t._ZN10Calculator3addEi 000000000000000a Calculator::add(int)
 
 # 3. nm과 함께 사용 (가장 일반적)
 $ nm -C cpp_mangling.o  # -C 옵션이 자동 demangle
@@ -1162,21 +1162,25 @@ Symbol Table은 컴파일러, 링커, 디버거, 프로파일러 등 모든 개�
 ### 핵심 개념 요약
 
 **심볼 타입과 바인딩:**
+
 - Text(T), Data(D), BSS(B), Undefined(U), Common(C) 심볼 구분
 - Global, Local, Weak 바인딩의 링킹 시 우선순위
 - Visibility(default, hidden, protected) 제어로 API 경계 관리
 
 **ELF 구조와 도구들:**
+
 - .symtab (컴파일 타임) vs .dynsym (런타임) 심볼 테이블의 역할
 - nm, objdump, readelf의 특화된 분석 기능
 - strip의 단계별 심볼 제거와 크기 최적화
 
 **C++ Name Mangling:**
+
 - 오버로딩, 템플릿, 네임스페이스의 고유한 심볼 생성
 - c++filt를 통한 demangling으로 가독성 확보
 - 템플릿 인스턴스화로 인한 심볼 폭발과 최적화 전략
 
 **디버깅 심볼 관리:**
+
 - DWARF 디버그 정보의 구조와 레벨별 상세도
 - 디버그 심볼 분리로 프로덕션 바이너리 크기 최적화
 - Build ID와 Symbol Server를 통한 체계적 심볼 관리
@@ -1184,26 +1188,31 @@ Symbol Table은 컴파일러, 링커, 디버거, 프로파일러 등 모든 개�
 ### 프로덕션 적용 지침
 
 **성능 최적화:**
+
 - 프로파일링 도구는 심볼 정보 의존 - 적절한 심볼 유지 필요
 - Function-level linking으로 미사용 코드 제거
 - LTO와 PGO 결합으로 심볼 기반 최적화 극대화
 
 **크기 최적화:**
+
 - 단계별 strip 적용: debug → all → dynamic only
 - Visibility 제어로 불필요한 심볼 익스포트 방지  
 - Container 멀티스테이지 빌드로 런타임 이미지 최소화
 
 **디버깅 전략:**
+
 - 프로덕션: stripped binary + 별도 debug symbols
 - 개발: full symbols로 즉시 디버깅 가능
 - CI/CD: symbol 분리 자동화로 양쪽 요구사항 충족
 
 **보안 고려사항:**
+
 - Symbol hiding으로 공격 표면 축소
 - Strip을 통한 내부 구조 정보 제거
 - 동적 심볼은 제거 불가 - 최소한으로 유지
 
 **DevOps 관점:**
+
 - Symbol 분석 자동화로 의존성 관리
 - Binary artifact 크기 모니터링
 - Debug symbol repository 구축으로 효율적 문제 해결

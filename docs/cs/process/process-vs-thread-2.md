@@ -11,6 +11,7 @@ tags:
 # Process vs Thread 심화 (2): 메모리 공유와 격리의 실제 구현
 
 ---
+
 tags: [linux, memory-management, virtual-memory, page-table, cow, mmap, tls, shared-memory, operating-system]
 ---
 
@@ -571,21 +572,25 @@ Address           Perm   Offset Device    Inode    Size    Rss   Pss Referenced
 ## 정리: 공유와 격리의 스펙트럼
 
 **완전 격리 (별도 프로세스)**
+
 - 독립 mm_struct
 - 독립 페이지 테이블
 - COW로 초기 복사
 
 **부분 공유 (공유 메모리)**
+
 - 독립 mm_struct
 - 특정 VMA만 공유
 - 명시적 동기화 필요
 
 **완전 공유 (스레드)**
+
 - 같은 mm_struct
 - 같은 페이지 테이블
 - 스택과 TLS만 분리
 
 이 이해가 중요한 이유:
+
 1. **성능 최적화**: 공유 수준에 따른 오버헤드
 2. **동기화 전략**: futex vs 세마포어
 3. **보안**: 격리 수준 선택

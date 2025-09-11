@@ -14,7 +14,7 @@ tags:
 
 ## 들어가며
 
-"왜 32GB RAM을 가진 서버에서 각 프로세스가 4GB 이상의 가상 주소 공간을 가질 수 있을까?", "프로세스가 같은 주소 0x1000에 접근해도 서로 다른 데이터를 보는 이유는?", "Page fault가 발생해도 왜 애플리케이션이 느려지지 않을까?" 이런 의문들은 모두 Virtual Memory와 Page Table의 동작 원리를 이해하면 해결됩니다. 
+"왜 32GB RAM을 가진 서버에서 각 프로세스가 4GB 이상의 가상 주소 공간을 가질 수 있을까?", "프로세스가 같은 주소 0x1000에 접근해도 서로 다른 데이터를 보는 이유는?", "Page fault가 발생해도 왜 애플리케이션이 느려지지 않을까?" 이런 의문들은 모두 Virtual Memory와 Page Table의 동작 원리를 이해하면 해결됩니다.
 
 특히 production 환경에서 메모리 성능 이슈를 해결하려면 MMU(Memory Management Unit)와 TLB(Translation Lookaside Buffer)의 동작 방식을 깊이 이해해야 합니다.
 
@@ -310,6 +310,7 @@ CPU Core            MMU                     Physical Memory
 ### Page Table Walk 상세 과정
 
 1. **Virtual Address Parsing**:
+
 ```c
 // 64-bit 가상 주소 0x7ffff7bd5123 분석
 unsigned long vaddr = 0x7ffff7bd5123UL;
@@ -323,6 +324,7 @@ int offset     = vaddr & 0xfff;          // bits 11-0:  0x123
 ```
 
 2. **Page Table Walking Algorithm**:
+
 ```c
 // 커널의 페이지 테이블 워킹 (단순화된 버전)
 // linux/arch/x86/mm/fault.c의 실제 구현 참조
@@ -363,6 +365,7 @@ pte_t *page_table_walk(struct mm_struct *mm, unsigned long vaddr) {
 ```
 
 3. **Physical Address 계산**:
+
 ```c
 // 최종 물리 주소 계산
 unsigned long get_physical_address(pte_t *pte, unsigned long vaddr) {
@@ -905,6 +908,7 @@ struct mm_struct {
 ### TLB 최적화 전략
 
 1. **메모리 지역성 개선**:
+
 ```c
 // 나쁜 예: TLB Miss 많이 발생
 void bad_memory_access(int **matrix, int size) {
@@ -926,6 +930,7 @@ void good_memory_access(int **matrix, int size) {
 ```
 
 2. **메모리 풀 사용**:
+
 ```c
 // 메모리 풀로 TLB 효율성 향상
 struct memory_pool {
@@ -1095,6 +1100,7 @@ Address           Kbytes     RSS   Dirty Mode  Mapping
 ```
 
 **해결책**:
+
 ```c
 // 메모리 풀 도입으로 TLB 효율성 개선
 #define POOL_SIZE (1024 * 1024 * 1024)  // 1GB pool
@@ -1141,6 +1147,7 @@ Mem:           31Gi        12Gi       2.1Gi       1.2Gi        16Gi        17Gi
 ```
 
 **원인 분석**:
+
 ```bash
 # cgroup 메모리 상세 확인
 $ cat /sys/fs/cgroup/memory/kubepods/burstable/pod-uuid/&lt;container-id&gt;/memory.usage_in_bytes
@@ -1157,6 +1164,7 @@ active_file 1073741824    # 1GB는 active
 ```
 
 **해결책**:
+
 ```yaml
 # 1. Memory limit 여유 확보
 resources:
@@ -1190,6 +1198,7 @@ if (huge_malloc == NULL) {
 ```
 
 **원인 분석**:
+
 ```bash
 # 가상 메모리 커밋 설정 확인
 $ cat /proc/sys/vm/overcommit_memory
@@ -1207,6 +1216,7 @@ Committed_AS:   45234567 kB  # ~44GB 이미 커밋됨
 ```
 
 **해결책 1: overcommit 설정 변경**
+
 ```bash
 # Always overcommit 모드로 변경 (주의 필요)
 $ echo 1 > /proc/sys/vm/overcommit_memory
@@ -1216,6 +1226,7 @@ $ echo 80 > /proc/sys/vm/overcommit_ratio
 ```
 
 **해결책 2: mmap 사용**
+
 ```c
 // mmap은 overcommit 제약을 덜 받음
 void *huge_mem = mmap(NULL, 8UL * 1024 * 1024 * 1024,

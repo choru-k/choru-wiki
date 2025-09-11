@@ -18,9 +18,10 @@ tags:
 
 ## 들어가며
 
-"API 호출 후 응답을 어떻게 처리할까?" 이 질문에 대한 답이 바로 **콜백 함수(Callback Function)**입니다. 
+"API 호출 후 응답을 어떻게 처리할까?" 이 질문에 대한 답이 바로 **콜백 함수(Callback Function)**입니다.
 
 2024년 현재 프로덕션에서 발생하는 실제 시나리오를 생각해보세요:
+
 - Node.js에서 10,000개의 동시 HTTP 요청 처리
 - GUI 애플리케이션의 버튼 클릭 이벤트 처리
 - 데이터베이스 쿼리 완료 후 결과 처리
@@ -106,6 +107,7 @@ int main() {
 ```
 
 **Production에서의 실제 사용 사례:**
+
 ```c
 // Linux epoll을 사용한 네트워크 이벤트 처리
 struct epoll_event events[MAX_EVENTS];
@@ -234,6 +236,7 @@ fetchData('/api/users', function(error, data) {
 ```
 
 **Event-driven Programming 예제:**
+
 ```javascript
 // DOM 이벤트 콜백
 document.getElementById('button').addEventListener('click', function(event) {
@@ -359,6 +362,7 @@ graph TD
 ```
 
 **실제 Node.js Event Loop 동작:**
+
 ```javascript
 console.log('Start');  // 1. Call Stack에서 즉시 실행
 
@@ -870,11 +874,13 @@ runGenerator(fetchUserData, 123)
 프로덕션에서 발생한 실제 콜백 관련 장애입니다:
 
 **증상:**
+
 - 메모리 사용량이 지속적으로 증가
 - 응답 시간이 점진적으로 느려짐
 - 최종적으로 서비스 전체 장애
 
 **초기 분석:**
+
 ```javascript
 // 문제가 된 코드
 class NotificationService {
@@ -897,11 +903,13 @@ class NotificationService {
 ```
 
 **실제 원인:**
+
 - 콜백 함수들이 `pendingCallbacks` 배열에 계속 누적
 - 각 콜백은 클로저로 인해 관련 변수들을 참조
 - 가비지 컬렉션이 되지 않아 메모리 누수 발생
 
 **해결책:**
+
 ```javascript
 class NotificationService {
     constructor() {
@@ -945,6 +953,7 @@ class NotificationService {
 ### 콜백 함수 디버깅
 
 - [ ] **메모리 누수 확인**
+
   ```bash
   # Node.js 메모리 사용량 모니터링
   node --inspect --inspect-brk app.js
@@ -952,6 +961,7 @@ class NotificationService {
   ```
 
 - [ ] **콜백 실행 추적**
+
   ```javascript
   // 콜백 실행 추적
   function traceCallback(callback, name) {
@@ -963,6 +973,7 @@ class NotificationService {
   ```
 
 - [ ] **성능 프로파일링**
+
   ```bash
   # Node.js 성능 프로파일링
   node --prof app.js
@@ -970,6 +981,7 @@ class NotificationService {
   ```
 
 - [ ] **이벤트 루프 블로킹 확인**
+
   ```javascript
   // 이벤트 루프 지연 측정
   const { performance } = require('perf_hooks');

@@ -138,13 +138,13 @@ $ ls -lh *_program
 
 # 의존성 확인
 $ ldd static_program
-	not a dynamic executable
+ not a dynamic executable
 
 $ ldd dynamic_program
-	linux-vdso.so.1 (0x00007ffde5bfe000)
-	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f8b2e400000)
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f8b2e200000)
-	/lib64/ld-linux-x86-64.so.2 (0x00007f8b2e550000)
+ linux-vdso.so.1 (0x00007ffde5bfe000)
+ libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f8b2e400000)
+ libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f8b2e200000)
+ /lib64/ld-linux-x86-64.so.2 (0x00007f8b2e550000)
 ```
 
 **Static Linking 장점:**
@@ -179,12 +179,12 @@ Hex dump of section '.interp':
 ```bash
 # 동적 링커 디버그 모드
 $ LD_DEBUG=libs ./dynamic_program
-     1396:	find library=libm.so.6 [0]; searching
-     1396:	 search path=/lib/x86_64-linux-gnu  (system search path)
-     1396:	  trying file=/lib/x86_64-linux-gnu/libm.so.6
-     1396:	find library=libc.so.6 [0]; searching
-     1396:	 search path=/lib/x86_64-linux-gnu  (system search path)
-     1396:	  trying file=/lib/x86_64-linux-gnu/libc.so.6
+     1396: find library=libm.so.6 [0]; searching
+     1396:  search path=/lib/x86_64-linux-gnu  (system search path)
+     1396:   trying file=/lib/x86_64-linux-gnu/libm.so.6
+     1396: find library=libc.so.6 [0]; searching
+     1396:  search path=/lib/x86_64-linux-gnu  (system search path)
+     1396:   trying file=/lib/x86_64-linux-gnu/libc.so.6
 
 Square root of 16: 4.00
 ```
@@ -218,11 +218,11 @@ $ gcc -fPIC -shared shared_lib.c -o libshared.so
 # PIC 코드 확인
 $ objdump -d libshared.so | grep -A5 get_global
 0000000000001119 &lt;get_global&gt;:
-    1119:	f3 0f 1e fa          	endbr64 
-    111d:	55                   	push   %rbp
-    111e:	48 89 e5             	mov    %rsp,%rbp
-    1121:	48 8b 05 e8 2e 00 00 	mov    0x2ee8(%rip),%rax  # PIC 주소 참조
-    1128:	8b 00                	mov    (%rax),%eax
+    1119: f3 0f 1e fa           endbr64 
+    111d: 55                    push   %rbp
+    111e: 48 89 e5              mov    %rsp,%rbp
+    1121: 48 8b 05 e8 2e 00 00  mov    0x2ee8(%rip),%rax  # PIC 주소 참조
+    1128: 8b 00                 mov    (%rax),%eax
 ```
 
 ## Linker 작업 단계
@@ -277,11 +277,11 @@ OFFSET           TYPE              VALUE
 # 링킹 후 주소 확인
 $ objdump -d program | grep -A5 func1
 0000000000001129 &lt;func1&gt;:
-    1129:	f3 0f 1e fa          	endbr64 
-    112d:	55                   	push   %rbp
-    112e:	48 89 e5             	mov    %rsp,%rbp
-    1131:	e8 03 00 00 00       	call   1139 &lt;external_func&gt;  # 실제 주소로 재배치됨
-    1136:	90                   	nop
+    1129: f3 0f 1e fa           endbr64 
+    112d: 55                    push   %rbp
+    112e: 48 89 e5              mov    %rsp,%rbp
+    1131: e8 03 00 00 00        call   1139 &lt;external_func&gt;  # 실제 주소로 재배치됨
+    1136: 90                    nop
 ```
 
 ### 3. 섹션 병합
@@ -571,8 +571,8 @@ $ nm -D libvisibility.so
 
 # hidden과 internal 심볼은 보이지 않음
 $ objdump -t libvisibility.so | grep -E "(hidden|internal)"
-0000000000001124 l    df *ABS*	0000000000000000 hidden_function
-0000000000001129 l    df *ABS*	0000000000000000 internal_function
+0000000000001124 l    df *ABS* 0000000000000000 hidden_function
+0000000000001129 l    df *ABS* 0000000000000000 internal_function
 ```
 
 ### Version Scripts를 통한 Export Control
@@ -601,8 +601,8 @@ $ gcc -fPIC -shared -Wl,--version-script=version.map \
 # 버전 정보 확인  
 $ objdump -T libversioned.so
 DYNAMIC SYMBOL TABLE:
-0000000000001119 g    DF .text	000000000000000b LIBVERSION_1.0 global_function
-0000000000001135 g    DF .text	000000000000000b LIBVERSION_1.1 new_function
+0000000000001119 g    DF .text 000000000000000b LIBVERSION_1.0 global_function
+0000000000001135 g    DF .text 000000000000000b LIBVERSION_1.1 new_function
 ```
 
 ## Link-Time Optimization (LTO)
@@ -668,16 +668,16 @@ $ gcc -O2 -S file1.c -o file1_normal.s
 $ cat file1_normal.s | grep -A20 expensive_calculation
 expensive_calculation:
 .LFB0:
-	.cfi_startproc
-	endbr64
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	movl	%edi, -20(%rbp)
-	movl	$0, -8(%rbp)
-	movl	$0, -4(%rbp)
+ .cfi_startproc
+ endbr64
+ pushq %rbp
+ .cfi_def_cfa_offset 16
+ .cfi_offset 6, -16
+ movq %rsp, %rbp
+ .cfi_def_cfa_register 6
+ movl %edi, -20(%rbp)
+ movl $0, -8(%rbp)
+ movl $0, -4(%rbp)
 # ... 루프 코드
 
 # LTO로 인한 최적화 확인
@@ -725,6 +725,7 @@ collect2: error: ld returned 1 exit status
 **해결 방법들:**
 
 1. **함수 정의 추가**:
+
 ```c
 // utils.c
 void missing_function() {
@@ -733,18 +734,20 @@ void missing_function() {
 ```
 
 ```bash
-$ gcc main.c utils.c -o program
+gcc main.c utils.c -o program
 ```
 
 2. **라이브러리 링크**:
+
 ```bash
 # 수학 라이브러리 예제
 $ gcc math_program.c -lm -o program
 ```
 
 3. **라이브러리 경로 지정**:
+
 ```bash
-$ gcc main.c -L/custom/lib -lmylib -o program
+gcc main.c -L/custom/lib -lmylib -o program
 ```
 
 ### 2. Multiple Definition 오류
@@ -777,12 +780,14 @@ collect2: error: ld returned 1 exit status
 **해결 방법:**
 
 1. **static 사용** (파일 스코프 제한):
+
 ```c
 // file1.c
 static int global_var = 10;  // 파일 내부에서만 접근
 ```
 
 2. **extern 선언** 사용:
+
 ```c
 // globals.h
 extern int global_var;
@@ -899,10 +904,10 @@ CXXFLAGS = -O2 -flto=$(shell nproc)
 
 # 분할 컴파일 (ccache 활용)
 %.o: %.c
-	@ccache $(CC) $(CFLAGS) -c $< -o $@
+ @ccache $(CC) $(CFLAGS) -c $< -o $@
 
 program: $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+ $(CC) $(LDFLAGS) $(OBJECTS) -o $@
 ```
 
 ### 4. 보안 강화 링킹
@@ -1179,21 +1184,25 @@ time ./bench_lto
 ### 프로덕션 적용 포인트
 
 **성능 최적화:**
+
 - mold/lld 사용으로 빌드 시간 단축 (5-20배 향상)
 - LTO 적용으로 런타임 성능 향상 (10-30%)  
 - PGO와 함께 사용 시 더 큰 효과
 
 **크기 최적화:**
+
 - Static linking + strip으로 컨테이너 이미지 최적화
 - Symbol visibility 제어로 불필요한 익스포트 제거
 - Dead code elimination으로 바이너리 크기 감소
 
 **보안 강화:**
+
 - RELRO, PIE, NX bit 등 보안 플래그 적용
 - Static linking으로 라이브러리 취약점 노출 최소화
 - Symbol hiding으로 공격 표면 축소
 
 **DevOps 최적화:**
+
 - 빠른 링커 사용으로 CI/CD 파이프라인 가속화
 - 병렬 링킹으로 멀티코어 활용
 - ccache와 연동으로 증분 빌드 최적화

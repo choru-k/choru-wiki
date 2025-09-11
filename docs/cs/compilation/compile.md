@@ -54,6 +54,7 @@ int main() {
 ```
 
 전처리기 결과 확인:
+
 ```bash
 # 전처리만 실행
 $ gcc -E hello.c -o hello.i
@@ -124,6 +125,7 @@ main:
 ```
 
 최적화 레벨별 비교:
+
 ```bash
 # 최적화 없음 (-O0, 기본값)
 $ gcc -O0 -S hello.c -o hello_O0.s
@@ -197,6 +199,7 @@ int main() {
 ```
 
 링킹 과정:
+
 ```bash
 # 각각 컴파일
 $ gcc -c math_utils.c -o math_utils.o
@@ -229,6 +232,7 @@ int x = 42 + y;
 ```
 
 토큰 분해:
+
 ```
 INT     -> "int"
 ID      -> "x"  
@@ -252,6 +256,7 @@ graph TD
 ```
 
 GCC에서 AST 확인:
+
 ```bash
 # GCC AST 덤프 (simplified)
 $ gcc -fdump-tree-original-raw hello.c
@@ -300,6 +305,7 @@ int main ()
 ```
 
 LLVM IR 확인:
+
 ```bash
 # Clang으로 LLVM IR 생성
 $ clang -S -emit-llvm hello.c -o hello.ll
@@ -343,6 +349,7 @@ int calculate() {
 ```
 
 최적화 전후 비교:
+
 ```bash
 # 최적화 없음
 $ gcc -O0 -S optimize_example.c -o opt_O0.s
@@ -513,6 +520,7 @@ int main() {
 ```
 
 성능 벤치마크:
+
 ```bash
 # 각 최적화 레벨로 컴파일
 $ gcc -O0 benchmark.c -o bench_O0
@@ -595,7 +603,8 @@ link_error.c:(.text+0xe): undefined reference to `undefined_function'
 collect2: error: ld returned 1 exit status
 ```
 
-**해결법**: 
+**해결법**:
+
 - 함수 정의 추가
 - 필요한 라이브러리 링크 (`-l` 옵션)
 - 오브젝트 파일 추가
@@ -669,16 +678,16 @@ release: CFLAGS += $(RELEASE_FLAGS)
 release: $(TARGET)_release
 
 $(TARGET)_debug $(TARGET)_release: $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+ $(CC) $(OBJECTS) -o $@ $(LDFLAGS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+ $(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJDIR):
-	mkdir -p $(OBJDIR)
+ mkdir -p $(OBJDIR)
 
 clean:
-	rm -rf $(OBJDIR) $(TARGET)_debug $(TARGET)_release
+ rm -rf $(OBJDIR) $(TARGET)_debug $(TARGET)_release
 
 .PHONY: all debug release clean
 ```
@@ -818,6 +827,7 @@ $ nm -D libmath.so
 ```
 
 사용 예제:
+
 ```c
 // main.c
 #include <stdio.h>

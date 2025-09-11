@@ -9,10 +9,9 @@ tags:
 
 # Header Files: 컴파일의 첫 번째 관문에서 마주하는 복잡성
 
-
 ## 들어가며
 
-"컴파일 시간이 너무 오래 걸립니다." 프로덕션 환경에서 빌드 시간이 30분을 넘어가는 C++ 프로젝트를 마주했을 때, 가장 먼저 의심해야 할 것은 바로 header file의 구조입니다. 
+"컴파일 시간이 너무 오래 걸립니다." 프로덕션 환경에서 빌드 시간이 30분을 넘어가는 C++ 프로젝트를 마주했을 때, 가장 먼저 의심해야 할 것은 바로 header file의 구조입니다.
 
 Header file은 단순해 보이지만, 실제로는 컴파일 성능과 코드 구조의 품질을 좌우하는 핵심 요소입니다. 왜 iostream을 include하는 간단한 프로그램도 수만 줄의 코드를 전처리해야 할까요? 왜 template heavy한 라이브러리는 컴파일이 느릴까요?
 
@@ -110,6 +109,7 @@ struct Point {
 ```
 
 **동작 원리:**
+
 1. 첫 번째 include 시: `COMMON_H`가 정의되지 않아 내용이 포함됨
 2. 두 번째 include 시: `COMMON_H`가 이미 정의되어 내용이 건너뛰어짐
 
@@ -125,11 +125,13 @@ struct Point {
 ```
 
 **장점:**
+
 - 코드가 간결함
 - 매크로 이름 충돌 걱정 없음
 - 컴파일러 최적화 가능
 
 **단점:**
+
 - 표준이 아님 (하지만 모든 주요 컴파일러 지원)
 - 심볼릭 링크나 하드링크에서 문제 발생 가능
 
@@ -145,11 +147,13 @@ struct Point {
 ### 검색 순서 이해하기
 
 **따옴표(" ") 사용 시:**
+
 1. 현재 소스 파일과 같은 디렉터리
 2. -I 옵션으로 지정된 디렉터리 (순서대로)
 3. 시스템 include 디렉터리
 
 **꺾쇠(&lt; &gt;) 사용 시:**
+
 1. -I 옵션으로 지정된 디렉터리
 2. 시스템 include 디렉터리
 
@@ -234,6 +238,7 @@ void Engine::initialize() {
 ### Forward Declaration이 가능한 경우
 
 **가능:**
+
 ```cpp
 class MyClass;
 
@@ -250,6 +255,7 @@ std::vector<MyClass*> objects;
 ```
 
 **불가능 (complete type 필요):**
+
 ```cpp
 class MyClass;
 
@@ -405,6 +411,7 @@ public:
 ```
 
 **장점:**
+
 - 별도의 라이브러리 빌드 불필요
 - 컴파일러 최적화 기회 증가
 - 배포와 사용이 간단
@@ -520,11 +527,13 @@ graph LR
 ```
 
 **성능 향상:**
+
 - Module은 한 번 컴파일되면 재사용됨
 - 전처리 시간 대폭 감소
 - 컴파일 병렬화 개선
 
 **캡슐화 강화:**
+
 ```cpp
 // module implementation
 module math;  // implementation unit
@@ -659,6 +668,7 @@ $ find . -name "*.cpp" -exec g++ -M {} \; | \
 ```
 
 **해결책:**
+
 1. 자주 변경되는 template 코드를 별도 헤더로 분리
 2. Forward declaration 적극 활용
 3. PIMPL 패턴으로 구현 세부사항 숨김
@@ -671,9 +681,11 @@ $ find . -name "*.cpp" -exec g++ -M {} \; | \
 ### 컴파일 시간이 오래 걸릴 때
 
 - [ ] 불필요한 #include 제거
+
   ```bash
-  $ include-what-you-use main.cpp
+  include-what-you-use main.cpp
   ```
+
 - [ ] Forward declaration 활용 가능성 검토
 - [ ] Template heavy한 헤더의 분리 검토
 - [ ] PCH 도입 검토
@@ -682,10 +694,12 @@ $ find . -name "*.cpp" -exec g++ -M {} \; | \
 ### 링크 오류가 발생할 때
 
 - [ ] Multiple definition 오류 확인
+
   ```bash
   # 중복 정의 확인
   $ nm object1.o object2.o | grep "T symbol_name"
   ```
+
 - [ ] Header guard 누락 확인
 - [ ] Template 특수화 위치 확인
 - [ ] Inline 함수 정의 위치 확인
@@ -693,9 +707,11 @@ $ find . -name "*.cpp" -exec g++ -M {} \; | \
 ### 헤더 의존성 문제
 
 - [ ] Circular dependency 확인
+
   ```bash
-  $ cinclude2dot --src src/ | dot -Tsvg > deps.svg
+  cinclude2dot --src src/ | dot -Tsvg > deps.svg
   ```
+
 - [ ] 불필요한 의존성 제거
 - [ ] Interface segregation 적용 검토
 

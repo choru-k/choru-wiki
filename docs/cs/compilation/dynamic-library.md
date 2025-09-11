@@ -175,12 +175,12 @@ $ ldd program
 
 # 동적 로딩 과정 추적
 $ LD_DEBUG=all ./program 2>&1 | head -20
-     1234:	calling init: /lib64/ld-linux-x86-64.so.2
-     1234:	find library=libmath.so.1 [0]; searching
-     1234:	 search path=./  (rpath from file program)
-     1234:	  trying file=./libmath.so.1
-     1234:	binding file ./libmath.so.1 to ./program: normal symbol `add'
-     1234:	binding file ./libmath.so.1 to ./program: normal symbol `multiply'
+     1234: calling init: /lib64/ld-linux-x86-64.so.2
+     1234: find library=libmath.so.1 [0]; searching
+     1234:  search path=./  (rpath from file program)
+     1234:   trying file=./libmath.so.1
+     1234: binding file ./libmath.so.1 to ./program: normal symbol `add'
+     1234: binding file ./libmath.so.1 to ./program: normal symbol `multiply'
 ```
 
 ## Position Independent Code (PIC) 심화
@@ -243,9 +243,9 @@ $ gcc plt_example.c -lm -o plt_program
 $ objdump -d plt_program | grep -A10 -B5 "@plt"
 
 0000000000001030 <sqrt@plt>:
-    1030:	ff 25 e2 2f 00 00    	jmpq   *0x2fe2(%rip)        # 4018 <sqrt@GLIBC_2.2.5>
-    1036:	68 00 00 00 00       	pushq  $0x0
-    103b:	e9 e0 ff ff ff       	jmpq   1020 <.plt>
+    1030: ff 25 e2 2f 00 00     jmpq   *0x2fe2(%rip)        # 4018 <sqrt@GLIBC_2.2.5>
+    1036: 68 00 00 00 00        pushq  $0x0
+    103b: e9 e0 ff ff ff        jmpq   1020 <.plt>
 
 # 실행 중 PLT 동작 추적
 $ LD_DEBUG=bindings ./plt_program 2>&1 | grep sqrt
@@ -1233,16 +1233,19 @@ Dynamic library는 현대 소프트웨어 시스템의 핵심 구성 요소로, 
 ### 핵심 개념 요약
 
 **런타임 로딩 메커니즘:**
+
 - GOT/PLT를 통한 Position Independent Code 실행
 - Lazy binding으로 성능 최적화, Eager binding으로 보안 강화
 - Dynamic linker의 심볼 해결 과정과 우선순위
 
 **버전 관리와 호환성:**
+
 - SONAME을 통한 바이너리 호환성 보장
 - ABI 변경 시 major version 증가 필요
 - Semantic versioning과 library versioning의 차이점 인식
 
 **보안 고려사항:**
+
 - ASLR/PIE를 통한 메모리 레이아웃 랜덤화
 - RELRO를 통한 GOT 오버라이트 방지  
 - Symbol visibility 제어로 공격 표면 최소화
@@ -1250,21 +1253,25 @@ Dynamic library는 현대 소프트웨어 시스템의 핵심 구성 요소로, 
 ### 프로덕션 적용 지침
 
 **성능 최적화:**
+
 - Static linking: 단독 실행 환경, 최고 성능 필요시
 - Dynamic linking: 메모리 효율성, 유지보수성 중시시
 - Runtime loading: 플러그인 아키텍처, 유연한 모듈 시스템
 
 **컨테이너 환경:**
+
 - 멀티스테이지 빌드로 이미지 크기 최적화
 - 필요한 라이브러리만 포함하여 보안 위험 감소
 - Library caching과 layer 최적화
 
 **DevOps 관점:**
+
 - 의존성 관리 자동화 (ldd, readelf 활용)
 - CI/CD에서 ABI 호환성 검증
 - Library 버전 롤백 전략 수립
 
 **문제 해결:**
+
 - LD_DEBUG로 로딩 과정 추적
 - strace로 시스템 콜 레벨 분석
 - Memory mapping 모니터링

@@ -23,6 +23,7 @@ tags:
 "어떻게 Node.js는 단일 스레드인데도 10,000개의 동시 연결을 처리할 수 있을까?" 이 질문의 답이 바로 **이벤트 루프(Event Loop)**입니다.
 
 2024년 현재, 대부분의 모던 애플리케이션은 이벤트 기반 비동기 프로그래밍 모델을 사용합니다:
+
 - JavaScript의 브라우저 및 Node.js 런타임
 - Python의 asyncio 프레임워크
 - Go의 runtime scheduler
@@ -121,6 +122,7 @@ graph TD
 ### 각 페이즈의 상세 동작
 
 #### 1. Timer Phase
+
 ```c
 // libuv/src/timer.c의 실제 구현 (단순화)
 void uv__run_timers(uv_loop_t* loop) {
@@ -150,6 +152,7 @@ void uv__run_timers(uv_loop_t* loop) {
 ```
 
 #### 2. Poll Phase (가장 중요)
+
 ```c
 // Poll phase에서 epoll을 사용한 I/O 대기
 int uv__io_poll(uv_loop_t* loop, int timeout) {

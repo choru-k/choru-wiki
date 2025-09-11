@@ -11,6 +11,7 @@ tags:
 # Process vs Thread 심화 (1): Linux의 충격적 진실 - 모든 것은 clone()이다
 
 ---
+
 tags: [linux, process, thread, kernel, clone, task_struct, operating-system, system-programming]
 ---
 
@@ -380,16 +381,19 @@ $ ls /sys/kernel/debug/sched/
 ## 정리: 환상과 실체
 
 **환상 (User Space)**
+
 - 프로세스: 독립적 실행 단위
 - 스레드: 프로세스 내 실행 흐름
 - 명확한 계층 구조
 
 **실체 (Kernel Space)**
+
 - 모든 것은 task_struct
 - clone() 플래그로 공유 수준 결정
 - 프로세스/스레드는 편의상 구분
 
 이 이해가 왜 중요한가?
+
 1. **디버깅**: /proc, /sys 정보 올바른 해석
 2. **성능**: 스케줄링, CPU 친화도 최적화
 3. **보안**: 격리 수준 정확한 이해

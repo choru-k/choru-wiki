@@ -14,7 +14,7 @@ tags:
 
 ## 들어가며
 
-"왜 우리 서버는 동시 접속자 수천 명만 되어도 느려질까?" 
+"왜 우리 서버는 동시 접속자 수천 명만 되어도 느려질까?"
 
 프로덕션 환경에서 네트워크 성능 문제에 직면했을 때, socket programming의 깊은 이해 없이는 근본적인 해결책을 찾기 어렵습니다. Socket은 네트워크 프로그래밍의 기초이자 고성능 서버 개발의 핵심입니다. Berkeley Socket API부터 최신 비동기 I/O까지, 실제 production 환경에서 검증된 기술들을 살펴보겠습니다.
 
@@ -336,6 +336,7 @@ int connect_with_timeout(const char *server_ip, int port, int timeout_sec) {
 ### TCP Socket (SOCK_STREAM)
 
 **특징:**
+
 - 연결 지향적 (Connection-oriented)
 - 신뢰성 있는 데이터 전송
 - 순서 보장
@@ -409,6 +410,7 @@ void tcp_client_example(const char *server_ip, int port) {
 ### UDP Socket (SOCK_DGRAM)
 
 **특징:**
+
 - 비연결형 (Connectionless)
 - 빠르고 오버헤드가 적음
 - 순서 보장 안됨
@@ -876,11 +878,13 @@ void handle_client_data(int client_fd) {
 ### Unix Domain Socket 특징
 
 **장점:**
+
 - 로컬 IPC에서 네트워크 소켓보다 빠름
 - 네트워크 스택 오버헤드 없음
 - 파일 시스템 권한 활용 가능
 
 **단점:**
+
 - 같은 머신에서만 통신 가능
 - 파일 시스템에 소켓 파일 생성
 
@@ -1352,10 +1356,12 @@ ssize_t debug_read(int sockfd, void *buffer, size_t count, const char *context) 
 ### Case 1: 소켓 고갈 문제
 
 **상황 (2024년 3월):**
+
 - 웹 서버에서 "socket: Too many open files" 에러 발생
 - 동시 연결 수는 예상 범위 내였음
 
 **분석:**
+
 ```bash
 # 1. 현재 소켓 사용량 확인
 $ lsof -i -P -n | grep :8080 | wc -l
@@ -1371,6 +1377,7 @@ $ netstat -an | grep TIME_WAIT | wc -l
 **원인:** 에러 처리 경로에서 close() 누락
 
 **해결책:**
+
 ```c
 // 기존 코드 (문제)
 int handle_request(const char *server_ip, int port) {
@@ -1401,6 +1408,7 @@ int handle_request(const char *server_ip, int port) {
 **상황:** TCP 소켓에서 예상보다 높은 응답 시간
 
 **분석 및 해결:**
+
 ```c
 // 문제: Nagle 알고리즘으로 인한 지연
 // 작은 패킷들이 합쳐져서 전송되어 지연 발생
@@ -1426,28 +1434,32 @@ int fix_latency_issue(int sockfd) {
 **소켓 문제 발생 시:**
 
 - [ ] **리소스 누수 확인**
+
   ```bash
-  $ lsof -p <pid> | grep socket | wc -l
-  $ netstat -an | grep -E "(ESTABLISHED|TIME_WAIT)" | wc -l
+  lsof -p <pid> | grep socket | wc -l
+  netstat -an | grep -E "(ESTABLISHED|TIME_WAIT)" | wc -l
   ```
 
 - [ ] **소켓 옵션 점검**
+
   ```bash
-  $ ss -i  # TCP 상세 정보 확인
-  $ cat /proc/sys/net/core/somaxconn  # 백로그 제한 확인
+  ss -i  # TCP 상세 정보 확인
+  cat /proc/sys/net/core/somaxconn  # 백로그 제한 확인
   ```
 
 - [ ] **네트워크 레벨 문제 확인**
+
   ```bash
-  $ ping target_host  # 기본 연결성
-  $ traceroute target_host  # 라우팅 경로
-  $ tcpdump -i any host target_host  # 패킷 캡처
+  ping target_host  # 기본 연결성
+  traceroute target_host  # 라우팅 경로
+  tcpdump -i any host target_host  # 패킷 캡처
   ```
 
 - [ ] **시스템 레벨 제한 확인**
+
   ```bash
-  $ ulimit -n  # 파일 디스크립터 제한
-  $ cat /proc/sys/fs/file-max  # 시스템 전체 제한
+  ulimit -n  # 파일 디스크립터 제한
+  cat /proc/sys/fs/file-max  # 시스템 전체 제한
   ```
 
 ## 정리
@@ -1457,6 +1469,7 @@ Socket programming은 네트워크 애플리케이션의 기초이며, 고성능
 ### 핵심 개념
 
 **기본 API:**
+
 - `socket()`: 소켓 생성
 - `bind()`: 주소 바인딩
 - `listen()/accept()`: 서버 연결 수락
@@ -1464,23 +1477,27 @@ Socket programming은 네트워크 애플리케이션의 기초이며, 고성능
 - `read()/write()`: 데이터 송수신
 
 **프로토콜 선택:**
+
 - **TCP (SOCK_STREAM)**: 신뢰성, 순서 보장, 연결 지향
 - **UDP (SOCK_DGRAM)**: 빠름, 비연결형, 브로드캐스트 가능
 - **Unix Domain Socket**: 로컬 IPC, 고성능
 
 **성능 최적화:**
+
 - 적절한 socket options 설정
 - Non-blocking I/O + epoll/kqueue
 - 버퍼 크기 튜닝
 - sendfile() 등 고급 API 활용
 
 **일반적인 함정:**
+
 - 리소스 누수 (소켓 미해제)
 - Partial read/write 미처리
 - SO_REUSEADDR 누락
 - Nagle 알고리즘으로 인한 지연
 
 **프로덕션 고려사항:**
+
 - 에러 처리와 복구 전략
 - 모니터링과 로깅
 - 시스템 레벨 튜닝

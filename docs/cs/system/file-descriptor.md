@@ -14,7 +14,7 @@ tags:
 
 ## 들어가며
 
-"왜 서버에서 'too many open files' 에러가 계속 발생할까?" 
+"왜 서버에서 'too many open files' 에러가 계속 발생할까?"
 
 프로덕션 환경에서 갑작스럽게 발생하는 이 에러는 대부분 file descriptor 고갈이 원인입니다. File descriptor는 Unix/Linux 시스템에서 모든 I/O 작업의 기반이 되는 핵심 개념이지만, 많은 개발자들이 그 내부 동작을 제대로 이해하지 못해 예상치 못한 문제에 직면합니다.
 
@@ -102,7 +102,7 @@ $ cat /proc/sys/fs/file-max
 
 # 현재 할당된 FD 수 확인
 $ cat /proc/sys/fs/file-nr
-1440	0	1048576
+1440 0 1048576
 # 사용중  사용가능  최대값
 ```
 
@@ -621,7 +621,8 @@ void pipe_communication_example() {
 1. **증상**: "accept: too many open files" 에러 발생
 2. **초기 분석**: 동시 연결 수 증가로 의심
 3. **실제 원인**: 연결 종료 시 file descriptor를 제대로 닫지 않는 버그
-4. **해결책**: 
+4. **해결책**:
+
    ```c
    // 기존 코드 (버그 있음)
    void handle_client(int client_fd) {
@@ -651,17 +652,23 @@ void pipe_communication_example() {
 **FD 고갈 문제 발생 시:**
 
 - [ ] 현재 FD 사용량 확인
+
   ```bash
-  $ lsof -p &lt;pid&gt; | wc -l
+  lsof -p &lt;pid&gt; | wc -l
   ```
+
 - [ ] FD 제한 확인
+
   ```bash
-  $ cat /proc/&lt;pid&gt;/limits | grep "open files"
+  cat /proc/&lt;pid&gt;/limits | grep "open files"
   ```
+
 - [ ] 시간별 FD 사용량 모니터링
+
   ```bash
-  $ while true; do echo "$(date): $(ls /proc/&lt;pid&gt;/fd | wc -l)"; sleep 1; done
+  while true; do echo "$(date): $(ls /proc/&lt;pid&gt;/fd | wc -l)"; sleep 1; done
   ```
+
 - [ ] 코드에서 close() 누락 지점 검토
 - [ ] 예외 처리 경로에서 FD 정리 확인
 
@@ -746,23 +753,27 @@ File descriptor는 Unix/Linux 시스템에서 I/O 작업의 핵심입니다:
 ### 핵심 포인트
 
 **기본 개념:**
+
 - FD는 열린 파일/리소스를 식별하는 정수 인덱스
 - 프로세스별로 독립적인 FD 테이블 유지
 - 가장 작은 번호부터 할당
 
 **중요한 연산:**
+
 - `open()`: 파일 열기, FD 할당
 - `close()`: FD 해제 (필수!)
 - `dup()/dup2()`: FD 복제
 - `fcntl()`: FD 속성 제어
 
 **실무 고려사항:**
+
 - FD 제한 설정과 모니터링
 - 예외 상황에서의 FD 정리
 - Non-blocking I/O 활용
 - epoll/kqueue와의 연계
 
 **디버깅:**
+
 - `/proc/&lt;pid&gt;/fd/` 디렉토리 활용
 - `lsof` 명령어 사용
 - FD 누수 탐지 및 방지

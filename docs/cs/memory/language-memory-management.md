@@ -321,6 +321,7 @@ public class MemoryCheck {
 ```
 
 해결책:
+
 ```dockerfile
 # JDK 8u191+, JDK 10+
 FROM openjdk:11-jre-slim

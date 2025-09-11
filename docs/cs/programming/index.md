@@ -12,18 +12,21 @@ tags:
 ## 주요 내용
 
 ### 비동기 프로그래밍
+
 - 콜백 함수의 동작 원리와 한계
 - Promise와 Future 패턴
 - async/await 문법의 내부 구현
 - 콜백 지옥 해결 전략
 
 ### 동시성 모델
+
 - 코루틴과 경량 스레드
 - 액터 모델과 CSP (Communicating Sequential Processes)
 - 이벤트 루프와 리액터 패턴
 - 비선점형 vs 선점형 스케줄링
 
 ### 실무 적용
+
 - Node.js 이벤트 루프 최적화
 - Go 고루틴과 채널 활용
 - Python asyncio 성능 튜닝
@@ -32,6 +35,7 @@ tags:
 ## 문서 목록
 
 ### 비동기 프로그래밍 기초
+
 - [콜백 함수 완벽 이해](callback.md) - 비동기 프로그래밍의 기초, 콜백 패턴의 이해
 - [이벤트 루프 동작 원리](event-loop.md) - JavaScript와 Node.js의 이벤트 루프 메커니즘
 - [코루틴과 협력적 멀티태스킹](coroutine.md) - 코루틴의 개념과 다양한 언어에서의 구현

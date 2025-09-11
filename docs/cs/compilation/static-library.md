@@ -1176,58 +1176,58 @@ all: $(LIBRARY)
 
 # 정규 아카이브 생성
 $(LIBRARY): $(OBJECTS)
-	$(AR) rcs $@ $^
-	$(RANLIB) $@
-	@echo "Created static library: $@"
+ $(AR) rcs $@ $^
+ $(RANLIB) $@
+ @echo "Created static library: $@"
 
 # Thin 아카이브 생성
 thin: $(OBJECTS)
-	$(AR) rcsT $(THIN_LIBRARY) $(OBJECTS)
-	@echo "Created thin archive: $(THIN_LIBRARY)"
+ $(AR) rcsT $(THIN_LIBRARY) $(OBJECTS)
+ @echo "Created thin archive: $(THIN_LIBRARY)"
 
 # 오브젝트 파일 컴파일
 %.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $@
+ $(CC) $(CFLAGS) -c $< -o $@
 
 # 테스트 프로그램
 test: test_mylib
 test_mylib: test_mylib.c $(LIBRARY)
-	$(CC) $(CFLAGS) $< -L. -lmylib $(LDFLAGS) -o $@
-	@echo "Test program created: $@"
+ $(CC) $(CFLAGS) $< -L. -lmylib $(LDFLAGS) -o $@
+ @echo "Test program created: $@"
 
 # 설치
 INSTALL_PREFIX ?= /usr/local
 install: $(LIBRARY)
-	install -d $(INSTALL_PREFIX)/lib
-	install -d $(INSTALL_PREFIX)/include/mylib
-	install -m 644 $(LIBRARY) $(INSTALL_PREFIX)/lib/
-	install -m 644 $(HEADERS) $(INSTALL_PREFIX)/include/mylib/
-	@echo "Installed to $(INSTALL_PREFIX)"
+ install -d $(INSTALL_PREFIX)/lib
+ install -d $(INSTALL_PREFIX)/include/mylib
+ install -m 644 $(LIBRARY) $(INSTALL_PREFIX)/lib/
+ install -m 644 $(HEADERS) $(INSTALL_PREFIX)/include/mylib/
+ @echo "Installed to $(INSTALL_PREFIX)"
 
 # 정리
 clean:
-	rm -f $(OBJECTS) $(LIBRARY) $(THIN_LIBRARY) test_mylib
-	rm -f *.gcda *.gcno  # PGO 파일들
-	@echo "Cleaned build artifacts"
+ rm -f $(OBJECTS) $(LIBRARY) $(THIN_LIBRARY) test_mylib
+ rm -f *.gcda *.gcno  # PGO 파일들
+ @echo "Cleaned build artifacts"
 
 # 도움말
 help:
-	@echo "Available targets:"
-	@echo "  all          - Build regular static library (default)"
-	@echo "  thin         - Build thin archive"
-	@echo "  test         - Build and run test program"
-	@echo "  install      - Install library and headers"
-	@echo "  clean        - Remove build artifacts"
-	@echo ""
-	@echo "Build options:"
-	@echo "  DEBUG=1             - Enable debug build"
-	@echo "  THREAD_SAFE=1       - Enable thread safety (default)"
-	@echo "  DOUBLE_PRECISION=0  - Use single precision floats"
-	@echo ""
-	@echo "Examples:"
-	@echo "  make DEBUG=1"
-	@echo "  make thin THREAD_SAFE=0"
-	@echo "  make install INSTALL_PREFIX=/opt/mylib"
+ @echo "Available targets:"
+ @echo "  all          - Build regular static library (default)"
+ @echo "  thin         - Build thin archive"
+ @echo "  test         - Build and run test program"
+ @echo "  install      - Install library and headers"
+ @echo "  clean        - Remove build artifacts"
+ @echo ""
+ @echo "Build options:"
+ @echo "  DEBUG=1             - Enable debug build"
+ @echo "  THREAD_SAFE=1       - Enable thread safety (default)"
+ @echo "  DOUBLE_PRECISION=0  - Use single precision floats"
+ @echo ""
+ @echo "Examples:"
+ @echo "  make DEBUG=1"
+ @echo "  make thin THREAD_SAFE=0"
+ @echo "  make install INSTALL_PREFIX=/opt/mylib"
 
 .PHONY: all thin test install clean help
 ```
@@ -1687,16 +1687,19 @@ Static Library는 현대 소프트웨어 개발에서 배포 간소화, 성능 �
 ### 핵심 개념 요약
 
 **Archive 관리:**
+
 - `ar rcs`로 오브젝트 파일들을 아카이브로 통합
 - `ranlib` 또는 `ar s`로 심볼 테이블 최적화
 - Thin archive로 디스크 공간 효율성 확보
 
 **Selective Linking:**
+
 - 사용되는 오브젝트 파일만 최종 바이너리에 포함
 - Whole archive linking으로 constructor/destructor 보장
 - 심볼 해결 순서와 의존성 관리 중요성
 
 **최적화 기법:**
+
 - LTO를 통한 링크 시점 최적화로 10-30% 성능 향상
 - PGO 결합으로 실행 패턴 기반 최적화
 - Strip과 size 최적화로 바이너리 크기 감소
@@ -1704,26 +1707,31 @@ Static Library는 현대 소프트웨어 개발에서 배포 간소화, 성능 �
 ### 프로덕션 적용 지침
 
 **컨테이너 최적화:**
+
 - Static linking으로 FROM scratch 이미지 구현
 - Multi-stage 빌드로 빌드 의존성 분리
 - 수백 배 작은 이미지 크기로 배포 효율성 극대화
 
 **크로스 플랫폼 지원:**
+
 - 아키텍처별 라이브러리 빌드 자동화
 - Universal binary로 단일 아티팩트 배포
 - CI/CD에서 matrix 빌드로 다양한 타겟 지원
 
 **라이브러리 설계:**
+
 - 네임스페이스 prefix로 심볼 충돌 방지
 - 버전 관리와 ABI 호환성 유지
 - Configuration flag로 컴파일 시점 최적화
 
 **성능 및 품질 관리:**
+
 - 자동화된 벤치마킹으로 성능 회귀 감지
 - Valgrind, gprof 등 도구로 메모리/CPU 프로파일링
 - 테스트 자동화로 API 호환성 보장
 
 **보안 및 유지보수:**
+
 - Symbol visibility 제어로 공격 표면 최소화
 - Static linking으로 라이브러리 취약점 노출 차단
 - 의존성 명시적 관리로 공급망 보안 강화

@@ -53,6 +53,7 @@ Direct I/O Read (Page Cache 우회):
 각 데이터베이스는 Page Cache에 대해 다른 전략을 사용합니다:
 
 **PostgreSQL**: OS Page Cache를 적극 활용
+
 ```bash
 # PostgreSQL은 Page Cache에 의존
 shared_buffers = 8GB        # 자체 버퍼는 RAM의 25%
@@ -60,6 +61,7 @@ effective_cache_size = 24GB # OS Page Cache 고려한 설정
 ```
 
 **MySQL InnoDB**: Direct I/O로 Page Cache 우회
+
 ```ini
 [mysqld]
 innodb_flush_method = O_DIRECT  # Page Cache 우회
@@ -67,13 +69,14 @@ innodb_buffer_pool_size = 24GB  # 자체 버퍼 풀 사용 (RAM의 70-80%)
 ```
 
 **Cassandra**: JVM 힙 외부 메모리로 자체 캐시 구현
+
 ```java
 // Cassandra는 off-heap memory 사용
 ByteBuffer buffer = ByteBuffer.allocateDirect(size);  // Direct memory
 // Page Cache 최소 사용, JVM에서 자체 관리
 ```
 
-## Kubernetes의 Shared Page Cache 
+## Kubernetes의 Shared Page Cache
 
 Kubernetes 노드에서 Page Cache는 **모든 Pod가 공유**합니다. 이는 성능상 이점이 있지만, 예상치 못한 문제를 일으킬 수 있습니다.
 
@@ -97,6 +100,7 @@ Kubernetes Node:
 ```
 
 커널은 inode 번호로 파일을 식별합니다:
+
 ```
 Pod A: /app-data/file.txt     → inode 12345
 Pod B: /different/file.txt    → inode 12345 (같은 파일!)
@@ -236,6 +240,7 @@ spec:
 ```
 
 이 방식의 동작 원리:
+
 ```
 Timeline of cache ownership:
 
@@ -351,6 +356,7 @@ echo 3 > /proc/sys/vm/drop_caches
 ```
 
 대신 이렇게 하세요:
+
 ```bash
 # 특정 파일만 cache에서 제거
 fincore --pages --summarize --clear /path/to/file
