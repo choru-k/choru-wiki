@@ -1,0 +1,18 @@
+{
+  "name": "choru-wiki",
+  "version": "1.0.0",
+  "description": "Technical documentation wiki",
+  "scripts": {
+    "lint": "markdownlint 'docs/**/*.md' --fix",
+    "lint:check": "markdownlint 'docs/**/*.md'",
+    "format": "prettier --write 'docs/**/*.md'",
+    "format:check": "prettier --check 'docs/**/*.md'",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
+    "markdownlint-cli": "^0.37.0",
+    "prettier": "^3.1.0"
+  }
+}

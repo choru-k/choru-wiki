@@ -39,6 +39,24 @@ mkdocs serve
 mkdocs build
 ```
 
+### Markdown Linting
+```bash
+# Install dependencies (first time only)
+npm install
+
+# Check markdown files for issues
+npm run lint:check
+
+# Auto-fix markdown formatting issues
+npm run lint
+
+# Check specific file
+npx markdownlint docs/path/to/file.md
+
+# Auto-fix specific file
+npx markdownlint --fix docs/path/to/file.md
+```
+
 ### Deployment
 ```bash
 # Automatic deployment via GitHub Actions on push to main branch
@@ -110,6 +128,24 @@ tags:
    - Use backticks for inline paths: \`/proc/&lt;pid&gt;/maps\`
    - In code blocks, angle brackets are safe to use as-is
 
+6. **Mermaid Diagram Line Breaks**: Avoid using `<br/>` tags in Mermaid diagrams:
+```mermaid
+# Bad - causes rendering issues
+graph TD
+    PCT[프로세스 제어 블록<br/>PCB]
+    
+# Good - use quotes with actual line breaks
+graph TD
+    PCT["프로세스 제어 블록
+    PCB"]
+    
+# Or use single line
+graph TD
+    PCT[프로세스 제어 블록 PCB]
+```
+**Issue**: `<br/>` tags in Mermaid diagrams may not render correctly, especially with Korean text.
+**Solution**: Use quoted strings with actual line breaks or keep text on a single line.
+
 ### Extended Markdown Features
 
 The wiki supports:
@@ -125,6 +161,10 @@ The wiki supports:
 - `docker-compose.yml`: Docker container configuration for local development
 - `requirements.txt`: Python dependencies (mkdocs-material, Pygments)
 - `.github/workflows/deploy.yml`: Automatic deployment to GitHub Pages
+- `package.json`: Node.js dependencies for markdown linting
+- `.markdownlint.json`: Markdownlint configuration rules
+- `.lintstagedrc.json`: Lint-staged configuration for pre-commit hooks
+- `.husky/pre-commit`: Git pre-commit hook to run linters automatically
 
 ## Content Migration from NotePlan
 
@@ -144,6 +184,8 @@ The wiki automatically deploys to `https://choru-k.github.io/choru-wiki/` when p
 - Search functionality supports both English and Korean
 - Tags plugin automatically aggregates tags from all documents
 - Custom CSS optimizes Korean font rendering and spacing
+- **Pre-commit hooks automatically run markdown linting before each commit**
+- Markdown files are automatically formatted to follow consistent style rules
 
 ## Troubleshooting Common Rendering Issues
 
@@ -166,3 +208,33 @@ The wiki automatically deploys to `https://choru-k.github.io/choru-wiki/` when p
 ### Korean Text Spacing Issues
 **Symptom**: Korean text appears cramped or poorly spaced.
 **Fix**: Custom CSS in `docs/stylesheets/extra.css` handles this - ensure it's loaded in `mkdocs.yml`.
+
+## Markdown Linting Rules
+
+The project uses `markdownlint` to enforce consistent markdown formatting. Key rules include:
+
+### Enforced Rules
+- **MD037**: No spaces inside emphasis markers (`**bold**` not `** bold **`)
+- **MD032**: Lists must be surrounded by blank lines
+- **MD030**: Spaces after list markers (1 space after `-`, `*`, `+`, `1.`)
+- **MD009**: No trailing spaces (except for line breaks with exactly 2 spaces)
+- **MD022**: Headings must be surrounded by blank lines
+- **MD031**: Fenced code blocks must be surrounded by blank lines
+- **MD047**: Files must end with a single newline character
+
+### Disabled Rules
+- **MD013/MD041**: Line length limit disabled (long URLs and tables allowed)
+- **MD025**: Multiple top-level headings allowed
+- **MD036**: Emphasis used instead of heading allowed
+- **MD033**: HTML elements allowed for special cases (`<br>`, `<sup>`, `<sub>`, etc.)
+
+### Pre-commit Hook
+When you commit files, the pre-commit hook will:
+1. Automatically run `markdownlint --fix` on staged markdown files
+2. Fix any auto-fixable formatting issues
+3. Fail the commit if there are unfixable issues (you'll need to fix them manually)
+
+To bypass the hook in emergency situations (not recommended):
+```bash
+git commit --no-verify -m "commit message"
+```
