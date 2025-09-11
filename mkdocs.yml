@@ -228,7 +228,12 @@ nav:
               - "8-2: Event Loop and Concurrency": cs/guide/chapter-08-async-programming/02-event-loop.md
               - "8-3: Coroutine and Green Thread": cs/guide/chapter-08-async-programming/03-coroutine.md
               - "8-4: Distributed Async Patterns": cs/guide/chapter-08-async-programming/04-distributed-async.md
-          - "Chapter 9: Memory & GC": cs/guide/chapter-09-memory-gc.md
+          - "Chapter 9: Memory & GC":
+              - "Overview": cs/guide/chapter-09-memory-gc/index.md
+              - "9-1: Memory Allocator Internals": cs/guide/chapter-09-memory-gc/01-memory-allocator.md
+              - "9-2: GC Algorithms": cs/guide/chapter-09-memory-gc/02-gc-algorithms.md
+              - "9-3: Language-specific GC": cs/guide/chapter-09-memory-gc/03-language-gc.md
+              - "9-4: Memory Optimization": cs/guide/chapter-09-memory-gc/04-memory-optimization.md
           - "Chapter 10: Performance Optimization": cs/guide/chapter-10-performance-optimization.md
           - "Chapter 11: Container & Isolation": cs/guide/chapter-11-container-isolation.md
           - "Chapter 12: Observability & Debugging": cs/guide/chapter-12-observability-debugging.md
