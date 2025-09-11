@@ -214,6 +214,10 @@ nav:
               - "4-2: Thread and Synchronization": cs/guide/chapter-04-process-thread/02-thread-sync.md
               - "4-3: Scheduling and Priority": cs/guide/chapter-04-process-thread/03-scheduling.md
               - "4-4: Signal and IPC": cs/guide/chapter-04-process-thread/04-signal-ipc.md
+              - "4-5: Process State Analysis": cs/guide/chapter-04-process-thread/05-process-state-analysis.md
+              - "4-6: Thread Synchronization Debugging": cs/guide/chapter-04-process-thread/06-thread-synchronization-debugging.md
+              - "4-7: CPU Affinity Optimization": cs/guide/chapter-04-process-thread/07-cpu-affinity-optimization.md
+              - "4-8: Signal Handling Debugging": cs/guide/chapter-04-process-thread/08-signal-handling-debugging.md
           - "Chapter 5: CPU & Interrupt":
               - "Overview": cs/guide/chapter-05-cpu-interrupt/index.md
               - "5-1: CPU Architecture and Execution": cs/guide/chapter-05-cpu-interrupt/01-cpu-architecture.md

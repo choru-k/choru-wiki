@@ -120,6 +120,46 @@ graph TB
 - 💾 **공유 메모리**: 고속 데이터 공유
 - 📬 **메시지 큐**: 구조화된 메시지 전달
 
+### [4-5: 프로세스 상태 분석](05-process-state-analysis.md)
+
+**"프로세스가 D state에 걸렸어요"**
+
+- 🔍 **프로세스 상태 분류**: R, S, D, Z, T 상태의 정확한 의미
+- ⚠️ **D state (Uninterruptible Sleep)**: 위험한 상태와 원인 분석
+- 💀 **Zombie 프로세스**: 좀비 상태 원인과 정리 방법
+- 📊 **/proc/[pid]/stat 해석**: 프로세스 상태 정보 완벽 분석
+- 📈 **Process Accounting**: 프로세스 생명주기 추적
+
+### [4-6: 스레드 동기화 디버깅](06-thread-synchronization-debugging.md)
+
+**"Deadlock이 발생한 것 같아요"**
+
+- 🔒 **Deadlock 감지**: 교착상태 발견과 분석 기법
+- ⚡ **Futex 성능 분석**: Linux 동기화 프리미티브 최적화
+- 🔍 **Helgrind 활용**: Valgrind를 이용한 경쟁 상태 디버깅
+- ⏰ **Priority Inversion**: 우선순위 역전 문제와 해결책
+- 🚨 **Lock Contention**: 락 경합 분석과 최적화
+
+### [4-7: CPU 친화도 최적화](07-cpu-affinity-optimization.md)
+
+**"특정 CPU에서만 실행하고 싶어요"**
+
+- 🎯 **CPU Affinity 설정**: 프로세스/스레드를 특정 코어에 바인딩
+- 🏗️ **NUMA 최적화**: 메모리 접근 지역성 고려한 배치
+- 📊 **캐시 친화성**: CPU 캐시 효율성 극대화 전략
+- ⚡ **Load Balancing vs Affinity**: 성능 트레이드오프 분석
+- 🎮 **고성능 애플리케이션**: 게임 서버 레이턴시 최적화 사례
+
+### [4-8: 시그널 처리 디버깅](08-signal-handling-debugging.md)
+
+**"SIGPIPE로 프로세스가 죽어요"**
+
+- 📡 **시그널 생성과 전달**: 커널의 시그널 전송 메커니즘  
+- 🛡️ **견고한 시그널 핸들러**: 안전한 시그널 처리 패턴
+- 💥 **SIGPIPE/SIGTERM 처리**: 네트워크 서비스 안정성 확보
+- 🔄 **Graceful Shutdown**: 우아한 서비스 종료 구현
+- ⏱️ **실시간 시그널**: RT 시그널을 활용한 고급 통신
+
 ## 실습 환경 준비
 
 이 장의 예제들을 직접 실행해보려면 다음 도구들이 필요합니다:
