@@ -34,6 +34,7 @@ FROM stats_mysql_connection_pool;
 ```
 
 **증상:**
+
 - **Memory 사용량 급증**: ProxySQL Pod 메모리가 512Mi → 2Gi로 폭증
 - **Connection Leak**: Free Connection이 지속적으로 증가
 - **성능 저하**: Connection 관리 오버헤드로 응답 시간 증가
@@ -73,6 +74,7 @@ sequenceDiagram
 ### 1. ProxySQL Connection Warming 알고리즘
 
 **기본 동작:**
+
 ```sql
 -- ProxySQL 기본 설정 (문제가 되는 설정)
 SET mysql-max_connections=10000;           -- 매우 큰 Pool 크기
@@ -83,6 +85,7 @@ SET mysql-connection_warming=false;        -- 사전 Connection 준비 안함
 ```
 
 **Connection Pool 생성 로직:**
+
 ```c
 // ProxySQL 내부 로직 (의사코드)
 int target_free_connections = max_connections * free_connections_pct / 100;
@@ -107,6 +110,7 @@ if (current_free < target_free_connections &&
 ### 2. TCP Handshake 지연과 Thunder Herd
 
 **네트워크 지연 상황:**
+
 ```bash
 # MySQL Backend에 대한 네트워크 지연 측정
 $ mtr --report --report-cycles 10 mysql-backend.region.rds.amazonaws.com
@@ -120,6 +124,7 @@ $ mtr --report --report-cycles 10 mysql-backend.region.rds.amazonaws.com
 ```
 
 **Thunder Herd 현상:**
+
 ```bash
 # 동시에 생성되는 Connection 수 모니터링
 ss -t state syn-sent | grep :3306 | wc -l
@@ -129,6 +134,7 @@ ss -t state syn-sent | grep :3306 | wc -l
 ### 3. AWS NLB Connection Timeout 특성
 
 **NLB의 Connection Idle Timeout:**
+
 ```yaml
 # NLB 설정 확인 (기본 350초)
 apiVersion: v1
@@ -142,6 +148,7 @@ spec:
 ```
 
 **Client-side Connection Drop 문제:**
+
 ```mermaid
 sequenceDiagram
     participant C as Client App
@@ -163,6 +170,7 @@ sequenceDiagram
 ```
 
 **문제:**
+
 - Client가 일방적으로 Connection 종료
 - ProxySQL은 Backend Connection을 여전히 유효하다고 판단
 - Free Connection Pool에 "좀비" Connection이 누적
@@ -172,6 +180,7 @@ sequenceDiagram
 ### 1. Connection Pool 크기 적정화
 
 **최적화된 설정:**
+
 ```sql
 -- Before (문제 설정)
 SET mysql-max_connections=10000;
@@ -189,6 +198,7 @@ SET mysql-connect_timeout_server_max=10000; -- 10초 Connection timeout
 ```
 
 **설정 근거:**
+
 ```bash
 # 적정 Connection 수 계산 방법
 # 1. Peak TPS 측정
@@ -207,6 +217,7 @@ Recommended_Max_Connections = 50 * 2 = 100
 ### 2. Connection Lifecycle 관리 강화
 
 **Idle Connection 정리:**
+
 ```sql
 -- Connection 재사용 최적화
 SET mysql-multiplexing=true;               -- Connection 다중화 활성화
@@ -219,6 +230,7 @@ SET mysql-client_session_track_gtids=true;              -- GTID 추적으로 Con
 ```
 
 **Connection Pool 모니터링 스크립트:**
+
 ```python
 #!/usr/bin/env python3
 import pymysql
@@ -279,6 +291,7 @@ if __name__ == "__main__":
 ### 3. NLB Level 최적화
 
 **Connection Draining 설정:**
+
 ```yaml
 apiVersion: v1
 kind: Service
@@ -294,6 +307,7 @@ spec:
 ```
 
 **ProxySQL Health Check 개선:**
+
 ```yaml
 # Kubernetes Readiness/Liveness Probe 최적화
 readinessProbe:
@@ -494,6 +508,7 @@ grep -E "(queries:|avg:|95th)" new_config_results.txt
 ```
 
 **예상 결과:**
+
 ```bash
 # OLD CONFIG (문제 설정):
 # queries: 150000 (500.00 per sec.)
@@ -613,18 +628,21 @@ watch kubectl exec -it proxysql-0 -- mysql -h127.0.0.1 -P6032 -uadmin -padmin \
 ProxySQL Connection Pool 최적화의 핵심은 **"적은 Connection으로 최대 효율"**입니다:
 
 ### 최적화 원칙
+
 1. **Connection Pool 크기 최소화**: Little's Law로 필요 최소량 계산
 2. **Free Connection 비율 제한**: 1-10% 수준으로 유지
 3. **Connection Warming 활용**: 미리 준비해서 Thunder Herd 방지
 4. **Lifecycle 관리 강화**: Idle Connection 적극적 정리
 
 ### Production 적용 가이드
+
 - **점진적 적용**: 설정 변경은 단계별로 진행
 - **실시간 모니터링**: Free Connection 비율, 메모리 사용량 추적
 - **A/B Testing**: 설정 변경 전 성능 비교 필수
 - **Fallback Plan**: 문제 발생 시 즉시 이전 설정으로 롤백
 
 ### 성과 지표
+
 - **메모리 사용량**: 70-80% 감소 가능
 - **Connection 효율성**: 90% 이상 활용률 달성
 - **응답 시간**: Connection 대기 시간 제거로 5-10% 개선

@@ -22,6 +22,7 @@ tags:
 Docker 컨테이너의 종료 상태는 다음과 같이 정의됩니다:
 
 ```bash
+```text
 # Docker Exit Codes
 Exit Code 0   : 정상 종료
 Exit Code 1   : 일반적인 애플리케이션 오류  
@@ -31,6 +32,8 @@ Exit Code 127 : 명령어/파일을 찾을 수 없음
 Exit Code 137 : SIGKILL (9) 신호로 인한 강제 종료  ← 주목!
 Exit Code 139 : SIGSEGV (11) Segmentation fault
 Exit Code 143 : SIGTERM (15) 정상적인 종료 요청
+```
+
 ```
 
 ### SIGKILL과 Exit Code 137의 관계
@@ -51,12 +54,17 @@ exit_code = 128 + signal_number
 ### 1. OOM Killer (가장 흔한 경우)
 
 ```bash
+```bash
 # OOM 발생 확인
 journalctl -k | grep -i -E "memory|oom|killed"
+```
 
+```text
 # 출력 예시:
 kernel: Out of memory: Killed process 12345 (myapp) total-vm:2048000kB, anon-rss:1024000kB, file-rss:0kB
 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=docker-abc123.scope,mems_allowed=0,oom_memcg=/docker/abc123,task_memcg=/docker/abc123
+```
+
 ```
 
 메모리 사용량 추적:
@@ -77,16 +85,23 @@ cat /sys/fs/cgroup/memory/docker/container_id/memory.oom_control
 실제 Production 환경에서 경험한 복잡한 시나리오입니다:
 
 ```bash
+```bash
 # systemd 서비스 의존성 확인
 systemctl show myapp.service | grep -E "(After|Requires|Wants|PartOf)"
+```
 
+```text
 # 출력 예시:
 After=nginx.service
 PartOf=nginx.service    # 위험! nginx가 죽으면 myapp도 죽음
+```
 
 # nginx 서비스 상태 확인
+
 systemctl status nginx.service
+
 # Active: failed (Result: exit-code)
+
 ```
 
 **문제 상황 재현:**
@@ -107,14 +122,20 @@ WantedBy=multi-user.target
 ```
 
 nginx가 실패하면 systemd가 myapp에 SIGKILL을 전송합니다:
+
+```bash
 ```bash
 # systemd 로그 확인
 journalctl -u myapp.service -f
+```
 
+```text
 # 출력:
 systemd[1]: nginx.service failed
 systemd[1]: Stopping myapp.service (PartOf dependency)
 systemd[1]: Sent signal KILL to main process 12345 (myapp)
+```
+
 ```
 
 ### 3. Docker 리소스 제한
@@ -579,5 +600,5 @@ Docker Exit Code 137의 진단 우선순위:
 ## 관련 문서
 
 - [Kubernetes OOM 디버깅](../kubernetes/oom-debugging.md)
-- [Container 메모리 최적화](../performance/container-memory-optimization.md) 
+- [Container 메모리 최적화](../performance/container-memory-optimization.md)
 - [SystemD 서비스 관리](../system/systemd-service-management.md)

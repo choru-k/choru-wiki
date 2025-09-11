@@ -13,7 +13,7 @@ tags:
 
 ## 들어가며
 
-"EKS에서 Service를 LoadBalancer로 노출했더니 Target 수가 500개를 넘어서 AWS 한도에 걸렸어" - 이런 경험 있나요? 
+"EKS에서 Service를 LoadBalancer로 노출했더니 Target 수가 500개를 넘어서 AWS 한도에 걸렸어" - 이런 경험 있나요?
 
 AWS Load Balancer Controller의 **IP Mode**와 **Instance Mode**는 근본적으로 다른 트래픽 라우팅 방식을 사용합니다. 각각의 동작 원리와 장단점, 그리고 Production에서 마주하는 실제 문제와 해결책을 깊이 있게 살펴보겠습니다.
 
@@ -64,6 +64,7 @@ spec:
 ### IP Mode: Direct Pod Targeting
 
 **동작 원리:**
+
 ```
 Client Request → NLB → Pod IP:Port (Direct)
 ```
@@ -88,6 +89,7 @@ spec:
 ```
 
 **Target Group 구성:**
+
 ```bash
 # IP Mode Target Group 예시
 aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
@@ -103,6 +105,7 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 ### Instance Mode: Node-level Targeting
 
 **동작 원리:**
+
 ```
 Client Request → NLB → Node IP:NodePort → iptables → Pod IP:Port
 ```
@@ -128,6 +131,7 @@ spec:
 ```
 
 **Target Group 구성:**
+
 ```bash
 # Instance Mode Target Group 예시
 aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
@@ -152,6 +156,7 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 ```
 
 **성능 이점:**
+
 - **낮은 레이턴시**: 추가 hop 없이 직접 Pod 통신
 - **정확한 로드 밸런싱**: NLB가 실제 Pod 수만큼 균등 분산
 - **Connection Stickiness**: Client IP가 특정 Pod에 고정 가능
@@ -159,6 +164,7 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 ### 단점: Target 수 제한과 운영 복잡성
 
 **AWS NLB Target 제한:**
+
 ```bash
 # Cross-Zone Load Balancing 활성화 시
 # Target Group당 최대 500개 Target
@@ -175,6 +181,7 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 ```
 
 **해결 방법 1: Node Labeling으로 Target 제한**
+
 ```yaml
 # Init Container로 특정 Node만 Target에 포함
 initContainers:
@@ -201,6 +208,7 @@ spec:
 ```
 
 **해결 방법 2: Service 분리 전략**
+
 ```yaml
 # Service를 기능별로 분리하여 Target 수 감소
 ---
@@ -247,6 +255,7 @@ spec:
 ```
 
 **확장성 이점:**
+
 - **Target 수 제한 없음**: Node 수만큼만 Target 등록 (보통 10-50개)
 - **Port 무관**: 여러 Port를 사용해도 Target 수 변화 없음
 - **Dynamic Pod Scaling**: Pod 수가 변해도 Target Group 변경 불필요
@@ -254,6 +263,7 @@ spec:
 ### 단점: 추가 홉과 불균등 분산
 
 **성능 측면:**
+
 ```bash
 # iptables 규칙으로 인한 추가 처리
 $ iptables -t nat -L KUBE-SERVICES | grep proxysql
@@ -267,6 +277,7 @@ KUBE-SEP-JKL  all  --  anywhere  anywhere
 ```
 
 **로드 밸런싱 이슈:**
+
 ```bash
 # 문제 시나리오: Node별 Pod 분포 불균등
 Node-1: 5 pods  ←── NLB가 1/3 트래픽 전송
@@ -343,6 +354,7 @@ groups:
 ```
 
 **상세 성능 분석:**
+
 ```bash
 # Target별 Connection 분포 확인
 aws elbv2 describe-target-health \
@@ -417,11 +429,13 @@ spec:
 ### 1. Target이 500개 제한에 걸린 경우
 
 **증상:**
+
 ```
 error: failed to create target group: ValidationError: A target group can have at most 500 targets
 ```
 
 **해결책:**
+
 ```bash
 # 현재 Target 수 확인
 aws elbv2 describe-targets --target-group-arn $ARN | jq '.Targets | length'
@@ -441,6 +455,7 @@ kubectl apply -f -
 ### 2. Instance Mode에서 불균등 분산 문제
 
 **확인 방법:**
+
 ```bash
 # Node별 Pod 분포 확인
 kubectl get pods -o wide | awk '{print $7}' | sort | uniq -c
@@ -451,6 +466,7 @@ kubectl exec -n kube-system kube-proxy-xxx -- iptables -t nat -L | grep myapp
 ```
 
 **해결책:**
+
 ```yaml
 # Deployment에 podAntiAffinity 추가
 spec:
@@ -495,6 +511,7 @@ kubectl exec -it pod-name -- curl -f http://localhost:8080/health
 ```
 
 **최적화 전략:**
+
 ```yaml
 # Internal LoadBalancer로 불필요한 인터넷 비용 절약
 metadata:
@@ -512,18 +529,21 @@ metadata:
 EKS LoadBalancer 모드 선택 가이드
 
 ### IP Mode 사용 시기
+
 - **High-performance 요구**: 낮은 레이턴시가 중요한 서비스
 - **정확한 로드밸런싱**: Pod별 균등 분산이 필요
 - **소규모 서비스**: Target 수가 500개 미만
 - **Connection Stickiness**: 클라이언트-Pod 간 고정 연결 필요
 
 ### Instance Mode 사용 시기  
+
 - **대규모 서비스**: Pod 수가 많고 Port가 다양한 경우
 - **Dynamic Scaling**: Pod 수가 자주 변하는 환경
 - **비용 최적화**: Target Group 관리 비용 절감
 - **Legacy 호환**: 기존 NodePort 기반 서비스
 
 ### Production 체크리스트
+
 - [ ] Target 수 제한 (500개) 고려하여 모드 선택
 - [ ] Pod Distribution 최적화 (podAntiAffinity)
 - [ ] Health Check 설정 검증

@@ -73,9 +73,12 @@ sum(rate(container_cpu_usage_seconds_total{
 이 쿼리의 문제점:
 
 ```bash
+```text
 # container="" (빈 값)인 메트릭도 포함됨
 container_cpu_usage_seconds_total{container="",pod="app-123",cpu="total"} 1.5
 container_cpu_usage_seconds_total{container="app",pod="app-123",cpu="total"} 1.5
+```
+
 ```
 
 ### 정확한 쿼리 방법
@@ -115,6 +118,7 @@ static u64 cpuacct_cpuusage_read(struct cgroup_subsys_state *css,
 ```
 
 실제 파일 경로:
+
 ```bash
 # Pod의 총 CPU 사용량
 cat /sys/fs/cgroup/cpu,cpuacct/kubepods.slice/kubepods-burstable.slice/kubepods-burstable-pod12345.slice/cpuacct.usage
@@ -169,6 +173,7 @@ spec:
 ```
 
 메트릭 예시:
+
 ```bash
 # Pod 전체 사용량 (모든 컨테이너 합계)
 container_cpu_usage_seconds_total{container="",pod="myapp-pod"} 2.5

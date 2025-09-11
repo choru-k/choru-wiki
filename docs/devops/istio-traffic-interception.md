@@ -13,7 +13,7 @@ tags:
 
 ## 들어가며
 
-"Istio를 설치했는데 자동으로 모든 트래픽이 sidecar를 지나간다는거야?" Production에서 Service Mesh를 운영하다 보면 이런 궁금증이 생깁니다. **도대체 어떻게 Pod 내부의 모든 네트워크 트래픽을 Envoy 프록시로 투명하게 라우팅할 수 있을까?** 
+"Istio를 설치했는데 자동으로 모든 트래픽이 sidecar를 지나간다는거야?" Production에서 Service Mesh를 운영하다 보면 이런 궁금증이 생깁니다. **도대체 어떻게 Pod 내부의 모든 네트워크 트래픽을 Envoy 프록시로 투명하게 라우팅할 수 있을까?**
 
 답은 Linux의 netfilter/iptables와 투명 프록시(transparent proxy) 기술에 있습니다. Istio의 마법 같은 트래픽 interception을 kernel 수준에서 완전히 땀어보겠습니다.
 
@@ -118,59 +118,61 @@ kubectl run netshoot --rm -it --image=nicolaka/netshoot -- bash
 
 #### 1. Inbound Traffic Interception
 
-```
+```bash
 Chain PREROUTING (policy ACCEPT)
- pkts bytes target     prot opt in     out     source      destination
-  282 16920 ISTIO_INBOUND  tcp  --  any    any   anywhere    anywhere
+pkts bytes target          prot opt in    out    source       destination
+282  16920 ISTIO_INBOUND   tcp  --  any   any    anywhere     anywhere
 
 Chain ISTIO_INBOUND (1 references)
- pkts bytes target     prot opt in     out     source      destination
-    0     0 RETURN     tcp  --  any    any   anywhere    anywhere    tcp dpt:15008
-    0     0 RETURN     tcp  --  any    any   anywhere    anywhere    tcp dpt:ssh
-    0     0 RETURN     tcp  --  any    any   anywhere    anywhere    tcp dpt:15090
-  234 14040 RETURN     tcp  --  any    any   anywhere    anywhere    tcp dpt:15021
-   48  2880 RETURN     tcp  --  any    any   anywhere    anywhere    tcp dpt:15020
-    0     0 ISTIO_IN_REDIRECT tcp --  any    any   anywhere    anywhere
+pkts bytes target              prot opt in    out    source       destination
+  0     0  RETURN              tcp  --  any   any    anywhere     anywhere     tcp dpt:15008
+  0     0  RETURN              tcp  --  any   any    anywhere     anywhere     tcp dpt:ssh
+  0     0  RETURN              tcp  --  any   any    anywhere     anywhere     tcp dpt:15090
+234 14040  RETURN              tcp  --  any   any    anywhere     anywhere     tcp dpt:15021
+ 48  2880  RETURN              tcp  --  any   any    anywhere     anywhere     tcp dpt:15020
+  0     0  ISTIO_IN_REDIRECT  tcp  --  any   any    anywhere     anywhere
 
 Chain ISTIO_IN_REDIRECT (3 references)
- pkts bytes target     prot opt in     out     source      destination
-    0     0 REDIRECT   tcp  --  any    any   anywhere    anywhere    redir ports 15006
+pkts bytes target     prot opt in    out    source       destination
+  0     0  REDIRECT   tcp  --  any   any    anywhere     anywhere     redir ports 15006
 ```
 
 **분석:**
+
 - 모든 inbound TCP 트래픽 → `ISTIO_INBOUND`
 - Envoy 관리 포트들(15008, 15090, 15021, 15020) → `RETURN` (bypass)
 - 나머지 모든 트래픽 → port 15006으로 redirect
 
 #### 2. Outbound Traffic Interception
 
-```
+```bash
 Chain OUTPUT (policy ACCEPT)
- pkts bytes target     prot opt in     out     source      destination
-   54  3240 ISTIO_OUTPUT  tcp  --  any    any   anywhere    anywhere
+pkts bytes target         prot opt in    out    source       destination
+ 54  3240  ISTIO_OUTPUT   tcp  --  any   any    anywhere     anywhere
 
 Chain ISTIO_OUTPUT (1 references)
- pkts bytes target     prot opt in     out     source      destination
-    0     0 RETURN     all  --  any    lo    127.0.0.6   anywhere
-    0     0 ISTIO_IN_REDIRECT all --  any  lo   anywhere   !localhost   owner UID match 1337
-    0     0 RETURN     all  --  any    lo    anywhere    anywhere     ! owner UID match 1337
-   54  3240 RETURN     all  --  any    any   anywhere    anywhere     owner UID match 1337
-    0     0 RETURN     all  --  any    any   anywhere    localhost
-    0     0 ISTIO_REDIRECT all --  any   any   anywhere    anywhere
+pkts bytes target              prot opt in    out    source       destination
+  0     0  RETURN              all  --  any   lo     127.0.0.6    anywhere
+  0     0  ISTIO_IN_REDIRECT   all  --  any   lo     anywhere     !localhost    owner UID match 1337
+  0     0  RETURN              all  --  any   lo     anywhere     anywhere      !owner UID match 1337
+ 54  3240  RETURN              all  --  any   any    anywhere     anywhere      owner UID match 1337
+  0     0  RETURN              all  --  any   any    anywhere     localhost
+  0     0  ISTIO_REDIRECT      all  --  any   any    anywhere     anywhere
 
 Chain ISTIO_REDIRECT (1 references)
- pkts bytes target     prot opt in     out     source      destination
-    0     0 REDIRECT   tcp  --  any    any   anywhere    anywhere    redir ports 15001
+pkts bytes target     prot opt in    out    source       destination
+  0     0  REDIRECT   tcp  --  any   any    anywhere     anywhere     redir ports 15001
 ```
 
 **분석:**
+
 - UID 1337(Envoy)가 생성한 패킷 → `RETURN` (무한 루프 방지)
 - localhost 트래픽 → `RETURN` (성능상 이유로 bypass)
 - 나머지 모든 outbound → port 15001로 redirect
 
 ### 트래픽 플로우 시각화
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                        Pod Network Namespace                     │
 ├─────────────────────────────────────────────────────────────────┤
@@ -247,6 +249,7 @@ Envoy의 투명 프록시 리스너 설정:
 ### Kubelet Probe Redirection
 
 원래 Pod 설정:
+
 ```yaml
 readinessProbe:
   httpGet:
@@ -255,6 +258,7 @@ readinessProbe:
 ```
 
 Istio injection 후:
+
 ```yaml
 readinessProbe:
   httpGet:
@@ -450,7 +454,8 @@ kubectl exec -it client-pod -- \
 ```
 
 curl-format.txt:
-```
+
+```text
      time_namelookup:  %{time_namelookup}\n
         time_connect:  %{time_connect}\n
      time_appconnect:  %{time_appconnect}\n
@@ -473,6 +478,7 @@ Istio의 투명한 트래픽 인터셉션은 다음 핵심 기술들의 조합�
 이 이해를 바탕으로 Service Mesh의 동작 원리를 정확히 파악하고 성능 최적화와 트러블슈팅에 활용할 수 있습니다.
 
 **Production에서 주의할 점:**
+
 - Envoy 리소스 사용량 모니터링 필수
 - Network Policy와 Istio 보안 정책의 상호작용 이해
 - DNS 및 서비스 디스커버리 설정 점검

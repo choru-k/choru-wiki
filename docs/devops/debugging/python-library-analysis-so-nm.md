@@ -45,7 +45,7 @@ for so_file in so_files:
 
 공유 라이브러리(.so)는 ELF(Executable and Linkable Format) 형식으로, 심볼 테이블을 포함합니다:
 
-```
+```text
 ELF Structure:
 ┌─────────────────────────┐
 │   ELF Header            │
@@ -71,12 +71,15 @@ ELF Structure:
 # Python 확장 모듈의 심볼 확인
 nm -D /opt/python/lib/python3.9/site-packages/numpy/core/_multiarray_umath.cpython-39-x86_64-linux-gnu.so
 
+```text
 # 출력 예시:
                  U __cxa_finalize@GLIBC_2.2.5
                  U abort@GLIBC_2.2.5
 00000000002b8180 T PyInit__multiarray_umath
                  U PyArg_ParseTuple@GLIBC_2.2.5
                  U PyErr_SetString@GLIBC_2.2.5
+```
+
 ```
 
 **심볼 타입 설명:**
@@ -95,6 +98,7 @@ nm -D /opt/python/lib/python3.9/site-packages/numpy/core/_multiarray_umath.cpyth
 # Python C API 함수 사용 현황
 nm -D mymodule.so | grep -E "^[[:space:]]*U.*Py" | sort
 
+```text
 # 출력 예시:
                  U PyArg_ParseTuple
                  U PyArg_ParseTupleAndKeywords
@@ -104,22 +108,28 @@ nm -D mymodule.so | grep -E "^[[:space:]]*U.*Py" | sort
                  U PyModule_Create2
 ```
 
+```
+
 #### 2. 외부 라이브러리 의존성 확인
 
 ```bash
 # GLIBC 버전 의존성 확인
 nm -D mymodule.so | grep GLIBC | awk -F'@' '{print $2}' | sort -V | uniq
 
+```text
 # 출력:
 GLIBC_2.2.5
 GLIBC_2.3.4
 GLIBC_2.14
+```
 
 # 수학 라이브러리 의존성
-nm -D mymodule.so | grep -E "(sin|cos|exp|log)" 
+
+nm -D mymodule.so | grep -E "(sin|cos|exp|log)"
                  U sin@GLIBC_2.2.5
                  U cos@GLIBC_2.2.5
                  U exp@GLIBC_2.2.5
+
 ```
 
 #### 3. 정의된 함수 목록 (API 분석)
@@ -182,6 +192,7 @@ nm -D "$MODULE_SO" | grep GLIBC | awk -F'@' '{print $2}' | sort -V | uniq | sed 
 ./python_lib_analyzer.sh /opt/python/lib/python3.9/site-packages/numpy/core/_multiarray_umath.cpython-39-x86_64-linux-gnu.so
 
 # 출력:
+```text
 === Python Module Analysis: _multiarray_umath.cpython-39-x86_64-linux-gnu.so ===
 
 1. Dynamic Library Dependencies:
@@ -207,6 +218,8 @@ nm -D "$MODULE_SO" | grep GLIBC | awk -F'@' '{print $2}' | sort -V | uniq | sed 
 5. GLIBC Version Requirements:
   GLIBC_2.2.5
   GLIBC_2.14
+```
+
 ```
 
 ## Production 문제 해결 시나리오

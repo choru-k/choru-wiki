@@ -580,15 +580,18 @@ if __name__ == "__main__":
 Kubernetes Pod 디버깅의 단계별 접근법:
 
 ### Level 1: Basic Debugging
+
 - `kubectl logs`, `kubectl describe`
 - `kubectl debug` with ephemeral containers
 
 ### Level 2: Advanced Debugging  
+
 - Host 노드 접근
 - `/proc/PID/root`를 통한 Pod 식별
 - `nsenter`를 이용한 namespace 진입
 
 ### Level 3: Deep Debugging
+
 - 특권 Pod를 이용한 완전한 시스템 접근
 - `strace`, `lsof`, `tcpdump` 등 고급 도구 활용
 - 실시간 시스템 호출 및 네트워크 분석

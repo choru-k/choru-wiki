@@ -13,7 +13,7 @@ tags:
 
 ## 들어가며
 
-"Scale-out하면 문제가 해결될 거야!" 하지만 Production에서 로드테스트 중 ProxySQL Pod을 늘렸더니 오히려 **전체 서비스가 다운**되는 경험을 해봤나요? 
+"Scale-out하면 문제가 해결될 거야!" 하지만 Production에서 로드테스트 중 ProxySQL Pod을 늘렸더니 오히려 **전체 서비스가 다운**되는 경험을 해봤나요?
 
 이는 ProxySQL의 Connection Pool 특성과 Health Check 메커니즘, 그리고 Kubernetes Readiness Probe가 만들어내는 **악순환 고리** 때문입니다. 실제 Production 장애를 통해 분석한 ProxySQL Scale-out의 함정과 해결책을 살펴보겠습니다.
 
@@ -62,6 +62,7 @@ sum(rate(node_network_transmit_drop_total{product=~"$product",sbregion="$sbregio
 ### 1. Shared Resource Health Check의 함정
 
 **기존 Health Check 방식:**
+
 ```yaml
 readinessProbe:
   exec:
@@ -76,6 +77,7 @@ readinessProbe:
 ```
 
 **문제점:**
+
 - 모든 ProxySQL Pod이 **동일한 Noti DB**에 Health Check
 - DB의 `max_connections`에 도달하면 **모든 신규 Pod이 Not Ready**
 - Scale-out이 오히려 Health Check 부하를 증가
@@ -94,6 +96,7 @@ FROM stats_mysql_connection_pool;
 ```
 
 **Thunder Herd 패턴:**
+
 1. 요청 급증 → In-use Connection 부족
 2. 대량의 새 Connection 생성 시도
 3. TCP Handshake 지연으로 과도한 Connection Pool 생성
@@ -112,6 +115,7 @@ awk 'NR>1 {print $2}' | cut -d- -f3 | sort | uniq -c
 ```
 
 **Zone-A가 복구되지 않은 이유:**
+
 - Pod 수 부족으로 트래픽 집중
 - 노드 네트워크 대역폭 초과
 - DNS 해결 실패까지 발생
@@ -121,6 +125,7 @@ awk 'NR>1 {print $2}' | cut -d- -f3 | sort | uniq -c
 ### 1. Health Check 독립성 확보
 
 **개선된 Health Check 전략:**
+
 ```yaml
 readinessProbe:
   exec:
@@ -137,6 +142,7 @@ readinessProbe:
 ```
 
 **Alternative: Multi-Backend Health Check**
+
 ```bash
 #!/bin/bash
 # 여러 DB 중 하나라도 연결 가능하면 Ready
@@ -157,6 +163,7 @@ exit $((1 - $SUCCESS))
 ### 2. Connection Pool 최적화
 
 **ProxySQL Configuration 튜닝:**
+
 ```sql
 -- 기존 설정 (문제 있던 설정)
 SET mysql-max_connections=10000;        -- 너무 큰 값
@@ -175,6 +182,7 @@ SET mysql-free_connections_pct=10;           -- Free Connection 10%로 제한
 ```
 
 **Connection Pool 모니터링:**
+
 ```sql
 -- Connection Pool 상태 실시간 모니터링
 SELECT 
@@ -193,6 +201,7 @@ ORDER BY free_pct DESC;
 ### 3. 고가용성 확보: Zone-aware Scaling
 
 **PodDisruptionBudget 설정:**
+
 ```yaml
 apiVersion: policy/v1
 kind: PodDisruptionBudget
@@ -206,6 +215,7 @@ spec:
 ```
 
 **Zone별 최소 Pod 보장:**
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -401,22 +411,27 @@ class ProxySQLLoadTest:
 ProxySQL Scale-out 장애를 통해 배운 핵심 교훈들:
 
 ### 1. 공유 리소스 의존성 주의
+
 - Health Check가 Backend DB에 의존하면 Scale-out이 역효과
 - **독립적인 Health Check** 메커니즘 필요
 
 ### 2. Connection Pool은 적을수록 좋다
+
 - 과도한 Free Connection은 메모리 낭비이자 성능 저해 요소
 - **Thunder Herd 방지**를 위한 적극적인 Connection 제한 필요
 
 ### 3. Zone별 균등 배치가 핵심
+
 - 소수 Pod에 트래픽 집중되면 노드 레벨 장애로 확산
 - **Topology Spread Constraints** 필수 적용
 
 ### 4. 점진적 Load Testing
+
 - 급격한 부하 증가는 예상치 못한 Cascade Failure 유발
 - **Gradual Ramp-up**으로 시스템 한계 정확히 파악
 
 **Production 운영 체크리스트:**
+
 - [ ] ProxySQL Admin Interface 기반 Health Check 적용
 - [ ] Connection Pool 설정 최적화 (`max_connections < 500`)  
 - [ ] Zone별 최소 3개 Pod 보장

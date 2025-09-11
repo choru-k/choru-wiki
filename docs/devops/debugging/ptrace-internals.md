@@ -86,6 +86,7 @@ struct task_struct {
 ### 기본 추적 설정
 
 #### PTRACE_TRACEME
+
 자식 프로세스가 부모에게 추적 허용을 요청:
 
 ```c
@@ -142,6 +143,7 @@ int main() {
 ```
 
 #### PTRACE_ATTACH
+
 이미 실행 중인 프로세스에 추적 연결:
 
 ```c
@@ -188,6 +190,7 @@ void detach_from_process(pid_t target_pid) {
 ### 시스템 콜 추적
 
 #### PTRACE_SYSCALL
+
 시스템 콜 진입/종료 시점에서 프로세스 중단:
 
 ```c
@@ -264,6 +267,7 @@ int main() {
 ### 메모리 읽기/쓰기
 
 #### PTRACE_PEEKDATA / PTRACE_POKEDATA
+
 대상 프로세스의 메모리 직접 접근:
 
 ```c
@@ -337,6 +341,7 @@ int patch_return_value(pid_t pid, long new_value) {
 ### 고급 추적 옵션
 
 #### PTRACE_SETOPTIONS
+
 추적 동작 세부 제어:
 
 ```c
@@ -407,11 +412,14 @@ ptrace 사용을 제어하는 주요 보안 메커니즘:
 # Yama ptrace_scope 확인
 cat /proc/sys/kernel/yama/ptrace_scope
 
+```text
 # 값의 의미:
 # 0: 전통적인 ptrace 동작 (제한 없음)
 # 1: 제한된 ptrace - 부모-자식 관계만 허용
 # 2: 관리자만 ptrace 허용
 # 3: ptrace 완전 비활성화
+```
+
 ```
 
 실제 Yama 제한 우회 방법:
@@ -1249,6 +1257,7 @@ void analyze_network_performance(pid_t pid) {
 ### 일반적인 ptrace 오류
 
 #### EPERM (Operation not permitted)
+
 ```bash
 # 원인 확인
 cat /proc/sys/kernel/yama/ptrace_scope
@@ -1265,6 +1274,7 @@ prctl(PR_SET_PTRACER, tracer_pid, 0, 0, 0);
 ```
 
 #### EIO (Input/output error)
+
 ```c
 // 대상 프로세스가 이미 다른 tracer에 의해 추적 중
 int check_if_already_traced(pid_t pid) {
@@ -1294,6 +1304,7 @@ int check_if_already_traced(pid_t pid) {
 ```
 
 #### ESRCH (No such process)
+
 ```c
 // 프로세스 존재 여부 확인
 int is_process_alive(pid_t pid) {
@@ -1364,24 +1375,28 @@ int optimized_memory_read(pid_t pid, void *addr, void *buffer, size_t len) {
 ptrace는 Linux 디버깅 생태계의 핵심이며, 올바른 이해와 활용을 통해 강력한 분석 도구를 만들 수 있습니다:
 
 ### 핵심 개념
+
 - **Process Control**: 다른 프로세스의 실행 제어
 - **Memory Access**: 대상 프로세스 메모리 직접 접근
 - **System Call Interception**: 시스템 콜 가로채기 및 수정
 - **Signal Handling**: 시그널 기반 통신
 
 ### Production 활용 시 주의사항
+
 - **성능 오버헤드**: 10-100배 느려질 수 있음
 - **보안 제한**: Yama LSM, capabilities, seccomp 고려
 - **권한 관리**: 적절한 권한과 보안 정책 필요
 - **Container 호환성**: 특별한 권한과 설정 필요
 
 ### 효과적인 사용 전략
+
 1. **목적별 최적화**: 필요한 기능만 추적
 2. **샘플링 활용**: 전체 추적보다는 선택적 추적
 3. **보안 고려**: 민감한 정보 노출 방지
 4. **성능 모니터링**: 추적으로 인한 성능 영향 측정
 
 ### 관련 도구 연결
+
 - **strace**: ptrace 기반 시스템 콜 추적
 - **gdb**: 브레이크포인트와 디버깅
 - **ltrace**: 라이브러리 함수 호출 추적

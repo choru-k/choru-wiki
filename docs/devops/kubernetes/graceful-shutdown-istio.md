@@ -22,12 +22,15 @@ tags:
 일반적인 Production 환경의 트래픽 경로:
 
 ```
+```text
 Internet → NLB/ALB → Istio Gateway → Envoy Sidecar → App Container
+```
+
 ```
 
 각 레이어마다 서로 다른 종료 타이밍과 메커니즘을 가져서 복잡도가 증가합니다:
 
-```
+```text
 Timeline of Graceful Shutdown:
 ┌─────────────────────────────────────────────────────────┐
 │ T=0s    Pod Deletion Started                            │
@@ -48,11 +51,14 @@ Timeline of Graceful Shutdown:
 # Pod 삭제 시 Endpoint 업데이트 추적
 kubectl get endpoints myservice -w
 
+```text
 # 예상: 즉시 Pod IP 제거
 # 실제: 수 초의 지연 발생 가능
 NAME        ENDPOINTS                           AGE
 myservice   10.0.1.100:8080,10.0.1.101:8080   5m
 myservice   10.0.1.101:8080                    5m    # 지연 후 업데이트
+```
+
 ```
 
 이는 다음과 같은 이유 때문입니다:
@@ -88,8 +94,11 @@ UnhealthyThresholdCount: 3            # 3회 실패시 unhealthy
 **문제점**: Pod가 종료되어도 NLB가 인식하기까지 **최대 90초** 소요 가능!
 
 ```
+```text
 Pod Deletion (T=0) → ... → NLB Detection (T=90s)
 └─ 이 사이에 들어오는 요청들이 실패!
+```
+
 ```
 
 ### 3. Istio Envoy Configuration 업데이트 지연
@@ -513,21 +522,25 @@ groups:
 완벽한 Graceful Shutdown을 위한 핵심 원칙:
 
 ### 1. 신뢰하지 말고 검증하라
+
 - Kubernetes endpoint 업데이트 지연 가능성
 - NLB health check는 비동기적
 - Istio configuration 전파에 시간 소요
 
 ### 2. 다층 방어 전략
+
 - **Application 레벨**: PreStop hook + Health check endpoint
 - **Service Mesh 레벨**: Connection pool + Outlier detection  
 - **Load Balancer 레벨**: Connection draining + 빠른 health check
 
 ### 3. 실시간 검증
+
 - 트래픽 모니터링으로 실제 연결 상태 확인
 - Metrics 기반 자동화된 검증
 - 장애 시 즉시 롤백 가능한 체계
 
 ### 4. Production 체크리스트
+
 - [ ] `terminationGracePeriodSeconds` 충분히 설정 (60s+)
 - [ ] PreStop hook에서 활성 연결 대기
 - [ ] Health check endpoint 구현

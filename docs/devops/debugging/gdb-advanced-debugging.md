@@ -1506,6 +1506,7 @@ export ASAN_OPTIONS=abort_on_error=1:disable_coredump=0
 **상황**: 웹서버에서 하루에 2-3번 segfault 발생, 로그로는 원인 파악 불가
 
 **디버깅 과정**:
+
 ```bash
 # 1. Core dump 생성 설정
 echo '/var/core/core.%e.%p.%t' | sudo tee /proc/sys/kernel/core_pattern
@@ -1540,6 +1541,7 @@ echo '|/usr/local/bin/analyze_crash.sh %p' > /proc/sys/kernel/core_pattern
 **상황**: Java 애플리케이션이 아닌 C++ 서비스에서 메모리 사용량 지속 증가
 
 **디버깅 과정**:
+
 ```bash
 # 1. 실시간 메모리 할당 추적
 gdb -p $(pgrep myservice)
@@ -1571,6 +1573,7 @@ Stack trace:
 **상황**: 고부하 시 응답 없음, CPU 사용률 정상
 
 **디버깅 과정**:
+
 ```bash
 # 1. 스레드 상태 분석
 gdb -p $(pgrep service)
@@ -1596,6 +1599,7 @@ Thread 2: waiting for db_mutex (owned by thread 1)
 GDB는 단순한 디버거를 넘어서 production 환경의 복잡한 문제를 해결할 수 있는 강력한 플랫폼입니다:
 
 ### 핵심 역량
+
 - **Deep System Analysis**: 메모리, 스레드, 시스템 콜 레벨 분석
 - **Remote Debugging**: 원격 환경에서 안전한 디버깅  
 - **Automation**: Python extension과 스크립팅으로 자동화
@@ -1603,6 +1607,7 @@ GDB는 단순한 디버거를 넘어서 production 환경의 복잡한 문제를
 - **Production Ready**: 최소 침입으로 라이브 시스템 분석
 
 ### Production 활용 전략
+
 1. **예방적 모니터링**: Core dump 자동 분석 시스템 구축
 2. **선택적 디버깅**: 특정 조건에서만 상세 분석 수행  
 3. **원격 분석**: 개발 환경에서 production 데이터 분석
@@ -1610,6 +1615,7 @@ GDB는 단순한 디버거를 넘어서 production 환경의 복잡한 문제를
 5. **통합**: CI/CD 파이프라인과 모니터링 시스템 연동
 
 ### 고급 기법 활용 지침
+
 - **메모리 corruption**: AddressSanitizer + GDB 조합
 - **멀티스레드 이슈**: ThreadSanitizer + 실시간 스레드 분석
 - **성능 문제**: 샘플링 기반 프로파일링
@@ -1617,6 +1623,7 @@ GDB는 단순한 디버거를 넘어서 production 환경의 복잡한 문제를
 - **Container 환경**: 권한과 네임스페이스 고려사항
 
 ### 보안 및 성능 고려사항
+
 - **성능 영향**: 디버깅 중 10-100배 성능 저하 가능
 - **보안**: 메모리 내용과 심볼 정보 노출 위험
 - **권한**: ptrace capability와 컨테이너 보안 정책

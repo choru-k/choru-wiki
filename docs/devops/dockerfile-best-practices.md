@@ -13,7 +13,7 @@ tags:
 
 ## 들어가며
 
-"Dockerfile 작성은 쉽다"고 생각하다가 production에서 고통받은 경험이 있나요? **1GB 넘는 이미지 크기**, **보안 취약점 가득한 base image**, **빌드 시간 30분**과 같은 문제들 말입니다. 
+"Dockerfile 작성은 쉽다"고 생각하다가 production에서 고통받은 경험이 있나요? **1GB 넘는 이미지 크기**, **보안 취약점 가득한 base image**, **빌드 시간 30분**과 같은 문제들 말입니다.
 
 Production-grade 컨테이너 이미지를 구축하려면 단순히 동작하는 것을 넘어서 보안, 성능, 유지보수성을 모두 고려해야 합니다. 실제 DevOps 팀에서 사용하는 enterprise-level Dockerfile 작성 노하우를 완전히 공개합니다.
 
@@ -70,6 +70,7 @@ ENTRYPOINT ["/app"]
 ```
 
 **효과:**
+
 - 이미지 크기: 500MB → 15MB (97% 감소)
 - 공격 표면 최소화 (scratch base)
 - 빌드 도구 유출 방지
@@ -354,6 +355,7 @@ ENTRYPOINT ["java", "-jar", "/app.jar"]
 ```
 
 **장점:**
+
 - CVE 0개에 가까운 보안
 - 이미지 크기 최소화
 - 쉘 접근 불가로 공격 벡터 차단
@@ -473,6 +475,7 @@ RUN apt-get update && \
 ### 3. Build Context 최적화
 
 `.dockerignore`:
+
 ```gitignore
 # 빌드 성능 향상을 위한 제외 파일
 **/.git
@@ -708,6 +711,7 @@ Production-ready Dockerfile 작성의 핵심은 다음 요소들의 균형입니
 5. **Observability**: 모니터링과 디버깅 지원
 
 **Enterprise 환경에서 추가로 고려할 사항**:
+
 - **Supply chain security**: SBOM 관리와 의존성 추적
 - **Compliance**: 보안 스캔과 정책 준수
 - **Multi-platform builds**: AMD64/ARM64 크로스 플랫폼 지원
