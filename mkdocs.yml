@@ -217,12 +217,17 @@ nav:
               - "6-3: Block I/O and Disk Scheduling": cs/guide/chapter-06-file-io/03-block-io.md
               - "6-4: Async I/O and Event Programming": cs/guide/chapter-06-file-io/04-async-io.md
           - "Chapter 7: Network Programming":
-              - "Overview": cs/guide/chapter-07-network-programming.md
-              - "7-1: Socket Programming Basics": cs/guide/chapter-07-1-socket-programming-basics.md
-              - "7-2: TCP/IP Stack Internals": cs/guide/chapter-07-2-tcp-ip-stack-internals.md
-              - "7-3: High Performance Network Server": cs/guide/chapter-07-3-high-performance-network-server.md
-              - "7-4: Secure Networking and TLS": cs/guide/chapter-07-4-secure-networking-and-tls.md
-          - "Chapter 8: Async & Event Programming": cs/guide/chapter-08-async-event-programming.md
+              - "Overview": cs/guide/chapter-07-network-programming/index.md
+              - "7-1: Socket Programming Basics": cs/guide/chapter-07-network-programming/01-socket-basics.md
+              - "7-2: TCP/IP Stack Internals": cs/guide/chapter-07-network-programming/02-tcp-ip-stack.md
+              - "7-3: High Performance Network Server": cs/guide/chapter-07-network-programming/03-high-performance.md
+              - "7-4: Secure Networking and TLS": cs/guide/chapter-07-network-programming/04-secure-networking.md
+          - "Chapter 8: Async & Event Programming":
+              - "Overview": cs/guide/chapter-08-async-programming/index.md
+              - "8-1: Promise and Future Patterns": cs/guide/chapter-08-async-programming/01-promise-future.md
+              - "8-2: Event Loop and Concurrency": cs/guide/chapter-08-async-programming/02-event-loop.md
+              - "8-3: Coroutine and Green Thread": cs/guide/chapter-08-async-programming/03-coroutine.md
+              - "8-4: Distributed Async Patterns": cs/guide/chapter-08-async-programming/04-distributed-async.md
           - "Chapter 9: Memory & GC": cs/guide/chapter-09-memory-gc.md
           - "Chapter 10: Performance Optimization": cs/guide/chapter-10-performance-optimization.md
           - "Chapter 11: Container & Isolation": cs/guide/chapter-11-container-isolation.md
