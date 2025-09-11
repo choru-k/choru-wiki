@@ -29,8 +29,6 @@ $Z(s,a) = V(s) + A(s,a)$
 
 V와 A 을 확률 분포로써 적용 할 수 있을 것 같습니다. V 는 `(num_support)` 의 차원을 갖고 A 는 `(action_space, num_support)` 의 차원을 가질 것입니다.
 
-  
-
 ```Python
 def forward(self, x):
         x = F.relu(self.fc(x))
@@ -45,22 +43,18 @@ def forward(self, x):
         return p
 ```
 
-  
-
 ## Double + Distributional
 
 oneline_net 에서 action을 구합니다.
 
 ```Python
-				z_space = online_net.z.repeat(batch_size, online_net.num_outputs, 1)
+    z_space = online_net.z.repeat(batch_size, online_net.num_outputs, 1)
         prob_next_states_online = online_net(next_states)
         prob_next_states_target = target_net(next_states)
         Q_next_state = torch.sum(prob_next_states_online * z_space, 2)
         next_actions = torch.argmax(Q_next_state, 1)
         prob_next_states_action = torch.stack([prob_next_states_target[i, action, :] for i, action in enumerate(next_actions)])
 ```
-
-  
 
 ## PER + Distributional
 
@@ -97,7 +91,5 @@ def get_loss(cls, online_net, target_net, states, next_states, actions, rewards,
 
         return loss
 ```
-
-  
 
 나머지는 Distributional 이 없는 버전과 동일합니다.

@@ -51,10 +51,6 @@ CG Damp 는 원래 잇는듯.... 왜지???
 
 혹시라도 `kl_hessian_p` 값이 0일 경우를 방지???
 
-  
-
-  
-
 [https://reinforcement-learning-kr.github.io/2018/06/25/4_npg/](https://reinforcement-learning-kr.github.io/2018/06/25/4_npg/)
 
 [https://papers.nips.cc/paper/2073-a-natural-policy-gradient.pdf](https://papers.nips.cc/paper/2073-a-natural-policy-gradient.pdf)

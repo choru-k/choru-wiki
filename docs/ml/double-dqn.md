@@ -14,8 +14,6 @@ double: [https://arxiv.org/pdf/1509.06461.pdf](https://arxiv.org/pdf/1509.06461.
 
 duel: [https://arxiv.org/pdf/1511.06581.pdf](https://arxiv.org/pdf/1511.06581.pdf)
 
-  
-
 ## Double
 
 그냥 DQN 식
@@ -29,8 +27,6 @@ $loss = (Q(s,a) - r + \gamma Q'(s, argma_{a'}Q(s,a'))^2$
 Action 선택을 `target_net` 으로 하는지 `main_net` 으로 하는지의 차이만 있을 뿐이다.
 
 DQN에서는 단순하게 `target_net`으로 Action을 선택했는데 이 경우에는 만약 `target_net`이 가장 큰 `qvalue`을 가지고 있는 `action`을 선택하면 그 `action`이 다시 `Q-value`을 증가 시키고 다시 그 `action`이 선택 되는 순환이 발생 할 수 있기 때문에 `action` 을 선택하는 `net` 과 `value` 을 평가하는 `net` 을 분리시킨다.
-
-  
 
 ## 구현
 

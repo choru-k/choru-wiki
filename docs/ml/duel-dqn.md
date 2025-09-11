@@ -8,8 +8,6 @@ tags:
 
 # Dueling DQN
 
-  
-
 ## Duel
 
 $Q(s,a) = V(s) + A(s,a)$

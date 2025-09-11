@@ -13,8 +13,6 @@ tags:
 
 일단 바로 Rainbow 을 하면 복잡하기 때문에 Distributional 을 제외한 부분부터 조합하도록 합시다.
 
-  
-
 정리하면
 
 **Rainbow 구성 요소:**
@@ -27,8 +25,6 @@ tags:
 6. **Nosiy Net** ( Net 전체에 Noisy 을 주어서 explore 을 하도록 )
 
 입니다.
-
-  
 
 ## Memory.py
 
@@ -61,8 +57,6 @@ def __init__(self, capacity):
 ```
 
 기본뼈대는 PER 과 같지만 N-step 전까지의 replay 안에서만 sample 을 구하고 sample 을 N-step 에 맞게 변형해주는 부분이 들어갑니다.
-
-  
 
 ```Python
 def sample(self, batch_size, net, target_net, beta):
@@ -104,8 +98,6 @@ def sample(self, batch_size, net, target_net, beta):
         return batch, weights
 ```
 
-  
-
 ## Model.py
 
 Noisy Net, Double, Duel 이 적용됩니다. 또한 PER 에 필요한 td_error 을 쉽게 구하기 위해서 함수를 따로 빼줍니다.
@@ -128,8 +120,6 @@ def __init__(self, num_inputs, num_outputs):
                 nn.init.xavier_uniform(m.weight)
 ```
 
-  
-
 ```Python
 @classmethod
     def get_td_error(cls, oneline_net, target_net, states, next_states, actions, rewards, masks):
@@ -151,8 +141,6 @@ def __init__(self, num_inputs, num_outputs):
 
         return td_error
 ```
-
-  
 
 explore 을 위한 Noisy Net 이기 때문에 action을 구할 때 마다 nosie 을 초기화 해줍니다.
 

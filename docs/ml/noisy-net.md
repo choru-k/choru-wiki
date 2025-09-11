@@ -13,8 +13,6 @@ tags:
 
 [https://arxiv.org/pdf/1706.10295.pdf](https://arxiv.org/pdf/1706.10295.pdf)
 
-  
-
 일반적으로 탐색을 할때 두가지 방법을 사용합니다.
 
 **탐색 방법:**
@@ -22,11 +20,7 @@ tags:
 1. **epsilon-greedy**: 지금까지 보통 써왔던 방법으로 특정 확률로 랜덤한 액션을 선택하게 합니다.
 2. **entropy regularisation**: 일반적으로 policy-gradient 방법에 자주 사용됩니다.
 
-  
-
 이 논문에서는 신경망 전체에 noisy 을 주는 방법을 제안하고 있습니다. 이 noisy 을 통해서 탐색을 한다는 것 입니다. 이 방법이 전통적인 탐색 방법 보다 더 좋다는 것은 논문에서 증명되어 있지 않은 것 같습니다. (제가 논문을 잘 이해를 못한 부분 일 수도 있습니다) 결과론적으로 봤을 때 더 잘됬네 라는 느낌인것 같습니다만 제 느낌적인 부분으로는 일반적으로 epsilon-greedy 는 점점 decay 되면서 탐험의 의미가 사라지고 state 나 network 에 상관없이 무작위라는 특성이 있습니다. 그에 비해 noisy-net 은 그때그때 다르기 때문에 좀더 의미 있는 탐색을 하는 것 같습니다. 만약 action A,B 의 Q 값이 100, 10 등 확연히 차이가 날 때에는 무조건 A를 선택하는게 좋고 B를 선택하는 경험은 큰 필요가 없습니다만 A,B 의 값이 51, 50 일 경우 거의 비슷하기 때문에 많은 탐험을 하는게 중요할 것 같습니다. nosiy-net 은 전체 신경망에 대해서 nosie 을 주기 때문에 이러한 의미 있는 탐색을 더 하는 것 같습니다. 또한 epsilon-greedy 의 경우 decay 의 값과 최소 epsilon 값 등 hyper-parameter 가 존재하는데 그에 비해 noisy net 은 그런 hyper-parameter 에 의한 차이가 적다고 생각됩니다.
-
-  
 
 일반적인 linear layer 의 식은
 
@@ -54,8 +48,6 @@ $\epsilon^w_{i,j} = f(\epsilon_i)f(\epsilon_j), \epsilon^b_j=f(\epsilon_j)$
 $f(x)=sgn(x)\sqrt{|x|}$
 
 을 사용합니다.
-
-  
 
 # 실제구현
 
@@ -137,8 +129,6 @@ $\frac {\sigma_0} {\sqrt{p}}$
 
 로 초기화 한다고 합니다. 논문에서는 `sigma_zero`를 0.5 로 주었다고 합니다.
 
-  
-
 ```Python
 def _scale_noise(self, size):
     x = torch.randn(size)
@@ -170,8 +160,6 @@ def forward(self, input):
 
 $w = u^w+\sigma^w*\epsilon^w, b = u^b+\sigma^b*\epsilon^b$
 
-  
-
 이제 위의 Noisy-Net 을 사용해봅시다.
 
 ```Python
@@ -196,8 +184,6 @@ class QNet(nn.Module):
 ```
 
 보시면 fc2 부분을 NoisyLinear 로 바꾸어 주고 `forward` 부분에서 `reset_noise` 을 호출함으로써 지속적으로 nosie 을 만들어 줍니다. NoisyLayer 는 일반적으로 마지막 부분에 넣는다고 합니다. 물론 모든 Layer 을 NoisyLayer 로 바꾸어도 되지만 개인적으로는 이미 noise 가 들어간 값에 또 noise 를 넣는게 큰 의미가 있는지는 잘 모르겠습니다.
-
-  
 
 참조
 

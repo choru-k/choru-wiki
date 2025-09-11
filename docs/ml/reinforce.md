@@ -13,12 +13,10 @@ $\Delta \theta_t = \alpha \nabla_{\theta}log\pi_{\theta}(s_t,a_t)v_t$
 
 v 는 Q의 unbiased 한 샘플. 즉 경험적으로 구한 Q값.
 
-  
-
 ```Python
 memory = []
 while not done:
-		steps += 1
+  steps += 1
 
     action = net.get_action(state)
     next_state, reward, done, _ = env.step(action)

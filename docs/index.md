@@ -5,6 +5,7 @@ A comprehensive personal wiki documenting core computer science concepts with de
 ## 📚 Main Sections
 
 ### [Memory Management](cs/memory/index.md)
+
 시스템 메모리의 동작 원리부터 언어별 메모리 관리, 컨테이너 환경의 메모리 격리까지 다룹니다.
 
 - Process memory structure and virtual memory
@@ -13,6 +14,7 @@ A comprehensive personal wiki documenting core computer science concepts with de
 - OOM Killer and memory pressure monitoring
 
 ### [Process & Thread](cs/process/index.md)
+
 Linux 커널의 프로세스/스레드 구현부터 스케줄링, 인터럽트 처리까지 심도 있게 탐구합니다.
 
 - Process vs Thread implementation and differences
@@ -36,11 +38,13 @@ Linux 커널의 프로세스/스레드 구현부터 스케줄링, 인터럽트 �
 ## 💡 Learning Paths
 
 ### Beginner Track
+
 1. [Process Memory Structure](cs/memory/process-memory-structure.md)
 2. [Garbage Collection Basics](cs/memory/garbage-collection-basics.md)
 3. [Process vs Thread - The Linux Truth](cs/process/process-vs-thread-1.md)
 
 ### Intermediate Track
+
 1. [Linux Scheduling Complete Guide](cs/process/linux-scheduling-1.md)
 2. [JVM Memory Structure & GC Tuning](cs/memory/jvm-memory-gc.md)
 3. [Cgroup and Container Memory Isolation](cs/memory/cgroup-container-memory.md)

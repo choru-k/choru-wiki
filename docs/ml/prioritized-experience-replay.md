@@ -13,8 +13,6 @@ tags:
 
 [https://arxiv.org/pdf/1511.05952.pdf](https://arxiv.org/pdf/1511.05952.pdf)
 
-  
-
 ## 기본 내용
 
 TD Error
@@ -28,8 +26,6 @@ DQN에서는 이걸 0로 만드는 것을 목표로 학습을 시켰음. 이걸 
 $P(experience_i) = \frac {|error_i|} {\sum_j |error_j|}$
 
 로 표현해서 만듬.
-
-  
 
 # 구현 법
 
@@ -48,8 +44,8 @@ random_number = np.random.uniform(0, sum_td_error)
 tmp_sum_error = 0
 idx = 0
 while tmp_sum_error < random_number:
-	tmp_sum_error += abs(td_errors[idx])
-	idx += 1
+ tmp_sum_error += abs(td_errors[idx])
+ idx += 1
 
 memory.push(idx)
 
@@ -57,13 +53,9 @@ memory.push(idx)
 # replay 나머지는 같음
 ```
 
-  
-
 ## Segment Tree 사용법
 
 위의 방법은 memory을 만들 때 `O(batch_size * len(td_erros))` 만큼의 계산량을 가지기 때문에 이미 부분을 Segment Tree 을 사용해서 `O(batch_size * log(len(td_erros)))` 으로 최적화 가능. Segment Tree 검색 하는게 빨라요.
-
-  
 
 ## Numpy random choice 사용법
 
@@ -76,17 +68,10 @@ transitions = [self.memory[idx] for idx in indexes]
 
 이게 제일 간단한 방법 같은데 아마 성능상의 이유로 Segment Tree 을 쓰는 예제가 많은 것 같음. 아마?
 
-  
-
 여기서는 3번째 방법을 이용해서 논문을 구현합니다.
-
-  
-
-  
 
 ## Memory_With_TDError  
   
-
 ```Python
 class Memory_With_TDError(Memory):
     def __init__(self, capacity, alpha, beta):
@@ -140,8 +125,6 @@ class Memory_With_TDError(Memory):
 
         return td_error
 ```
-
-  
 
 ![[Screenshot2018-11-1514.45.16.png]]
 

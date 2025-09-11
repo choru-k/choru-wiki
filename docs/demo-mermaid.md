@@ -187,13 +187,15 @@ erDiagram
 
 ## ASCII Art vs Mermaid 비교
 
-### ASCII Art 문제점:
+### ASCII Art 문제점
+
 - 폰트에 따라 정렬이 깨짐
 - 모바일에서 보기 어려움
 - 수정이 번거로움
 - 복사/붙여넣기 시 깨짐
 
-### Mermaid 장점:
+### Mermaid 장점
+
 - 항상 일정한 렌더링
 - 반응형 디자인
 - 간단한 문법으로 복잡한 다이어그램 생성
@@ -204,6 +206,7 @@ erDiagram
 ASCII Art를 Mermaid로 변환하는 예시:
 
 **Before (ASCII):**
+
 ```text
     A
    / \
@@ -213,6 +216,7 @@ D   E   F
 ```
 
 **After (Mermaid):**
+
 ```mermaid
 graph TD
     A --> B

@@ -10,8 +10,6 @@ tags:
 
 Advantage = Q - V
 
-  
-
 Q와 V 를 둘 다 학습시키는건 불필요.
 
 $Q(s,a) = E[r + \gamma V(s')]$
@@ -19,8 +17,6 @@ $Q(s,a) = E[r + \gamma V(s')]$
 $Q-V = r + \gamma V(s') - V(s) = td\ error$
 
 Entropy Loss Function 을 도입. Explore 을 위해서
-
-  
 
 $H(X) = -SumP(x)log(P(x))$
 

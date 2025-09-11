@@ -67,7 +67,7 @@ Create documents following this pattern:
 Include these elements in technical sections:
 
 #### System Architecture Diagrams
-```
+```text
 Use ASCII art for architecture:
 ┌─────────────────────────┐
 │     User Space          │
@@ -241,6 +241,110 @@ Every article must include:
 더 자세한 내용은 [OOM Killer](oom-killer.md#detection-mechanism) 섹션 참조
 ```
 
+## Code and Output Formatting Guidelines
+
+### CRITICAL: Proper Language Identifiers
+
+Always use appropriate language identifiers for syntax highlighting:
+
+#### Command Line Output
+```bash
+# For shell commands and their output
+$ iptables -t nat -L -v
+Chain PREROUTING (policy ACCEPT 0 packets, 0 bytes)
+```
+
+#### System Output (logs, config files, structured data)
+```text
+# For iptables output, system logs, config files
+Chain OUTPUT (policy ACCEPT)
+pkts bytes target     prot opt in    out    source       destination
+ 54  3240  ISTIO_OUTPUT   tcp  --  any   any    anywhere     anywhere
+```
+
+#### ASCII Diagrams and Box Drawings
+```text
+# For architectural diagrams, flowcharts, ASCII art
+┌─────────────────────────┐
+│     User Space          │
+├─────────────────────────┤
+│     Kernel Space        │
+└─────────────────────────┘
+```
+
+#### Programming Languages
+```python
+# Python code
+def function():
+    return True
+```
+
+```c
+// C/C++ code
+struct task_struct {
+    volatile long state;
+}
+```
+
+```go
+// Go code
+func main() {
+    fmt.Println("Hello")
+}
+```
+
+```yaml
+# YAML configuration
+apiVersion: v1
+kind: Pod
+```
+
+```json
+// JSON data
+{
+  "name": "value"
+}
+```
+
+### Table Formatting for Command Output
+
+When showing command output with columns (like iptables, ps, netstat):
+
+1. **Use monospace formatting**: Wrap in code blocks with `bash` or `text`
+2. **Align columns**: Ensure columns are properly aligned for readability
+3. **Preserve spacing**: Maintain original spacing from command output
+
+#### Good Example:
+```bash
+Chain ISTIO_OUTPUT (1 references)
+pkts bytes target              prot opt in    out    source       destination
+  0     0  RETURN              all  --  any   lo     127.0.0.6    anywhere
+ 54  3240  RETURN              all  --  any   any    anywhere     anywhere      owner UID match 1337
+```
+
+#### Bad Example:
+```
+Chain ISTIO_OUTPUT (1 references)
+ pkts bytes target     prot opt in     out     source      destination
+    0     0 RETURN     all  --  any    lo    127.0.0.6   anywhere
+```
+
+### Special Characters and Symbols
+
+1. **Angle brackets in text**: Use HTML entities
+   - `&lt;pid&gt;` instead of `<pid>`
+   - Example: `/proc/&lt;pid&gt;/maps`
+
+2. **Arrows and special symbols**: Use Unicode
+   - `→` for arrows (not ->)
+   - `✓` for checkmarks
+   - `✗` for crosses
+
+3. **Box drawing characters**: Use proper Unicode box characters
+   - `┌─┬─┐` not `+-+-+`
+   - `│ │ │` not `| | |`
+   - `└─┴─┘` not `+-+-+`
+
 ## Quality Checklist
 
 Before completing any article:
@@ -279,7 +383,7 @@ Before completing any article:
 ### Visualization Patterns
 
 #### Before/After Comparison
-```
+```text
 변경 전:                    변경 후:
 ┌──────────┐              ┌──────────┐
 │ Complex  │              │  Simple  │
@@ -288,14 +392,14 @@ Before completing any article:
 ```
 
 #### Process Flow
-```
+```text
 Step 1 → Step 2 → Step 3
   ↓        ↓        ↓
 [Detail] [Detail] [Result]
 ```
 
 #### Decision Tree
-```
+```text
         Question?
        /         \
      Yes          No
