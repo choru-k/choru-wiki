@@ -204,6 +204,10 @@ nav:
               - "3-2: TLB and Caching": cs/guide/chapter-03-virtual-memory/02-tlb-caching.md
               - "3-3: Page Fault and Memory Management": cs/guide/chapter-03-virtual-memory/03-page-fault.md
               - "3-4: Memory Compression and Deduplication": cs/guide/chapter-03-virtual-memory/04-compression-deduplication.md
+              - "3-5: Page Fault Analysis": cs/guide/chapter-03-virtual-memory/05-page-fault-analysis.md
+              - "3-6: Memory Mapping Optimization": cs/guide/chapter-03-virtual-memory/06-memory-mapping-optimization.md
+              - "3-7: Swap Management": cs/guide/chapter-03-virtual-memory/07-swap-management.md
+              - "3-8: OOM Debugging": cs/guide/chapter-03-virtual-memory/08-oom-debugging.md
           - "Chapter 4: Process & Thread":
               - "Overview": cs/guide/chapter-04-process-thread/index.md
               - "4-1: Process Creation and Termination": cs/guide/chapter-04-process-thread/01-process-creation.md
@@ -302,21 +306,21 @@ nav:
           - File Descriptors: cs/system/file-descriptor.md
       - AWS Internals (Storytelling):
           - S3 Deep Dive:
-              - "Data Durability: 99.999999999% Magic": cs/aws-internals/s3/01-durability-v2.md
-              - "Consistency: From Eventual to Strong": cs/aws-internals/s3/02-consistency-v2.md
-              - "Performance: Netflix's Christmas Story": cs/aws-internals/s3/03-performance-v2.md
-              - "Security: Capital One Breach Timeline": cs/aws-internals/s3/04-security-v2.md
+              - "Data Durability: 99.999999999% Magic": cs/aws-internals/s3/01-architecture.md
+              - "Consistency: From Eventual to Strong": cs/aws-internals/s3/02-storage-classes.md
+              - "Performance: Netflix's Christmas Story": cs/aws-internals/s3/03-performance.md
+              - "Security: Capital One Breach Timeline": cs/aws-internals/s3/04-security.md
           - Load Balancing:
-              - "ELB/ALB: Black Friday Crisis Management": cs/aws-internals/load-balancing/01-elb-alb-v2.md
-              - "NLB/GWLB: Fortnite's 100M Concurrent Users": cs/aws-internals/load-balancing/02-nlb-gwlb-v2.md
-              - "Algorithms: Instagram's 10B User Distribution": cs/aws-internals/load-balancing/03-algorithms-v2.md
+              - "ELB/ALB: Black Friday Crisis Management": cs/aws-internals/load-balancing/01-elb-alb.md
+              - "NLB/GWLB: Fortnite's 100M Concurrent Users": cs/aws-internals/load-balancing/02-nlb-gwlb.md
+              - "Algorithms: Instagram's 10B User Distribution": cs/aws-internals/load-balancing/03-algorithms.md
       - Kubernetes Deep Dive (Storytelling):
           - Architecture:
-              - "Overview: Google's 2B Containers Secret": cs/kubernetes/architecture/01-overview-v2.md
-              - "API Server: Cloudflare's DDoS Defense": cs/kubernetes/architecture/02-api-server-v2.md
-              - "etcd: Discord's 1B Messages Recovery": cs/kubernetes/architecture/03-etcd-v2.md
+              - "Overview: Google's 2B Containers Secret": cs/kubernetes/architecture/01-overview.md
+              - "API Server: Cloudflare's DDoS Defense": cs/kubernetes/architecture/02-api-server.md
+              - "etcd: Discord's 1B Messages Recovery": cs/kubernetes/architecture/03-etcd.md
           - Workloads:
-              - "Pods: Airbnb's 10K Bookings/sec": cs/kubernetes/workloads/01-pods-v2.md
+              - "Pods: Airbnb's 10K Bookings/sec": cs/kubernetes/workloads/01-pods.md
   - DevOps:
       - Service Mesh:
           - Istio Traffic Interception: devops/istio-traffic-interception.md

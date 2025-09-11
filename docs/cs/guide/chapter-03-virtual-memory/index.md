@@ -107,6 +107,46 @@ graph TB
 - 📦 **Transparent Huge Pages**: 자동 대용량 페이지
 - ⚡ **Memory Ballooning**: 가상화 환경의 메모리 최적화
 
+### [3-5: Page Fault 분석](05-page-fault-analysis.md)
+
+**"갑자기 응답이 느려졌어요"**
+
+- 💥 **Page Fault 성능 영향**: 실제 응답시간에 미치는 영향 분석
+- 🔍 **Major vs Minor Fault**: 각 유형별 원인과 해결책
+- 📊 **/proc/[pid]/stat 해석**: Page fault 통계 정보 분석
+- 🎯 **perf를 활용한 측정**: 정확한 page fault 측정 기법
+- 🔒 **mlock/mlockall 활용**: 메모리 잠금을 통한 성능 최적화
+
+### [3-6: 메모리 매핑 최적화](06-memory-mapping-optimization.md)
+
+**"대용량 파일 처리가 느려요"**
+
+- 🗂️ **mmap vs read/write**: 각각의 장단점과 적합한 사용 사례
+- 💡 **madvise 패턴 활용**: 메모리 사용 힌트로 성능 최적화
+- 📈 **Huge Pages 실질 효과**: 대용량 페이지의 성능 개선 효과
+- 🌐 **NUMA 메모리 바인딩**: 다중 CPU 환경의 메모리 최적화
+- 🚀 **대용량 파일 처리**: 효율적인 대용량 데이터 처리 전략
+
+### [3-7: 스왑 관리와 최적화](07-swap-management.md)
+
+**"시스템이 swap을 쓰기 시작했어요"**
+
+- ⚖️ **스왑 성능 영향**: 스왑 사용이 시스템에 미치는 실제 영향
+- 🎛️ **swappiness 최적화**: 스왑 발생 임계값 조정 전략
+- 🗜️ **zram과 zswap**: 메모리 압축을 통한 스왑 최적화
+- 📊 **스왑 패턴 분석**: 스왑 사용 패턴 모니터링과 분석
+- 🐳 **컨테이너 스왑 관리**: 컨테이너 환경의 스왑 관리 전략
+
+### [3-8: OOM 디버깅과 예방](08-oom-debugging.md)
+
+**"OOM Killer가 프로세스를 죽였어요"**
+
+- ⚔️ **OOM Killer 동작 원리**: 프로세스 선택 기준과 알고리즘
+- 🎯 **oom_score 활용**: OOM 점수 조정을 통한 프로세스 보호
+- 🐳 **cgroup OOM 디버깅**: 컨테이너 메모리 제한 OOM 분석
+- 🔍 **dmesg OOM 메시지 해석**: 시스템 로그를 통한 OOM 원인 분석
+- 🛡️ **early OOM 설정**: 시스템 보호를 위한 조기 OOM 트리거
+
 ## 실습 환경 준비
 
 이 장의 예제들을 직접 실행해보려면 다음 도구들이 필요합니다:
