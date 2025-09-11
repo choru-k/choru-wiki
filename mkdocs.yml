@@ -186,6 +186,8 @@ nav:
               - "1-2: How Linking Works": cs/guide/chapter-01-compiler-linker/02-linking.md
               - "1-3: Loading and Execution": cs/guide/chapter-01-compiler-linker/03-loading-execution.md
               - "1-4: Compiler Optimization": cs/guide/chapter-01-compiler-linker/04-optimization.md
+              - "1-5: Build System Debugging": cs/guide/chapter-01-compiler-linker/05-build-debugging.md
+              - "1-6: Linking Error Resolution": cs/guide/chapter-01-compiler-linker/06-linking-debugging.md
           - "Chapter 2: Memory Architecture":
               - "Overview": cs/guide/chapter-02-memory/index.md
               - "2-1: Process Memory Structure": cs/guide/chapter-02-memory/01-process-memory.md
@@ -237,6 +239,21 @@ nav:
           - "Chapter 10: Performance Optimization": cs/guide/chapter-10-performance-optimization.md
           - "Chapter 11: Container & Isolation": cs/guide/chapter-11-container-isolation.md
           - "Chapter 12: Observability & Debugging": cs/guide/chapter-12-observability-debugging.md
+          - "Chapter 13: Distributed Systems": cs/guide/chapter-13-distributed-systems.md
+          - "Chapter 14: Security Engineering":
+              - "Overview": cs/guide/chapter-14-security-engineering/index.md
+              - "14-1: Memory Security": cs/guide/chapter-14-security-engineering/01-memory-security.md
+              - "14-2: Network Security": cs/guide/chapter-14-security-engineering/02-network-security.md
+              - "14-3: Authentication & Authorization": cs/guide/chapter-14-security-engineering/03-authentication-authorization.md
+              - "14-4: Container Security": cs/guide/chapter-14-security-engineering/04-container-security.md
+              - "14-5: Cryptography & Key Management": cs/guide/chapter-14-security-engineering/05-cryptography-key-management.md
+          - "Chapter 15: System Design Patterns":
+              - "Overview": cs/guide/chapter-15-system-design-patterns/index.md
+              - "15-1: Microservices Architecture": cs/guide/chapter-15-system-design-patterns/01-microservices-architecture.md
+              - "15-2: Event-Driven Architecture": cs/guide/chapter-15-system-design-patterns/02-event-driven-architecture.md
+              - "15-3: CQRS & Event Sourcing": cs/guide/chapter-15-system-design-patterns/03-cqrs-event-sourcing.md
+              - "15-4: Saga Pattern": cs/guide/chapter-15-system-design-patterns/04-saga-pattern.md
+              - "15-5: API Gateway Patterns": cs/guide/chapter-15-system-design-patterns/05-api-gateway-patterns.md
       - Memory Management:
           - cs/memory/index.md
           - Process Memory Structure: cs/memory/process-memory-structure.md
