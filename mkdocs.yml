@@ -194,6 +194,10 @@ nav:
               - "2-2: Stack and Heap Internals": cs/guide/chapter-02-memory/02-stack-heap.md
               - "2-3: Virtual Memory and Paging": cs/guide/chapter-02-memory/03-virtual-memory.md
               - "2-4: Memory Mapping and Shared Memory": cs/guide/chapter-02-memory/04-memory-mapping.md
+              - "2-5: Memory Leak Debugging": cs/guide/chapter-02-memory/05-memory-leak-debugging.md
+              - "2-6: Memory Allocator Optimization": cs/guide/chapter-02-memory/06-memory-allocator.md
+              - "2-7: Memory Usage Analysis": cs/guide/chapter-02-memory/07-memory-usage-analysis.md
+              - "2-8: Stack Problem Debugging": cs/guide/chapter-02-memory/08-stack-debugging.md
           - "Chapter 3: Virtual Memory":
               - "Overview": cs/guide/chapter-03-virtual-memory/index.md
               - "3-1: Address Translation": cs/guide/chapter-03-virtual-memory/01-address-translation.md
@@ -296,6 +300,23 @@ nav:
       - System Programming:
           - cs/system/index.md
           - File Descriptors: cs/system/file-descriptor.md
+      - AWS Internals (Storytelling):
+          - S3 Deep Dive:
+              - "Data Durability: 99.999999999% Magic": cs/aws-internals/s3/01-durability-v2.md
+              - "Consistency: From Eventual to Strong": cs/aws-internals/s3/02-consistency-v2.md
+              - "Performance: Netflix's Christmas Story": cs/aws-internals/s3/03-performance-v2.md
+              - "Security: Capital One Breach Timeline": cs/aws-internals/s3/04-security-v2.md
+          - Load Balancing:
+              - "ELB/ALB: Black Friday Crisis Management": cs/aws-internals/load-balancing/01-elb-alb-v2.md
+              - "NLB/GWLB: Fortnite's 100M Concurrent Users": cs/aws-internals/load-balancing/02-nlb-gwlb-v2.md
+              - "Algorithms: Instagram's 10B User Distribution": cs/aws-internals/load-balancing/03-algorithms-v2.md
+      - Kubernetes Deep Dive (Storytelling):
+          - Architecture:
+              - "Overview: Google's 2B Containers Secret": cs/kubernetes/architecture/01-overview-v2.md
+              - "API Server: Cloudflare's DDoS Defense": cs/kubernetes/architecture/02-api-server-v2.md
+              - "etcd: Discord's 1B Messages Recovery": cs/kubernetes/architecture/03-etcd-v2.md
+          - Workloads:
+              - "Pods: Airbnb's 10K Bookings/sec": cs/kubernetes/workloads/01-pods-v2.md
   - DevOps:
       - Service Mesh:
           - Istio Traffic Interception: devops/istio-traffic-interception.md
