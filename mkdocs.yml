@@ -5,7 +5,7 @@ site_description: Computer Science, DevOps, and System Programming Knowledge Bas
 
 theme:
   name: material
-  language: ko
+  language: en
   palette:
     # Light mode
     - media: "(prefers-color-scheme: light)"
@@ -45,7 +45,6 @@ theme:
     - navigation.footer
     # Table of contents
     - toc.follow
-    - toc.integrate
     # Search
     - search.highlight
     - search.share
@@ -179,6 +178,55 @@ nav:
   - Home: index.md
   - Computer Science:
       - cs/index.md
+      - CS Mastery Guide:
+          - cs/guide/index.md
+          - "Chapter 1: Compiler & Linker":
+              - "Overview": cs/guide/chapter-01-compiler-linker/index.md
+              - "1-1: How Compilation Works": cs/guide/chapter-01-compiler-linker/01-compilation.md
+              - "1-2: How Linking Works": cs/guide/chapter-01-compiler-linker/02-linking.md
+              - "1-3: Loading and Execution": cs/guide/chapter-01-compiler-linker/03-loading-execution.md
+              - "1-4: Compiler Optimization": cs/guide/chapter-01-compiler-linker/04-optimization.md
+          - "Chapter 2: Memory Architecture":
+              - "Overview": cs/guide/chapter-02-memory/index.md
+              - "2-1: Process Memory Structure": cs/guide/chapter-02-memory/01-process-memory.md
+              - "2-2: Stack and Heap Internals": cs/guide/chapter-02-memory/02-stack-heap.md
+              - "2-3: Virtual Memory and Paging": cs/guide/chapter-02-memory/03-virtual-memory.md
+              - "2-4: Memory Mapping and Shared Memory": cs/guide/chapter-02-memory/04-memory-mapping.md
+          - "Chapter 3: Virtual Memory":
+              - "Overview": cs/guide/chapter-03-virtual-memory/index.md
+              - "3-1: Address Translation": cs/guide/chapter-03-virtual-memory/01-address-translation.md
+              - "3-2: TLB and Caching": cs/guide/chapter-03-virtual-memory/02-tlb-caching.md
+              - "3-3: Page Fault and Memory Management": cs/guide/chapter-03-virtual-memory/03-page-fault.md
+              - "3-4: Memory Compression and Deduplication": cs/guide/chapter-03-virtual-memory/04-compression-deduplication.md
+          - "Chapter 4: Process & Thread":
+              - "Overview": cs/guide/chapter-04-process-thread/index.md
+              - "4-1: Process Creation and Termination": cs/guide/chapter-04-process-thread/01-process-creation.md
+              - "4-2: Thread and Synchronization": cs/guide/chapter-04-process-thread/02-thread-sync.md
+              - "4-3: Scheduling and Priority": cs/guide/chapter-04-process-thread/03-scheduling.md
+              - "4-4: Signal and IPC": cs/guide/chapter-04-process-thread/04-signal-ipc.md
+          - "Chapter 5: CPU & Interrupt":
+              - "Overview": cs/guide/chapter-05-cpu-interrupt.md
+              - "5-1: CPU Architecture and Execution": cs/guide/chapter-05-1-cpu-architecture-and-execution.md
+              - "5-2: Interrupt and Exception": cs/guide/chapter-05-2-interrupt-and-exception.md
+              - "5-3: Context Switching": cs/guide/chapter-05-3-context-switching.md
+              - "5-4: Power Management": cs/guide/chapter-05-4-power-management.md
+          - "Chapter 6: File Descriptor & I/O":
+              - "Overview": cs/guide/chapter-06-file-descriptor-io.md
+              - "6-1: File Descriptor Internals": cs/guide/chapter-06-1-file-descriptor-internals.md
+              - "6-2: VFS and Filesystem Abstraction": cs/guide/chapter-06-2-vfs-and-filesystem-abstraction.md
+              - "6-3: Block I/O and Disk Scheduling": cs/guide/chapter-06-3-block-io-and-disk-scheduling.md
+              - "6-4: Async I/O and Event Programming": cs/guide/chapter-06-4-async-io-and-event-programming.md
+          - "Chapter 7: Network Programming":
+              - "Overview": cs/guide/chapter-07-network-programming.md
+              - "7-1: Socket Programming Basics": cs/guide/chapter-07-1-socket-programming-basics.md
+              - "7-2: TCP/IP Stack Internals": cs/guide/chapter-07-2-tcp-ip-stack-internals.md
+              - "7-3: High Performance Network Server": cs/guide/chapter-07-3-high-performance-network-server.md
+              - "7-4: Secure Networking and TLS": cs/guide/chapter-07-4-secure-networking-and-tls.md
+          - "Chapter 8: Async & Event Programming": cs/guide/chapter-08-async-event-programming.md
+          - "Chapter 9: Memory & GC": cs/guide/chapter-09-memory-gc.md
+          - "Chapter 10: Performance Optimization": cs/guide/chapter-10-performance-optimization.md
+          - "Chapter 11: Container & Isolation": cs/guide/chapter-11-container-isolation.md
+          - "Chapter 12: Observability & Debugging": cs/guide/chapter-12-observability-debugging.md
       - Memory Management:
           - cs/memory/index.md
           - Process Memory Structure: cs/memory/process-memory-structure.md
@@ -270,4 +318,6 @@ nav:
           - Rainbow: ml/rainbow.md
           - Rainbow Distributional: ml/rainbow-distributional.md
   - Tags: tags.md
-  - Demo: demo.md
+  - Demo:
+    - demo.md
+    - demo-mermaid.md
