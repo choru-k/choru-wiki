@@ -205,17 +205,17 @@ nav:
               - "4-3: Scheduling and Priority": cs/guide/chapter-04-process-thread/03-scheduling.md
               - "4-4: Signal and IPC": cs/guide/chapter-04-process-thread/04-signal-ipc.md
           - "Chapter 5: CPU & Interrupt":
-              - "Overview": cs/guide/chapter-05-cpu-interrupt.md
-              - "5-1: CPU Architecture and Execution": cs/guide/chapter-05-1-cpu-architecture-and-execution.md
-              - "5-2: Interrupt and Exception": cs/guide/chapter-05-2-interrupt-and-exception.md
-              - "5-3: Context Switching": cs/guide/chapter-05-3-context-switching.md
-              - "5-4: Power Management": cs/guide/chapter-05-4-power-management.md
+              - "Overview": cs/guide/chapter-05-cpu-interrupt/index.md
+              - "5-1: CPU Architecture and Execution": cs/guide/chapter-05-cpu-interrupt/01-cpu-architecture.md
+              - "5-2: Interrupt and Exception": cs/guide/chapter-05-cpu-interrupt/02-interrupt-exception.md
+              - "5-3: Context Switching": cs/guide/chapter-05-cpu-interrupt/03-context-switching.md
+              - "5-4: Power Management": cs/guide/chapter-05-cpu-interrupt/04-power-management.md
           - "Chapter 6: File Descriptor & I/O":
-              - "Overview": cs/guide/chapter-06-file-descriptor-io.md
-              - "6-1: File Descriptor Internals": cs/guide/chapter-06-1-file-descriptor-internals.md
-              - "6-2: VFS and Filesystem Abstraction": cs/guide/chapter-06-2-vfs-and-filesystem-abstraction.md
-              - "6-3: Block I/O and Disk Scheduling": cs/guide/chapter-06-3-block-io-and-disk-scheduling.md
-              - "6-4: Async I/O and Event Programming": cs/guide/chapter-06-4-async-io-and-event-programming.md
+              - "Overview": cs/guide/chapter-06-file-io/index.md
+              - "6-1: File Descriptor Internals": cs/guide/chapter-06-file-io/01-file-descriptor.md
+              - "6-2: VFS and Filesystem Abstraction": cs/guide/chapter-06-file-io/02-vfs-filesystem.md
+              - "6-3: Block I/O and Disk Scheduling": cs/guide/chapter-06-file-io/03-block-io.md
+              - "6-4: Async I/O and Event Programming": cs/guide/chapter-06-file-io/04-async-io.md
           - "Chapter 7: Network Programming":
               - "Overview": cs/guide/chapter-07-network-programming.md
               - "7-1: Socket Programming Basics": cs/guide/chapter-07-1-socket-programming-basics.md
