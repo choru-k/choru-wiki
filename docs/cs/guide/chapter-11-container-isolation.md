@@ -1,0 +1,1080 @@
+---
+tags:
+  - Container
+  - Docker
+  - Kubernetes
+  - Linux
+---
+
+# Chapter 11: 컨테이너와 리소스 격리
+
+## 이 문서를 읽으면 이런 질문에 대해서 대답할 수 있습니다
+
+1. **컨테이너는 VM과 어떻게 다른가요?**
+   - 커널 공유 vs 하이퍼바이저
+   - 리소스 오버헤드 차이
+   - 격리 수준과 보안
+
+2. **namespace와 cgroup은 어떻게 동작하나요?**
+   - 7가지 namespace 종류와 역할
+   - cgroup v1 vs v2
+   - 리소스 제한과 계산
+
+3. **컨테이너 네트워킹은 어떻게 구현되나요?**
+   - veth pair와 bridge
+   - iptables와 NAT
+   - CNI 플러그인 동작
+
+4. **컨테이너 이미지 레이어는 어떻게 관리되나요?**
+   - Union filesystem (OverlayFS)
+   - Copy-on-Write 메커니즘
+   - 이미지 빌드 최적화
+
+5. **컨테이너 보안은 어떻게 강화하나요?**
+   - Capabilities와 seccomp
+   - AppArmor와 SELinux
+   - Rootless 컨테이너
+
+## 1. 컨테이너의 기초
+
+### 1.1 컨테이너 vs 가상머신
+
+```mermaid
+graph TB
+    subgraph "Virtual Machine"
+        HW1["Hardware]
+        HV[Hypervisor"]
+        
+        subgraph "VM1"
+            GOS1["Guest OS]
+            BIN1[Bins/Libs"]
+            APP1[App A]
+        end
+        
+        subgraph "VM2"
+            GOS2["Guest OS]
+            BIN2[Bins/Libs"]
+            APP2[App B]
+        end
+        
+        HW1 --> HV
+        HV --> VM1
+        HV --> VM2
+    end
+    
+    subgraph "Container"
+        HW2["Hardware]
+        HOS[Host OS Kernel"]
+        CE[Container Engine]
+        
+        subgraph "Container1"
+            BIN3["Bins/Libs]
+            APP3[App A"]
+        end
+        
+        subgraph "Container2"
+            BIN4["Bins/Libs]
+            APP4[App B"]
+        end
+        
+        HW2 --> HOS
+        HOS --> CE
+        CE --> Container1
+        CE --> Container2
+    end
+    
+    style HV fill:#f99,stroke:#333,stroke-width:2px
+    style CE fill:#9f9,stroke:#333,stroke-width:2px
+```
+
+### 1.2 컨테이너 생성 과정
+
+```c
+// 간단한 컨테이너 구현
+#define _GNU_SOURCE
+#include <sched.h>
+#include <sys/mount.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#define STACK_SIZE (1024 * 1024)
+
+static char child_stack[STACK_SIZE];
+
+int child_func(void* arg) {
+    // 새로운 호스트명 설정
+    sethostname("container", 9);
+    
+    // 새로운 루트 파일시스템 마운트
+    chroot("/container/rootfs");
+    chdir("/");
+    
+    // proc 마운트
+    mount("proc", "/proc", "proc", 0, NULL);
+    
+    // 컨테이너 내부 프로세스 실행
+    execl("/bin/bash", "/bin/bash", NULL);
+    
+    return 0;
+}
+
+int main() {
+    // namespace 플래그
+    int flags = CLONE_NEWNS    |  // Mount namespace
+               CLONE_NEWUTS   |  // UTS namespace (hostname)
+               CLONE_NEWPID   |  // PID namespace
+               CLONE_NEWIPC   |  // IPC namespace
+               CLONE_NEWNET   |  // Network namespace
+               CLONE_NEWUSER;    // User namespace
+    
+    // 컨테이너 프로세스 생성
+    pid_t pid = clone(child_func, 
+                     child_stack + STACK_SIZE,
+                     flags | SIGCHLD, NULL);
+    
+    if (pid == -1) {
+        perror("clone");
+        exit(1);
+    }
+    
+    // 부모는 자식 대기
+    waitpid(pid, NULL, 0);
+    
+    return 0;
+}
+```
+
+## 2. Linux Namespaces
+
+### 2.1 Namespace 종류
+
+```c
+// 7가지 namespace 종류
+
+// 1. Mount namespace (CLONE_NEWNS)
+// 파일시스템 마운트 포인트 격리
+unshare(CLONE_NEWNS);
+mount("none", "/", NULL, MS_REC | MS_PRIVATE, NULL);
+
+// 2. UTS namespace (CLONE_NEWUTS)
+// 호스트명과 도메인명 격리
+unshare(CLONE_NEWUTS);
+sethostname("mycontainer", 11);
+
+// 3. PID namespace (CLONE_NEWPID)
+// 프로세스 ID 격리
+unshare(CLONE_NEWPID);
+fork();  // 자식은 PID 1이 됨
+
+// 4. Network namespace (CLONE_NEWNET)
+// 네트워크 인터페이스, 라우팅 테이블 격리
+unshare(CLONE_NEWNET);
+// 새로운 네트워크 스택
+
+// 5. IPC namespace (CLONE_NEWIPC)
+// System V IPC, POSIX 메시지 큐 격리
+unshare(CLONE_NEWIPC);
+
+// 6. User namespace (CLONE_NEWUSER)
+// UID/GID 매핑
+unshare(CLONE_NEWUSER);
+
+// 7. Cgroup namespace (CLONE_NEWCGROUP)
+// cgroup 계층 구조 격리
+unshare(CLONE_NEWCGROUP);
+```
+
+### 2.2 Namespace 조작
+
+```bash
+# namespace 관련 명령어
+
+# 현재 프로세스의 namespace 확인
+ls -l /proc/$$/ns/
+
+# 새로운 namespace에서 명령 실행
+unshare --pid --mount --fork /bin/bash
+
+# 기존 namespace에 진입
+nsenter --target $PID --pid --mount /bin/bash
+
+# namespace 정보 확인
+lsns
+
+# PID namespace 트리 확인
+systemd-cgls
+```
+
+```c
+// namespace 프로그래밍
+#include <fcntl.h>
+
+// namespace 파일 디스크립터 얻기
+int get_namespace_fd(pid_t pid, const char* ns_type) {
+    char path[256];
+    snprintf(path, sizeof(path), "/proc/%d/ns/%s", pid, ns_type);
+    return open(path, O_RDONLY);
+}
+
+// namespace 진입
+void enter_namespace(int ns_fd) {
+    if (setns(ns_fd, 0) == -1) {
+        perror("setns");
+        exit(1);
+    }
+}
+
+// User namespace UID 매핑
+void setup_uid_map(pid_t pid) {
+    char path[256];
+    char mapping[100];
+    
+    // uid_map 설정 (컨테이너 UID 0 = 호스트 UID 1000)
+    snprintf(path, sizeof(path), "/proc/%d/uid_map", pid);
+    snprintf(mapping, sizeof(mapping), "0 1000 1");
+    
+    int fd = open(path, O_WRONLY);
+    write(fd, mapping, strlen(mapping));
+    close(fd);
+    
+    // gid_map 설정
+    snprintf(path, sizeof(path), "/proc/%d/gid_map", pid);
+    fd = open(path, O_WRONLY);
+    write(fd, mapping, strlen(mapping));
+    close(fd);
+}
+```
+
+## 3. Control Groups (cgroups)
+
+### 3.1 cgroup v1 vs v2
+
+```bash
+# cgroup v1 계층 구조
+/sys/fs/cgroup/
+├── cpu/
+│   ├── docker/
+│   │   └── <container-id>/
+│   │       ├── cpu.shares
+│   │       └── cpu.cfs_quota_us
+├── memory/
+│   ├── docker/
+│   │   └── <container-id>/
+│   │       ├── memory.limit_in_bytes
+│   │       └── memory.usage_in_bytes
+└── blkio/
+
+# cgroup v2 통합 계층 구조
+/sys/fs/cgroup/
+├── cgroup.controllers
+├── cgroup.subtree_control
+└── docker/
+    └── <container-id>/
+        ├── cpu.max
+        ├── memory.max
+        ├── memory.current
+        └── io.max
+```
+
+### 3.2 cgroup 프로그래밍
+
+```c
+// cgroup 생성 및 프로세스 할당
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+void create_cgroup(const char* name) {
+    char path[256];
+    
+    // cgroup 디렉토리 생성
+    snprintf(path, sizeof(path), "/sys/fs/cgroup/cpu/%s", name);
+    mkdir(path, 0755);
+    
+    // CPU 제한 설정 (50%)
+    snprintf(path, sizeof(path), "/sys/fs/cgroup/cpu/%s/cpu.cfs_quota_us", name);
+    int fd = open(path, O_WRONLY);
+    write(fd, "50000", 5);  // 50ms out of 100ms
+    close(fd);
+    
+    snprintf(path, sizeof(path), "/sys/fs/cgroup/cpu/%s/cpu.cfs_period_us", name);
+    fd = open(path, O_WRONLY);
+    write(fd, "100000", 6);  // 100ms period
+    close(fd);
+    
+    // 메모리 제한 설정 (100MB)
+    snprintf(path, sizeof(path), "/sys/fs/cgroup/memory/%s", name);
+    mkdir(path, 0755);
+    
+    snprintf(path, sizeof(path), "/sys/fs/cgroup/memory/%s/memory.limit_in_bytes", name);
+    fd = open(path, O_WRONLY);
+    write(fd, "104857600", 9);  // 100MB
+    close(fd);
+    
+    // 현재 프로세스를 cgroup에 추가
+    snprintf(path, sizeof(path), "/sys/fs/cgroup/cpu/%s/cgroup.procs", name);
+    fd = open(path, O_WRONLY);
+    char pid_str[20];
+    snprintf(pid_str, sizeof(pid_str), "%d", getpid());
+    write(fd, pid_str, strlen(pid_str));
+    close(fd);
+}
+
+// cgroup v2 API
+void setup_cgroup_v2() {
+    // 컨트롤러 활성화
+    int fd = open("/sys/fs/cgroup/cgroup.subtree_control", O_WRONLY);
+    write(fd, "+cpu +memory +io", 14);
+    close(fd);
+    
+    // 서브 cgroup 생성
+    mkdir("/sys/fs/cgroup/mycontainer", 0755);
+    
+    // CPU 제한 (max 50%)
+    fd = open("/sys/fs/cgroup/mycontainer/cpu.max", O_WRONLY);
+    write(fd, "50000 100000", 12);  // 50ms/100ms
+    close(fd);
+    
+    // 메모리 제한
+    fd = open("/sys/fs/cgroup/mycontainer/memory.max", O_WRONLY);
+    write(fd, "104857600", 9);  // 100MB
+    close(fd);
+    
+    // I/O 제한 (디바이스 8:0, 읽기 1MB/s)
+    fd = open("/sys/fs/cgroup/mycontainer/io.max", O_WRONLY);
+    write(fd, "8:0 rbps=1048576", 16);
+    close(fd);
+}
+```
+
+### 3.3 리소스 모니터링
+
+```c
+// cgroup 통계 읽기
+struct cgroup_stats {
+    long memory_usage;
+    long memory_limit;
+    long cpu_usage_ns;
+    double cpu_percentage;
+};
+
+void read_cgroup_stats(const char* cgroup_path, struct cgroup_stats* stats) {
+    char path[256];
+    char buffer[256];
+    int fd;
+    
+    // 메모리 사용량
+    snprintf(path, sizeof(path), "%s/memory.current", cgroup_path);
+    fd = open(path, O_RDONLY);
+    read(fd, buffer, sizeof(buffer));
+    stats->memory_usage = atol(buffer);
+    close(fd);
+    
+    // 메모리 제한
+    snprintf(path, sizeof(path), "%s/memory.max", cgroup_path);
+    fd = open(path, O_RDONLY);
+    read(fd, buffer, sizeof(buffer));
+    stats->memory_limit = atol(buffer);
+    close(fd);
+    
+    // CPU 사용량
+    snprintf(path, sizeof(path), "%s/cpu.stat", cgroup_path);
+    fd = open(path, O_RDONLY);
+    read(fd, buffer, sizeof(buffer));
+    // usage_usec 파싱
+    sscanf(buffer, "usage_usec %ld", &stats->cpu_usage_ns);
+    stats->cpu_usage_ns *= 1000;  // Convert to nanoseconds
+    close(fd);
+}
+
+// 리소스 제한 이벤트 모니터링
+void monitor_cgroup_events(const char* cgroup_path) {
+    char path[256];
+    snprintf(path, sizeof(path), "%s/memory.events", cgroup_path);
+    
+    int fd = open(path, O_RDONLY);
+    int epfd = epoll_create1(0);
+    
+    struct epoll_event ev;
+    ev.events = EPOLLPRI;
+    ev.data.fd = fd;
+    epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
+    
+    while (1) {
+        struct epoll_event events[1];
+        int nfds = epoll_wait(epfd, events, 1, -1);
+        
+        if (nfds > 0) {
+            char buffer[256];
+            lseek(fd, 0, SEEK_SET);
+            read(fd, buffer, sizeof(buffer));
+            
+            // OOM kill 이벤트 확인
+            if (strstr(buffer, "oom_kill 1")) {
+                printf("OOM Kill detected!\n");
+            }
+        }
+    }
+}
+```
+
+## 4. 컨테이너 네트워킹
+
+### 4.1 네트워크 구성
+
+```bash
+# veth pair 생성
+ip link add veth0 type veth peer name veth1
+
+# namespace에 인터페이스 이동
+ip link set veth1 netns $PID
+
+# 브리지 생성 및 연결
+ip link add docker0 type bridge
+ip link set veth0 master docker0
+
+# IP 할당
+ip addr add 172.17.0.1/16 dev docker0
+ip netns exec $PID ip addr add 172.17.0.2/16 dev veth1
+
+# NAT 설정
+iptables -t nat -A POSTROUTING -s 172.17.0.0/16 ! -o docker0 -j MASQUERADE
+
+# 포트 포워딩
+iptables -t nat -A DOCKER -p tcp --dport 8080 -j DNAT --to-destination 172.17.0.2:80
+```
+
+### 4.2 CNI (Container Network Interface)
+
+```go
+// CNI 플러그인 구현 예제
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "github.com/containernetworking/cni/pkg/skel"
+    "github.com/containernetworking/cni/pkg/types"
+    "github.com/vishvananda/netlink"
+)
+
+// CNI 설정
+type NetConf struct {
+    types.NetConf
+    Bridge string `json:"bridge"`
+    Subnet string `json:"subnet"`
+}
+
+// ADD 명령 처리
+func cmdAdd(args *skel.CmdArgs) error {
+    var conf NetConf
+    json.Unmarshal(args.StdinData, &conf)
+    
+    // veth pair 생성
+    veth := &netlink.Veth{
+        LinkAttrs: netlink.LinkAttrs{
+            Name: "veth0",
+        },
+        PeerName: "veth1",
+    }
+    netlink.LinkAdd(veth)
+    
+    // 브리지에 연결
+    bridge, _ := netlink.LinkByName(conf.Bridge)
+    netlink.LinkSetMaster(veth, bridge)
+    
+    // namespace에 이동
+    veth1, _ := netlink.LinkByName("veth1")
+    netlink.LinkSetNsFd(veth1, int(args.Netns))
+    
+    // IP 할당
+    addr, _ := netlink.ParseAddr(conf.Subnet)
+    netlink.AddrAdd(veth1, addr)
+    
+    // 결과 반환
+    result := &types.Result{
+        IP4: &types.IPConfig{
+            IP: addr.IP,
+        },
+    }
+    
+    return result.Print()
+}
+
+// DEL 명령 처리
+func cmdDel(args *skel.CmdArgs) error {
+    // veth 삭제
+    veth, _ := netlink.LinkByName("veth0")
+    netlink.LinkDel(veth)
+    
+    return nil
+}
+
+func main() {
+    skel.PluginMain(cmdAdd, cmdDel, nil)
+}
+```
+
+## 5. Union Filesystem
+
+### 5.1 OverlayFS 구조
+
+```mermaid
+graph TB
+    subgraph "Container View"
+        MERGED["Merged Directory
+Read/Write"]
+    end
+    
+    subgraph "Overlay Structure"
+        UPPER["Upper Dir
+Read/Write"]
+        LOWER1["Lower Dir 1
+Read-Only"]
+        LOWER2["Lower Dir 2
+Read-Only"]
+        LOWER3["Base Image
+Read-Only"]
+    end
+    
+    MERGED --> UPPER
+    MERGED --> LOWER1
+    MERGED --> LOWER2
+    MERGED --> LOWER3
+    
+    style UPPER fill:#9f9,stroke:#333,stroke-width:2px
+    style MERGED fill:#ff9,stroke:#333,stroke-width:2px
+```
+
+### 5.2 OverlayFS 구현
+
+```c
+// OverlayFS 마운트
+void mount_overlay(const char* lower, const char* upper, 
+                  const char* work, const char* merged) {
+    char options[1024];
+    
+    // 디렉토리 생성
+    mkdir(upper, 0755);
+    mkdir(work, 0755);
+    mkdir(merged, 0755);
+    
+    // 마운트 옵션 구성
+    snprintf(options, sizeof(options),
+            "lowerdir=%s,upperdir=%s,workdir=%s",
+            lower, upper, work);
+    
+    // OverlayFS 마운트
+    if (mount("overlay", merged, "overlay", 0, options) == -1) {
+        perror("mount overlay");
+        exit(1);
+    }
+}
+
+// Copy-on-Write 시뮬레이션
+void simulate_cow() {
+    // 읽기 시도
+    int fd = open("/merged/file.txt", O_RDONLY);
+    if (fd != -1) {
+        // Lower layer에서 읽기
+        char buffer[1024];
+        read(fd, buffer, sizeof(buffer));
+        close(fd);
+    }
+    
+    // 쓰기 시도
+    fd = open("/merged/file.txt", O_WRONLY);
+    if (fd != -1) {
+        // Upper layer로 복사 후 쓰기
+        write(fd, "modified", 8);
+        close(fd);
+    }
+}
+
+// 레이어 정보 확인
+void inspect_layers(const char* merged_path) {
+    char path[256];
+    struct stat st;
+    
+    snprintf(path, sizeof(path), "%s/..", merged_path);
+    
+    // xattr로 레이어 정보 확인
+    char lower[1024], upper[256], work[256];
+    getxattr(path, "trusted.overlay.lowerdir", lower, sizeof(lower));
+    getxattr(path, "trusted.overlay.upperdir", upper, sizeof(upper));
+    getxattr(path, "trusted.overlay.workdir", work, sizeof(work));
+    
+    printf("Lower: %s\n", lower);
+    printf("Upper: %s\n", upper);
+    printf("Work: %s\n", work);
+}
+```
+
+## 6. 컨테이너 이미지
+
+### 6.1 이미지 레이어 관리
+
+```go
+// 이미지 레이어 구조
+type Layer struct {
+    ID       string
+    Parent   string
+    Size     int64
+    Created  time.Time
+    DiffPath string
+}
+
+type Image struct {
+    ID     string
+    Layers []Layer
+    Config ImageConfig
+}
+
+// 레이어 스토리지
+type LayerStore struct {
+    root   string
+    layers map[string]*Layer
+    mu     sync.RWMutex
+}
+
+func (ls *LayerStore) CreateLayer(parent string, diff io.Reader) (*Layer, error) {
+    layer := &Layer{
+        ID:     generateID(),
+        Parent: parent,
+        Created: time.Now(),
+    }
+    
+    // 레이어 디렉토리 생성
+    layerPath := filepath.Join(ls.root, layer.ID)
+    os.MkdirAll(layerPath, 0755)
+    
+    // diff 압축 해제
+    tar := tar.NewReader(diff)
+    for {
+        header, err := tar.Next()
+        if err == io.EOF {
+            break
+        }
+        
+        target := filepath.Join(layerPath, header.Name)
+        
+        switch header.Typeflag {
+        case tar.TypeDir:
+            os.MkdirAll(target, os.FileMode(header.Mode))
+        case tar.TypeReg:
+            file, _ := os.Create(target)
+            io.Copy(file, tar)
+            file.Close()
+        }
+    }
+    
+    ls.mu.Lock()
+    ls.layers[layer.ID] = layer
+    ls.mu.Unlock()
+    
+    return layer, nil
+}
+
+// 이미지 빌드
+func BuildImage(dockerfile string) (*Image, error) {
+    var layers []Layer
+    baseImage := "ubuntu:20.04"
+    
+    // Dockerfile 파싱
+    commands := parseDockerfile(dockerfile)
+    
+    for _, cmd := range commands {
+        switch cmd.Type {
+        case "FROM":
+            baseImage = cmd.Value
+            
+        case "RUN":
+            // 컨테이너 실행하고 변경사항 캡처
+            container := createContainer(baseImage)
+            container.Run(cmd.Value)
+            
+            diff := container.Diff()
+            layer, _ := layerStore.CreateLayer(previousLayer, diff)
+            layers = append(layers, *layer)
+            
+        case "COPY":
+            // 파일 복사 레이어 생성
+            layer := createCopyLayer(cmd.Source, cmd.Dest)
+            layers = append(layers, layer)
+        }
+    }
+    
+    return &Image{
+        ID:     generateID(),
+        Layers: layers,
+    }, nil
+}
+```
+
+### 6.2 이미지 최적화
+
+```dockerfile
+# 나쁜 예: 큰 레이어 생성
+FROM ubuntu:20.04
+RUN apt-get update
+RUN apt-get install -y python3
+RUN apt-get install -y python3-pip
+RUN pip install numpy pandas sklearn
+RUN apt-get clean
+
+# 좋은 예: 레이어 최소화
+FROM ubuntu:20.04
+RUN apt-get update && \
+    apt-get install -y \
+        python3 \
+        python3-pip && \
+    pip install --no-cache-dir \
+        numpy \
+        pandas \
+        sklearn && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 멀티 스테이지 빌드
+FROM golang:1.17 AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -o main .
+
+FROM alpine:3.14
+RUN apk --no-cache add ca-certificates
+COPY --from=builder /app/main /main
+ENTRYPOINT ["/main"]
+```
+
+## 7. 컨테이너 보안
+
+### 7.1 Capabilities
+
+```c
+// Linux capabilities 관리
+#include <sys/capability.h>
+
+void drop_capabilities() {
+    // 현재 capabilities 가져오기
+    cap_t caps = cap_get_proc();
+    
+    // 모든 capabilities 제거
+    cap_clear(caps);
+    
+    // 필요한 최소한의 capabilities만 유지
+    cap_value_t cap_list[] = {
+        CAP_NET_BIND_SERVICE,  // 1024 이하 포트 바인딩
+        CAP_SETUID,            // UID 변경
+        CAP_SETGID             // GID 변경
+    };
+    
+    cap_set_flag(caps, CAP_PERMITTED, 3, cap_list, CAP_SET);
+    cap_set_flag(caps, CAP_EFFECTIVE, 3, cap_list, CAP_SET);
+    
+    // 적용
+    cap_set_proc(caps);
+    cap_free(caps);
+}
+
+// 특정 capability 확인
+int has_capability(cap_value_t cap) {
+    cap_t caps = cap_get_proc();
+    cap_flag_value_t value;
+    
+    cap_get_flag(caps, cap, CAP_EFFECTIVE, &value);
+    cap_free(caps);
+    
+    return value == CAP_SET;
+}
+```
+
+### 7.2 Seccomp
+
+```c
+// Seccomp 필터 설정
+#include <seccomp.h>
+
+void setup_seccomp() {
+    scmp_filter_ctx ctx;
+    
+    // 기본 정책: 모든 시스템 콜 차단
+    ctx = seccomp_init(SCMP_ACT_KILL);
+    
+    // 허용할 시스템 콜 화이트리스트
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(open), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(close), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 0);
+    
+    // 네트워크 관련 시스템 콜
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(socket), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(connect), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(sendto), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(recvfrom), 0);
+    
+    // 필터 적용
+    seccomp_load(ctx);
+    seccomp_release(ctx);
+}
+
+// BPF 직접 사용
+void setup_seccomp_bpf() {
+    struct sock_filter filter[] = {
+        // 시스템 콜 번호 로드
+        BPF_STMT(BPF_LD | BPF_W | BPF_ABS, 
+                offsetof(struct seccomp_data, nr)),
+        
+        // read 시스템 콜 허용
+        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_read, 0, 1),
+        BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
+        
+        // write 시스템 콜 허용
+        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_write, 0, 1),
+        BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
+        
+        // 나머지는 차단
+        BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_KILL),
+    };
+    
+    struct sock_fprog prog = {
+        .len = sizeof(filter) / sizeof(filter[0]),
+        .filter = filter,
+    };
+    
+    prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+    prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog);
+}
+```
+
+### 7.3 Rootless 컨테이너
+
+```bash
+# User namespace 설정
+echo "1000:100000:65536" > /etc/subuid
+echo "1000:100000:65536" > /etc/subgid
+
+# Rootless 모드 활성화
+systemctl --user enable docker
+systemctl --user start docker
+
+# Rootless 컨테이너 실행
+docker --context=rootless run -it ubuntu
+```
+
+## 8. 컨테이너 런타임
+
+### 8.1 OCI Runtime Spec
+
+```go
+// OCI 런타임 스펙 구현
+type Spec struct {
+    Version string          `json:"ociVersion"`
+    Process *Process        `json:"process"`
+    Root    *Root          `json:"root"`
+    Mounts  []Mount        `json:"mounts"`
+    Linux   *Linux         `json:"linux,omitempty"`
+}
+
+type Process struct {
+    Terminal bool     `json:"terminal"`
+    User     User     `json:"user"`
+    Args     []string `json:"args"`
+    Env      []string `json:"env"`
+    Cwd      string   `json:"cwd"`
+}
+
+type Linux struct {
+    Namespaces  []Namespace   `json:"namespaces"`
+    Resources   *Resources    `json:"resources"`
+    CgroupsPath string        `json:"cgroupsPath"`
+    Seccomp     *Seccomp      `json:"seccomp"`
+}
+
+// 런타임 구현
+func CreateContainer(spec *Spec) error {
+    // namespace 설정
+    flags := 0
+    for _, ns := range spec.Linux.Namespaces {
+        switch ns.Type {
+        case "pid":
+            flags |= syscall.CLONE_NEWPID
+        case "network":
+            flags |= syscall.CLONE_NEWNET
+        case "mount":
+            flags |= syscall.CLONE_NEWNS
+        }
+    }
+    
+    // 프로세스 생성
+    cmd := exec.Command(spec.Process.Args[0], spec.Process.Args[1:]...)
+    cmd.SysProcAttr = &syscall.SysProcAttr{
+        Cloneflags: uintptr(flags),
+    }
+    
+    // cgroup 설정
+    setupCgroups(spec.Linux.Resources)
+    
+    // 보안 설정
+    setupSeccomp(spec.Linux.Seccomp)
+    
+    return cmd.Start()
+}
+```
+
+## 9. 오케스트레이션
+
+### 9.1 Kubernetes Pod 구조
+
+```yaml
+# Pod 정의
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  # 공유 네트워크 namespace
+  shareProcessNamespace: true
+  
+  containers:
+  - name: app
+    image: myapp:latest
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+    
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      capabilities:
+        drop:
+        - ALL
+        add:
+        - NET_BIND_SERVICE
+      
+  - name: sidecar
+    image: logging:latest
+    # 같은 네트워크 namespace 공유
+    
+  volumes:
+  - name: shared-data
+    emptyDir: {}
+```
+
+### 9.2 CRI (Container Runtime Interface)
+
+```go
+// CRI 구현
+type RuntimeService interface {
+    // 컨테이너 라이프사이클
+    CreateContainer(podSandboxID string, config *ContainerConfig) (string, error)
+    StartContainer(containerID string) error
+    StopContainer(containerID string, timeout int64) error
+    RemoveContainer(containerID string) error
+    
+    // 샌드박스 관리
+    RunPodSandbox(config *PodSandboxConfig) (string, error)
+    StopPodSandbox(podSandboxID string) error
+    RemovePodSandbox(podSandboxID string) error
+}
+
+// CRI 구현체
+type ContainerdRuntime struct {
+    client *containerd.Client
+}
+
+func (r *ContainerdRuntime) CreateContainer(
+    podSandboxID string, 
+    config *ContainerConfig) (string, error) {
+    
+    // OCI 스펙 생성
+    spec := generateOCISpec(config)
+    
+    // 컨테이너 생성
+    container, err := r.client.NewContainer(
+        context.Background(),
+        config.Metadata.Name,
+        containerd.WithSpec(spec),
+        containerd.WithImage(config.Image),
+    )
+    
+    return container.ID(), err
+}
+```
+
+## 10. 성능 최적화
+
+### 10.1 컨테이너 시작 시간 최적화
+
+```go
+// 이미지 프리로딩
+func PreloadImages(images []string) {
+    for _, image := range images {
+        go func(img string) {
+            docker.PullImage(img)
+            // 첫 번째 레이어를 메모리에 캐시
+            layers := getImageLayers(img)
+            for _, layer := range layers[:1] {
+                cacheLayer(layer)
+            }
+        }(image)
+    }
+}
+
+// Lazy pulling with containerd
+func LazyPullImage(ref string) error {
+    // Stargz 형식 사용 (seekable tar.gz)
+    image, err := client.Pull(
+        context.Background(),
+        ref,
+        containerd.WithPullSnapshotter("stargz"),
+    )
+    
+    // 필요한 파일만 온디맨드로 가져옴
+    return err
+}
+```
+
+### 10.2 리소스 최적화
+
+```bash
+# CPU 핀닝
+docker run --cpuset-cpus="0,1" myapp
+
+# NUMA 노드 지정
+docker run --cpuset-mems="0" myapp
+
+# 메모리 스왑 비활성화
+docker run --memory="1g" --memory-swap="1g" myapp
+
+# 커널 파라미터 튜닝
+echo 100000 > /proc/sys/net/core/somaxconn
+echo 1 > /proc/sys/net/ipv4/tcp_tw_reuse
+```
+
+## 정리
+
+컨테이너 기술은 리눅스 커널의 여러 기능을 조합한 것입니다:
+
+1. **격리**: Namespace로 프로세스, 네트워크, 파일시스템 격리
+2. **리소스 제한**: cgroup으로 CPU, 메모리, I/O 제한
+3. **파일시스템**: Union FS로 레이어드 이미지 구현
+4. **네트워킹**: veth, bridge, iptables로 네트워크 구성
+5. **보안**: Capabilities, Seccomp, LSM으로 보안 강화
+
+다음 장에서는 이러한 컨테이너 환경에서 애플리케이션을 어떻게 관찰하고 디버깅하는지 알아보겠습니다.
+
+## 참고 자료
+
+- [Linux Containers Documentation](https://linuxcontainers.org/)
+- [OCI Runtime Specification](https://github.com/opencontainers/runtime-spec)
+- [Docker Documentation](https://docs.docker.com/)
+- [Kubernetes Documentation](https://kubernetes.io/docs/)

@@ -10,6 +10,7 @@ tags:
 # Chapter 5-4: CPU 전력 관리와 주파수 스케일링
 
 ## 이 절에서 답할 질문들
+
 - CPU는 어떻게 전력 소비를 동적으로 조절하는가?
 - P-state와 C-state의 차이는 무엇인가?
 - DVFS(Dynamic Voltage and Frequency Scaling)는 어떻게 작동하는가?
@@ -25,6 +26,7 @@ tags:
 > "우리는 전 세계에 40개의 데이터센터를 운영합니다. 전기료만 연간 130억 달러. 그런데 2019년, CPU 전력 관리를 최적화해서 30억 달러를 절약했습니다. 비결? **매 미리초마다 CPU 상태를 조절하는 것**이죠."
 
 실제 측정 데이터:
+
 ```python
 # 구글 데이터센터의 하루
 power_consumption = {
@@ -189,6 +191,7 @@ struct cpufreq_policy {
 > "Model 3가 한번 충전으로 500km를 가는 비밀? 매초 1000번 전압과 주파수를 조절하죠. 고속도로에서는 풀파워, 시내에서는 절전 모드로 동작하죠. 이게 DVFS입니다."
 
 전력 소비 공식:
+
 ```python
 # 전력 = 전압² × 주파수 × 상수
 def calculate_power(voltage, frequency):
@@ -518,6 +521,7 @@ void update_package_cstate(int cpu, int new_cstate) {
 > "게임에서 보스를 만났을 때를 생각해보세요. 평소 3.5GHz로 달리다가 갑자기 5.8GHz로 터보! 하지만 10초만. 열이 오르면 다시 낮춰야 합니다. F1 레이싱의 DRS같은 거죠."
 
 실제 터보 부스트 시나리오:
+
 ```python
 # 게임 플레이 중 터보 부스트
 turbo_scenario = {
@@ -1123,6 +1127,7 @@ power_management_wisdom = {
 > "1% 전력 효율 개선 = 연간 1억 달러 절약이죠. 코드 한 줄로 수백만 달러를 아낄 수 있습니다. 전력 관리를 무시하지 마세요."
 
 **기억하세요**:
+
 - 구글이 30억 달러를 아낀 것도
 - 아이폰이 하루 종일 버티는 것도  
 - 테슬라가 500km를 가는 것도
@@ -1132,11 +1137,13 @@ power_management_wisdom = {
 ## 관련 문서
 
 ### 이전 단계
+
 - [CPU 아키텍처와 실행 모드](01-cpu-architecture.md) - CPU 기초 구조와 Protection Ring
 - [인터럽트와 예외 처리](02-interrupt-exception.md) - 인터럽트 메커니즘
 - [컨텍스트 스위칭](03-context-switching.md) - 프로세스 전환과 CPU 상태
 
 ### File I/O와 연결
+
 - [파일 디스크립터의 내부 구조](../chapter-06-file-io/01-file-descriptor.md) - I/O 성능과 전력 최적화
 - [VFS와 파일 시스템 추상화](../chapter-06-file-io/02-vfs-filesystem.md) - 사용자 모드와 커널 모드 전환
 - [블록 I/O와 디스크 스케줄링](../chapter-06-file-io/03-block-io.md) - 전력 효율적인 I/O 처리
@@ -1145,4 +1152,5 @@ power_management_wisdom = {
 다음 장에서는 파일 디스크립터와 I/O가 어떻게 운영체제의 핵심이 되었는지 알아봅시다! 💾
 
 ## 다음 장 예고
+
 Chapter 6에서는 "파일 디스크립터와 I/O는 어떻게 동작하는가"를 다룹니다. 파일 디스크립터의 내부 구조, VFS 계층, 블록 I/O와 비동기 I/O, 그리고 최신 io_uring 인터페이스까지 살펴보겠습니다.

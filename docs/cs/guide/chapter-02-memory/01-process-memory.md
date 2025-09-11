@@ -26,7 +26,7 @@ tags:
 
 ### 1.1 프로그램이 메모리에 적재되는 순간
 
-여러분이 터미널에서 `./myprogram`을 입력하고 엔터를 누르는 순간, 무슨 일이 일어날까요? 
+여러분이 터미널에서 `./myprogram`을 입력하고 엔터를 누르는 순간, 무슨 일이 일어날까요?
 
 운영체제는 마치 부동산 중개인처럼 프로그램을 위한 '집'을 마련합니다. 이 집은 가상 주소 공간(Virtual Address Space)이라고 부르며, 64비트 시스템에서는 이론적으로 2^64 바이트(약 1800경 바이트)라는 어마어마한 크기를 가집니다. 물론 실제로 이 모든 공간을 사용하는 것은 아닙니다. 마치 서울시 전체를 내 집이라고 주장할 수는 있지만, 실제로 사는 곳은 그 중 작은 아파트 한 채인 것과 같습니다.
 
@@ -65,6 +65,7 @@ tags:
 처음 컴퓨터가 만들어졌을 때는 메모리가 이렇게 복잡하지 않았습니다. 모든 것이 한 덩어리였죠. 하지만 프로그램이 복잡해지면서 여러 문제가 발생했습니다:
 
 **문제 1: 코드와 데이터가 섞여 있으면?**
+
 ```c
 // 만약 코드와 데이터가 구분 없이 섞여 있다면...
 int data = 42;
@@ -169,18 +170,18 @@ $ gcc -o example example.c
 $ objdump -d example | grep -A10 "<greet>:"
 
 0000000000401126 <greet>:
-  401126:	55                   	push   %rbp        # 스택 프레임 설정
-  401127:	48 89 e5             	mov    %rsp,%rbp   # 베이스 포인터 설정
-  40112a:	48 83 ec 10          	sub    $0x10,%rsp  # 지역 변수 공간 확보
-  40112e:	48 89 7d f8          	mov    %rdi,-0x8(%rbp)  # 매개변수 저장
-  401132:	48 8b 45 f8          	mov    -0x8(%rbp),%rax
-  401136:	48 89 c6             	mov    %rax,%rsi
-  401139:	48 8d 3d c4 0e 00 00 	lea    0xec4(%rip),%rdi  # "Hello, %s!\n" 주소
-  401140:	b8 00 00 00 00       	mov    $0x0,%eax
-  401145:	e8 e6 fe ff ff       	call   401030 <printf@plt>
-  40114a:	90                   	nop
-  40114b:	c9                   	leave
-  40114c:	c3                   	ret
+  401126: 55                    push   %rbp        # 스택 프레임 설정
+  401127: 48 89 e5              mov    %rsp,%rbp   # 베이스 포인터 설정
+  40112a: 48 83 ec 10           sub    $0x10,%rsp  # 지역 변수 공간 확보
+  40112e: 48 89 7d f8           mov    %rdi,-0x8(%rbp)  # 매개변수 저장
+  401132: 48 8b 45 f8           mov    -0x8(%rbp),%rax
+  401136: 48 89 c6              mov    %rax,%rsi
+  401139: 48 8d 3d c4 0e 00 00  lea    0xec4(%rip),%rdi  # "Hello, %s!\n" 주소
+  401140: b8 00 00 00 00        mov    $0x0,%eax
+  401145: e8 e6 fe ff ff        call   401030 <printf@plt>
+  40114a: 90                    nop
+  40114b: c9                    leave
+  40114c: c3                    ret
 ```
 
 우리가 작성한 간단한 `greet` 함수가 13개의 기계어 명령어로 변환되었습니다! 각 명령어는 Text 섹션의 특정 주소(0x401126부터)에 저장됩니다.
@@ -199,6 +200,7 @@ void malicious_function() {
 ```
 
 만약 이것이 가능하다면:
+
 1. **자기 수정 코드(Self-modifying code)**: 실행 중에 자신을 변경하는 코드가 가능해집니다. 디버깅이 지옥이 됩니다.
 2. **보안 취약점**: 버퍼 오버플로우 등으로 코드를 덮어쓸 수 있게 됩니다.
 3. **최적화 불가능**: CPU 캐시가 코드를 안전하게 캐싱할 수 없습니다.
@@ -246,7 +248,7 @@ graph LR
 
 ### 3.1 Data 섹션: 초기값이 있는 전역 변수
 
-Data 섹션은 프로그램이 시작할 때부터 특정 값을 가져야 하는 전역 변수들이 사는 곳입니다. 
+Data 섹션은 프로그램이 시작할 때부터 특정 값을 가져야 하는 전역 변수들이 사는 곳입니다.
 
 ```c
 // 이 변수들은 모두 Data 섹션에 저장됩니다
@@ -287,7 +289,7 @@ $ ls -lh program_*
 -rwxr-xr-x 1 user user 8.5K program_b  # 8.5KB!
 ```
 
-왜 이런 차이가 날까요? 
+왜 이런 차이가 날까요?
 
 **program_a의 경우**: 컴파일러는 배열의 모든 요소(1, 2, 3, 0, 0, 0, ...)를 실행 파일에 저장해야 합니다. 100만 개의 정수 = 4MB.
 
@@ -345,9 +347,10 @@ Rodata section:
 
 ### 4.1 스택의 본질: LIFO 구조의 이유
 
-스택은 함수 호출을 관리하는 메모리 영역입니다. 왜 하필 LIFO(Last In First Out) 구조일까요? 
+스택은 함수 호출을 관리하는 메모리 영역입니다. 왜 하필 LIFO(Last In First Out) 구조일까요?
 
 함수 호출을 생각해보세요:
+
 ```c
 void c() { printf("C\n"); }
 void b() { c(); }
@@ -442,6 +445,7 @@ int main() {
 ```
 
 실행 결과:
+
 ```text
 Starting recursion...
 Depth: 0, Stack address: 0x7ffd5a7c6340
@@ -512,6 +516,7 @@ void vulnerable_function_protected(char* input) {
 ### 5.1 힙이 필요한 이유
 
 스택은 편리하지만 한계가 있습니다:
+
 1. **크기가 컴파일 타임에 결정되어야 함**: `int arr[n]`처럼 변수 크기 배열은 C99 이전에는 불가능
 2. **함수가 끝나면 사라짐**: 함수에서 만든 데이터를 반환하기 어려움
 3. **크기 제한**: 보통 8MB 정도로 제한됨
@@ -558,6 +563,7 @@ Image* create_image(int w, int h) {
 힙은 어떻게 커지까요? 다음 두 가지 방법이 있습니다:
 
 **1. brk/sbrk 시스템 콜**: 작은 할당에 사용
+
 ```c
 // 힙이 어떻게 자라는지 관찰
 #include <unistd.h>
@@ -580,6 +586,7 @@ void observe_heap_growth() {
 ```
 
 **2. mmap 시스템 콜**: 큰 할당에 사용
+
 ```c
 void large_allocation() {
     void* initial_brk = sbrk(0);
@@ -599,6 +606,7 @@ void large_allocation() {
 ```
 
 일반적으로 128KB(시스템마다 다름)를 기준으로:
+
 - **작은 할당**: brk로 힙 확장
 - **큰 할당**: mmap으로 별도 영역 할당
 
@@ -636,6 +644,7 @@ void demonstrate_fragmentation() {
 ```
 
 힙의 상태:
+
 ```
 초기: [block1][block2][block3][block4]
 해제: [block1][빈공간][빈공간][block4]
@@ -695,6 +704,7 @@ void* my_malloc(size_t size) {
 ```
 
 실제 할당자들은 훨씬 복잡한 전략을 사용합니다:
+
 - **dlmalloc**: Doug Lea's malloc, 전통적인 구현
 - **ptmalloc**: glibc의 기본 할당자, 멀티스레드 최적화
 - **jemalloc**: Facebook이 사용, 단편화 최소화
@@ -765,6 +775,7 @@ void process_huge_file(const char* filename) {
 ```
 
 이 코드의 놀라운 점:
+
 1. 10GB 파일지만 10GB RAM이 필요하지 않음
 2. 필요한 부분만 자동으로 메모리에 로드 (Lazy Loading)
 3. 여러 프로세스가 같은 파일을 매핑하면 자동으로 공유
@@ -881,6 +892,7 @@ int main() {
 ```
 
 Valgrind로 검사:
+
 ```bash
 $ gcc -g memory_leak.c -o memory_leak
 $ valgrind --leak-check=full ./memory_leak
@@ -976,6 +988,7 @@ int main() {
 ```
 
 ASLR 효과:
+
 ```bash
 $ ./aslr_demo
 Stack: 0x7ffd8b4c5a2c
@@ -1026,26 +1039,31 @@ void test_dep() {
 우리는 프로세스 메모리 구조의 여행을 마쳤습니다. 핵심을 정리하면:
 
 **Text 섹션**
+
 - 실행 코드가 저장되는 읽기 전용 영역
 - 여러 프로세스가 공유 가능
 - 보안을 위해 쓰기 금지
 
 **Data/BSS 섹션**
+
 - 전역 변수와 정적 변수의 거주지
 - BSS는 0으로 초기화되는 변수를 효율적으로 저장
 - 프로그램 시작부터 끝까지 유지
 
 **Stack**
+
 - 함수 호출 정보를 LIFO로 관리
 - 지역 변수와 매개변수 저장
 - 제한된 크기, 오버플로우 주의
 
 **Heap**
+
 - 동적 메모리 할당 영역
 - malloc/free로 관리
 - 단편화 문제 존재
 
 **Memory Mapped Region**
+
 - 공유 라이브러리와 파일 매핑
 - mmap으로 큰 메모리 할당
 - 프로세스 간 공유 가능
@@ -1075,6 +1093,7 @@ void test_dep() {
 ### 9.3 더 깊이 공부하기
 
 메모리 구조를 마스터했다면, 다음 주제들을 탐구해보세요:
+
 - 가상 메모리와 페이징 메커니즘
 - 메모리 할당자 구현
 - 커널 메모리 관리

@@ -14,7 +14,7 @@ tags:
 
 "프로세스를 쓸까, 스레드를 쓸까?"
 
-이 질문은 모든 시스템 프로그래머가 고민하는 영원한 숙제입니다. 교과서는 "프로세스는 무겁고 스레드는 가볍다"고 말하지만, Linux 커널 개발자 Linus Torvalds는 "프로세스와 스레드는 본질적으로 같다"고 말합니다. 
+이 질문은 모든 시스템 프로그래머가 고민하는 영원한 숙제입니다. 교과서는 "프로세스는 무겁고 스레드는 가볍다"고 말하지만, Linux 커널 개발자 Linus Torvalds는 "프로세스와 스레드는 본질적으로 같다"고 말합니다.
 
 이 장에서는 프로세스와 스레드의 진짜 차이, Linux의 독특한 task 모델, 스케줄링 메커니즘, 그리고 프로세스 간 통신 방법까지 동시성 프로그래밍의 모든 것을 깊이 탐구합니다.
 
@@ -249,11 +249,13 @@ graph TD
 ## 관련 문서
 
 ### 선행 지식
+
 - [Chapter 3: Virtual Memory](../chapter-03-virtual-memory/index.md) - 가상 메모리와 주소 공간
 - [Memory Management](../chapter-02-memory/index.md) - 메모리 관리 기초
 - [CPU Architecture](../chapter-05-1-cpu-architecture-and-execution.md) - CPU 실행 모델
 
 ### 관련 주제
+
 - [Context Switching](../chapter-05-3-context-switching.md) - 프로세스 전환 메커니즘
 - [Async Programming](../chapter-08-async-event-programming.md) - 비동기 프로그래밍 패턴
 - [Performance Optimization](../chapter-10-performance-optimization.md) - 동시성 최적화

@@ -54,6 +54,7 @@ Cache"]
 ```
 
 때로는 이 목표들이 충돌합니다:
+
 - 속도를 위해 코드를 복제하면 → 크기 증가
 - 크기를 줄이기 위해 함수 호출하면 → 속도 감소
 
@@ -112,6 +113,7 @@ get_buffer_size:
 ```
 
 더 복잡한 예:
+
 ```c
 // 원본
 double calculate() {
@@ -172,6 +174,7 @@ int calculate(int a, int b) {
 ```
 
 인라이닝의 효과:
+
 ```mermaid
 graph LR
     subgraph "인라이닝 전"
@@ -192,6 +195,7 @@ graph LR
 ### 2.4 루프 최적화
 
 #### 루프 언롤링 (Loop Unrolling)
+
 ```c
 // 원본 코드
 for (int i = 0; i < 4; i++) {
@@ -207,6 +211,7 @@ sum += array[3];
 ```
 
 #### 루프 불변 코드 이동 (Loop-Invariant Code Motion)
+
 ```c
 // 원본 코드
 for (int i = 0; i < n; i++) {
@@ -222,6 +227,7 @@ for (int i = 0; i < n; i++) {
 ```
 
 #### 루프 융합 (Loop Fusion)
+
 ```c
 // 원본 코드
 for (int i = 0; i < n; i++) {
@@ -281,6 +287,7 @@ for (int i = 0; i < 1024; i += 4) {
 ```
 
 벡터화 효과:
+
 ```mermaid
 graph TD
     subgraph "스칼라 처리"
@@ -338,6 +345,7 @@ int factorial(int n, int acc) {
 ```
 
 스택 사용량 비교:
+
 ```
 재귀 버전:              최적화 버전:
 ┌──────────┐           ┌──────────┐
@@ -371,6 +379,7 @@ int sum_array(int* arr, int n) {
 ```
 
 #### -O0 (최적화 없음)
+
 ```assembly
 sum_array:
     push   rbp
@@ -394,6 +403,7 @@ sum_array:
 ```
 
 #### -O2 (권장 최적화)
+
 ```assembly
 sum_array:
     test   esi, esi          ; n == 0?
@@ -414,6 +424,7 @@ sum_array:
 ```
 
 #### -O3 (공격적 최적화, 벡터화 포함)
+
 ```assembly
 sum_array:
     ; SIMD 명령어 사용
@@ -510,6 +521,7 @@ void writer_opt() {
 ```
 
 해결: 메모리 배리어 사용
+
 ```c
 void writer_safe() {
     data = 42;
@@ -569,6 +581,7 @@ gcc -fprofile-use program.c -o program_optimized
 ```
 
 PGO 효과:
+
 ```mermaid
 graph LR
     subgraph "일반 최적화"
@@ -625,6 +638,7 @@ void matrix_multiply(double* C, const double* A, const double* B, int n) {
 ```
 
 최적화 기법 적용:
+
 ```c
 // 캐시 친화적 버전 (타일링)
 void matrix_multiply_tiled(double* C, const double* A, const double* B, int n) {
@@ -650,6 +664,7 @@ void matrix_multiply_tiled(double* C, const double* A, const double* B, int n) {
 ```
 
 성능 차이:
+
 ```
 행렬 크기: 1024x1024
 ┌──────────────┬──────────┬────────────┐
@@ -684,16 +699,19 @@ void matrix_multiply_tiled(double* C, const double* A, const double* B, int n) {
 ## 9. 정리: 컴파일러 최적화의 핵심
 
 ### 최적화란?
+
 - **정의**: 프로그램의 의미를 유지하면서 성능을 개선하는 변환
 - **목적**: 실행 속도 향상, 메모리 사용 감소, 전력 효율 개선
 - **제약**: 프로그램의 관찰 가능한 동작은 변경하지 않음
 
 ### 왜 중요한가?
+
 1. **무료 성능 향상**: 코드 변경 없이 2-10배 성능 개선
 2. **하드웨어 활용**: SIMD, 캐시, 파이프라인 최적 활용
 3. **개발 생산성**: 최적화는 컴파일러에게, 로직은 개발자가
 
 ### 기억해야 할 점
+
 - 컴파일러는 강력하지만 만능이 아니에요
 - 최적화 레벨에 따라 다른 기법이 적용돼요
 - 알고리즘 개선이 컴파일러 최적화보다 중요해요
@@ -703,6 +721,7 @@ void matrix_multiply_tiled(double* C, const double* A, const double* B, int n) {
 ## 다음 장 예고
 
 Chapter 1을 마치고, [Chapter 2: 메모리 아키텍처](../chapter-02-memory/index.md)에서는 **프로그램 로딩과 메모리 레이아웃**을 다룹니다:
+
 - 프로세스의 메모리는 어떻게 구성되는가?
 - 스택과 힙은 어떻게 자라는가?
 - 메모리 누수는 왜 발생하는가?

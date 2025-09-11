@@ -221,11 +221,13 @@ graph TD
 ## 관련 문서
 
 ### 선행 지식
+
 - [Chapter 2: Memory Management](../chapter-02-memory/index.md) - 메모리 관리 기초
 - [Process Memory Structure](../chapter-02-memory/01-process-memory.md) - 프로세스 메모리 구조
 - [Stack and Heap](../chapter-02-memory/02-stack-heap.md) - 스택과 힙 메모리
 
 ### 관련 주제
+
 - [Chapter 4: Process & Thread](../chapter-04-process-thread/index.md) - 프로세스 관리
 - [Memory Optimization](../chapter-10-performance-optimization.md) - 메모리 성능 최적화
 - [Container Isolation](../chapter-11-container-isolation.md) - 메모리 격리 기술

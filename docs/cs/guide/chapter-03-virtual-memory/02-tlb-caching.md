@@ -759,17 +759,20 @@ void analyze_tlb_misses() {
 긴 여정이었습니다! TLB가 왜 중요한지 이해하셨나요?
 
 ### TLB란?
+
 - **한 줄 요약**: CPU 안의 "주소 변환 단축 다이얼"
 - **크기**: 고작 64개 항목 (L1 DTLB)
 - **효과**: 100 사이클 → 1 사이클로 단축
 
 ### 왜 배워야 하는가?
+
 1. **성능 차이**: TLB Hit Rate 1% 차이 = 성능 2배 차이
 2. **최적화 포인트**: 랜덤 접근 → 순차 접근 = 10배 성능
 3. **Huge Pages**: 2MB 페이지 = TLB 효율 512배
 4. **비용**: TLB Shootdown 한 번 = 500 마이크로초
 
-### 꼭 기억하세요!
+### 꼭 기억하세요
+
 - **98% 법칙**: TLB Hit Rate가 98% 미만이면 문제 있음
 - **TLB Shootdown**: 가능한 피할 것 (64코어에서 지옥)
 - **PCID 필수**: Context Switch가 잦은 시스템에서
@@ -779,10 +782,12 @@ void analyze_tlb_misses() {
 ## 관련 문서
 
 ### 선행 지식
+
 - [주소 변환 메커니즘](01-address-translation.md) - 페이지 테이블과 MMU
 - [Process Memory Structure](../chapter-02-memory/01-process-memory.md) - 프로세스 메모리 구조
 
 ### 관련 주제
+
 - [페이지 폴트 처리](03-page-fault.md) - TLB 미스 후 처리
 - [Context Switching](../chapter-05-3-context-switching.md) - TLB 무효화와 성능
 - [Performance Optimization](../chapter-10-performance-optimization.md) - TLB 최적화 기법
@@ -792,6 +797,7 @@ void analyze_tlb_misses() {
 지금까지 TLB가 주소 변환을 어떻게 빠르게 하는지 배웠습니다. 하지만 만약 페이지가 아예 없다면?
 
 다음 섹션 [3-3: 페이지 폴트와 메모리 관리](03-page-fault.md)에서는 **페이지 폴트의 모든 것**을 다룹니다:
+
 - Segmentation Fault의 진짜 원인
 - fork()가 빠른 이유: Copy-on-Write의 마법
 - 메모리가 부족할 때: 스왑의 비밀

@@ -1589,6 +1589,7 @@ class ProductionIncidentHandler:
 > 단순함을 유지하되, 필요한 복잡성은 받아들여라."
 
 **실전 체크리스트:**
+
 - [ ] Idempotency 보장
 - [ ] Circuit Breaker 구현
 - [ ] Retry with backoff

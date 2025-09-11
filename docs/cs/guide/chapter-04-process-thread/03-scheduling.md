@@ -188,6 +188,7 @@ void schedule(void) {
 CFS를 이해하는 가장 쉬운 방법은 생일 케이크를 공평하게 나누는 것입니다.
 
 상상해보세요. 10명이 케이크를 나눠 먹는데:
+
 - A는 지금까지 1조각 먹음
 - B는 3조각 먹음
 - C는 한 입도 못 먹음
@@ -195,6 +196,7 @@ CFS를 이해하는 가장 쉬운 방법은 생일 케이크를 공평하게 나
 누가 다음 조각을 받아야 할까요? 당연히 C죠!
 
 CFS는 이렇게 동작합니다:
+
 - **vruntime** = 지금까지 먹은 케이크 양
 - 가장 적게 먹은(vruntime이 작은) 프로세스가 다음 차례
 
@@ -353,7 +355,7 @@ static void enqueue_entity(struct cfs_rq *cfs_rq,
 
 Linux 개발자들의 절묘한 선택: Nice 값이 1 차이날 때마다 CPU 시간은 약 1.25배(정확히는 1.25992...) 차이납니다.
 
-왜 1.25인지 궁금하죠? 
+왜 1.25인지 궁금하죠?
 
 ```
 nice 차이 5 = 1.25^5 ≈ 3배
@@ -366,6 +368,7 @@ nice 차이 20 = 1.25^20 ≈ 100배
 **실제 활용 사례**
 
 제가 만든 백업 스크립트:
+
 ```bash
 #!/bin/bash
 # 백업은 느려도 되니까 양보
@@ -581,6 +584,7 @@ void* collision_detection(void* arg) {
 ```
 
 **실제 측정 결과**
+
 ```
 CFS: 평균 지연 5ms, 최악 200ms 😱
 SCHED_DEADLINE: 평균 지연 1ms, 최악 50ms ✅
@@ -680,6 +684,7 @@ void edf_scheduler(deadline_task_t *tasks, int n) {
 제가 만든 게임 서버가 이상하게 느렸습니다. CPU는 50%만 사용하는데 왜?
 
 `perf stat`으로 확인해보니:
+
 ```
 L1 cache miss: 40%
 L2 cache miss: 25%
@@ -773,6 +778,7 @@ int get_current_cpu() {
 **NUMA = Non-Uniform Memory Access**
 
 대형 서버에서 메모리 접근 시간이 다릅니다:
+
 - 로컬 메모리: 100ns
 - 원격 메모리: 300ns (3배 느림!)
 
@@ -896,6 +902,7 @@ void* numa_optimized_thread(void *arg) {
 ```
 
 **재현 코드**
+
 ```c
 // 이렇게 하면 우선순위 역전 발생!
 void* low_priority(void* arg) {
@@ -1355,6 +1362,7 @@ Max latency: 50ms  # 실시간은 1ms 이하여야
 **실제 최적화 사례**
 
 게임 서버 최적화 전후:
+
 ```
 Before:
 - Context switches: 50,000/sec
@@ -1428,6 +1436,7 @@ void measure_scheduling_latency() {
 ### 8.1 애플리케이션별 최적화: 실제 프로덕션 설정
 
 **게임 서버 (League of Legends 스타일)**
+
 ```c
 void setup_game_server() {
     // 게임 로직: 절대 우선순위
@@ -1451,6 +1460,7 @@ void setup_game_server() {
 ```
 
 **웹 서버 (Nginx 스타일)**
+
 ```c
 void setup_web_server() {
     int cpu_count = get_cpu_count();
@@ -1469,6 +1479,7 @@ void setup_web_server() {
 ```
 
 **데이터베이스 (PostgreSQL 스타일)**
+
 ```c
 void setup_database() {
     // WAL writer: 최우선
@@ -1618,16 +1629,19 @@ $ perf stat -e migrations ./program
 ### 🎯 10년간 배운 스케줄링 교훈
 
 ### 스케줄링이란?
+
 - **정의**: CPU 시간을 프로세스/스레드에 분배
 - **목표**: 공정성, 응답성, 처리량 균형
 - **구현**: CFS, RT, DL 스케줄러
 
 ### 주요 스케줄러
+
 1. **CFS**: vruntime 기반 공정 스케줄링
 2. **RT**: FIFO/RR 실시간 스케줄링
 3. **DL**: 데드라인 기반 스케줄링
 
 ### 왜 중요한가?
+
 1. **성능**: CPU 활용도 극대화
 2. **응답성**: 사용자 경험 개선
 3. **공정성**: 자원 공평 분배
@@ -1636,9 +1650,11 @@ $ perf stat -e migrations ./program
 ### 기억해야 할 점
 
 #### 1. **"모든 것을 실시간으로 만들지 마라"**
+
 제 실수처럼 시스템을 멈출 수 있습니다. 정말 필요한 것만 RT로.
 
 #### 2. **스케줄링 선택 가이드**
+
 ```
 일반 앱 → CFS (SCHED_NORMAL)
 배치 작업 → SCHED_BATCH or nice 19
@@ -1649,12 +1665,14 @@ $ perf stat -e migrations ./program
 ```
 
 #### 3. **성능 최적화 우선순위**
+
 1. 알고리즘 개선 (O(n²) → O(n log n))
 2. CPU 친화도 설정 (캐시 활용)
 3. NUMA 최적화 (메모리 지역성)
 4. 스케줄링 정책 변경 (마지막 수단)
 
 #### 4. **측정 없이 최적화하지 마라**
+
 ```bash
 # 항상 먼저 측정
 perf stat ./myapp
@@ -1663,6 +1681,7 @@ pidstat -w
 ```
 
 #### 5. **우선순위 역전은 실제로 일어난다**
+
 - Mars Pathfinder (1997)
 - 내 금융 서버 (2019)
 - 당신의 서버 (언젠가?)
@@ -1682,6 +1701,7 @@ CFS는 대부분의 경우 훌륭합니다. 하지만 특별한 요구사항이 
 ## 다음 섹션 예고
 
 다음 섹션(4-4)에서는 **시그널과 IPC**를 다룹니다:
+
 - 시그널의 생성과 처리
 - 파이프와 FIFO
 - 메시지 큐와 세마포어

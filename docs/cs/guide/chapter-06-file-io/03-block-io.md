@@ -10,6 +10,7 @@ tags:
 # Chapter 6-3: 블록 I/O와 디스크 스케줄링
 
 ## 이 절에서 답할 질문들
+
 - 블록 I/O 계층은 왜 필요한가?
 - I/O 스케줄러는 어떻게 디스크 성능을 최적화하는가?
 - 멀티큐 블록 계층은 어떻게 SSD의 성능을 활용하는가?
@@ -250,14 +251,16 @@ err_free:
 
 ### 📦 Request 구조체: BIO들의 컨테이너
 
-Request는 여러 BIO를 병합한 것입니다. 
+Request는 여러 BIO를 병합한 것입니다.
 
 예를 들어:
+
 - BIO 1: 섹터 100-103 읽기
 - BIO 2: 섹터 104-107 읽기
 - 병합 → Request: 섹터 100-107 읽기 (한 번에!)
 
 제가 측정한 병합 효과:
+
 ```bash
 # 병합 비활성화
 $ echo 2 > /sys/block/sda/queue/nomerges
@@ -408,6 +411,7 @@ avg-cpu:  %iowait
 ```
 
 각 스케줄러의 특징:
+
 - **NOOP**: "그냥 들어온 순서대로" (SSD에 최적)
 - **Deadline**: "마감 시간 보장" (데이터베이스에 최적)
 - **BFQ**: "모두에게 공정하게" (데스크탑에 최적)
@@ -455,6 +459,7 @@ static struct elevator_type elevator_noop = {
 Deadline은 엘리베이터 알고리즘과 마감 시간을 결합합니다.
 
 실제 예시:
+
 ```bash
 # 기본 설정
 read_expire = 500ms   # 읽기는 0.5초 내에
@@ -466,6 +471,7 @@ write_expire = 5000ms # 쓰기는 5초 내에
 ```
 
 제가 테스트한 결과:
+
 ```python
 # 랜덤 I/O 테스트
 import random
@@ -581,6 +587,7 @@ static struct request *deadline_check_expired(struct deadline_data *dd,
 BFQ는 "네트워크 QoS"를 디스크에 적용한 것입니다.
 
 실제 사용 예:
+
 ```bash
 # 시나리오: 동시에 여러 프로세스가 I/O
 # - Chrome: 웹 브라우징
@@ -592,6 +599,7 @@ BFQ는 "네트워크 QoS"를 디스크에 적용한 것입니다.
 ```
 
 제가 데스크탑에서 테스트한 결과:
+
 ```bash
 # 대용량 파일 복사 중 브라우저 사용
 # CFQ: 브라우저 클릭 후 3초 대기
@@ -705,6 +713,7 @@ static void bfq_calc_finish(struct bfq_entity *entity, unsigned long service) {
 ### 🚀 blk-mq: NVMe 시대의 필수품
 
 전통적인 블록 계층의 문제:
+
 ```bash
 # 단일 큐: 모든 CPU가 하나의 큐를 공유
 # 96코어 서버에서 병목 발생!
@@ -717,6 +726,7 @@ CPU95 -/
 ```
 
 blk-mq의 해결책:
+
 ```bash
 # 멀티 큐: 각 CPU마다 자신의 큐
 CPU0 --> [Queue 0] --\
@@ -873,6 +883,7 @@ blk_finish_plug(&plug); // 한 번에 전송!
 ```
 
 실제 효과:
+
 ```bash
 # 데이터베이스 트랜잭션 테스트
 # 플러깅 비활성화: 1000 TPS
@@ -974,6 +985,7 @@ static void blk_mq_plug_issue_direct(struct blk_plug *plug, bool from_schedule) 
 NVMe는 SSD를 위해 처음부터 새롭게 설계된 프로토콜입니다.
 
 전통 SATA vs NVMe:
+
 ```bash
 # SATA SSD (AHCI 프로토콜)
 - 최대 1개 큐
@@ -1140,6 +1152,7 @@ static inline int nvme_process_cq(struct nvme_queue *nvmeq, u16 *start,
 io_uring은 리눅스 I/O의 미래입니다.
 
 전통적인 방식 vs io_uring:
+
 ```c
 // 전통: 매번 시스템 콜
 for (int i = 0; i < 1000; i++) {
@@ -1158,6 +1171,7 @@ io_uring_submit(&ring);  // 커널 진입 1번!
 ```
 
 제가 실제로 경험한 성능 차이:
+
 ```bash
 # 데이터베이스 벤치마크
 # epoll + read/write: 450K QPS
@@ -1500,4 +1514,5 @@ echo bfq > /sys/block/sda/queue/scheduler
 다음 절에서는 비동기 I/O와 이벤트 기반 프로그래밍이 어떻게 높은 동시성을 달성하는지 살펴보겠습니다.
 
 ## 다음 절 예고
+
 6-4절에서는 "비동기 I/O와 이벤트 기반 프로그래밍"을 다룹니다. select/poll/epoll의 진화, io_uring의 혁신, kqueue와 IOCP, 그리고 리액터 패턴 구현을 살펴보겠습니다.

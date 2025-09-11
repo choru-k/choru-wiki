@@ -1,0 +1,1149 @@
+---
+tags:
+  - Performance
+  - Optimization
+  - Profiling
+  - Benchmarking
+---
+
+# Chapter 10: 성능 분석과 최적화
+
+## 이 문서를 읽으면 이런 질문에 대해서 대답할 수 있습니다
+
+1. **성능 병목은 어떻게 찾나요?**
+   - 프로파일링 도구와 기법
+   - 시스템 메트릭 해석
+   - 병목 지점 식별 방법
+
+2. **CPU 최적화는 어떻게 하나요?**
+   - 캐시 최적화와 지역성
+   - 벡터화와 SIMD 명령어
+   - 분기 예측과 파이프라인
+
+3. **메모리 최적화의 핵심은 무엇인가요?**
+   - 메모리 접근 패턴
+   - False sharing과 캐시 라인
+   - NUMA 최적화
+
+4. **I/O 성능은 어떻게 개선하나요?**
+   - 배치 처리와 버퍼링
+   - 비동기 I/O와 다중화
+   - Zero-copy 기법
+
+5. **마이크로 벤치마크의 함정은 무엇인가요?**
+   - 벤치마크 설계 원칙
+   - 일반적인 실수들
+   - 실제 워크로드 시뮬레이션
+
+## 1. 성능 분석 방법론
+
+### 1.1 USE 방법론
+
+```mermaid
+graph TD
+    subgraph "USE Method"
+        U[Utilization<br/>사용률]
+        S[Saturation<br/>포화도]
+        E[Errors<br/>에러]
+    end
+    
+    subgraph "Resources"
+        CPU[CPU]
+        MEM[Memory]
+        DISK[Disk I/O]
+        NET[Network]
+    end
+    
+    U --> CPU
+    U --> MEM
+    U --> DISK
+    U --> NET
+    
+    S --> CPU
+    S --> MEM
+    S --> DISK
+    S --> NET
+    
+    E --> CPU
+    E --> MEM
+    E --> DISK
+    E --> NET
+    
+    style U fill:#9f9,stroke:#333,stroke-width:2px
+    style S fill:#ff9,stroke:#333,stroke-width:2px
+    style E fill:#f99,stroke:#333,stroke-width:2px
+```
+
+```bash
+# USE 방법론 적용 예제
+
+# CPU
+# Utilization
+mpstat -P ALL 1
+sar -u 1 10
+
+# Saturation
+vmstat 1
+sar -q 1 10  # run queue length
+
+# Errors
+dmesg | grep -i error
+journalctl -p err
+
+# Memory
+# Utilization
+free -m
+vmstat 1
+
+# Saturation
+sar -B 1 10  # paging statistics
+vmstat -s | grep "pages swapped"
+
+# Errors
+dmesg | grep -i "out of memory"
+
+# Disk I/O
+# Utilization
+iostat -xz 1
+sar -d 1 10
+
+# Saturation
+iostat -xz 1  # avgqu-sz column
+sar -d 1 10   # await column
+
+# Errors
+smartctl -a /dev/sda
+dmesg | grep -i "i/o error"
+
+# Network
+# Utilization
+sar -n DEV 1 10
+netstat -i
+
+# Saturation
+ss -s  # socket statistics
+netstat -s | grep -i overflow
+
+# Errors
+netstat -s | grep -i error
+ip -s link show
+```
+
+### 1.2 프로파일링 도구
+
+```c
+// perf를 사용한 CPU 프로파일링
+// 컴파일: gcc -O2 -g program.c -o program
+
+// 기록
+// perf record -g ./program
+
+// 분석
+// perf report
+// perf annotate function_name
+
+// Flame graph 생성
+// perf script | stackcollapse-perf.pl | flamegraph.pl > flame.svg
+
+// 핫스팟 분석 예제
+void hot_function() {
+    for (int i = 0; i < 1000000; i++) {
+        // CPU intensive work
+        calculate_something(i);
+    }
+}
+
+// perf stat으로 성능 카운터 확인
+// perf stat -e cycles,instructions,cache-misses ./program
+
+// 출력 예:
+// Performance counter stats for './program':
+//   10,234,567,890  cycles
+//    8,123,456,789  instructions  # 0.79 insn per cycle
+//      123,456,789  cache-misses
+```
+
+```python
+# Python 프로파일링
+import cProfile
+import pstats
+from line_profiler import LineProfiler
+
+# cProfile 사용
+def profile_with_cprofile():
+    profiler = cProfile.Profile()
+    profiler.enable()
+    
+    # 프로파일링할 코드
+    expensive_function()
+    
+    profiler.disable()
+    stats = pstats.Stats(profiler)
+    stats.sort_stats('cumulative')
+    stats.print_stats(10)
+
+# Line profiler 사용
+@profile  # kernprof -l -v script.py
+def expensive_function():
+    result = []
+    for i in range(1000000):  # Line 1: 10% time
+        result.append(i * 2)   # Line 2: 30% time
+        if i % 100 == 0:       # Line 3: 20% time
+            process(result)     # Line 4: 40% time
+    return result
+
+# Memory profiler
+from memory_profiler import profile
+
+@profile
+def memory_intensive():
+    # 메모리 사용량이 라인별로 표시됨
+    large_list = [i for i in range(1000000)]
+    large_dict = {i: i**2 for i in range(100000)}
+```
+
+## 2. CPU 최적화
+
+### 2.1 캐시 최적화
+
+```c
+// 캐시 라인 크기 (보통 64 bytes)
+#define CACHE_LINE_SIZE 64
+
+// 행렬 곱셈 - 캐시 미친화적
+void matrix_multiply_naive(double* A, double* B, double* C, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            double sum = 0;
+            for (int k = 0; k < n; k++) {
+                sum += A[i*n + k] * B[k*n + j];  // B의 접근이 캐시 미스 유발
+            }
+            C[i*n + j] = sum;
+        }
+    }
+}
+
+// 캐시 친화적 타일링
+void matrix_multiply_tiled(double* A, double* B, double* C, int n) {
+    const int TILE_SIZE = 64;  // L1 캐시에 맞는 크기
+    
+    // 초기화
+    memset(C, 0, n * n * sizeof(double));
+    
+    for (int i0 = 0; i0 < n; i0 += TILE_SIZE) {
+        for (int j0 = 0; j0 < n; j0 += TILE_SIZE) {
+            for (int k0 = 0; k0 < n; k0 += TILE_SIZE) {
+                
+                // 타일 내부 계산
+                for (int i = i0; i < min(i0 + TILE_SIZE, n); i++) {
+                    for (int j = j0; j < min(j0 + TILE_SIZE, n); j++) {
+                        double sum = C[i*n + j];
+                        
+                        for (int k = k0; k < min(k0 + TILE_SIZE, n); k++) {
+                            sum += A[i*n + k] * B[k*n + j];
+                        }
+                        
+                        C[i*n + j] = sum;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 프리페칭
+void process_with_prefetch(int* data, int n) {
+    for (int i = 0; i < n; i++) {
+        // 다음 캐시 라인 프리페치
+        __builtin_prefetch(&data[i + 16], 0, 3);
+        
+        // 현재 데이터 처리
+        process_item(data[i]);
+    }
+}
+```
+
+### 2.2 SIMD 벡터화
+
+```c
+#include <immintrin.h>  // AVX2
+
+// 스칼라 버전
+void add_scalar(float* a, float* b, float* c, int n) {
+    for (int i = 0; i < n; i++) {
+        c[i] = a[i] + b[i];
+    }
+}
+
+// SIMD 버전 (AVX2 - 256bit = 8 floats)
+void add_simd(float* a, float* b, float* c, int n) {
+    int simd_width = 8;
+    int simd_end = n - (n % simd_width);
+    
+    // SIMD 처리
+    for (int i = 0; i < simd_end; i += simd_width) {
+        __m256 va = _mm256_load_ps(&a[i]);
+        __m256 vb = _mm256_load_ps(&b[i]);
+        __m256 vc = _mm256_add_ps(va, vb);
+        _mm256_store_ps(&c[i], vc);
+    }
+    
+    // 나머지 스칼라 처리
+    for (int i = simd_end; i < n; i++) {
+        c[i] = a[i] + b[i];
+    }
+}
+
+// 자동 벡터화 힌트
+void auto_vectorize(float* restrict a, 
+                    float* restrict b, 
+                    float* restrict c, int n) {
+    
+    // restrict 키워드로 aliasing 없음을 보장
+    #pragma omp simd
+    for (int i = 0; i < n; i++) {
+        c[i] = a[i] * b[i] + c[i];  // FMA 명령어로 변환 가능
+    }
+}
+
+// 벡터화 확인
+// gcc -O3 -march=native -ftree-vectorize -fopt-info-vec file.c
+```
+
+### 2.3 분기 예측 최적화
+
+```c
+// 분기 예측 실패가 많은 코드
+void process_unpredictable(int* data, int n) {
+    for (int i = 0; i < n; i++) {
+        if (data[i] > 128) {  // 50% 확률로 랜덤
+            process_high(data[i]);
+        } else {
+            process_low(data[i]);
+        }
+    }
+}
+
+// 분기 제거 - 조건부 이동
+void process_branchless(int* data, int n) {
+    for (int i = 0; i < n; i++) {
+        int high = data[i] > 128;
+        int result = high ? compute_high(data[i]) : compute_low(data[i]);
+        // 또는 비트 연산 사용
+        // int result = (high * compute_high(data[i])) + 
+        //              (!high * compute_low(data[i]));
+    }
+}
+
+// 데이터 정렬로 분기 예측 개선
+void process_sorted(int* data, int n) {
+    // 데이터 정렬
+    qsort(data, n, sizeof(int), compare);
+    
+    // 이제 분기 예측이 효과적
+    for (int i = 0; i < n; i++) {
+        if (data[i] > 128) {
+            process_high(data[i]);
+        } else {
+            process_low(data[i]);
+        }
+    }
+}
+
+// likely/unlikely 힌트
+#define likely(x)   __builtin_expect(!!(x), 1)
+#define unlikely(x) __builtin_expect(!!(x), 0)
+
+void process_with_hint(int* data, int n) {
+    for (int i = 0; i < n; i++) {
+        if (unlikely(data[i] == 0)) {  // 드문 경우
+            handle_zero();
+        } else {
+            process_normal(data[i]);
+        }
+    }
+}
+```
+
+## 3. 메모리 최적화
+
+### 3.1 메모리 접근 패턴
+
+```c
+// Row-major vs Column-major 접근
+#define SIZE 1024
+
+// 캐시 친화적 (row-major in C)
+void row_major_access(int matrix[SIZE][SIZE]) {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            matrix[i][j] = i + j;  // 연속 메모리 접근
+        }
+    }
+}
+
+// 캐시 비친화적
+void column_major_access(int matrix[SIZE][SIZE]) {
+    for (int j = 0; j < SIZE; j++) {
+        for (int i = 0; i < SIZE; i++) {
+            matrix[i][j] = i + j;  // 캐시 라인 점프
+        }
+    }
+}
+
+// Structure of Arrays (SoA) 패턴
+// Array of Structures (캐시 비효율적)
+struct Particle_AoS {
+    float x, y, z;
+    float vx, vy, vz;
+    float mass;
+};
+
+void update_positions_aos(struct Particle_AoS* particles, int n, float dt) {
+    for (int i = 0; i < n; i++) {
+        // 전체 구조체 로드 (사용하지 않는 필드도 포함)
+        particles[i].x += particles[i].vx * dt;
+        particles[i].y += particles[i].vy * dt;
+        particles[i].z += particles[i].vz * dt;
+    }
+}
+
+// Structure of Arrays (캐시 효율적)
+struct Particles_SoA {
+    float* x;
+    float* y;
+    float* z;
+    float* vx;
+    float* vy;
+    float* vz;
+    float* mass;
+};
+
+void update_positions_soa(struct Particles_SoA* particles, int n, float dt) {
+    // 벡터화 가능, 캐시 효율적
+    #pragma omp simd
+    for (int i = 0; i < n; i++) {
+        particles->x[i] += particles->vx[i] * dt;
+    }
+    
+    #pragma omp simd
+    for (int i = 0; i < n; i++) {
+        particles->y[i] += particles->vy[i] * dt;
+    }
+    
+    #pragma omp simd  
+    for (int i = 0; i < n; i++) {
+        particles->z[i] += particles->vz[i] * dt;
+    }
+}
+```
+
+### 3.2 False Sharing 방지
+
+```c
+#include <pthread.h>
+
+// False sharing 발생
+struct bad_counter {
+    long count1;  // CPU 1이 업데이트
+    long count2;  // CPU 2가 업데이트 (같은 캐시 라인!)
+};
+
+// False sharing 방지
+struct alignas(64) good_counter {
+    long count;
+    char padding[64 - sizeof(long)];  // 캐시 라인 분리
+};
+
+// 실제 예제
+void* thread_func_bad(void* arg) {
+    struct bad_counter* counter = (struct bad_counter*)arg;
+    int thread_id = *(int*)arg;
+    
+    for (int i = 0; i < 100000000; i++) {
+        if (thread_id == 0) {
+            counter->count1++;  // False sharing!
+        } else {
+            counter->count2++;  // False sharing!
+        }
+    }
+    return NULL;
+}
+
+void* thread_func_good(void* arg) {
+    struct good_counter* counters = (struct good_counter*)arg;
+    int thread_id = *(int*)arg;
+    
+    for (int i = 0; i < 100000000; i++) {
+        counters[thread_id].count++;  // 캐시 라인 분리됨
+    }
+    return NULL;
+}
+```
+
+### 3.3 NUMA 최적화
+
+```c
+#include <numa.h>
+
+// NUMA 인식 메모리 할당
+void numa_aware_allocation() {
+    int num_nodes = numa_num_configured_nodes();
+    
+    for (int node = 0; node < num_nodes; node++) {
+        // 특정 NUMA 노드에 메모리 할당
+        void* local_mem = numa_alloc_onnode(1024 * 1024, node);
+        
+        // CPU 친화도 설정
+        struct bitmask* cpumask = numa_allocate_cpumask();
+        numa_node_to_cpus(node, cpumask);
+        numa_sched_setaffinity(0, cpumask);
+        
+        // 로컬 메모리에서 작업
+        process_data(local_mem);
+        
+        numa_free(local_mem, 1024 * 1024);
+        numa_free_cpumask(cpumask);
+    }
+}
+
+// NUMA 밸런싱
+void numa_balanced_threads() {
+    int num_threads = get_nprocs();
+    pthread_t threads[num_threads];
+    
+    for (int i = 0; i < num_threads; i++) {
+        pthread_attr_t attr;
+        pthread_attr_init(&attr);
+        
+        // CPU 친화도 설정
+        cpu_set_t cpuset;
+        CPU_ZERO(&cpuset);
+        CPU_SET(i, &cpuset);
+        pthread_attr_setaffinity_np(&attr, sizeof(cpuset), &cpuset);
+        
+        // 스레드 생성
+        pthread_create(&threads[i], &attr, worker_thread, (void*)(intptr_t)i);
+        pthread_attr_destroy(&attr);
+    }
+}
+```
+
+## 4. I/O 최적화
+
+### 4.1 배치 처리와 버퍼링
+
+```c
+// 비효율적: 작은 I/O 많이
+void write_inefficient(int fd, char* data, int n) {
+    for (int i = 0; i < n; i++) {
+        write(fd, &data[i], 1);  // 시스템 콜 오버헤드
+    }
+}
+
+// 효율적: 버퍼링
+void write_buffered(int fd, char* data, int n) {
+    const int BUFFER_SIZE = 8192;
+    char buffer[BUFFER_SIZE];
+    int buf_pos = 0;
+    
+    for (int i = 0; i < n; i++) {
+        buffer[buf_pos++] = data[i];
+        
+        if (buf_pos == BUFFER_SIZE) {
+            write(fd, buffer, BUFFER_SIZE);
+            buf_pos = 0;
+        }
+    }
+    
+    // 남은 데이터 flush
+    if (buf_pos > 0) {
+        write(fd, buffer, buf_pos);
+    }
+}
+
+// Vectored I/O
+void write_vectored(int fd, struct data* items, int n) {
+    struct iovec iov[n];
+    
+    for (int i = 0; i < n; i++) {
+        iov[i].iov_base = items[i].buffer;
+        iov[i].iov_len = items[i].size;
+    }
+    
+    // 한 번의 시스템 콜로 여러 버퍼 쓰기
+    writev(fd, iov, n);
+}
+```
+
+### 4.2 비동기 I/O
+
+```c
+// io_uring을 사용한 비동기 I/O
+#include <liburing.h>
+
+void async_io_uring() {
+    struct io_uring ring;
+    io_uring_queue_init(256, &ring, 0);
+    
+    // 여러 I/O 작업 제출
+    for (int i = 0; i < num_files; i++) {
+        struct io_uring_sqe* sqe = io_uring_get_sqe(&ring);
+        
+        io_uring_prep_read(sqe, fds[i], buffers[i], 
+                          buffer_size, 0);
+        io_uring_sqe_set_data(sqe, &requests[i]);
+    }
+    
+    // 배치 제출
+    io_uring_submit(&ring);
+    
+    // 완료 처리
+    struct io_uring_cqe* cqe;
+    for (int i = 0; i < num_files; i++) {
+        io_uring_wait_cqe(&ring, &cqe);
+        
+        struct request* req = io_uring_cqe_get_data(cqe);
+        process_result(req, cqe->res);
+        
+        io_uring_cqe_seen(&ring, cqe);
+    }
+    
+    io_uring_queue_exit(&ring);
+}
+
+// AIO (POSIX)
+void posix_aio() {
+    struct aiocb cb[10];
+    
+    for (int i = 0; i < 10; i++) {
+        memset(&cb[i], 0, sizeof(struct aiocb));
+        cb[i].aio_fildes = fds[i];
+        cb[i].aio_buf = buffers[i];
+        cb[i].aio_nbytes = BUFFER_SIZE;
+        cb[i].aio_offset = 0;
+        
+        aio_read(&cb[i]);
+    }
+    
+    // 완료 대기
+    for (int i = 0; i < 10; i++) {
+        while (aio_error(&cb[i]) == EINPROGRESS) {
+            // 대기
+        }
+        
+        ssize_t bytes = aio_return(&cb[i]);
+        process_data(buffers[i], bytes);
+    }
+}
+```
+
+## 5. 락 최적화
+
+### 5.1 Lock-free 프로그래밍
+
+```c
+// Compare-and-swap 기반 lock-free 스택
+struct node {
+    void* data;
+    struct node* next;
+};
+
+struct lock_free_stack {
+    _Atomic(struct node*) head;
+};
+
+void push(struct lock_free_stack* stack, void* data) {
+    struct node* new_node = malloc(sizeof(struct node));
+    new_node->data = data;
+    
+    struct node* head = atomic_load(&stack->head);
+    
+    do {
+        new_node->next = head;
+    } while (!atomic_compare_exchange_weak(&stack->head, 
+                                          &head, new_node));
+}
+
+void* pop(struct lock_free_stack* stack) {
+    struct node* head = atomic_load(&stack->head);
+    struct node* next;
+    
+    do {
+        if (head == NULL) return NULL;
+        next = head->next;
+    } while (!atomic_compare_exchange_weak(&stack->head, 
+                                          &head, next));
+    
+    void* data = head->data;
+    free(head);
+    return data;
+}
+
+// RCU (Read-Copy-Update)
+struct rcu_data {
+    int value;
+    struct rcu_head rcu;
+};
+
+void rcu_reader() {
+    rcu_read_lock();
+    
+    struct rcu_data* data = rcu_dereference(global_data);
+    // 읽기 작업 (락 없음)
+    int val = data->value;
+    
+    rcu_read_unlock();
+}
+
+void rcu_writer() {
+    struct rcu_data* new_data = malloc(sizeof(struct rcu_data));
+    new_data->value = 42;
+    
+    struct rcu_data* old_data = global_data;
+    rcu_assign_pointer(global_data, new_data);
+    
+    // 모든 reader가 완료될 때까지 대기
+    synchronize_rcu();
+    
+    // 이제 안전하게 old_data 해제
+    free(old_data);
+}
+```
+
+### 5.2 락 경합 감소
+
+```c
+// 락 분할 (Lock Striping)
+#define NUM_LOCKS 16
+
+struct striped_hashtable {
+    struct bucket {
+        pthread_mutex_t lock;
+        struct entry* head;
+    } buckets[NUM_LOCKS];
+};
+
+void striped_insert(struct striped_hashtable* ht, 
+                   int key, void* value) {
+    int bucket = key % NUM_LOCKS;
+    
+    pthread_mutex_lock(&ht->buckets[bucket].lock);
+    // 해당 버킷에만 락
+    insert_entry(&ht->buckets[bucket].head, key, value);
+    pthread_mutex_unlock(&ht->buckets[bucket].lock);
+}
+
+// Reader-Writer 락
+pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
+
+void reader() {
+    pthread_rwlock_rdlock(&rwlock);
+    // 여러 reader 동시 접근 가능
+    read_data();
+    pthread_rwlock_unlock(&rwlock);
+}
+
+void writer() {
+    pthread_rwlock_wrlock(&rwlock);
+    // 배타적 접근
+    write_data();
+    pthread_rwlock_unlock(&rwlock);
+}
+
+// Spinlock vs Mutex
+void short_critical_section() {
+    // 짧은 임계 영역에는 spinlock이 유리
+    pthread_spinlock_t spinlock;
+    pthread_spin_lock(&spinlock);
+    
+    // 매우 짧은 작업
+    counter++;
+    
+    pthread_spin_unlock(&spinlock);
+}
+
+void long_critical_section() {
+    // 긴 임계 영역에는 mutex가 유리
+    pthread_mutex_t mutex;
+    pthread_mutex_lock(&mutex);
+    
+    // 긴 작업
+    process_large_data();
+    
+    pthread_mutex_unlock(&mutex);
+}
+```
+
+## 6. 컴파일러 최적화
+
+### 6.1 최적화 레벨과 플래그
+
+```bash
+# GCC/Clang 최적화 플래그
+# -O0: 최적화 없음 (디버깅용)
+# -O1: 기본 최적화
+# -O2: 추천 최적화 (대부분의 경우)
+# -O3: 공격적 최적화 (코드 크기 증가 가능)
+# -Os: 크기 최적화
+# -Ofast: -O3 + fast-math (표준 준수 포기)
+
+gcc -O2 -march=native -mtune=native program.c
+
+# Profile-guided optimization (PGO)
+# 1. 프로파일 생성
+gcc -fprofile-generate program.c -o program
+./program  # 대표적인 워크로드 실행
+
+# 2. 프로파일 기반 최적화
+gcc -fprofile-use program.c -o program_optimized
+
+# Link-time optimization (LTO)
+gcc -flto -O2 file1.c file2.c -o program
+```
+
+### 6.2 컴파일러 힌트
+
+```c
+// 인라인 힌트
+static inline int fast_function(int x) {
+    return x * 2 + 1;
+}
+
+// 강제 인라인
+__attribute__((always_inline)) 
+static inline int must_inline(int x) {
+    return x + 1;
+}
+
+// 인라인 방지
+__attribute__((noinline))
+void dont_inline() {
+    // 디버깅이나 프로파일링을 위해
+}
+
+// 핫/콜드 경로 표시
+__attribute__((hot))
+void frequently_called() {
+    // 최적화 우선순위 높음
+}
+
+__attribute__((cold))
+void error_handler() {
+    // 최적화 우선순위 낮음
+}
+
+// 함수 속성
+__attribute__((pure))  // 부작용 없음, 전역 상태 읽기만
+int pure_function(int x) {
+    return x * global_constant;
+}
+
+__attribute__((const))  // 부작용 없음, 인자만 사용
+int const_function(int x, int y) {
+    return x * y;
+}
+
+// 정렬 지정
+struct __attribute__((packed)) packed_struct {
+    char c;
+    int i;  // 패딩 없음
+};
+
+struct __attribute__((aligned(64))) cache_aligned {
+    int data;  // 64바이트 정렬
+};
+```
+
+## 7. 벤치마킹
+
+### 7.1 마이크로 벤치마크
+
+```c
+#include <time.h>
+#include <stdint.h>
+
+// 고해상도 타이머
+uint64_t rdtsc() {
+    unsigned int lo, hi;
+    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
+    return ((uint64_t)hi << 32) | lo;
+}
+
+// 벤치마크 프레임워크
+typedef struct {
+    const char* name;
+    void (*func)(void*);
+    void* data;
+    int iterations;
+    double min_time;
+    double max_time;
+    double avg_time;
+} benchmark_t;
+
+void run_benchmark(benchmark_t* bench) {
+    // Warmup
+    for (int i = 0; i < 100; i++) {
+        bench->func(bench->data);
+    }
+    
+    double total = 0;
+    bench->min_time = 1e9;
+    bench->max_time = 0;
+    
+    for (int i = 0; i < bench->iterations; i++) {
+        uint64_t start = rdtsc();
+        
+        bench->func(bench->data);
+        
+        uint64_t end = rdtsc();
+        double elapsed = (end - start) / CPU_FREQ;
+        
+        total += elapsed;
+        if (elapsed < bench->min_time) bench->min_time = elapsed;
+        if (elapsed > bench->max_time) bench->max_time = elapsed;
+    }
+    
+    bench->avg_time = total / bench->iterations;
+    
+    printf("Benchmark: %s\n", bench->name);
+    printf("  Min: %.3f us\n", bench->min_time * 1e6);
+    printf("  Max: %.3f us\n", bench->max_time * 1e6);
+    printf("  Avg: %.3f us\n", bench->avg_time * 1e6);
+}
+
+// 컴파일러 최적화 방지
+void escape(void* p) {
+    __asm__ volatile("" : : "g"(p) : "memory");
+}
+
+void clobber() {
+    __asm__ volatile("" : : : "memory");
+}
+
+// 벤치마크 예제
+void benchmark_memcpy() {
+    const int SIZE = 1024 * 1024;
+    char* src = malloc(SIZE);
+    char* dst = malloc(SIZE);
+    
+    // 초기화
+    memset(src, 0x42, SIZE);
+    
+    uint64_t start = rdtsc();
+    
+    memcpy(dst, src, SIZE);
+    escape(dst);  // 최적화 방지
+    
+    uint64_t end = rdtsc();
+    
+    printf("memcpy %d bytes: %lu cycles\n", SIZE, end - start);
+    
+    free(src);
+    free(dst);
+}
+```
+
+### 7.2 실제 워크로드 시뮬레이션
+
+```python
+# Python 벤치마크 예제
+import time
+import statistics
+from contextlib import contextmanager
+
+@contextmanager
+def benchmark(name):
+    start = time.perf_counter()
+    yield
+    elapsed = time.perf_counter() - start
+    print(f"{name}: {elapsed:.6f} seconds")
+
+# 여러 실행 통계
+def benchmark_statistics(func, iterations=100):
+    times = []
+    
+    # Warmup
+    for _ in range(10):
+        func()
+    
+    # 실제 측정
+    for _ in range(iterations):
+        start = time.perf_counter()
+        func()
+        elapsed = time.perf_counter() - start
+        times.append(elapsed)
+    
+    return {
+        'min': min(times),
+        'max': max(times),
+        'mean': statistics.mean(times),
+        'median': statistics.median(times),
+        'stdev': statistics.stdev(times),
+        'p95': statistics.quantiles(times, n=20)[18],  # 95th percentile
+        'p99': statistics.quantiles(times, n=100)[98],  # 99th percentile
+    }
+
+# A/B 테스트
+def ab_test(func_a, func_b, iterations=1000):
+    stats_a = benchmark_statistics(func_a, iterations)
+    stats_b = benchmark_statistics(func_b, iterations)
+    
+    improvement = (stats_a['mean'] - stats_b['mean']) / stats_a['mean'] * 100
+    
+    print(f"Function A: mean={stats_a['mean']:.6f}, p95={stats_a['p95']:.6f}")
+    print(f"Function B: mean={stats_b['mean']:.6f}, p95={stats_b['p95']:.6f}")
+    print(f"Improvement: {improvement:.2f}%")
+```
+
+## 8. 성능 모니터링
+
+### 8.1 시스템 메트릭
+
+```bash
+#!/bin/bash
+# 종합 성능 모니터링 스크립트
+
+# CPU 사용률
+echo "=== CPU Usage ==="
+mpstat 1 5
+
+# 메모리 사용률
+echo "=== Memory Usage ==="
+free -h
+vmstat 1 5
+
+# 디스크 I/O
+echo "=== Disk I/O ==="
+iostat -xz 1 5
+
+# 네트워크
+echo "=== Network ==="
+sar -n DEV 1 5
+
+# 프로세스별 리소스
+echo "=== Top Processes ==="
+pidstat 1 5
+
+# 시스템 콜 추적
+echo "=== System Calls ==="
+strace -c -p $PID
+
+# 캐시 미스율
+echo "=== Cache Statistics ==="
+perf stat -e cache-references,cache-misses,instructions,cycles -p $PID sleep 5
+```
+
+### 8.2 애플리케이션 메트릭
+
+```c
+// 애플리케이션 레벨 메트릭
+typedef struct {
+    atomic_long requests_total;
+    atomic_long requests_failed;
+    atomic_long bytes_processed;
+    
+    // 레이턴시 히스토그램
+    atomic_long latency_buckets[10];  // 1ms, 5ms, 10ms, ...
+    
+    // 처리율
+    atomic_long throughput_current;
+    time_t last_reset;
+} metrics_t;
+
+static metrics_t metrics = {0};
+
+void record_request(double latency_ms, bool success) {
+    atomic_fetch_add(&metrics.requests_total, 1);
+    
+    if (!success) {
+        atomic_fetch_add(&metrics.requests_failed, 1);
+    }
+    
+    // 레이턴시 버킷 결정
+    int bucket = 0;
+    double thresholds[] = {1, 5, 10, 25, 50, 100, 250, 500, 1000, INFINITY};
+    
+    while (latency_ms > thresholds[bucket]) bucket++;
+    atomic_fetch_add(&metrics.latency_buckets[bucket], 1);
+}
+
+void print_metrics() {
+    time_t now = time(NULL);
+    double elapsed = difftime(now, metrics.last_reset);
+    
+    printf("Metrics Report:\n");
+    printf("  Total Requests: %ld\n", metrics.requests_total);
+    printf("  Failed Requests: %ld (%.2f%%)\n", 
+           metrics.requests_failed,
+           100.0 * metrics.requests_failed / metrics.requests_total);
+    printf("  Throughput: %.2f req/s\n", 
+           metrics.requests_total / elapsed);
+    
+    printf("  Latency Distribution:\n");
+    double percentiles[] = {50, 90, 95, 99};
+    // ... 백분위수 계산 ...
+}
+```
+
+## 9. 실전 최적화 사례
+
+### 9.1 웹 서버 최적화
+
+```c
+// 고성능 HTTP 서버 최적화
+struct http_server {
+    int epfd;
+    struct thread_pool* workers;
+    struct connection_pool* connections;
+    struct buffer_pool* buffers;
+};
+
+void optimized_http_server() {
+    // 1. SO_REUSEPORT로 멀티코어 스케일링
+    int optval = 1;
+    setsockopt(listen_fd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval));
+    
+    // 2. TCP_NODELAY로 레이턴시 감소
+    setsockopt(client_fd, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval));
+    
+    // 3. Edge-triggered epoll
+    struct epoll_event ev;
+    ev.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
+    epoll_ctl(epfd, EPOLL_CTL_ADD, client_fd, &ev);
+    
+    // 4. 커널 파라미터 튜닝
+    // echo 2 > /proc/sys/net/ipv4/tcp_fin_timeout
+    // echo 1 > /proc/sys/net/ipv4/tcp_tw_reuse
+    // echo 1 > /proc/sys/net/ipv4/tcp_tw_recycle
+    
+    // 5. 연결 풀링
+    struct connection* conn = get_connection_from_pool();
+    
+    // 6. Zero-copy sendfile
+    off_t offset = 0;
+    sendfile(client_fd, file_fd, &offset, file_size);
+    
+    // 7. 비동기 로깅
+    async_log("Request processed");
+}
+```
+
+## 10. 정리
+
+성능 최적화는 체계적인 접근이 필요합니다:
+
+1. **측정이 먼저**: 추측하지 말고 프로파일링으로 병목 찾기
+2. **알고리즘 최적화**: O(n²) → O(n log n) 같은 근본적 개선
+3. **캐시 활용**: 데이터 지역성과 캐시 친화적 설계
+4. **병렬화**: 멀티코어 활용과 락 경합 최소화
+5. **I/O 최적화**: 배치 처리, 비동기 I/O, zero-copy
+
+다음 장에서는 이러한 최적화 기법을 컨테이너 환경에서 어떻게 적용하는지, 리소스 격리와 cgroup에 대해 알아보겠습니다.
+
+## 참고 자료
+
+- [Systems Performance by Brendan Gregg](http://www.brendangregg.com/systems-performance-2nd-edition-book.html)
+- [Computer Systems: A Programmer's Perspective](http://csapp.cs.cmu.edu/)
+- [Linux Performance](http://www.brendangregg.com/linuxperf.html)
+- [Intel Optimization Manual](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)

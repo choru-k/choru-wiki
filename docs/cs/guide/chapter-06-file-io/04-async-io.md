@@ -10,6 +10,7 @@ tags:
 # Chapter 6-4: 비동기 I/O와 이벤트 기반 프로그래밍
 
 ## 이 절에서 답할 질문들
+
 - 동기 I/O와 비동기 I/O의 근본적인 차이는 무엇인가?
 - select, poll, epoll은 어떻게 진화해왔는가?
 - io_uring은 기존 비동기 I/O의 어떤 문제를 해결하는가?
@@ -25,6 +26,7 @@ tags:
 "어떻게 하면 동시에 1만 개의 연결을 처리할 수 있을까?"
 
 전통적인 방법의 문제:
+
 ```c
 // 각 연결마다 스레드 생성
 for (int i = 0; i < 10000; i++) {
@@ -61,6 +63,7 @@ Memory usage: 15MB  # 166분의 1!
 select는 BSD 4.2에서 처음 등장했습니다. 당시로서는 혁명적이었죠!
 
 하지만 시대가 변했습니다:
+
 ```c
 // select의 제한
 #define FD_SETSIZE 1024  // 최대 1024개 FD만!
@@ -74,6 +77,7 @@ for (int fd = 0; fd <= max_fd; fd++) {
 ```
 
 제가 겪은 select의 한계:
+
 ```bash
 # 1000개 연결 테스트
 # CPU 사용률: 45% (FD 검사만으로!)
@@ -267,6 +271,7 @@ static int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time) {
 poll은 System V에서 select의 한계를 극복하기 위해 만들어졌습니다.
 
 개선점:
+
 ```c
 // select: 고정 크기 비트맵
 fd_set readfds;  // 최대 1024개
@@ -277,6 +282,7 @@ struct pollfd *fds = malloc(10000 * sizeof(struct pollfd));
 ```
 
 하지만 여전한 문제:
+
 ```c
 // 매번 전체 배열을 검사해야 함
 for (int i = 0; i < nfds; i++) {
@@ -401,6 +407,7 @@ for (ready_fds) {  // 준비된 것만!
 ```
 
 제가 측정한 성능 차이:
+
 ```bash
 # 10000개 연결, 100개만 활성
 
@@ -420,6 +427,7 @@ Latency: 0.5ms  # 30배 빨라짐!
 #### Edge-Triggered vs Level-Triggered
 
 제가 겪은 실수:
+
 ```c
 // Level-Triggered (기본값)
 while (1) {
@@ -1488,11 +1496,12 @@ void enable_tcp_fastopen(int listen_fd) {
 
 비동기 I/O와 이벤트 기반 프로그래밍은 현대 고성능 시스템의 핵심입니다. select에서 시작하여 poll, epoll을 거쳐 io_uring에 이르기까지, 리눅스의 I/O 멀티플렉싱은 지속적으로 진화해왔습니다.
 
-epoll은 O(1) 복잡도로 수만 개의 연결을 효율적으로 처리할 수 있게 해주었고, io_uring은 시스템 콜 오버헤드를 최소화하면서 진정한 비동기 I/O를 구현했습니다. 
+epoll은 O(1) 복잡도로 수만 개의 연결을 효율적으로 처리할 수 있게 해주었고, io_uring은 시스템 콜 오버헤드를 최소화하면서 진정한 비동기 I/O를 구현했습니다.
 
 리액터 패턴은 이벤트 기반 서버의 표준 아키텍처가 되었으며, Windows의 IOCP는 프로액터 패턴의 대표적 구현입니다. Zero-copy, TCP 최적화 등의 기법을 통해 네트워크 성능을 극대화할 수 있습니다.
 
 다음 장에서는 네트워크 프로그래밍의 더 깊은 측면을 탐구하겠습니다.
 
 ## 다음 장 예고
+
 Chapter 7에서는 "네트워크 프로그래밍은 어떻게 동작하는가"를 다룹니다. 소켓 프로그래밍의 기초부터 고급 기법까지, TCP/IP 스택의 내부 구현과 최적화 전략을 살펴보겠습니다.

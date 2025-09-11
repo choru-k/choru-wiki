@@ -10,6 +10,7 @@ tags:
 # Chapter 7-3: 고성능 네트워크 서버 구현
 
 ## 이 절에서 답할 질문들
+
 - C10K 문제는 무엇이고 어떻게 해결하는가?
 - 제로카피는 어떻게 성능을 향상시키는가?
 - CPU 친화도와 NUMA는 왜 중요한가?
@@ -62,6 +63,7 @@ $ top
 제가 게임 서버를 개발할 때 배운 교훈입니다: "연결당 1KB만 줄여도, 100만 연결에서는 1GB를 절약한다!"
 
 실제로 계산해보면:
+
 ```bash
 # 일반적인 연결 구조체 크기
 초보자_구조체 = 8KB    # char buffer[8192] 같은 고정 버퍼
@@ -201,6 +203,7 @@ void *alloc_buffer(struct buffer_cache *cache, size_t size) {
 2013년, Linux 3.9에 SO_REUSEPORT가 추가되었을 때, 저는 기뻐서 소리를 질렀습니다! 드디어 여러 프로세스가 같은 포트를 바인딩할 수 있게 되었거든요.
 
 이전에는 이런 고생을 했습니다:
+
 ```python
 # 구석기 시대 방법
 마스터_프로세스:
@@ -214,6 +217,7 @@ void *alloc_buffer(struct buffer_cache *cache, size_t size) {
 ```
 
 성능 차이는 어마어마했습니다:
+
 ```bash
 # nginx 벤치마크 결과
 $ wrk -t12 -c400 -d30s http://localhost/
@@ -311,16 +315,19 @@ void worker_main(struct server_config *config, int worker_id) {
 ### 🏎️ 데이터 복사는 악이다
 
 일반적인 파일 전송에서는 데이터가 4번이나 복사됩니다:
+
 1. 디스크 → 커널 버퍼 (DMA)
 2. 커널 버퍼 → 사용자 버퍼 (CPU)
 3. 사용자 버퍼 → 소켓 버퍼 (CPU)
 4. 소켓 버퍼 → NIC (DMA)
 
 제로카피를 사용하면? 단 2번!
+
 1. 디스크 → 커널 버퍼 (DMA)
 2. 커널 버퍼 → NIC (DMA)
 
 실제 성능 차이:
+
 ```bash
 # 10GB 파일 전송 테스트
 $ time ./normal_copy large_file.bin
@@ -524,6 +531,7 @@ node   0   1
 ```
 
 실제 성능 차이:
+
 ```python
 # 잘못된 NUMA 배치
 CPU 0에서 실행 + Node 1 메모리 사용 = 100ms
@@ -705,6 +713,7 @@ void *numa_worker_thread(void *arg) {
 #### 🏊 연결 재사용의 마법
 
 데이터베이스 연결을 예로 들면:
+
 ```python
 # 연결 풀 없이
 매_요청마다:
@@ -1040,6 +1049,7 @@ HTTP/3 (2022):
 #### 🚄 멀티플렉싱의 힘
 
 실제 성능 비교:
+
 ```bash
 # 100개의 작은 이미지 로딩 테스트
 
@@ -1220,6 +1230,7 @@ void http2_server_push(struct http2_connection *conn,
 #### 💬 실시간 통신의 혁명
 
 제가 실시간 채팅 서버를 만들 때의 진화:
+
 ```javascript
 // 1세대: Polling (2005년)
 setInterval(() => {
@@ -1402,4 +1413,5 @@ $ numastat           # NUMA 통계 확인
 다음 절에서는 보안 네트워킹과 암호화 통신을 살펴보겠습니다.
 
 ## 다음 절 예고
+
 7-4절에서는 "보안 네트워킹과 TLS"를 다룹니다. TLS 핸드셰이크, 인증서 검증, 암호화 스위트, 그리고 성능 최적화를 살펴보겠습니다.

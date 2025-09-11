@@ -33,6 +33,7 @@ tags:
 ### 1.1 페이지 폴트 분류: 신호등처럼 단순한 분류
 
 페이지 폴트는 신호등과 같습니다:
+
 - 🟢 **Minor Fault**: 초록불 - 빠르게 처리되고 계속 진행
 - 🟡 **Major Fault**: 노란불 - 잠시 멈추고 기다림
 - 🔴 **Invalid Fault**: 빨간불 - 정지! Segmentation Fault!
@@ -121,6 +122,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
 ### 1.3 Minor vs Major Fault: 천국과 지옥의 차이
 
 제가 실제로 경험한 사례입니다. 같은 100MB 파일을 처리하는데:
+
 - 첫 번째 실행: 5초 (Major Fault 다발)
 - 두 번째 실행: 0.1초 (Minor Fault만)
 
@@ -1061,18 +1063,21 @@ void measure_fault_cost() {
 긴 여정이었습니다! 이제 여러분은 "Segmentation Fault"를 보고도 당황하지 않을 겁니다.
 
 ### 페이지 폴트란?
+
 - **한 줄 요약**: CPU가 "이 메모리 어디 있어요?"라고 묻는 것
 - **좋은 폴트**: Minor Fault - 빠른 처리 (0.001ms)
 - **나쁜 폴트**: Major Fault - 디스크 I/O (5ms)
 - **치명적 폴트**: Segmentation Fault - 게임 오버
 
 ### 왜 배워야 하는가?
+
 1. **malloc()의 거짓말**: 1GB 할당 ≠ 1GB 사용
 2. **fork()의 마법**: 100GB 복사가 1초 (CoW)
 3. **스왑 지옥**: 왜 컴퓨터가 느려지는지 이해
 4. **OOM Killer**: Chrome이 갑자기 죽는 이유
 
-### 꼭 기억하세요!
+### 꼭 기억하세요
+
 - **Minor Fault**: 초당 수천 번 발생해도 정상 (빠름)
 - **Major Fault**: 초당 100번만 넘어도 지옥 (느림)
 - **CoW**: Redis가 100GB를 1초에 백업하는 비밀
@@ -1082,10 +1087,12 @@ void measure_fault_cost() {
 ## 관련 문서
 
 ### 선행 지식
+
 - [TLB와 캐싱](02-tlb-caching.md) - 주소 변환 성능
 - [주소 변환 메커니즘](01-address-translation.md) - MMU와 페이지 테이블
 
 ### 관련 주제
+
 - [메모리 압축](04-compression-deduplication.md) - 페이지 폴트 예방
 - [Process Creation](../chapter-04-process-thread/01-process-creation.md) - fork()와 CoW
 - [Signal & IPC](../chapter-04-process-thread/04-signal-ipc.md) - OOM Killer 시그널
@@ -1095,6 +1102,7 @@ void measure_fault_cost() {
 지금까지 페이지 폴트와 메모리 관리의 기본을 배웠습니다. 하지만 더 놀라운 기술들이 있습니다.
 
 다음 섹션 [3-4: 메모리 압축과 중복 제거](04-compression-deduplication.md)에서는 **메모리를 압축하는 마법**을 다룹니다:
+
 - **zRAM**: RAM을 압축해서 2배로 쓰기
 - **KSM**: 똑같은 메모리 페이지 합치기
 - **Memory Balloon**: 가상머신의 메모리 훔치기

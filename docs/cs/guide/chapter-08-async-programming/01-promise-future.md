@@ -21,21 +21,25 @@ tags:
 ### 💡 이 절에서 배우는 실전 기술
 
 **"Promise가 그냥 콜백보다 나은 거 아니야?"**
+
 - 콜백 지옥에서 탈출한 실제 사례
 - Promise 체이닝으로 10줄 코드를 3줄로
 - 에러 처리가 한곳에 모이는 마법
 
 **"C++의 std::future는 왜 이렇게 복잡해?"**
+
 - 커스텀 Promise/Future 구현으로 이해하기
 - 스레드 안전성과 성능의 균형
 - Facebook Folly의 Future 구현 비밀
 
 **"async/await 없이 비동기 코드 잘 짜는 법"**
+
 - Promise 조합 패턴 (all, race, allSettled)
 - 재시도와 타임아웃 처리
 - Circuit Breaker로 장애 격리
 
 **"AbortController가 뭐가 좋은데?"**
+
 - 취소 가능한 비동기 작업 만들기
 - 메모리 누수 방지
 - 사용자 경험 개선 사례
@@ -701,6 +705,7 @@ async function demonstratePromiseUtils() {
 #### 🏃‍♂️ 병렬 처리로 10배 빨라진 이미지 처리
 
 실제 프로젝트에서 1000개 이미지를 처리할 때:
+
 - 순차 처리: 120초
 - std::async 병렬: 15초
 - 커스텀 스레드 풀: 12초
@@ -1078,6 +1083,7 @@ void cancellable_operation_example() {
 #### 🎆 AbortController: 비동기의 긴급 정지 버튼
 
 Google Chrome 팀이 AbortController를 도입한 이유:
+
 - **메모리 누수**: 취소되지 않은 fetch가 메모리를 계속 점유
 - **네트워크 대역폭**: 불필요한 요청이 계속 진행
 - **UX 개선**: 사용자가 페이지 이동 시 즉시 취소
@@ -1266,6 +1272,7 @@ Java의 ExecutorService를 보고 배운 교훈:
 "작업을 어디서 실행할지를 추상화하면, 테스트와 성능 최적화가 쉽다"
 
 **실행자 패턴의 실전 활용:**
+
 - **ThreadPoolExecutor**: CPU 집약적 작업 (ML 학습)
 - **InlineExecutor**: 디버깅과 테스트
 - **DelayedExecutor**: 스케줄링된 작업 (알림, 정기 체크)
@@ -1458,6 +1465,7 @@ console.log('3');
 ```
 
 **비밀은 두 개의 큐:**
+
 1. **마이크로태스크 큐** (우선순위 높음)
    - Promise 콜백
    - queueMicrotask()
@@ -1702,11 +1710,13 @@ scheduler.schedule(longRunningTask(), 'low');
 이것이 **Circuit Breaker** 패턴의 탄생 배경입니다.
 
 **Circuit Breaker의 3가지 상태:**
+
 1. **CLOSED** (정상): 전기가 흐름 ✓
 2. **OPEN** (차단): 회로 차단, 요청 거부 ❌
 3. **HALF_OPEN** (테스트): 조심스럽게 테스트 🤔
 
 **실제 효과:**
+
 - 장애 전파 방지: 99.9% 감소
 - 응답 시간: 50ms → 5ms (빠른 실패)
 - 시스템 복구: 10초 → 2초
@@ -1929,6 +1939,7 @@ class Bulkhead {
 ### 🚀 다음 시간 예고: Event Loop와 동시성
 
 8-2절에서는 **이벤트 루프와 동시성**을 다룹니다:
+
 - Node.js의 libuv가 어떻게 100만 연결을 처리하는지
 - 싱글 스레드로 동시성을 달성하는 비밀
 - epoll, kqueue, IOCP의 실제 동작 원리

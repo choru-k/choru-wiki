@@ -55,6 +55,7 @@ $ cat /sys/kernel/mm/ksm/pages_shared
 ### 이 장에서 배울 메모리 마술
 
 이번 장에서는 이런 "불가능해 보이는" 메모리 마술들의 비밀을 파헤칩니다:
+
 - **메모리 압축**: 어떻게 10GB를 5GB에 담는가?
 - **중복 제거**: 어떻게 100개의 같은 페이지를 1개로 만드는가?
 - **메모리 밸룬**: VM이 메모리를 빌려주고 돌려받는 방법
@@ -276,10 +277,12 @@ Redis latency: 평균 52ms, 스파이크 시 200ms  # 10배 개선!
 ```
 
 **zRAM vs zswap, 뭐가 다른가?**
+
 - **zRAM**: "우리 RAM을 압축해서 쓰자!" (스왑 디바이스 자체가 압축)
 - **zswap**: "스왑하기 전에 한 번 압축해볼까?" (스왑의 프론트엔드 캐시)
 
 비유하자면:
+
 - **zRAM**은 옷을 압축팩에 넣어 옷장에 보관하는 것
 - **zswap**은 자주 입는 옷만 압축해서 현관에 두고, 나머지는 창고에 보관하는 것
 
@@ -581,6 +584,7 @@ void demonstrate_ksm() {
 중국의 한 클라우드 업체에서 KSM의 한계를 느꼈습니다. VM이 1000개가 넘어가니 KSM 스캐너가 따라가지 못했죠. 그래서 만든 것이 **UKSM(Ultra KSM)**입니다.
 
 실제 벤치마크 결과:
+
 ```
 KSM:  20초마다 2000페이지 스캔 → 하루에 8.6M 페이지
 UKSM: 적응형 스캔 → 하루에 200M+ 페이지 (23배!)
@@ -664,6 +668,7 @@ Compressed: 3.2 GB       # 비밀이 여기 있다!
 **macOS는 메모리를 실시간으로 압축합니다!** 앱은 전혀 모른 채로요. 이것이 바로 Transparent Memory Compression입니다.
 
 실제 테스트:
+
 ```
 8GB 맥북에서:
 - 실제 물리 메모리: 8GB
@@ -851,6 +856,7 @@ VM2: Allocated: 8GB, Active: 7GB, Ballooned: 1GB
 **Balloon Driver가 5GB를 "빌려간" 겁니다!**
 
 이건 마치 **호텔의 유동적 방 배정**과 같습니다:
+
 - 손님 A: 스위트룸 예약했지만 거실만 사용 중
 - 손님 B: 싱글룸인데 파티 중
 - 호텔: A의 안 쓰는 침실을 임시로 B에게 제공
@@ -1065,6 +1071,7 @@ node 3: 1TB Optane
 그때 깨달았습니다. **모든 메모리가 평등하지 않다!**
 
 메모리 티어링을 적용한 후:
+
 ```bash
 # Hot data → DRAM
 # Warm data → Optane
@@ -1305,22 +1312,26 @@ void check_memory_fragmentation() {
 ### 3년간 배운 교훈들
 
 ### 메모리 압축이란? (한 줄 요약)
+
 - **정의**: 메모리 내용을 압축하여 더 많은 데이터 저장
 - **종류**: zRAM, zswap, 투명 압축
 - **트레이드오프**: CPU 사용량 vs 메모리 절약
 
 ### 메모리 중복 제거란? (실전 관점)
+
 - **정의**: 동일한 페이지를 하나로 병합
 - **구현**: KSM, UKSM
 - **효과**: VM 환경에서 특히 효과적
 
 ### 왜 중요한가? (돈과 직결되는 이유)
+
 1. **용량 증대**: 물리 메모리보다 많은 데이터 저장
 2. **성능**: 스왑보다 빠른 메모리 확장
 3. **효율성**: 중복 데이터 제거로 메모리 절약
 4. **투명성**: 애플리케이션 수정 불필요
 
 ### 기억해야 할 점 (치트 시트)
+
 - **zRAM은 스왑보다 10-100배 빠름** (실측: SSD 스왑 3ms → zRAM 0.03ms)
 - **KSM은 VM/Container 환경에서 30-50% 메모리 절약** (100개 컨테이너 → 실제 30개분 메모리)
 - **압축률은 데이터 패턴에 크게 의존** (텍스트 3x, 바이너리 1.2x, 제로 페이지 ∞)
@@ -1330,6 +1341,7 @@ void check_memory_fragmentation() {
 ### 실전 팁: 바로 적용 가능한 것들
 
 1. **AWS/GCP 인스턴스 메모리 부족?**
+
    ```bash
    # 즉시 20% 메모리 확보
    sudo modprobe zram
@@ -1339,6 +1351,7 @@ void check_memory_fragmentation() {
    ```
 
 2. **Docker 메모리 최적화**
+
    ```bash
    # KSM으로 컨테이너 메모리 공유
    echo 1 | sudo tee /sys/kernel/mm/ksm/run
@@ -1351,10 +1364,12 @@ void check_memory_fragmentation() {
 ## 관련 문서
 
 ### 선행 지식
+
 - [페이지 폴트 처리](03-page-fault.md) - 메모리 부족 상황
 - [가상 메모리 기초](../chapter-02-memory/03-virtual-memory.md) - 메모리 관리 기반 지식
 
 ### 관련 주제
+
 - [Container Isolation](../chapter-11-container-isolation.md) - 컴테이너 메모리 최적화
 - [Performance Optimization](../chapter-10-performance-optimization.md) - 메모리 성능 튤닝
 - [Process Creation](../chapter-04-process-thread/01-process-creation.md) - CoW와 fork()
@@ -1362,6 +1377,7 @@ void check_memory_fragmentation() {
 ## 다음 장 예고: 프로세스와 스레드의 전쟁과 평화
 
 Chapter 3을 마치고, [Chapter 4: 프로세스와 스레드](../chapter-04-process-thread/index.md)에서는 **프로세스와 스레드의 모든 것**을 다룹니다:
+
 - **프로세스 생성의 비밀**: fork()가 정말 프로세스를 "복사"할까?
 - **스레드 전쟁**: 뮤텍스 vs 세마포어, 누가 이기나?
 - **스케줄러의 고민**: 누구에게 CPU를 줄 것인가?

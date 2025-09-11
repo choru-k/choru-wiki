@@ -10,6 +10,7 @@ tags:
 # Chapter 7-4: 보안 네트워킹과 TLS
 
 ## 이 절에서 다루는 내용
+
 - TLS 프로토콜 동작 원리
 - 인증서와 PKI 체계
 - 암호화 스위트와 알고리즘
@@ -17,6 +18,7 @@ tags:
 - 보안 프로그래밍 패턴
 
 ## 학습 목표
+
 - TLS 1.3 프로토콜의 내부 동작을 이해한다
 - X.509 인증서 체계와 검증 과정을 구현한다
 - 암호화 알고리즘 선택과 성능 최적화를 학습한다
@@ -30,6 +32,7 @@ tags:
 1994년, Netscape가 SSL 1.0을 개발했을 때는 심각한 보안 결함 때문에 공개조차 하지 않았습니다. 그 후 SSL 2.0, SSL 3.0을 거쳐 TLS 1.0(1999년)이 표준이 되었고, 지금은 TLS 1.3(2018년)이 최신 버전입니다.
 
 제가 처음 HTTPS를 설정했을 때의 일화:
+
 ```bash
 # 2010년대 초반...
 $ openssl s_client -connect mysite.com:443
@@ -82,7 +85,7 @@ graph TB
 
 ### 1.2 TLS 1.3 핸드셰이크
 
-#### 🤝 TLS 1.3의 혁명: 1-RTT에서 0-RTT로!
+#### 🤝 TLS 1.3의 혁명: 1-RTT에서 0-RTT로
 
 TLS 1.2는 핸드셰이크에 2-RTT가 필요했지만, TLS 1.3은 1-RTT로 줄였고, 재연결 시에는 0-RTT까지 가능합니다!
 
@@ -302,6 +305,7 @@ static void tls_info_callback(const SSL* ssl, int where, int ret) {
 ### 🏦 디지털 신원증의 세계
 
 제가 처음 SSL 인증서를 구매했을 때의 충격:
+
 ```bash
 # 2012년: "인증서가 이렇게 비싸다고?"
 비용: $300/년 (Wildcard SSL)
@@ -483,6 +487,7 @@ int verify_certificate_pin(SSL* ssl, const unsigned char* expected_pin) {
 OCSP(Online Certificate Status Protocol)는 인증서가 현재 유효한지 확인합니다. 마치 신용카드를 사용할 때마다 카드가 유효한지 확인하는 것과 같죠.
 
 제가 경험한 OCSP 문제:
+
 ```bash
 # OCSP 서버가 다운되었을 때...
 $ curl https://example.com

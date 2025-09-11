@@ -63,11 +63,13 @@ def withdraw(account, amount):
 프로세스와 스레드의 관계를 설명할 때 저는 이런 비유를 씁니다:
 
 **프로세스 = 독립된 아파트**
+
 - 각자의 주방(힙), 거실(데이터), 침실(스택)이 있음
 - 이웃집 일에 영향받지 않음 (메모리 보호)
 - 이사(context switch) 비용이 큼
 
 **스레드 = 룸메이트**
+
 - 주방과 거실은 공유, 침실(스택)만 각자 소유
 - 한 명이 주방을 어지르면 모두가 피해 (공유 메모리 문제)
 - 방 옮기기(context switch)는 쉬움
@@ -318,6 +320,7 @@ void configure_thread_attributes() {
 뮤텍스를 가장 잘 설명하는 비유는 화장실 문의 잠금 장치입니다.
 
 비행기 화장실을 생각해보세요:
+
 1. 누군가 들어가면 "Occupied" 표시가 켜짐 (lock)
 2. 다른 사람들은 밖에서 대기 (blocked)
 3. 사용자가 나오면 "Vacant" 표시 (unlock)
@@ -402,6 +405,7 @@ void measure_syscall_cost() {
 ```
 
 Futex는 이렇게 동작합니다:
+
 1. **Fast Path**: 경쟁이 없으면 원자적 연산만으로 처리 (유저 공간)
 2. **Slow Path**: 경쟁이 있으면 커널에 가서 잠들기
 
@@ -633,6 +637,7 @@ void book_ticket(cinema_t *cinema) {
 ### 3.1 세마포어 원리: 다익스트라의 선물
 
 세마포어는 다익스트라(Dijkstra)가 1965년에 발명했습니다. P와 V라는 이상한 이름은 네덜란드어에서 왔죠:
+
 - **P (Proberen)**: "시도하다" - wait/down
 - **V (Verhogen)**: "증가시키다" - post/up
 
@@ -791,6 +796,7 @@ void init_producer_consumer(producer_consumer_t *pc) {
 조건 변수를 이해하려면 이 상황을 상상해보세요:
 
 **폴링 방식 (조건 변수 없이):**
+
 ```c
 // 😰 CPU를 태우는 바쁜 대기
 while (!data_ready) {
@@ -800,6 +806,7 @@ process_data();
 ```
 
 **조건 변수 방식:**
+
 ```c
 // 😎 우아하게 잠들어서 기다리기
 pthread_mutex_lock(&mutex);
@@ -878,6 +885,7 @@ void* signaler_thread(void *arg) {
 스레드 풀입니다! 매 요청마다 스레드를 만들면 죽습니다. 미리 만들어둔 스레드들이 일거리를 기다리는 거죠.
 
 제가 만든 웹 서버의 실제 성능 차이:
+
 - **요청당 스레드 생성**: 초당 5,000 요청 처리
 - **스레드 풀 (10개)**: 초당 50,000 요청 처리
 
@@ -970,6 +978,7 @@ RWLock을 이해하는 최고의 비유는 도서관입니다:
 - **쓰기 = 도서 정리**: 사서 혼자만 책을 재배치할 수 있음
 
 실제로 제가 만든 설정 관리 시스템:
+
 - 설정 읽기: 초당 100만 번 (모든 요청마다)
 - 설정 변경: 하루에 10번
 
@@ -1132,6 +1141,7 @@ Lock-free 프로그래밍은 공중그네 묘기와 같습니다. 안전망(락)
 **"왜 굳이 Lock-free를?"**
 
 제가 HFT(초고빈도 거래) 시스템을 만들 때의 요구사항:
+
 - 지연시간: 1 마이크로초 이하
 - 처리량: 초당 1000만 건
 
@@ -1155,6 +1165,7 @@ bool CAS(int *ptr, int expected, int new_value) {
 이 간단한 연산으로 어떻게 복잡한 자료구조를 만들까요?
 
 실제 성능 차이:
+
 ```c
 // 벤치마크: 1000만 번 push/pop
 Mutex Stack:     2,500ms
@@ -1470,6 +1481,7 @@ void* parallel_computation(void *arg) {
 **언제 스핀락을 쓸까?**
 
 제가 네트워크 패킷 처리기를 만들 때의 고민:
+
 - Critical Section 실행 시간: 50 나노초
 - 뮤텍스 잠금/해제: 100 나노초
 - 스핀락 잠금/해제: 10 나노초
@@ -1708,11 +1720,13 @@ void print_lock_stats(instrumented_mutex_t *m) {
 ### 🎯 10년간 배운 교훈들
 
 ### 스레드란?
+
 - **정의**: 프로세스 내의 실행 단위
 - **특징**: 메모리 공유, 빠른 생성, 가벼움
 - **위험**: 동기화 필요, 경쟁 조건
 
 ### 동기화 메커니즘
+
 1. **뮤텍스**: 상호 배제, 단일 소유자
 2. **세마포어**: 카운팅, 자원 관리
 3. **조건 변수**: 조건 대기, 신호
@@ -1720,6 +1734,7 @@ void print_lock_stats(instrumented_mutex_t *m) {
 5. **Lock-free**: 원자적 연산, 무대기
 
 ### 왜 중요한가?
+
 1. **정확성**: 데이터 일관성 보장
 2. **성능**: 병렬 처리로 속도 향상
 3. **확장성**: 멀티코어 활용
@@ -1728,9 +1743,11 @@ void print_lock_stats(instrumented_mutex_t *m) {
 ### 기억해야 할 점
 
 #### 1. **"Premature optimization is the root of all evil"** - Donald Knuth
+
 하지만 동시성에서는 **"Premature threading is the root of all bugs"**
 
 #### 2. **동기화 선택 가이드**
+
 ```
 경쟁 없음 → TLS
 읽기 많음 → RWLock  
@@ -1742,18 +1759,21 @@ void print_lock_stats(instrumented_mutex_t *m) {
 ```
 
 #### 3. **데드락 방지 체크리스트**
+
 - [ ] 락 순서 일정하게
 - [ ] 타임아웃 설정
 - [ ] 락 보유 시간 최소화
 - [ ] RAII 패턴 사용 (C++)
 
 #### 4. **성능 튜닝 우선순위**
+
 1. 알고리즘 개선 (O(n²) → O(n log n))
 2. 동기화 최소화 (락 구간 축소)
 3. 락 종류 최적화 (Mutex → RWLock)
 4. Lock-free 고려 (정말 필요한 경우만)
 
 #### 5. **디버깅 도구는 친구**
+
 - **ThreadSanitizer**: 레이스 컨디션 탐지
 - **Helgrind**: 데드락 발견
 - **perf**: 락 경합 분석
@@ -1772,6 +1792,7 @@ void print_lock_stats(instrumented_mutex_t *m) {
 ## 다음 섹션 예고
 
 다음 섹션(4-3)에서는 **스케줄링과 우선순위**를 다룹니다:
+
 - CFS 스케줄러의 동작 원리
 - 실시간 스케줄링 정책
 - CPU 친화도와 NUMA

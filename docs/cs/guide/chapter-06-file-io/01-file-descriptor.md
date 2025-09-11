@@ -10,6 +10,7 @@ tags:
 # Chapter 6-1: 파일 디스크립터의 내부 구조
 
 ## 이 절에서 답할 질문들
+
 - 파일 디스크립터는 정확히 무엇을 가리키는가?
 - 커널은 어떻게 파일 디스크립터를 관리하는가?
 - 프로세스 간 파일 디스크립터 공유는 어떻게 일어나는가?
@@ -296,7 +297,7 @@ struct inode {
 
 ### 🎰 빈 자리 찾기 게임
 
-파일 디스크립터 할당은 극장에서 빈 좌석을 찾는 것과 비슷합니다. 
+파일 디스크립터 할당은 극장에서 빈 좌석을 찾는 것과 비슷합니다.
 
 상상해보세요. 65,536개의 좌석이 있는 거대한 극장에서 빈 자리를 찾아야 한다면? 하나씩 확인하면 너무 느리겠죠.
 
@@ -601,6 +602,7 @@ struct file_operations pipe_file_operations = {
 ```
 
 이제 `read(fd, buf, size)`를 호출하면:
+
 1. fd로 file 구조체를 찾고
 2. `file->f_op->read()`를 호출
 3. 실제 구현체(ext4, socket, pipe 등)의 함수가 실행!
@@ -888,7 +890,7 @@ static int sock_map_fd(struct socket *sock, int flags) {
 }
 ```
 
-### 🎪 eventfd와 signalfd: 이벤트도 파일로!
+### 🎪 eventfd와 signalfd: 이벤트도 파일로
 
 리눅스는 한 발 더 나아갔습니다. 이벤트와 시그널까지 파일로 만들어버렸죠!
 
@@ -939,6 +941,7 @@ pthread condition variable보다 훨씬 가볍고 빠릅니다!
 #### signalfd: 시그널 처리의 혁명
 
 전통적인 시그널 핸들러는 악몽이었습니다:
+
 - async-signal-safe 함수만 호출 가능
 - 재진입 문제
 - 복잡한 시그널 마스킹
@@ -1054,6 +1057,7 @@ SYSCALL_DEFINE4(signalfd4, int, ufd, sigset_t __user *, user_mask,
 파일 디스크립터는 **엄청나게 자주** 접근됩니다. 매번 락을 잡으면 성능이 끔찍하겠죠.
 
 제가 성능 프로파일링을 했을 때:
+
 ```bash
 # perf로 시스템 콜 오버헤드 측정
 $ perf stat -e syscalls:* ./my_server
@@ -1403,4 +1407,5 @@ lsof -i :8080
 다음 절에서는 Virtual File System (VFS)이 어떻게 다양한 파일 시스템을 통합된 인터페이스로 추상화하는지 살펴보겠습니다.
 
 ## 다음 절 예고
+
 6-2절에서는 "VFS와 파일 시스템 추상화"를 다룹니다. VFS 레이어의 구조, 다양한 파일 시스템의 통합, 마운트 메커니즘, 그리고 파일 시스템별 최적화를 살펴보겠습니다.
