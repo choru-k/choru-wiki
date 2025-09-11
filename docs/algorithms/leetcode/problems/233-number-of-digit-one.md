@@ -55,21 +55,17 @@ class Solution:
         return ans
 ```
 
-  
-
 ```python
 class Solution:
     def countDigitOne(self, n: int) -> int:
         pivot, res = 1, 0
         while n >= pivot:
             res += n // (10 * pivot) * pivot \
-									+ min(pivot, \
-											max(n % (10 * pivot) - pivot + 1, 0))
+         + min(pivot, \
+           max(n % (10 * pivot) - pivot + 1, 0))
             pivot *= 10
         return res
 ```
-
-  
 
 ```python
 class Solution:
@@ -94,8 +90,6 @@ class Solution:
         
         return count(n)
 ```
-
-  
 
 ```python
 class Solution:
@@ -122,7 +116,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

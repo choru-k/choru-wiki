@@ -26,8 +26,6 @@ tags:
 
 우리는 항상 연속된 1이 많도록 배열하는게 가장 유리하다. 즉 연속된 1이 가장많은 곳은 A, B 의 가장 앞쪽이다. 만약 가장 앞쪽에 연속된 1이 가장 많은 곳이 아니라면 special binary string 이 아니게 된다.
 
-  
-
 그렇다면 `1xxxxxx0` 에서 `xxxxxxx` 을 dfs 한게 과연 실제로 만들어 질수 있을까?
 
 일단 xxxxxx 안에서 count 가 0으로 내려갓다가 0이 될수는 없다.
@@ -56,7 +54,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

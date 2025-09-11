@@ -16,8 +16,6 @@ tags:
 
 전체적인 설명은 [[Spaces/Home/PARA/Resource/Leetcode/973. K Closest Points to Origin]] 을 참고하면 된다.
 
-  
-
 일단 가장 중요한 건 `각각의 원소가 몇번 나왔는지를 저장`해야 된다는 점이다.
 
 가장 좋은 방법은 HashTable 을 사용해서 저장하는 것이다.
@@ -36,11 +34,9 @@ class Solution:
         for num in nums:
             nums_dict[num] += 1
         
-				# Python 기본 정렬은 내림차순 이기 때문에 오름차순 정렬을 위해 음수를 곱햇다.
+    # Python 기본 정렬은 내림차순 이기 때문에 오름차순 정렬을 위해 음수를 곱햇다.
         return list(map(lambda x: x[1], sorted([(-v,k) for k,v in nums_dict.items()])[:k]))
 ```
-
-  
 
 ## Heap 을 이용한 방법
 
@@ -65,8 +61,6 @@ class Solution:
         return list(map(lambda x: x[1], pq))
 ```
 
-  
-
 ## Double HashMap 을 사용한 방법 `O(N)`
 
 여기서 중요한 점은 `num → freq` 와 `freq → num` 2개의 HashMap 을 사용한 것이다.
@@ -90,11 +84,11 @@ class Solution:
             nums_dict[num] = freq
             reverse_nums_dict[freq].add(num)
             
-				# Max_Key 을 구하고 key 을 1개씩 줄이므로써 원하는 Top K 을 Sort 없이 구할 수 있다.
+    # Max_Key 을 구하고 key 을 1개씩 줄이므로써 원하는 Top K 을 Sort 없이 구할 수 있다.
         key = max(reverse_nums_dict.keys())
         ans = []
         while key >= 0:
-						# ans 가 K 보다 커지면 안되기 때문에 적당히 배열을 잘라준다.
+      # ans 가 K 보다 커지면 안되기 때문에 적당히 배열을 잘라준다.
             if len(ans)+ len(reverse_nums_dict[key]) < k:
                 for num in reverse_nums_dict[key]:
                     ans.append(num)

@@ -33,10 +33,6 @@ $max_{j=0..i-1}(price[i]+(dp[k-1][j]-price[j])) = price[i] + max_{j=0..i-1}(dp[k
 
 을 통해서 각 칸을 `O(1)` 에 구할 수 있고 전체 시간복잡도는 `O(k*N)` 이 된다.
 
-  
-
-  
-
 좀더 다른 아이디어를 생각해보자.
 
 우리는 항상 거래를 valley 에서 사고 peek 에서 팔 것 이라는 걸 알 수가 있다.
@@ -53,8 +49,6 @@ $max_{j=0..i-1}(price[i]+(dp[k-1][j]-price[j])) = price[i] + max_{j=0..i-1}(dp[k
 
 v_1 ≤ v_2 and p_1 ≤ p_2 이면 우리는 (p_1-v_1) + (p_2-v_2) 을 (p_2-v_1) + (p_1-v_2) 로 바꿀 수 있다. 만약 (p_1-v_2) 가 Top k 에 들어갈 정도로 크다면 우리는 (v1~p2) 의 사이에 거래를 2번 할 수 있는 것이고 그렇지 않다면 1번의 거래가 최적의 거래였던 것이다.
 
-  
-
 이걸 코드로써 잘 표현해보자.
 
 ## Solution
@@ -69,37 +63,37 @@ class Solution:
         v,p= 0,0
         vp_stack = []
         while p < len(prices):
-						# valley 을 찾는다.
+      # valley 을 찾는다.
             v = p
             while v+1 < l and prices[v] > prices[v+1]:
                 v+=1
-						# peak 을 찾는다.
+      # peak 을 찾는다.
             p = v+1
             while p+1 < l and prices[p] < prices[p+1]:
                 p+=1
-						# 만약 v_2 < v_1 인 상황 일 때
+      # 만약 v_2 < v_1 인 상황 일 때
             while len(vp_stack) > 0 and prices[v] < prices[vp_stack[-1]['v']]:
                 tmp = vp_stack.pop()
                 heappush(profit_heap, prices[tmp['p']] - prices[tmp['v']])
-						# p 가 범위를 넘어 갈 수도 있음 v=len(prices)-1 이면 p = len(prices)가 됨
+      # p 가 범위를 넘어 갈 수도 있음 v=len(prices)-1 이면 p = len(prices)가 됨
             if p < l:
-								# 중간 사이즈 profit 을 큰 profit 1개 작은 profit 1개로 나눈다.
+        # 중간 사이즈 profit 을 큰 profit 1개 작은 profit 1개로 나눈다.
                 while len(vp_stack) > 0 and prices[p] > prices[vp_stack[-1]['p']]:
                     tmp = vp_stack.pop()
                     heappush(profit_heap, prices[tmp['p']] - prices[v])
                     v = tmp['v']
                 vp_stack.append({ 'v': v, 'p': p })
-						# 항상 heap 사이즈를 k로 맞추어주어서 Nlogk 을 유지하게 한다.
+      # 항상 heap 사이즈를 k로 맞추어주어서 Nlogk 을 유지하게 한다.
             while len(profit_heap) > k: 
                 heappop(profit_heap)
-				# 남은 vp 조합 계산
+    # 남은 vp 조합 계산
         while len(vp_stack):
             tmp = vp_stack.pop()
             heappush(profit_heap, prices[tmp['p']] - prices[tmp['v']])
         while len(profit_heap) > k: 
             heappop(profit_heap)
         
-				# 그냥 pop 으로 빼도 됨. 어차피 Top k 가 중요.
+    # 그냥 pop 으로 빼도 됨. 어차피 Top k 가 중요.
         ans = 0
         while len(profit_heap) > 0:
             ans += profit_heap.pop()
@@ -107,10 +101,6 @@ class Solution:
 ```
 
 이건 `O(N + NlogK)` 이 된다.
-
-  
-
-  
 
 잘 생각해보면 우리는 Top K 만 구하면 된다. 그렇다면 nth-element 가 훨씬 유리하다.
 
@@ -128,7 +118,7 @@ class Solution:
             while p+1 < len(prices) and prices[p] < prices[p+1]:
                 p+=1
 
-						if p == len(prices): break
+      if p == len(prices): break
 
             while len(vp) > 0 and prices[vp[-1]['v']] > prices[v]:
                 profits.append(prices[vp[-1]['p']] - prices[vp[-1]['v']])
@@ -152,12 +142,6 @@ class Solution:
 ```
 
 이건 `O(N)` 이 된다. python 에는 nth_element 가 구현되어 있지 않기 때문에 leetcode 제출을 위해서는 직접 구현해야한다.
-
-  
-
-  
-
-  
 
 ![[0C1F680C-0072-4A62-95D4-0B75E3DAFA2A.jpeg]]
 

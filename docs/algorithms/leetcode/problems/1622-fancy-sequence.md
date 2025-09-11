@@ -15,17 +15,11 @@ tags:
 
 이 문제를 조금 생각해보자.
 
-  
-
 일단 가장 간단한 방법은 그냥 그 때 그 때 계산 하는 것이다.
 
 이 방법은 add, mul 에서 O(N) 의 시간 복잡도가 필요하다.
 
-  
-
 조금 더 고민해보자.
-
-  
 
 이제 그 때 그 때 계산이 아니라 조금 모아서 계산을 해보자.
 
@@ -81,8 +75,6 @@ class Fancy:
 # param_4 = obj.getIndex(idx)
 ```
 
-  
-
 위의 코드을 조금 더 고민해보자.
 
 특정 시점의 변환을 `ax+b` 라고하고, 그 뒤의 변환을 `cx+d` 라고 할 때,
@@ -113,19 +105,17 @@ class Fancy:
     def getIndex(self, idx: int) -> int:
         if idx >= len(self.arr):
             return -1
-			
+   
         c, d = self.pre[-1]
         a, b= self.pre[idx]
         # e*(a*x+b) + f = c*x + d
-		# e*a = c
-		# e*b + f = d
+  # e*a = c
+  # e*b + f = d
         e = c//a
         f = d-e*b
 
         return (e*self.arr[idx] + f) % (10**9+7)
 ```
-
-  
 
 하지만 실제로 위의코드는 TLE 가 된다. 왜냐하면 너무 큰 수를 다루기 때문이다.
 
@@ -138,8 +128,6 @@ class Fancy:
 각 변에 `a^(-1)` 을 곱하면
 
 `a^(-1) ≡ a^(m-2) (mod m)`
-
-  
 
 ```python
 MOD = 10**9+7
@@ -162,13 +150,13 @@ class Fancy:
     def getIndex(self, idx: int) -> int:
         if idx >= len(self.arr):
             return -1
-			
+   
         
         c, d = self.pre[-1]
         a, b= self.pre[idx]
         # e*(a*x+b) + f = c*x + d
-				# e = c // a => c * a^(-1) => a^(-1) 은 위의 식에서 구할 수 있음
-				# e*b + f = d
+    # e = c // a => c * a^(-1) => a^(-1) 은 위의 식에서 구할 수 있음
+    # e*b + f = d
         e= c * pow(a, MOD-2, MOD)
         f = d - e*b
 

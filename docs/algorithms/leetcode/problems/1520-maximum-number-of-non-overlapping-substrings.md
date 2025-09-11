@@ -39,13 +39,9 @@ c = [8, 9, 10]
 
 이 부분은 단순하다. 문자열이 끝나는 지점을 정해두고, 그 사이에서 문자열이 끝나는 지점을 늘려야 한다면 계속 늘리면 된다.
 
-  
-
 이걸 코드로 구현하면 밑이다.
 
 시간복잡도는 `O(N)` 이 된다.
-
-  
 
 ```python
 from typing import Dict, List
@@ -57,41 +53,41 @@ from collections import defaultdict
 class Solution:
     def maxNumOfSubstrings(self, s: str) -> List[str]:
         se = dict()
-				# 각 문자가 처음 나온곳과 마지막 나온곳을 저장한다.
+    # 각 문자가 처음 나온곳과 마지막 나온곳을 저장한다.
         for idx, c in enumerate(s):
             if c not in se:
                 se[c] = [idx,idx]
             se[c][1] = idx
         
-				# i 부터 시작했을 때, 원하는 문자열을 만드는 가장작은 right 을 구한다.
+    # i 부터 시작했을 때, 원하는 문자열을 만드는 가장작은 right 을 구한다.
         def get_new_right(i, c):
             right = se[c][1]
             for j in range(i, len(s)):
                 if j == right:
                     break
-								# 지금 이 문자열은 i 부터 시작하는데 필요한 문자열이 i 보다 앞에 있다면 문자열을 만들수 없다.
+        # 지금 이 문자열은 i 부터 시작하는데 필요한 문자열이 i 보다 앞에 있다면 문자열을 만들수 없다.
                 if se[s[j]][0] < i:
                     return -1
-								# 중간에 문자가 새롭게 잇을 경우, right 가 계속 늘어난다.
+        # 중간에 문자가 새롭게 잇을 경우, right 가 계속 늘어난다.
                 right = max(right, se[s[j]][1])
             return right
         right = len(s)
         ans = ['']
         for idx, c in enumerate(s):
-						# 각문자의 시작점이 현재일때만 실행.
-						# 이건 최대 26번만 실행된다.
+      # 각문자의 시작점이 현재일때만 실행.
+      # 이건 최대 26번만 실행된다.
             if se[c][0] == idx:
                 new_right = get_new_right(idx, c)
-								# 문자열을 만들수 잇다면
+        # 문자열을 만들수 잇다면
                 if new_right != -1:
-										# 만약 새롭게 시작하는 문자열과 저번에 만들었던 문자열이 안겹친다면 새로운 문자열이 된다.
+          # 만약 새롭게 시작하는 문자열과 저번에 만들었던 문자열이 안겹친다면 새로운 문자열이 된다.
                     if right < idx:
                         ans.append('')
-										
+          
                     right = new_right
                     ans[-1] = s[idx:right+1]
-							# 밑의 코드도 잘 동작이 된다. 왜일까? 고민해보자.
-#		            if new_right != -1:
+       # 밑의 코드도 잘 동작이 된다. 왜일까? 고민해보자.
+#              if new_right != -1:
 #                    if right < idx:
 #                        ans.append('')
 #                        right = new_right

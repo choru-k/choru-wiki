@@ -49,10 +49,7 @@ class Solution:
         return ret
 ```
 
-  
 TLE 가 되었기 때문에 좀더 보완해보자.  
-
-  
 
 ```python
 class Solution:
@@ -82,8 +79,6 @@ class Solution:
         
         return ret
 ```
-
-  
 
 다시 TLE 가 나왔기 때문에 조금더 추가해보자.
 

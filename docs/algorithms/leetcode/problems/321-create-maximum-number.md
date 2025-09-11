@@ -66,8 +66,6 @@ class Solution:
         return list(map(int, list(str(cache[(k, 0, 0)]))))
 ```
 
-  
-
 이러 문제의 가장 중요한 점은 뒤의 숫자에 필요없이 앞의 숫자가 가장 큰게 제일 중요하다는 것이다.
 
 ```python
@@ -110,7 +108,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

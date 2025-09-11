@@ -36,13 +36,11 @@ class Solution:
         ans = 0
         left= 0
         for m in machines:
-						# 왼쪽에서 오는 부족한 세탁물들
+      # 왼쪽에서 오는 부족한 세탁물들
             left += m - avg
-						ans = max(ans, abs(left))
+      ans = max(ans, abs(left))
         return ans
 ```
-
-  
 
 이제 이걸 양쪽으로 움직이게 생각해보자. 기본은 똑같다. 단지 다른건, 우리는 세탁물이 부족할 때 양쪽에서도 받을 수 있다는 것이다.
 
@@ -58,10 +56,10 @@ class Solution:
         left= 0
         for m in machines:
             left += m - avg
-						# m-avg 는 abs(m-avg) 가 아니다. 왜냐하면 [1,-2,1] 과 [-1,2,-1]은 다르기 때문이다.
-						# 세탁물은 받을 때는 한번에 2곳에서 받을 수 잇지만, 주는건 한번에 1개 밖에 줄수 없다.
+      # m-avg 는 abs(m-avg) 가 아니다. 왜냐하면 [1,-2,1] 과 [-1,2,-1]은 다르기 때문이다.
+      # 세탁물은 받을 때는 한번에 2곳에서 받을 수 잇지만, 주는건 한번에 1개 밖에 줄수 없다.
             ans = max(ans, abs(left), m-avg)
-						# ans = max(ans, abs(left), m-avg, math.ceil(abs(m-avg)/2)) 로도 할 수 있지만, left 의 계산에서 이 경우는 계산이 되어진다.
+      # ans = max(ans, abs(left), m-avg, math.ceil(abs(m-avg)/2)) 로도 할 수 있지만, left 의 계산에서 이 경우는 계산이 되어진다.
         return ans
 ```
 
@@ -69,7 +67,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

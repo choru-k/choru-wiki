@@ -20,11 +20,7 @@ tags:
 1. 범위가 생겼다.
 2. 1 이 아니라 특정 숫자을 센다.
 
-  
-
 1번은 간단히 count(high)- count(low-1) 로 해결 할 수 있다.
-
-  
 
 2번은 생각을 해보자.
 
@@ -48,14 +44,12 @@ class Solution:
                     res += (n // div) * mul + (n % mul + 1)
                 else:
                     res += (n // div + 1) * mul
-								# 여기가 핵심이다. 0으로 시작하는 숫자는 없기 때문에, 그 만큼을 빼준다.
-								# i 번째 자릿수가 d 일때의 경우의 수를 더하는 건데, 만약 i 번째 자릿수가 0 이라면 000xxx 같은 경우를 빼야하기 때문에 mul 을 빼주었다.
+        # 여기가 핵심이다. 0으로 시작하는 숫자는 없기 때문에, 그 만큼을 빼준다.
+        # i 번째 자릿수가 d 일때의 경우의 수를 더하는 건데, 만약 i 번째 자릿수가 0 이라면 000xxx 같은 경우를 빼야하기 때문에 mul 을 빼주었다.
                 res -= mul if d == 0 else 0
             return res 
         return countDigitOne(high, d) - countDigitOne(low-1, d)
 ```
-
-  
 
 ```JavaScript
 class Solution:
@@ -88,7 +82,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

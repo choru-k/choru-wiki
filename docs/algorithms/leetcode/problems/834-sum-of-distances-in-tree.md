@@ -19,8 +19,6 @@ tags:
 
 이러한 과정을 dfs 을 통해서 구할 수 잇다.
 
-  
-
 ![[Attachments/Untitled 7.png|Untitled 7.png]]
 
 이 문제에서 가장 어려운 점은 DFS 을 2번 해야하고, reverse 을 해야한다는 것이다.
@@ -38,7 +36,7 @@ class Solution:
         for u,v in edges:
             graph[u].add(v)
             graph[v].add(u)
-				# 여기서 sumDist(root) 와 cnt 을 구한다.
+    # 여기서 sumDist(root) 와 cnt 을 구한다.
         def dfs1(node, prev):
             for nxt in graph[node]:
                 if nxt == prev:
@@ -62,7 +60,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

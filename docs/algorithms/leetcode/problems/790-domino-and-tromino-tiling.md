@@ -33,7 +33,6 @@ $dp[n] = dp[n-1]+dp[n-2]+dp[n-3]+dp[n-3]+2\sum_{i=0}^{n-4}dp[i] \\=dp[n-1]+dp[n-
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
 
-
 ---
 
 *Note: 이 문제는 개인 노트에서 마이그레이션되었습니다. Solution은 지속적으로 개선되고 있습니다.*

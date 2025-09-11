@@ -22,8 +22,8 @@ tags:
 
 ```python
 for i, num in enumerate(nums):
-	if stack[-1][1] > num:
-		stack.append([i, num])
+ if stack[-1][1] > num:
+  stack.append([i, num])
 ```
 
 위의 코드가 핵심이 되겠다.
@@ -31,8 +31,6 @@ for i, num in enumerate(nums):
 이 경우 stack 은 내림차순 정렬이 될 것이고, 우리는 binary search 을 이용할 수 있다.
 
 python의 bisect 을 사용하기 위해서 queue 을 사용해서 오름차순으로 만들어 주었다.
-
-  
 
 ```python
 class Solution:
@@ -46,7 +44,7 @@ class Solution:
                 stack_idx.appendleft(i)
             else:
                 idx = bisect.bisect(stack, num)
-								# num 이 가장 큰 수 이기 때문에 자신의 길이가 ans 가 된다.
+        # num 이 가장 큰 수 이기 때문에 자신의 길이가 ans 가 된다.
                 if idx == len(stack):
                     ans = i
                 else:
@@ -86,7 +84,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

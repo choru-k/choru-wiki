@@ -27,20 +27,18 @@ class Solution:
         ans = 0
         cur = 0
         for _ in range(rows):
-						# col 이 남은칸
+      # col 이 남은칸
             col = cols
             col -= len(sentence[cur%n])
-						# cur 은 이번에 지금 까지 들어간 단어의 갯수
+      # cur 은 이번에 지금 까지 들어간 단어의 갯수
             cur += 1
-						# 다음 단어 + 스페이스 1칸 이 이번 col에 들어가면 넣고 그 다음 단어 비교
+      # 다음 단어 + 스페이스 1칸 이 이번 col에 들어가면 넣고 그 다음 단어 비교
             while col - (len(sentence[cur%n])+1) >= 0:
                 col -= (len(sentence[cur%n])+1)
                 cur += 1
         # 총 들어간 단어에서 문장단위로 나눔
         return cur // n
 ```
-
-  
 
 ## 첫번째 최적화
 
@@ -49,8 +47,8 @@ class Solution:
     def wordsTyping(self, sentence: List[str], rows: int, cols: int) -> int:
         words = sentence
         n = len(words)
-				# 미리 A 라는 단어로 시작하면 그 다음 단어는 무엇으로 시작할지 구해놓음
-				# 전처리로 같은 계산 반복 안함.
+    # 미리 A 라는 단어로 시작하면 그 다음 단어는 무엇으로 시작할지 구해놓음
+    # 전처리로 같은 계산 반복 안함.
         memo = [(0,0)] * len(words)
         for i in range(n):
             tmp = -1
@@ -95,7 +93,7 @@ class Solution:
         cur = 0
         now_row = 0
         cache = dict()
-				# cycle 을 찾는다. 
+    # cycle 을 찾는다. 
         while now_row < rows:
             if cur in cache:
                 cycle = now_row - cache[cur][0]
@@ -159,17 +157,11 @@ class Solution:
 
 2번째와 최악의 경우는 같음
 
-  
-
-  
-
 ## 실제로 sentence 을 나누기?
 
 위의 방법은 col 가 존재하고 여기에 word 을 한 개 한 개 넣으면서 col 이 넘치는지 안 넘치는 지를 비교하는 방법이였다. 밑의 방식은 넣고 싶은 words 을 지정하고 만약 중간에 문자열이 끊기면 안 끊기는 최소의 지점을 찾는다. 약간의 발상의 전환?
 
 밑의 예를 들어서 설명하면 `a bcd` 가 6개의 칸에 들어가는지 비교 `e a bc` 가 들어가는지 비교, `bc` 부분의 문자열이 잘렸기 때문에 안 잘리는 최소점을 right→left 로 찾음 `e a` 가 들어갈 수 있는 걸 확인
-
-  
 
 ![[Attachments/E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7202 2.svg|E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7202 2.svg]]
 
@@ -194,15 +186,13 @@ class Solution:
 
 `O(row*l)` 이 된다.
 
-  
-
 ## 최적화
 
 ```python
 class Solution:
     def wordsTyping(self, sentence: List[str], rows: int, cols: int) -> int:
         s = ' '.join(sentence) + ' '
-				# 항상 while 을 하는게 아니라 미리미리 단어의 시작을 구해논다.
+    # 항상 while 을 하는게 아니라 미리미리 단어의 시작을 구해논다.
         cache = [0] * len(s)
         recent_space = 1
         for i in range(len(s)):
@@ -229,8 +219,6 @@ class Solution:
 `O(n*l + rows)`
 
 마찬가지로 cache 을 미리 구하는게 아니라 필요할 때 구하는 방식으로 하면 `O(min(row,n)*l + row)` 까지 줄일 수 있다.
-
-  
 
 100%
 

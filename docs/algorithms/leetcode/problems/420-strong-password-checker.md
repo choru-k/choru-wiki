@@ -40,13 +40,13 @@ class Solution:
             if l >= 3:
                 change += l//3
                 if l%3 == 0:
-										# 만약 aaa 나 aaaaaa 같은 경우라면 1개를 지워주면 change 을 1개 줄여 줄 수 있다.
+          # 만약 aaa 나 aaaaaa 같은 경우라면 1개를 지워주면 change 을 1개 줄여 줄 수 있다.
                     one += 1
                 if l%3 == 1:
-										# aaaa, aaaaaaa 라면 2개를 지워주면 change 을 1개 줄여줄 수 있다.
+          # aaaa, aaaaaaa 라면 2개를 지워주면 change 을 1개 줄여줄 수 있다.
                     two += 1
         
-				# 위의 과정을 one-pass 로 처리할 수도 있다. 가독성을 위해 일단 따로 처리.
+    # 위의 과정을 one-pass 로 처리할 수도 있다. 가독성을 위해 일단 따로 처리.
         if len(s) <6:
             return max(missing, 6-len(s))
         if len(s) <= 20:
@@ -66,7 +66,7 @@ class Solution:
                 change -= replace
                 delete -= replace*2
             if delete >= 0:
-								# 연속된 3 개를 다 delete 해버리면 change 1개를 안해도 된다.
+        # 연속된 3 개를 다 delete 해버리면 change 1개를 안해도 된다.
                 replace = delete // 3
                 change -= replace
 
@@ -77,7 +77,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -17,15 +17,9 @@ tags:
 
 일단 가장 쉬운 방법부터 생각해보자.
 
-  
-
 보통 이런 문제를 풀 때는 어떠한 곳(특정포인트)에서 끝나는 subarray의 갯수나, 시작하는 subarray을 구하는 방법으로 풀 수가 있다.
 
-  
-
 이 문제 또한 비슷한 방법으로 풀 수가 있을까?
-
-  
 
 만약 특정포인트에서 끝나다고 할 때 sub array 는 몇개가 될까?
 
@@ -63,18 +57,14 @@ class Solution:
         return ans 
 ```
 
-  
-
 조금 다른 방법으로 풀어보자.
 
 L≤A[i]≤R 이 포함된 sub array 는 A[i]≤L 과 A[i]≤R 의 sub array을 뺀것이다.
 
-  
-
 ```python
 class Solution:
     def numSubarrayBoundedMax(self, A: List[int], L: int, R: int) -> int:
-				# 최대 수가 m인 subarray의 갯수를 구한다.
+    # 최대 수가 m인 subarray의 갯수를 구한다.
         def count(m):
             cnt = 0
             cur = 0
@@ -92,7 +82,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

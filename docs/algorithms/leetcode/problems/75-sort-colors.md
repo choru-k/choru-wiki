@@ -15,8 +15,6 @@ tags:
 
 가장 간단하게 생각할 수 있는 방법은 bucket sort 이다.
 
-  
-
 ```python
 class Solution:
     def sortColors(self, nums: List[int]) -> None:
@@ -35,19 +33,11 @@ class Solution:
             cnt[k]-=1
 ```
 
-  
-
-  
-
 # Follow Up
 
 이제 Follow Up 을 보자.
 
 - Could you come up with a one-pass algorithm using only constant space?
-
-  
-
-  
 
 일단 숫자가 0, 1 만 존재한다고 생각을 해보자.
 
@@ -55,7 +45,7 @@ class Solution:
 
 0은 왼쪽부터 1을 오른쪽 부터 넣는다면 정렬이 된 배열을 얻을 수 있을 것 같다.
 
-### Only 0-1 (Left - Right)
+## Only 0-1 (Left - Right)
 
 ```python
 class Solution:
@@ -73,8 +63,6 @@ class Solution:
                 one_idx -= 1
             i+=1
 ```
-
-  
 
 하지만 우리는 3개의 숫자를 정렬을 해야하고 왼쪽 오른쪽 이외의 곳에도 숫자를 넣어야 한다.
 
@@ -106,11 +94,7 @@ class Solution:
                 zero_idx+=1
 ```
 
-  
-
 이제 숫자가 3개 일 때 할 수 있는 방법을 찾을 수 있다. 위의 2방법을 합쳐서 0은 왼쪽 2는 오른쪽 1은 바로 위처럼 0 다음의 index 을 활용 하면 할 수 있다. 또는 바로 위의 방법을 응용해서 3개의 인덱스를 사용하는 방법도 존재한다.
-
-  
 
 ### 3개의 인덱스를 사용한 방법 (Left, Mid-1, Mid-2)
 
@@ -143,8 +127,6 @@ class Solution:
                 zero_idx+=1
 ```
 
-  
-
 왼쪽에는 0, 오른쪽에는 2 중간에 1을 넣는 방법
 
 ### Left-Mid-Right
@@ -169,13 +151,11 @@ class Solution:
                 one_idx+=1
                 nums[zero_idx]=0
                 zero_idx+=1
-								# 위의 코드를 이렇게 고칠 수 있습니다.
-								# nums[one_idx], nums[zero_idx] = nums[zero_idx], nums[one_idx]
+        # 위의 코드를 이렇게 고칠 수 있습니다.
+        # nums[one_idx], nums[zero_idx] = nums[zero_idx], nums[one_idx]
                 # one_idx+=1
                 # zero_idx+=1
 ```
-
-  
 
 조금 더 생각해본다면 zero_idx, one_idx 만으로 문제를 풀 수 있다.
 
@@ -194,21 +174,17 @@ class Solution:
                 nums[zero_idx], nums[i] = nums[i], nums[zero_idx]
                 zero_idx += 1
                 one_idx = max(one_idx, zero_idx)
-						# elif 가 아닌것이 핵심이다.
+      # elif 가 아닌것이 핵심이다.
             if nums[i] == 1:
                 nums[one_idx], nums[i] = nums[i], nums[one_idx]
                 one_idx += 1
 ```
-
-  
 
 ## Follow Up
 
 Space Complexity 가 O(1) 이 되는 Quick Sort 을 구현하기
 
 [https://leetcode.com/problems/sort-an-array/](https://leetcode.com/problems/sort-an-array/)
-
-  
 
 ```python
 # 위의 SortColor 와 비슷한 모양이 됩니다.
@@ -243,8 +219,6 @@ class Solution:
 ```
 
 실제로는 Call stack 때문에 평균 O(logN) 최악의 경우 O(N) 의 공간 복잡도를 사용합니다.
-
-  
 
 ## Follow up 2
 

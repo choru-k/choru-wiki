@@ -91,18 +91,18 @@ class Solution:
         if n == 1:
             return 1
         uglys = [1]
-				# 중복체크을 위해서 존재
+    # 중복체크을 위해서 존재
         uglys_set = set([1])
         idxes = [0 for _ in range(len(primes))]
         while len(uglys) < n:
             candidates = []
-						# ugly number 후보와, 어떤 prime 을 썻는지을 저장.
+      # ugly number 후보와, 어떤 prime 을 썻는지을 저장.
             for i, (prime, idx) in enumerate(zip(primes, idxes)):
                 candidates.append((uglys[idx]* prime, i))
 
             cur = min(candidates)
             idxes[cur[1]] += 1
-						# 중복된 숫자가 잇다면 무시. 예를 들어 2*7, 7*2 같은 경우
+      # 중복된 숫자가 잇다면 무시. 예를 들어 2*7, 7*2 같은 경우
             if cur[0] in uglys_set:
                 continue
             uglys_set.add(cur[0])
@@ -133,13 +133,13 @@ class Solution:
             return 1
         n-=1
         primes.sort()
-				# prime 과 prime 이 몇번째 수 인지을 저장합니다.
+    # prime 과 prime 이 몇번째 수 인지을 저장합니다.
         cur = [(num, i) for i, num in enumerate(primes)]
         while n > 0:
-						# 후보들 중 안에서 가장 작은수가 다음 super ugly number 입니다.
+      # 후보들 중 안에서 가장 작은수가 다음 super ugly number 입니다.
             num, x = heapq.heappop(cur)
             for i in range(x, len(primes)):
-								# 2*7, 7*2 의 경우을 방지하기 위해서 더 큰 소수만 곱셈을 합니다.
+        # 2*7, 7*2 의 경우을 방지하기 위해서 더 큰 소수만 곱셈을 합니다.
                 heapq.heappush(cur, (num*primes[i], i))
             n-=1
         return num

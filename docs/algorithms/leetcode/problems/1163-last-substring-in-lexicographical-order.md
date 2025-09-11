@@ -42,15 +42,9 @@ class Solution:
         return s[candidates[0]:]
 ```
 
-  
-
-  
-
 정답은 무조건 suffix 이다.
 
 `i<j` 일 때, `p<j` `p != i` 이면, `s[p:]` 는 최대 subtring 보다 작다고 하자.
-
-  
 
 ## DP
 
@@ -76,7 +70,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

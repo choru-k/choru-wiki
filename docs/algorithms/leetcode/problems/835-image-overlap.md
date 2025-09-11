@@ -29,8 +29,8 @@ class Solution:
         a = [(y, x) for y in range(len(A)) for x in range(len(A[0])) if A[y][x] == 1]
         b = [(y, x) for y in range(len(B)) for x in range(len(B[0])) if B[y][x] == 1]
         
-				# (ay-by), (ax-bx) 만큼 이동할 때 (ay,ax) 와 (by,bx) 가 겹친다.
-				# 
+    # (ay-by), (ax-bx) 만큼 이동할 때 (ay,ax) 와 (by,bx) 가 겹친다.
+    # 
         c= collections.Counter([(ay-by, ax-bx) for ay, ax in a for by, bx in b])
         # print(c)
         if len(c) == 0:
@@ -42,7 +42,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

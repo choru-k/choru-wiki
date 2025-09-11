@@ -13,19 +13,13 @@ tags:
 
 천천히 풀어보자
 
-  
-
 가장 쉬운 방법은 무식하게 하는 방법으로 O(N^3) 이 된다.
-
-  
 
 좀 더 생각해보자. 우리는 이 문제를 풀 수 있는 방법 3가지를 가지고 있다.
 
 - 1, 3 을 구하고 2을 구하는 방법
 - 1, 2 을 구하고 3을 구하는 방법
 - 3,2 을 구하고 1을 구하는 방법
-
-  
 
 각각의 방법들로 푸는 방법을 생각해보자.
 
@@ -49,11 +43,7 @@ class Solution:
         return False
 ```
 
-  
-
 시간 복잡도가 `O(N^2)` 가 되서 Time Limit Exceeded 가 된다.
-
-  
 
 ### 1, 2 을 구하고 3을 구하는 방법
 
@@ -78,8 +68,8 @@ class Solution:
         st = [float('inf')]
         for i in range(len(nums))[::-1]:
             st.append(nums[i])
-						# 현재 i 보다 왼쪽에 있는 숫자중 최솟값을 first 로써 사용
-						# first[i-1] >= st[-1] 이면 second 가 될 수 없기 때문에 pop
+      # 현재 i 보다 왼쪽에 있는 숫자중 최솟값을 first 로써 사용
+      # first[i-1] >= st[-1] 이면 second 가 될 수 없기 때문에 pop
             while len(st) > 0 and firsts[i-1] >= st[-1]:
                 st.pop()
             seconds[i] = st[-1]
@@ -87,7 +77,7 @@ class Solution:
         # print(firsts)
         # print(seconds)
         for i in range(1, len(nums)-1):
-						# 이미 first < second 만족 했기 때문에 second < third 만 비교
+      # 이미 first < second 만족 했기 때문에 second < third 만 비교
             if seconds[i+1] < nums[i]:
                 return True
             
@@ -96,8 +86,6 @@ class Solution:
 ```
 
 시간 복잡도는 `O(N)` 이 된다.
-
-  
 
 ### 3,2 을 구하고 1을 구하는 방법
 
@@ -114,8 +102,6 @@ class Solution:
 4 도 오른쪽에 더 작은 수가 존재하기 때문에 third = 4
 
 second 는 third 보다 오른쪽에 있는 수들 중 가장 큰 수이다.
-
-  
 
 ```python
 class Solution:
@@ -143,8 +129,6 @@ class Solution:
         return False
 ```
 
-  
-
 One pass 최적화
 
 ```python
@@ -164,8 +148,6 @@ class Solution:
             
         return False
 ```
-
-  
 
 적당히 문제 풀 때 스케치.
 

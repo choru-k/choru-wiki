@@ -32,8 +32,6 @@ class Solution:
         return all(len(v)>=K for v in arr)
 ```
 
-  
-
 이걸 좀더 간단히 하면 가 된다.
 
 arr 는 각 배열은 최대차이가 1이고 가장 최소는 다들 길이가 K 일 때 이기 때문에 밑처럼 표현이 된다.
@@ -48,7 +46,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

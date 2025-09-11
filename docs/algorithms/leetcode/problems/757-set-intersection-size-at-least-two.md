@@ -19,15 +19,9 @@ tags:
 
 만약 그 전의 interval 과 현재의 interval 이 겹치는 곳이 없다면 항상 새로운 원소를 넣어야 한다.
 
-  
-
 일단 우리가 `intervals.sort(key=lambda x: (x[1], -x[0]))` 로 정렬을 하면 4 가지 경우의 수가 있다.
 
-  
-
 ![[__11.svg]]
-
-  
 
 위를 보면, 1,2 번의 경우일 때는 겹치는 부분이 1개 밖에 없기 때문에 1개를 더 추가한다.
 
@@ -48,7 +42,7 @@ class Solution:
             if len(group) == 0 or group[-1] < s:
                 group.extend([e-1, e])
             elif group[-2] < s:
-								# 갯수만 구할 때는 없어도 됨.
+        # 갯수만 구할 때는 없어도 됨.
                 if group[-1] == e:
                     group[-1] = e-1
                 group.append(e)
@@ -59,7 +53,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

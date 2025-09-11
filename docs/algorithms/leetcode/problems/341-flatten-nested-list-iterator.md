@@ -15,8 +15,6 @@ tags:
 
 어렵다기 보다는 주어진 Class 을 잘 활용해야 하는 문제이다.
 
-  
-
 `hasNext` 는 현재 stack 을 Integer 가 있는 곳으로 데려다 준다. 즉 hasNext 뒤에는 `self.stack[-1]` 에는 Integer 의 index 가 존재하게 된다.
 
 ## Solution
@@ -63,7 +61,6 @@ class NestedIterator(object):
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

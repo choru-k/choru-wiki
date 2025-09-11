@@ -14,11 +14,7 @@ tags:
 
 [https://koosaga.com/156](https://koosaga.com/156)
 
-  
-
 이 문제를 풀기전에 우리는 기본적으로 KMP 알고리즘과 failure function 에 대해서 알아야한다.
-
-  
 
 Failu
 
@@ -26,7 +22,6 @@ Failu
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

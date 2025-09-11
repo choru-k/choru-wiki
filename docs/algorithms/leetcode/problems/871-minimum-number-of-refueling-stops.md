@@ -43,10 +43,6 @@ class Solution:
         return -1
 ```
 
-  
-
-  
-
 ## Heap
 
 Greedy 하게 생각하면 우리는 항상 보급을 많이 할 수 있는 정류장을 고르는게 이득이다.
@@ -66,7 +62,7 @@ class Solution:
         for location, fuel in stations:
             tank -= location - prev_location
                 
-						# 양수를 유지하기 위해서 중간 stations 중 가장 좋은 station 을 선택한다.
+      # 양수를 유지하기 위해서 중간 stations 중 가장 좋은 station 을 선택한다.
             while len(pq) > 0 and tank < 0:
                 tank += -heappop(pq)
                 ans +=1
@@ -81,7 +77,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

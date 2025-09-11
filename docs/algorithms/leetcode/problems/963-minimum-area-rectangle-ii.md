@@ -24,23 +24,19 @@ tags:
 from itertools import permutations
 class Solution:
     def minAreaFreeRect(self, points: List[List[int]]) -> float:
-				# 벡터 연산을 위해서 복소수로 만들어 주자.
+    # 벡터 연산을 위해서 복소수로 만들어 주자.
         points = [complex(*z) for z in points]
         points_set = set(points)
 
-				# 내적이 0 이면 두 벡터가 수직이다.
+    # 내적이 0 이면 두 벡터가 수직이다.
         dot_product = lambda z1, z2: z1.real*z2.real + z1.imag * z2.imag
         return min([abs(p2-p1) * abs(p3-p1)
             for p1, p2, p3 in permutations(points, 3) 
-						# p1 의 반대편의 점이 존재하고
+      # p1 의 반대편의 점이 존재하고
             if p2+p3-p1 in points_set 
-						# 내적이 수직이면
+      # 내적이 수직이면
             and dot_product(p2-p1,p3-p1) == 0] or [0])
 ```
-
-  
-
-  
 
 조금 다르게 생각하면 한 원 위에서 중심을 지나는 선분 2개을 이용하면 직사각형을 만들 수 있다.
 
@@ -69,7 +65,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -19,8 +19,6 @@ tags:
 
 즉 duplicate substring 의 길이로 binary search 을 할 수가 있다.
 
-  
-
 밑은 그걸 구현 한 것이다.
 
 ## Solution
@@ -39,7 +37,7 @@ class Solution:
                     if word in cache:
                         return word
                     cache.add(word)
-										# 문제의 부분
+          # 문제의 부분
                     word = word[1:]
             return ''      
         while low < high:
@@ -75,17 +73,13 @@ class Solution:
 
 이러한 기법을 `Rabin-Karp Solution` 이라고 한다.
 
-  
-
-  
-
 ```python
 class Solution:
     def longestDupSubstring(self, S: str) -> str:
         low, high = 0, len(S)
-				# 매우큰수. 100 * len(S) 은 너무 큰 수 이기 때문에 적당히 나누어 주어야 한다.
-				# 확률상 collision 이 일어날 확률이 너무 적기 때문에 충분히 문제 없다.
-				# len(S) / 2**63 = 1.0842022e-14
+    # 매우큰수. 100 * len(S) 은 너무 큰 수 이기 때문에 적당히 나누어 주어야 한다.
+    # 확률상 collision 이 일어날 확률이 너무 적기 때문에 충분히 문제 없다.
+    # len(S) / 2**63 = 1.0842022e-14
         mod = 2**63 - 1
         originS = S
         S = [ord(c)-ord('a') for c in S]

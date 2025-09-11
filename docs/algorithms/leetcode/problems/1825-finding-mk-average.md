@@ -17,8 +17,6 @@ tags:
 
 그리고 실시간으로 smallest k, largest k 값을 구해야 하기 때문에 sortedList 을 사용해야 한다는 것을 알 수 있다.
 
-  
-
 이제 키 포인트는 어떻게 주기적으로 smallest k, largest k 의 sum 을 구하냐는 것이다.
 
 한가지 방법으로는 값이 들어올 때 마다, smallest k, largest k 에 들어가는지 보고, 만약 포함된다면
@@ -80,15 +78,9 @@ class MKAverage:
 # param_2 = obj.calculateMKAverage()
 ```
 
-  
-
 두번째 방법으로는 Segment Tree 을 이용해서 범위 합을 빠르게 구하는 방법이 있다.
 
 아래 코드의 장점으로는 Segment Tree 코드를 제외한다면 더욱 이해하기 쉬운 코드라고 생각한다.
-
-  
-
-  
 
 ```python
 from sortedcontainers import SortedList
@@ -166,10 +158,10 @@ class MKAverage:
         l, r = self.sl[self.k], self.sl[-self.k-1]
         s = self.st.query(l, r)
         # 중복된 값이 있을 수 있기 때문에, 중복된 값을 빼주어야 한다.
-				# l, r 이 [5,5] 이고, m 이 5, k 가 1
-				# [5, 5, 5, 5, 5] 로 현재 sl 이 구성되어 있다면
-				# [x, o, o, o, x] 중간의 [5, 5, 5] 만 우리가 원하는 범위이다.
-				# 그래서 앞 뒤 적당한 값을 빼주어야 한다. 
+    # l, r 이 [5,5] 이고, m 이 5, k 가 1
+    # [5, 5, 5, 5, 5] 로 현재 sl 이 구성되어 있다면
+    # [x, o, o, o, x] 중간의 [5, 5, 5] 만 우리가 원하는 범위이다.
+    # 그래서 앞 뒤 적당한 값을 빼주어야 한다. 
         s -= (self.k - self.sl.bisect_left(l)) * l
         s -= (self.k - (self.m - self.sl.bisect_right(r))) * r
         # print(l, r, s, self.st.query(l, r), (self.m - 2*self.k))
@@ -180,7 +172,6 @@ class MKAverage:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

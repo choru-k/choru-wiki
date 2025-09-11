@@ -23,8 +23,6 @@ class Solution:
         return list(map(lambda point: [point[1],point[2]], sorted(points)[:K]))
 ```
 
-  
-
 우리는 사실 N개를 모두 정렬 할 필요가 없다.
 
 우리가 필요한건 Top K 이기 때문에 Heap 을 통해서 항상 Top K 을 가지고 있다가 새로운 Point 가 들어올 때 Top K 보다 더 작으면 넣고 더 크면 그냥 버리면 된다.
@@ -48,8 +46,6 @@ class Solution:
                     heappush(pq, (-point[0], point[1], point[2]))
         return list(map(lambda point: [point[1],point[2]], pq))
 ```
-
-  
 
 문제에서는
 
@@ -96,10 +92,6 @@ class Solution:
             return points[small_idx]
 ```
 
-  
-
-  
-
 ## Follow Up
 
 음식점들의 좌표가 처음에 Input 배열로 들어온다.
@@ -110,22 +102,14 @@ class Solution:
 
 유저의 위치와 K 는 (x, y, k) 로 들어온다. 검색은 자주 일어난다고 한다. 이러한 클래스를 구현하시오.
 
-  
-
 ```python
 class Solution:
-	def __init__(self, points: List[List[int]]) -> None:
+ def __init__(self, points: List[List[int]]) -> None:
 
-	def query(self, x, y, k) -> List[List[int]]:
+ def query(self, x, y, k) -> List[List[int]]:
 ```
 
-  
-
-  
-
 ### 풀이
-
-  
 
 일단 수학적으로 생각을 해봐야 한다. 이미 모든 식당의 원점에서부터의 거리를 가지고 있다고 해보자. 그 다음 특정 query point (x,y) 가 들어온다.
 
@@ -141,8 +125,6 @@ class Solution:
 
 같은 방법으로 right 도 구하면 우리가 원하는 답이 나온다.
 
-  
-
 밑은 위의 식을 코드로 표현한 것이다. 시간 복잡도는 최악의 경우 `O(N^2)` 이다. 하지만 N >> K 일 경우 단순 `O(N^2)` 보다 훨씬 효율적으로 원하는 답을 구할 수 있다.
 
 ```python
@@ -150,11 +132,11 @@ from bisect import bisect
 from heapq import heappush, heappop
 
 class Solution:
-	def __init__(self, points: List[List[int]]) -> None:
+ def __init__(self, points: List[List[int]]) -> None:
         points = [(x*x+y*y, x, y) for x,y in points]
         self.points = sorted(points)
 
-	def query(self, x, y, k) -> List[List[int]]:
+ def query(self, x, y, k) -> List[List[int]]:
         distance = x*x+y*x
         left = bisect(self.points, distance)
         right = left+1

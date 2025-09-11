@@ -27,15 +27,9 @@ A ^ B ^ B = C ^ B =>
 A = C ^ B
 ```
 
-  
-
 단순하게 생각하면 가장 큰 자릿수가 1이 되어야 하는 건 당연하다.
 
-  
-
 만약 정답이 5자리 수라면 처음에 `1 * * * *` 이 되는지 확인하고 만약 된다면 `1 1 * * *` 가 정답이 되는지를 확인하면 될 것 같다.
-
-  
 
 ```python
 class Solution:
@@ -49,8 +43,8 @@ class Solution:
             
             prefixes = { num >> i for num in nums }
             
-						# p1 ^ p2 = target 이 되는지를 확인하고 싶다
-						# 위의 식에서 p1 ^ target = p2 도 된다는 것을 알 수 있기 때문에 p2 를 확인한다.
+      # p1 ^ p2 = target 이 되는지를 확인하고 싶다
+      # 위의 식에서 p1 ^ target = p2 도 된다는 것을 알 수 있기 때문에 p2 를 확인한다.
             for p in prefixes:
                 if p^target in prefixes:
                     ans = target
@@ -61,7 +55,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

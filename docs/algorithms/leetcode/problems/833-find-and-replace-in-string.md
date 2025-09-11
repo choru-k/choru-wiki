@@ -38,8 +38,6 @@ class Solution:
         return ans
 ```
 
-  
-
 ## Clean Code
 
 target을 기준으로 생각하는 방식.
@@ -53,12 +51,12 @@ class Solution:
         for idx, s, t in zip(indexes, sources, targets):
             if S[idx:idx+len(s)] == s:
                 v.append((idx, len(s), t))
-				# 전부다 sort 하는게 아니라 필요한 애들만 sort
+    # 전부다 sort 하는게 아니라 필요한 애들만 sort
         v.sort()
         
         ans = ''
         prev_idx = 0
-				# prev_idx 을 사용해서 구간 별로 자르고 바꾼다.
+    # prev_idx 을 사용해서 구간 별로 자르고 바꾼다.
         for idx, s, t in v:
             ans += S[prev_idx:idx] + t
             prev_idx=idx+s
@@ -70,7 +68,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

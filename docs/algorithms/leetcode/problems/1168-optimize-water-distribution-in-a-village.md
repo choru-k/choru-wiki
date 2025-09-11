@@ -20,8 +20,6 @@ tags:
 
 -1 에서 부터 집까지의 pipe 가 우물을 설치하는 것이 된다.
 
-  
-
 전체 Edge 에서 짧은 걸 뽑아내는 경우 (Kruskal MST)
 
 O(ElogE)
@@ -48,8 +46,6 @@ class Solution:
                 ans += c
         return ans
 ```
-
-  
 
 현재 연결된 Edge 사이에서 짧은걸 뽑아내는 경우 (Prim MST)
 

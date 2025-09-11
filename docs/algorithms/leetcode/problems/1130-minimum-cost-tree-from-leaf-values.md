@@ -38,10 +38,6 @@ class Solution:
         return dfs(0, len(arr)-1)
 ```
 
-  
-
-  
-
 ## Stack 사용
 
 연속된 숫자 a, b, c 가 존재한다고 하자.
@@ -58,14 +54,14 @@ class Solution:
 ```python
 class Solution:
     def mctFromLeafValues(self, arr: List[int]) -> int:
-				# Edge 케이스 귀찮으니간 이렇게
+    # Edge 케이스 귀찮으니간 이렇게
         arr = [inf] + arr + [inf]
         ret = 0
         st = []
         for num in arr:
-						# stack 은 내림차순이 된다. num 이 더 작으면 넣고 stack이 더 작으면 계속 빼기 때문에
-						# 즉 stack[-2] > stack[-1] < num 일 때만 while 이 작동되고
-						# 위의 (a,b,c)의 경우가 된다.
+      # stack 은 내림차순이 된다. num 이 더 작으면 넣고 stack이 더 작으면 계속 빼기 때문에
+      # 즉 stack[-2] > stack[-1] < num 일 때만 while 이 작동되고
+      # 위의 (a,b,c)의 경우가 된다.
             while len(st) >= 2 and st[-2] >= st[-1] <= num:
                 if st[-2] == num == inf:
                     break
@@ -78,7 +74,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

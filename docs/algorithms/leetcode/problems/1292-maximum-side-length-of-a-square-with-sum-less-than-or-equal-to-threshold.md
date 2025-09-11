@@ -46,10 +46,6 @@ class Solution:
         return ans
 ```
 
-  
-
-  
-
 ## Sliding Window
 
 O(NM) 발상은 중복된 계산이 존재한다! 대각선으로 Sliding Window 가 가능.

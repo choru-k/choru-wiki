@@ -17,8 +17,6 @@ tags:
 
 이러한 문제를 받았을 때, 일단 LCA 을 한번만 구하는지, 또는 여러번 구하는지가 중요하다.
 
-  
-
 만약 한번만 구한다고 할 때는 단순하게 DFS 을 통해 구할 수 있다. path 을 저장하고, 높이를 맞춘 뒤 한개씩 빼내는 방식이다. 시간복잡도는 `O(N)` 공간복잡도도 `O(N)` 이다.
 
 ## Solution
@@ -69,8 +67,6 @@ class Solution:
                 path2.pop()
 ```
 
-  
-
 조금 더 간단한 방법으로
 
 ```python
@@ -83,7 +79,7 @@ class Solution:
 
 class Solution:
     def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
-				if root in (None, p, q):
+    if root in (None, p, q):
             return root
         left = self.lowestCommonAncestor(root.left, p, q)
         right = self.lowestCommonAncestor(root.right, p, q)
@@ -95,15 +91,9 @@ class Solution:
 
 을 할 수 있다. 왼쪽과 오른쪽에 각각 p, q 가 존재한다면 root 가 정답이고, 1개만 존재하면 그 node 을 올려보낸다.
 
-  
-
-  
-
 만약 여러번 구해야 한다면 우리는 전처리 과정을 통해서 시간복잡도를 줄일 수 있다.
 
 핵심은 par 에 부모를 저장한다는 것이다. 1 번째 부모, 2번째 부보, 4 번째 부모, 8 번째 부모를 미리 저장한다면 우리가 k 번째 부모를 알고 싶을 때 `O(logN)` 에 알 수 있다.
-
-  
 
 ```python
 # Definition for a binary tree node.
@@ -150,8 +140,6 @@ class Solution:
             return par[a][0]
         return lca(p, q)
 ```
-
-  
 
 이 방법에서 초기화 과정 (depth 와 par 을 구하는 과정) 의 시간복잡도는 `O(N)` 그 뒤 LCA 을 구하는 과정은 `O(logN)` 이다. 또한 공간 복잡도는 `O(NlogN)` 이다.
 

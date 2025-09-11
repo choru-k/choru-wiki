@@ -26,8 +26,6 @@ $(|y-a_{1y}|+|y-a_{2y}|+|y-a_{3y}|+... )+(|x-a_{1x}|+|x-a_{2x}|+|x-a_{3x}|+...)$
 
 이제 저 1차원 문제를 풀어보자.
 
-  
-
 문제를 조금 간단하게 생각해보자.
 
 만약 어떠한 정렬된 배열이 존재한다고 할때 그 숫자들의 차이들의 합이 최소가 되는 숫자를 찾아라.
@@ -40,11 +38,7 @@ $(|y-a_{1y}|+|y-a_{2y}|+|y-a_{3y}|+... )+(|x-a_{1x}|+|x-a_{2x}|+|x-a_{3x}|+...)$
 
 절댓값의 그래프을 그려보면 알 수 있다.
 
-  
-
 ![[__2.svg]]
-
-  
 
 이제 원래의 문제로 돌아가보자.
 
@@ -65,8 +59,6 @@ abs(x-0) + abs(x-0) + abs(x-2) 가 되는데 이건 위의
 
 우리는 위처럼 배열을 얻게 되고 결국 이 배열에 대해서만 문제를 고려하면 되는데 이것은 위의 문제와 같다.
 
-  
-
 즉 정답은 밑이 된다.
 
 ```python
@@ -75,12 +67,12 @@ class Solution:
         if not grid:
             return 0
         h, w = len(grid), len(grid[0])
-				# [0, 0, 2] 가 된다.
+    # [0, 0, 2] 가 된다.
         r = [y for y in range(h) for x in range(w) if grid[y][x]]
-				# [0, 2, 4] 가 된다.
+    # [0, 2, 4] 가 된다.
         c = [x for x in range(w) for y in range(h) if grid[y][x]]
-				
-				# 즉 최적의 값은 [0,2] 가 된다.
+    
+    # 즉 최적의 값은 [0,2] 가 된다.
         res_r = r[len(r) // 2]
         res_c = c[len(c) // 2]
         return sum(abs(ir - res_r) for ir in r) + sum(abs(ic - res_c) for ic in c)
@@ -90,7 +82,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

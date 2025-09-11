@@ -36,11 +36,7 @@ class Solution:
 
 O(N^2) Time Error
 
-  
-
 조금 더 생각해보면 배열을 앞 뒤로 순회하면서 최대 profit 을 구할 수 있다.
-
-  
 
 ```python
 class Solution:
@@ -61,11 +57,7 @@ class Solution:
         return max([left[i] + right[i] for i in range(len(prices))])
 ```
 
-  
-
 조금 더 생각하면 state 의 관점에서 생각할 수 있다.
-
-  
 
 ```python
 class Solution:
@@ -81,8 +73,6 @@ class Solution:
             
         return sell2
 ```
-
-  
 
 ```python
 class Solution:

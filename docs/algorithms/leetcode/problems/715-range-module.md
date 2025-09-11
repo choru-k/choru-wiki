@@ -47,15 +47,11 @@ class RangeModule:
 # obj.removeRange(left,right)
 ```
 
-  
-
 실제로 돌려보면 Memory 에러가 된다. 배열이 너무 크기 때문이다.
 
 범위을 저장하는 방법을 더욱 압축시켜보자.
 
 간단한 방법으로는 `[start,end]` 로써 저장을한다.
-
-  
 
 ```python
 from bisect import bisect_left, bisect_right
@@ -108,7 +104,7 @@ class RangeModule:
         
 
     def addRange(self, left: int, right: int) -> None:
-				# Binary Search O(LogN)
+    # Binary Search O(LogN)
         l = bisect_left(self.ranges, [left])
         r = bisect_left(self.ranges, [right])
         if self.ranges[l-1][0] <= l < self.ranges[l-1][1]:
@@ -118,7 +114,7 @@ class RangeModule:
         if self.ragnes[l-1][1] < l < r < self.ranges[r][0]:
             bisect.bisect_insort(self.ranges, [left, right])
                
-				# O(N) 
+    # O(N) 
         prev = None
         deleted = set()
         for i in range(len(self.ranges)):
@@ -132,7 +128,7 @@ class RangeModule:
         self.ranges = [self.ranges[i] for i in len(self.ranges) if i not in deleted]
         
 
-		# O(LogN)
+  # O(LogN)
     def queryRange(self, left: int, right: int) -> bool:
         idx = bisect_left(self.ranges, [left])
         return idx < len(self.ranges) and self.ranges[idx][0] <= left < right <= self.ranges[idx][1]
@@ -150,8 +146,6 @@ class RangeModule:
 # obj.removeRange(left,right)
 ```
 
-  
-
 하지만 코드가 매우 복잡해진다. 조금더 간단히 생각해보자. 현재 범위가 `(1,3), (6,10)` 이라면 현재는`[[1,3], [6,10]]` 로 저장을 했다. 이걸 `[1,3,6,10]` 으로 저장해도 될까? 문제 없을 것 같다. 왜냐하면 모든 범위는 중복 된다면 합쳐지기 때문에 항상 범위는 열리고 닫힌다. 이러한 규칙을 이용해서 binary search 을 보다. 기본적인 방법은 똑같다. 하지만 1d-array 로 표현함 으로써 코드가 보다 간단해졌다.
 
 ```python
@@ -162,7 +156,7 @@ class RangeModule:
         self.ranges = []
         
 
-	# O(N)
+ # O(N)
     def addRange(self, left: int, right: int) -> None:
         l = bisect_left(self.ranges, left)
         r = bisect_right(self.ranges, right)
@@ -173,7 +167,7 @@ class RangeModule:
             block.append(right)
         self.ranges[l:r] = block
 
-		# O(logN)
+  # O(logN)
     def queryRange(self, left: int, right: int) -> bool:
         l = bisect_right(self.ranges, left)
         r = bisect_left(self.ranges, right)
@@ -197,8 +191,6 @@ class RangeModule:
 # param_2 = obj.queryRange(left,right)
 # obj.removeRange(left,right)
 ```
-
-  
 
 만약 c++ 의 Map 같은 self-balanced tree 을 사용한다면 어떻게 될까?
 

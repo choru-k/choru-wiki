@@ -15,15 +15,11 @@ tags:
 
 일단 가장 간단한 방법부터 생각해보자.
 
-  
-
 우리는 빈도수가 크고, 같은 빈도수 에서는 더 최근에 들어온 애를 return 해주면 된다.
 
 그렇다면 빈도수 와 들어온 순서로 heap 을 만들어 주면 된다.
 
 이게 그 방법이다.
-
-  
 
 ```python
 from heapq import heappush, heappop
@@ -53,8 +49,6 @@ class FreqStack:
 # obj.push(x)
 # param_2 = obj.pop()
 ```
-
-  
 
 ## 보다 최적화
 
@@ -96,7 +90,6 @@ class FreqStack:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

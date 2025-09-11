@@ -15,15 +15,11 @@ tags:
 
 일단 문제를 쉽게 푸는 법을 생각하고 점차 최적화를 해보자.
 
-  
-
 이 문제를 보자마자 Trie 을 사용해야 할 것 같다.
 
 왜냐하면 입력을 받는다는 것이 Trie 의 자식을 탐색하는 것과 비슷하기 때문이다.
 
 일단 Input 부분만 구현하면 밑처럼 된다.
-
-  
 
 ```python
 class Node:
@@ -69,8 +65,6 @@ class AutocompleteSystem:
 # param_1 = obj.input(c)
 ```
 
-  
-
 이제 get_top 부분을 구현하기만 하면 된다.
 
 적당히 모든 자식을 탐색하고 sorting 하면 될 것 같다.
@@ -86,10 +80,6 @@ def get_top(self, root):
       dfs(root, self.now_word)
       return map(lambda x: x[1], sorted(sentences)[:3])
 ```
-
-  
-
-  
 
 ## 최적화
 

@@ -14,11 +14,9 @@ tags:
 일단 몇 가지를 생각해보자.
 
 - word1 이 word2 의 predecessor 가 되기 위해서는 `len(word1)+1 == len(word2)` 을 만족
-    - 즉 `sorted(words, key=len)`
+  - 즉 `sorted(words, key=len)`
 - 정렬된 words 에 대해서 `dp[i] = max(dp[j]) + 1` (if word[i] is predecessor of word[j])
 - word1 과 word2 의 predecessor 을 check 하는 함수를 만들기
-
-  
 
 밑은 이걸 차례대로 구현한 것이다.
 
@@ -47,8 +45,6 @@ class Solution:
 ```
 
 이 풀이의 시간복잡도는 `O(N^2S)` 가 된다. S 는 평균 word 의 길이다
-
-  
 
 ## Hash 을 이용한 보다 향상된 방법
 

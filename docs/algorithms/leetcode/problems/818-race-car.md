@@ -27,8 +27,6 @@ tags:
 
 만약 speed 가 target*2 라면 pos 가 0 이상이면 위의 조건과 같다.
 
-  
-
 ```python
 class Solution:
     def racecar(self, target: int) -> int:
@@ -39,7 +37,7 @@ class Solution:
             nxt_layer = collections.deque()
             while len(layer) > 0:
                 p, s = layer.popleft()
-								# 핵심
+        # 핵심
                 if p<0 or p > target*2 or abs(s) > target*2:
                     continue
                 if p == target:
@@ -55,10 +53,6 @@ class Solution:
             layer= nxt_layer
             ans+=1
 ```
-
-  
-
-  
 
 ## DP
 
@@ -76,15 +70,11 @@ class Solution:
 2. 목적지를 지나쳐 버렸을 때
 3. 목적지에 아직 도착 하지 않았을 때
 
-  
-
 1의 경우는 바로 정답이 된다.
 
 2의 경우에는 지나쳐 버리자 마자 reverse 을 해야한다. 속도가 매번 2배가 되기 때문에 지나쳐버린 후 계속 갈 경우 무조건 목적지의 2배 이상의 거리를 가게 되고 위의 BFS 에서 본 것 처럼 무조건 손해이다
 
 3의 경우 되도록 가까이 가는게 중요하다. 물론 더 먼점에서 출발하는게 더 이득일 수 있지만 어차피 reverse 을 한 뒤 얼마만큼 뒤로 가기 때문에 결국 더 먼점에서 출발할 수 가 있고 중요한 것은 얼만큼 뒤로 가냐가 된다.
-
-  
 
 ```python
 class Solution:
@@ -95,18 +85,18 @@ class Solution:
         def dp(num: int):
             if num not in memo:
                 n = num.bit_length()
-								# 1의 경우
+        # 1의 경우
                 if 2**n - 1 == num: 
                     memo[num] = n
 
                 else:
-								# 2의 경우
+        # 2의 경우
                 # n 만큼 앞으로 간다. n
                 # 한번 reverse 로 한다 1
                 # 2**n-1 - t 만큼 뒤로 가야한다
                 # 한번 reverse 을 했기 때문에 현재 스피드를 +1로 보고 2**n-1-t 만큼 앞으로 전진한다고 생각한다
                     memo[num] = dp(2**n - 1 - num) + n + 1
-										# 3의 경우
+          # 3의 경우
                     for m in range(1, n):
                         # n-1 만큼 앞으로 간다.
                         # reverse 1

@@ -21,8 +21,6 @@ tags:
 
 문제에서는 보다 좋은 시간복잡도를 원한다.
 
-  
-
 이 문제에서의 2개의 힌트가 있다.
 
 - 갯수만 알면 됨
@@ -51,9 +49,9 @@ class Solution:
             for left in l:
                 while i < len(r) and r[i]-left < lower: i+=1
                 while j < len(r) and r[j]-left <= upper: j+=1
-								# upper 보다 작은 수에서  lower 보다 작은걸 빼면 사이의 갯수가 나온다.
+        # upper 보다 작은 수에서  lower 보다 작은걸 빼면 사이의 갯수가 나온다.
                 cnt += j-i
-						# 이 부분을 마찬가지로 merge sort의 merge 을 쓰면 O(N) 이 되지만 가독성을 위해 O(NlogN) 을 사용하였다.
+      # 이 부분을 마찬가지로 merge sort의 merge 을 쓰면 O(N) 이 되지만 가독성을 위해 O(NlogN) 을 사용하였다.
             return sorted(arr), cnt
         _, ans = sort(sums)
         # print(k)

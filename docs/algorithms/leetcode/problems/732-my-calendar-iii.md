@@ -16,19 +16,13 @@ tags:
 
 당연하겠지만 `O(N* 10^9)` 은 너무 크다.
 
-  
-
 조금 생각해보자.
 
 ### Boundary Count
 
 이런 종류의 문제는 , 즉 start / end 가 존재하는 문제는 대부분 `boundary count` 방법으로 풀 수가 있다.
 
-  
-
 Boundary Count 방법은 표준라이브러리의 부족 때문에 python 으로는 구현하기 힘들다. 실제 면접이라면 c++ 의 Map 이라고 설명하면서 적당히 말하면 될 것 같다.
-
-  
 
 ```python
 class MyCalendarThree(object):
@@ -49,8 +43,6 @@ class MyCalendarThree(object):
 ```
 
 python 의 경우에는 배번 sort 을 하기 때문에 `O(N^2logN)` 이지만 Map 이 존재한다면 `O(N*logN + N*N)` 즉 `O(N^2)` 가 된다.
-
-  
 
 ### Segment Tree
 
@@ -91,8 +83,6 @@ class MyCalendarThree:
 # param_1 = obj.book(start,end)
 ```
 
-  
-
 ```python
 class MyCalendarThree:
     def __init__(self):
@@ -124,8 +114,6 @@ class MyCalendarThree:
 # obj = MyCalendarThree()
 # param_1 = obj.book(start,end)
 ```
-
-  
 
 ```python
 class Node:
@@ -163,8 +151,6 @@ class MyCalendarThree:
 # obj = MyCalendarThree()
 # param_1 = obj.book(start,end)
 ```
-
-  
 
 ```python
 class Node:
@@ -206,8 +192,6 @@ class MyCalendarThree:
 # obj = MyCalendarThree()
 # param_1 = obj.book(start,end)
 ```
-
-  
 
 ```python
 class SegmentNode:

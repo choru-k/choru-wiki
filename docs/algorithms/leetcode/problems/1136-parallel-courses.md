@@ -50,11 +50,11 @@ class Solution:
 ## Follow Up
 
 - 만약 한번에 최대 K 개의 수업만 들을 수 있다면 어떻게 할 것인가
-    
+
     [https://leetcode.com/problems/parallel-courses/discuss/363145/google-follow-up-questions](https://leetcode.com/problems/parallel-courses/discuss/363145/google-follow-up-questions)
-    
+
     결국 k 개을 골라야 하는데 더 많은 자식과의 연관관계을 가진 것을 기준으로 뽑아야함. 대충 greedy 하게
-    
+
     정답은 NP 여서 다 해봐야한다.
 
 ---

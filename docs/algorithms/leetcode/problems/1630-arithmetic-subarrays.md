@@ -30,7 +30,6 @@ class Solution:
         return ret
 ```
 
-
 정렬하지 않고 어떻게 풀까?
 일단 해당 배열에 max, min 을 구한다.
 그리고 해당 배열에서 각 아이템의 diff 은 `(max-min) / (len(nums)-1)` 이 되어야 한다.
@@ -60,8 +59,9 @@ class Solution:
         return ret
 ```
 
-https://leetcode.com/problems/arithmetic-subarrays/solutions/4322369/mo-s-algorithm-o-m-sqrt-n-log-n-c/
-- #todo Mo's algorithm 정리 
+<https://leetcode.com/problems/arithmetic-subarrays/solutions/4322369/mo-s-algorithm-o-m-sqrt-n-log-n-c/>
+
+- #todo Mo's algorithm 정리
 
 ```cpp
  Mo's algorithm
@@ -73,7 +73,7 @@ https://leetcode.com/problems/arithmetic-subarrays/solutions/4322369/mo-s-algori
 이것만을 가지고 파악하면 어떨까?
 
 일단 segment tree 로 min, max 을 구한다.
-그 다음 diff 를 구하고, min max 로 유추한 배열의 합, 제곱한 합을 구한다. 
+그 다음 diff 를 구하고, min max 로 유추한 배열의 합, 제곱한 합을 구한다.
 그 다음 실제 배열의 합, 제곱한 합을 구해야 하는데, 이건 prefix sum 으로 구할 수 있다.
 
 이럴경우 시간복잡도는 `n*logn + m*logn` 이 될 것 이다.

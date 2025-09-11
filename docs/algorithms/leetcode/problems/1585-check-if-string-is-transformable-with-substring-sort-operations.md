@@ -20,8 +20,6 @@ tags:
 
 최소의 단위의 소팅이란건 2개을 비교해서, 소팅을한다. 이건 버블소팅과 매우 유사하다.
 
-  
-
 이제 우리가 s에서 t을 못만드는 경우를 생각하자.
 
 그건 t에 있는 어떤 숫자가 왼쪽으로 가고 싶은데 왼쪽에는 모두 자신보다 작은 수 밖에 없어서 이동이 불가능 할 때 우리는 만들수 없다 라고 생각한다.
@@ -56,7 +54,7 @@ class Solution:
                 return False
             i = s_idx[c][0]
             for j in range(c):
-								# 위의 예제에서 9보다 작은 수가 존재하고, 그것이 9의 오른쪽으로 가야한다면 실패다.
+        # 위의 예제에서 9보다 작은 수가 존재하고, 그것이 9의 오른쪽으로 가야한다면 실패다.
                 if len(s_idx[j]) > 0 and i < s_idx[j][0] :
                     return False
             s_idx[c].popleft()
@@ -68,7 +66,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

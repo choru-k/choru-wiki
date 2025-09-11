@@ -16,8 +16,6 @@ tags:
 
 왜냐하면 a부터 시작하는 배열에는 모든 문자열이 들어있지 않기 때문이다.
 
-  
-
 ## Greedy1
 
 ```python
@@ -26,10 +24,10 @@ class Solution:
         if len(s) == 0:
             return ''
         s_set = set(s)
-				# 가장 작은 문자열 부터 본다.
+    # 가장 작은 문자열 부터 본다.
         for c in sorted(s_set):
             from_c_s = s[s.index(c):]
-						# 이 문자열 뒤에 그 외의 모든 문자열이 존재한다면 이 문자열부터 시작하는게 정답
+      # 이 문자열 뒤에 그 외의 모든 문자열이 존재한다면 이 문자열부터 시작하는게 정답
             if len(set(from_c_s)) == len(s_set):
                 return c + self.removeDuplicateLetters(from_c_s.replace(c, ''))
 ```
@@ -39,7 +37,7 @@ class Solution:
 ```python
 class Solution:
     def removeDuplicateLetters(self, s: str) -> str:
-				# 1의 방법을 약간 변형하여서 실제 계산량을 줄였다.
+    # 1의 방법을 약간 변형하여서 실제 계산량을 줄였다.
         if len(s) == 0:
             return ''
         count_s = collections.Counter(s)
@@ -49,15 +47,13 @@ class Solution:
             if mc == '' or mc > c:
                 mc = c
             count_s[c] -= 1
-						# 특정 문자열 뒤에 모든 문자열이 존재하는지를 counter 을 사용하여 판단
+      # 특정 문자열 뒤에 모든 문자열이 존재하는지를 counter 을 사용하여 판단
             if count_s[c] == 0:
                 break
         
         i = s.index(mc) 
         return mc + self.removeDuplicateLetters(s[i:].replace(mc, ''))
 ```
-
-  
 
 ## Using Stack
 
@@ -83,7 +79,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

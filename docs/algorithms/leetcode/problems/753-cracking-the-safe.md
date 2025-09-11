@@ -18,19 +18,13 @@ tags:
 
 생각하는 방식을 고민해 보자.
 
-  
-
 일단 이 문제를 그래프 문제로 바꾸어 보자.
 
 현재 노드에서 마지막 자리만 뒤에 다른 숫자가 추가될 때 생길 수 있는 노드와 연결되어 있다고 하자.
 
 밑의 그림처럼 `n=2,k=2` 의 경우와 `n=3,k=2` 의 경우의 그래프로 나타낼 수 있다.
 
-  
-
 ![[E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7201.jpg]]
-
-  
 
 잘보면 정답에서 마지막 노드는 항상 첫번째 노드와 다시 연결될 수 있고 경로는 circuit 이 된다.
 
@@ -46,8 +40,8 @@ class Solution(object):
         seen = set()
         ans = []
         def dfs(node):
-						# 뒤에서 부터 탐색한다. 만약 range(k) 로 할 경우 순환 싸이클을 돌아버린다.
-						# 위의 그래프 그림에서 직접 해보아라.
+      # 뒤에서 부터 탐색한다. 만약 range(k) 로 할 경우 순환 싸이클을 돌아버린다.
+      # 위의 그래프 그림에서 직접 해보아라.
             for x in map(str, range(k)[::-1]):
                 nei = node + x
                 if nei not in seen:
@@ -61,10 +55,6 @@ class Solution(object):
         dfs(start[1:])
         return "".join(ans)
 ```
-
-  
-
-  
 
 ```python
 class Solution:
@@ -92,7 +82,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -21,8 +21,6 @@ tags:
 
 두번째 방법은 UnionFind 을 통해서 맨위와 맨아래가 이어져 있다는 것으로 알수가 있다.
 
-  
-
 만약 어느 시점에 BFS 을 통해서 맨위에서 맨밑을 가는게 가능하다고 하면, 우리는 binary search 을 통해서 이러한 문제를 쉽게 풀 수 있다.
 
 ## Solution
@@ -62,15 +60,11 @@ class Solution:
         return l
 ```
 
-  
-
 위에서 말한 두번째 방법인 UnionFind 을 통해서도 답을 구할 수 있다.
 
 맨 마지막 상황에서는 start → end 가 한개로 이어져 있지 않을 것이다.
 
 한개씩 cell 을 거슬러 올라가면서 어느순간 start → end 가 한개로 이어질 텐데, 그게 우리가 원하는 정답일 것이다.
-
-  
 
 ```python
 class UnionFind:
@@ -121,7 +115,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

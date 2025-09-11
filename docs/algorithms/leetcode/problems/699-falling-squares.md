@@ -17,8 +17,6 @@ Lazy Segment !
 
 값이 잘 변하는!
 
-  
-
 lazy 는 복잡하니 그때그때 lazy 를 안쓰고 propagate! 어차피 propagate 시간복잡도는 O(1)
 
 이러면 return 값은 항상 node.val 이 됨.
@@ -85,7 +83,7 @@ class SegmentTree:
                 if l == r:
                     node.val = val
                 else:
-										# node.lazy 가 생겨버렸잖아. 바아아아아로 node.propagate!
+          # node.lazy 가 생겨버렸잖아. 바아아아아로 node.propagate!
                     node.lazy = val
                     node.propagtate()
             else:
@@ -112,7 +110,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

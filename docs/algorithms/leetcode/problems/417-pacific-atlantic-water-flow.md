@@ -18,8 +18,6 @@ tags:
 
 보통 무한 순환이 일어나면 visited 을 이용해서 체크를 하는데 memorization 을 사용하는 경우, visited 을 사용할 수 없음
 
-  
-
 즉 memorization 을 안쓰고 해야하기 때문에 reverse thinking 을 해야됨
 
 물이 내려오는 것을 보는게 아니라 물을 올려보내자. 이 물이 올라 갓을 때 어디 까지 갈 수 있는지 체크.
@@ -61,7 +59,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

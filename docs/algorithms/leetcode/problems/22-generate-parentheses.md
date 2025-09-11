@@ -30,7 +30,7 @@ tags:
 
 ```python
 class Solution:
-		# n 에 대해서는 불변이기 때문에 memorization 을 사용
+  # n 에 대해서는 불변이기 때문에 memorization 을 사용
     @functools.lru_cache(None)
     def generateParenthesis(self, n: int) -> List[str]:
         if n == 0:
@@ -51,10 +51,6 @@ class Solution:
         return ret
 ```
 
-  
-
-  
-
 ```python
 class Solution:
     def generateParenthesis(self, n: int) -> List[str]:
@@ -65,10 +61,6 @@ class Solution:
                 dp[i] += ['(' + x + ')' + y for x in dp[j] for y in dp[i-j-1]]
         return dp[n]
 ```
-
-  
-
-  
 
 ```python
 class Solution:
@@ -93,7 +85,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

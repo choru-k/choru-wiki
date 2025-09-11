@@ -27,8 +27,8 @@ class Solution:
             if pre_fix_sum in memo:
                 unused_node = memo[pre_fix_sum].next
 
-				# --------------
-				# 지우는 아이템은 Hashmap 에서 잘 빼줘야 한다.
+    # --------------
+    # 지우는 아이템은 Hashmap 에서 잘 빼줘야 한다.
                 p = pre_fix_sum + unused_node.val
                 while unused_node != cur:
                     memo.pop(p)
@@ -42,8 +42,7 @@ class Solution:
         return dummy.next
 ```
 
-
-한번째 다 돌고, 그 담에 한번에 정리한다. 훨씬 깔끔한듯. 
+한번째 다 돌고, 그 담에 한번에 정리한다. 훨씬 깔끔한듯.
 
 ```python
 class Solution:
@@ -71,7 +70,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

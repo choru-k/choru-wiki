@@ -17,10 +17,6 @@ tags:
 
 이 때의 시간 복잡도는 O(N^2) 이다.
 
-  
-
-  
-
 특정 범위 (a, b) 가 조건을 만족하는지 아닌지 확인을 한다고 하자. 만약 (a,b) 가 조건을 만족한다면 a 가 고정인 상태에서 b 보다 더 큰 숫자에 대해서는 검사를 할 필요가 없다. 왜냐하면 b 가 정답에 가깝기 때문이다.
 
 또한 b 가 고정일 경우 a 보다 작은 숫자에 대해서는 검사를 할 필요가 없다.
@@ -33,11 +29,7 @@ tags:
 
 정답 | 안정답 | 정답 의 a 가 deque 에 들어가게 되고, 안정답 때문에 뒤의 정답 queue가 pop 이 안되기 때문에 이걸 `정답 | 정답 | 정답 | 안정답 | 안정답 | 안정답` 처럼 만들기 위해서 단조 증가로 만들어야 한다.
 
-  
-
 조금 더 이해가 쉽게 하자면 만약 음수가 없었다면 어떻게 풀엇을지 부터 생각해보자. 그렇다면 간단하게 slide window 을 썻을 것이다. 이번에는 음수가 있었기 때문에 dq 의 pop 을 통해서 단조증가하게 억지로 만들었다.
-
-  
 
 위의 방법을 코드로써 표현한 것이 밑이다.
 
@@ -67,8 +59,6 @@ class Solution:
         return ans
 ```
 
-  
-
 두 번째 방법 Using heap
 
 ```python
@@ -90,11 +80,7 @@ class Solution:
         return ans
 ```
 
-  
-
 Using binary search
-
-  
 
 ```python
 class Solution:
@@ -114,15 +100,12 @@ class Solution:
         return ret if ret != float('inf') else -1
 ```
 
-  
-
 [https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/discuss/531032/3-Clean-Python-Solution%3A-Deque-Heap-or-Binary-Search](https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/discuss/531032/3-Clean-Python-Solution%3A-Deque-Heap-or-Binary-Search)
 
 ## 복잡도 분석
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -21,15 +21,11 @@ upper_bound 하나로 문제를 바꿀수 있다.
 
 이건 다시 `s 이하의 모든 문자열 - s 이하의 evil 이 포함된 문자열` 로 문제를 바꿀 수 있다.
 
-  
-
 `s 이하의 모든 문자열` 는 밑의 `count_with_lower` 를 통해 간단히 구할 수 있다.
 
 이제 핵심은 `s 이하의 evil 이 포함된 문자열` 이다.
 
 `s 이하의 evil 이 포함된 문자열` 를 어떻게 구할까.
-
-  
 
 `include_evil_in_prefix`, `include_evil_in_nxt`, `include_evil_in_prefix_and_nxt` 을 통해서 구했다.
 
@@ -111,7 +107,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

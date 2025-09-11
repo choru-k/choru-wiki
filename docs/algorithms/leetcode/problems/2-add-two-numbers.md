@@ -43,8 +43,6 @@ class Solution:
         return ans.next
 ```
 
-  
-
 루프 2번 도는걸 1번으로 합친거
 
 ```python
@@ -82,7 +80,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

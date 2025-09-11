@@ -34,13 +34,9 @@ class Solution:
         return dp[-1][0]+dp[-1][1]
 ```
 
-  
-
 단순한 dp 계산을 통해서 이진수의 길이만 주어졌을 때는 쉽게 구할 수 있다.
 
 `0xxxx` 와 `1xxxx` 의 길이가 다음 `0xxxx` 와 `1xxxx` 의 길이를 구할 때 사용 할 수 있다.
-
-  
 
 이제 조금 더 생각을 해보자.
 
@@ -49,10 +45,6 @@ class Solution:
 이제 `10101010` 의 경우를 생각해 보자.
 
 `10` 으로 시작하면 `01xxx` `00xxxx` 을 더하면 된다.
-
-  
-
-  
 
 ```python
 class Solution:
@@ -71,8 +63,6 @@ class Solution:
                 ans = dp[i][0]+dp[i][1]
         return ans
 ```
-
-  
 
 ```python
 class Solution:
@@ -100,7 +90,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

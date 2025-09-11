@@ -15,7 +15,7 @@ tags:
 ## 핵심 아이디어
 
 ```python
-	def findKthNumber(self, n, k):
+ def findKthNumber(self, n, k):
         cur = 1
         k = k - 1
         while k > 0:
@@ -42,7 +42,6 @@ tags:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

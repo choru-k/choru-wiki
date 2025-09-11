@@ -19,15 +19,11 @@ tags:
 
 이제 합이 target 이 되는 sub-array 중에서 길이가 제일 짧은 sub-array 을 찾으면 된다.
 
-  
-
 문제를 조금 쉽게 생각해서 합이 target 이 되는 sub-array 는 어떻게 구할지 부터 생각한다.
 
 이건 이미 여러번 해봣을 것이다.
 
 이걸 조금 더 생각해보자.
-
-  
 
 예를 들어서 target 이 3이고, 현재까지의 합의 나머지가 5 라면, 합이 2가 되는 가장 지점을 빼면 된다.
 
@@ -67,7 +63,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

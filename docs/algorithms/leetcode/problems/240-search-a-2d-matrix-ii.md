@@ -42,15 +42,7 @@ class Solution:
         return False
 ```
 
-  
-
-  
-
-  
-
 Thus, the overall time complexity can be approximated as O((log n + log m) * recursion depth). In the best-case scenario, this can be very efficient, especially compared to the linear approach. However, the worst-case scenario (where the recursion depth approaches min(n, m)) might still lead to a time complexity that is less favorable compared to simpler methods like the linear search from the top-right corner (O(m + n)).
-
-  
 
 ```python
 class Solution:
@@ -87,8 +79,6 @@ class Solution:
         return searchRec(0, 0, len(matrix[0]) - 1, len(matrix) - 1)
 ```
 
-  
-
 `O(n^log_4(3))`
 
 ```python
@@ -118,12 +108,6 @@ class Solution:
         ret = dfs(0, 0, h-1, w-1)
         return ret
 ```
-
-  
-
-  
-
-  
 
 Certainly! Let's compare the three approaches to solve the "search a 2D matrix" problem in terms of their time complexity. The three methods are:
 

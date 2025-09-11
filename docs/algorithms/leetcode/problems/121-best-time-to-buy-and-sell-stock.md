@@ -25,12 +25,12 @@ class Solution:
     def maxProfit(self, prices: List[int]) -> int:
         if len(prices) == 0:
             return 0
-				# 현재까지의 가격중에서 가장 싼 가격
+    # 현재까지의 가격중에서 가장 싼 가격
         cur_min_price = prices[0]
         ret= 0
         for price in prices[1:]:
-						# 만약 지금 판다고 했을 때의 수익.
-						# 지금까지의 가격 중 가장 쌌을 때 샀다고 가정한다. 공매도가 안되므로..
+      # 만약 지금 판다고 했을 때의 수익.
+      # 지금까지의 가격 중 가장 쌌을 때 샀다고 가정한다. 공매도가 안되므로..
             ret = max(price - cur_min_price, ret)
             cur_min_price = min(price, cur_min_price)
         return ret
@@ -40,7 +40,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

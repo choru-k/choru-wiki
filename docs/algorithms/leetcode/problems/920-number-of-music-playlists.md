@@ -18,8 +18,6 @@ tags:
 1. 모든 곡은 최소 1번 재생되어야 한다.
 2. 최근 K 개의 곡은 반복하면 안된다.
 
-  
-
 `numMusicPlaylists(N, L, K)` 가 우리가 원하는 함수이다.
 
 일단 `numMusicPlaylists(N, L, K)` 와 `numMusicPlaylists(N-1,L-1,K)` 의 관계을 보자.
@@ -29,8 +27,6 @@ tags:
 이제 `numMusicPlaylists(N, L, K)` 와 `numMusicPlaylists(N, L-1, K)` 의 관계을 보자.
 
 이미 L-1 의 길이에서 N 개의 곡을 선택하였기 때문에 1번 조건에서 자유롭다. 이제 2번 조건만 살펴보자. 우리는 최근 K 개 안에서 곡을 선택하지 않아야 한다. 즉 `(N-K)*numMusicPlaylists(N, L-1, K)` 가 포함된다.
-
-  
 
 이걸 표현한게 밑의 코드이다. 시간복잡도는 `O(N*L)` 이 된다.
 
@@ -55,8 +51,6 @@ class Solution:
         return dfs(N,L)
 ```
 
-  
-
 코드을 최적화 하면 밑의 코드가 된다.
 
 ```python
@@ -74,7 +68,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

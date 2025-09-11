@@ -21,8 +21,6 @@ tags:
 
 만약 이 문제를 Bucket Sort 을 사용할 경우 시간 복잡도는 32bit-int 가 되고 너무 크다
 
-  
-
 이제 Bucket Sort 을 잘 최적화 하여서 시간복잡도를 줄여보자.
 
 일단 우리의 정답의 최소 범위를 생각해 보자. 비둘기 집의 원리에 의해서 우리의 정답의 최소는
@@ -65,7 +63,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -20,8 +20,6 @@ tags:
 - 전체 서버의 갯수 - 다른 서버와 통신하는 서버의 갯수
 - 다른서버와 통신하지 않는 서버의 갯수
 
-  
-
 이 두 가지을 어떻게 구할 수 있을까?
 
 ## Graph 로 바꾸기
@@ -29,8 +27,6 @@ tags:
 이 문제을 그래프 문제로 바꾸고 grouping 문제로 생각을 해보자.
 
 즉 각각의 서버을 node 로 보고, 서로 통신할 수 있는 서버는 서로 edge 로 연결되어있다고 하자.
-
-  
 
 ```python
 class Solution:
@@ -54,13 +50,9 @@ class Solution:
 
 위의 코드로 우리는 이 문제을 graph 문제로 바꾸었다.
 
-  
-
 ## Group 만들기
 
 이제 group 을 지어보자. group 을 만드는 가장 쉬운 방법은 DFS 을 사용하는 것이다.
-
-  
 
 ```python
 class Solution:
@@ -81,7 +73,7 @@ class Solution:
                 if grid[y][i] == 1 and x != i:
                     graph[y,x].add((y,i))
         
-				# dfs 로 연결되어 있는 node 로 이동하고 같은 그룹으로 묶어준다.
+    # dfs 로 연결되어 있는 node 로 이동하고 같은 그룹으로 묶어준다.
         def dfs(y, x, group, visited):
             if (y,x) in visited:
                 return
@@ -104,8 +96,6 @@ class Solution:
 computers 의 크기는 최대 `O(h*w)` 가 된다. 즉 edge 의 크기는 최대 `O(h*w*max(h,w))` 가 된다.
 
 dfs 는 `O(V+E)` 이기 때문에 시간복잡도는 `O(h*w*max(h,w))` 가 된다.
-
-  
 
 ## Graph 안쓰고 바로 풀기
 
@@ -140,8 +130,6 @@ class Solution:
 ```
 
 dfs 안에서 바로 다음 server 을 찾는다. 시간복잡도의 변화는 없다.
-
-  
 
 ## Union Find 사용하기
 
@@ -178,9 +166,9 @@ class Solution:
                 if grid[y][x] == 1:
                     computers[y, x] = len(computers)
         n = len(computers)
-				# x 로 이어진 그룹
+    # x 로 이어진 그룹
         union_find_x = UnionFind(n)
-				# y 로 이어진 그룹
+    # y 로 이어진 그룹
         union_find_y = UnionFind(n)
         for y in range(len(grid)):
             for x in range(len(grid[y])):
@@ -195,13 +183,11 @@ class Solution:
             union_find_y.find(i)
             union_find_x.find(i)
         # y 로 이어진 곳도 없고, x 로 이어진 곳이 없다면 통신 안하는 서버.
-				# 전체 서버에서 통신 안하는 서버를 빼면 통신하는 서버의 갯수가 나온다.
+    # 전체 서버에서 통신 안하는 서버를 빼면 통신하는 서버의 갯수가 나온다.
         return n - sum(1 for i in range(n) if union_find_y.cnt[i] == union_find_x.cnt[i] == 1)
 ```
 
 위의 코드도 시간복잡도는 `O(h*w*max(h,w))` 가 됩니다. (union find 의 alpha 을 상수로 생각)
-
-  
 
 ## 최적화
 
@@ -227,8 +213,6 @@ class Solution:
         # print(computers)
         return len([id for id, (y, x) in enumerate(computers) if len(ys[y])>1 or len(xs[x]) > 1])
 ```
-
-  
 
 공간 복잡도도 최적화 할 수 있습니다. 우리가 원하는 건 단순히 갯수 이기 때문에 누가 어떻게 연결되었는지 알 필요가 없습니다. 밑의 코드의 공간 복잡도는 `O(h+w)` 가 됩니다.
 

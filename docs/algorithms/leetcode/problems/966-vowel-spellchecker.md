@@ -14,8 +14,6 @@ tags:
 
 이 문제는 2가지 방법으로 풀 수가 있다.
 
-  
-
 ## Hash Map
 
 원래 단어, 소문자화 시킨 단어, `aeiou` 을 와일드 카드로 바꾼 단어 의 HashMap 을 저장한다.
@@ -31,8 +29,8 @@ class Solution:
     def spellchecker(self, wordlist: List[str], queries: List[str]) -> List[str]:
         origin_words = set(wordlist)
         
-				# index 가 더 앞쪽인 단어를 출력해야 하기 때문에 
-				# wordlist의 뒤에서 부터 hash map 을 만든다. 이러면 더 앞쪽의 단어가 뒷쪽을 덮어씌운다.
+    # index 가 더 앞쪽인 단어를 출력해야 하기 때문에 
+    # wordlist의 뒤에서 부터 hash map 을 만든다. 이러면 더 앞쪽의 단어가 뒷쪽을 덮어씌운다.
         case_words = {word.lower(): word for word in wordlist[::-1]}
         vowel = lambda word: word.lower().replace('a', '*').replace('e', '*').replace('i', '*').replace('o', '*').replace('u', '*')
         vowel_words = {vowel(word): word for word in wordlist[::-1]}
@@ -48,10 +46,6 @@ class Solution:
                 ans.append('')
         return ans
 ```
-
-  
-
-  
 
 ## Use Trie
 

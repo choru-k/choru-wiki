@@ -19,19 +19,11 @@ tags:
 
 [http://www.secmem.org/blog/2018/12/23/segment-tree-2d-range-update-query/](http://www.secmem.org/blog/2018/12/23/segment-tree-2d-range-update-query/)
 
-  
-
 만약 `sums[row][col] = row` 줄의 0~col 까지의 cumulative sum 일 경우 update 는 O(n), sum 은 O(n) 이 된다.
-
-  
 
 Segment Tree 의 경우 update 는 O(logN) sum 은 O(NlogN) 이 된다.
 
-  
-
 즉 update 가 자주 일어나는지, sum 이 자주 일어나는지에 따라 최적의 알고리즘이 달라진다.
-
-  
 
 ## Segment Tree
 
@@ -91,8 +83,6 @@ class NumMatrix:
 # obj.update(row,col,val)
 # param_2 = obj.sumRegion(row1,col1,row2,col2)
 ```
-
-  
 
 ## 2D Segment Tree
 

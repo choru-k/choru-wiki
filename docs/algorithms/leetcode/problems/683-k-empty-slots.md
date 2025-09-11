@@ -28,8 +28,6 @@ class Solution:
         return -1
 ```
 
-  
-
 ## BST 을 발전시켜서 Double Linked List 을 사용하는 방법
 
 BST 의 문제는 insert, search 등등이 log N 이 걸린다는 단점이 있음
@@ -37,10 +35,6 @@ BST 의 문제는 insert, search 등등이 log N 이 걸린다는 단점이 있�
 어차피 Search 를 insert 후 인접에 대해서만 하기 때문에 double linked list 을 사용할 수 있음
 
 뒤에서 부터 진행하면 double linked list + Hashtable 을 사용가능
-
-  
-
-  
 
 ## Bucket Sort 을 사용하는 방법
 
@@ -72,13 +66,9 @@ class Solution:
         return -1
 ```
 
-  
-
 ## Day 기반으로 문제 풀기
 
 만약 day 을 기반으로 문제를 푼다면 두점 L, L+K+1 사이에서 에 대해서 L, L+K+1 이 전구가 켜지는게 먼저라면 정답이 된다.
-
-  
 
 ```python
 class Solution:
@@ -108,7 +98,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

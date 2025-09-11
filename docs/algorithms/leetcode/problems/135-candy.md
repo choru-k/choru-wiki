@@ -23,8 +23,6 @@ tags:
 
 마찬가지로 오른쪽도 같은 방법을 사용해보자.
 
-  
-
 ```python
 class Solution:
     def candy(self, ratings: List[int]) -> int:
@@ -41,11 +39,7 @@ class Solution:
         return left2right
 ```
 
-  
-
 우리가 원하는 조건은 이 두 개의 조건을 동시에 만족하는 경우이기 때문에 둘다 각각의 배열의 max 만 구하면 그것이 우리가 원하는 정답이 된다.
-
-  
 
 ```python
 class Solution:
@@ -70,8 +64,6 @@ class Solution:
         return sum(max(r,l) for r,l in zip(left2right, right2left))
 ```
 
-  
-
 ## Single Pass with Mountain?
 
 곰곰히 생각해보면 Candy 는 어떠한 특정한 패턴? 을 가지고 있다.
@@ -89,8 +81,6 @@ $\sum_{i=1}^{up}i + \sum_{i=1}^{down}i + max(up, down)$
 max 부분은 산의 정산 으로써 up과 down 중 더 큰 곳에만 영향을 받는다.
 
 ![[E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7202.jpg]]
-
-  
 
 이것을 구현한 코드가 밑이다.
 
@@ -125,7 +115,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

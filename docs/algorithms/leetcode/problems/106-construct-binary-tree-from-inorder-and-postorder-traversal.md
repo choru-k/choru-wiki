@@ -34,11 +34,7 @@ class Solution:
         return build(inorder)
 ```
 
-  
-
 위의 알고리즘의 시간 복잡도는 O(N^2) 가 된다. 왜냐하면 list 을 자르는 작업과 mid을 찾는 작업이 O(N) 이기 때문이다.
-
-  
 
 이것을 좀더 보완해보자. list 을 잘라서 인수로 주는 대신 list 의 범위를 인수로 줘보자.
 
@@ -57,8 +53,6 @@ class Solution:
             return node
         return build(0, len(inorder))
 ```
-
-  
 
 mid 을 찾는 과정을 O(1) 에 찾을수 있는 방법은 hash 을 이용하는 것이다.
 

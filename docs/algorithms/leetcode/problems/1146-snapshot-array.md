@@ -44,8 +44,6 @@ class SnapshotArray:
 # param_3 = obj.get(index,snap_id)
 ```
 
-  
-
 ## Binary Search 최적화
 
 snap O(1), set O(1), get O(logN)
@@ -79,10 +77,6 @@ class SnapshotArray:
 # param_2 = obj.snap()
 # param_3 = obj.get(index,snap_id)
 ```
-
-  
-
-  
 
 ```python
 import bisect 
@@ -119,8 +113,6 @@ class SnapshotArray:
 # param_2 = obj.snap()
 # param_3 = obj.get(index,snap_id)
 ```
-
-  
 
 ## Dictionary
 

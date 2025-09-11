@@ -21,8 +21,6 @@ tags:
 
 이 방법 살짝 바뀌어서 사용하면 문제 해결이 될 것 같다.
 
-  
-
 max_heap 과 min_heap 의 길이는 항상 고정이다. 만약 k 가 짝수면 k/2 로 홀수 면 k/2, k/2+1 이다.
 
 이걸 사용해서 조금 생각해보자.
@@ -39,11 +37,7 @@ max_heap 과 min_heap 의 길이는 항상 고정이다. 만약 k 가 짝수면 
 
 밑의 그림을 살펴보자.
 
-  
-
 ![[__3.svg]]
-
-  
 
 ```python
 from heapq import heappush, heappop

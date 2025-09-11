@@ -25,8 +25,6 @@ tags:
 
 얘를 들어서 19 는 1 을 더하거나 2 를 빼서 18, 21 을 만들 수 있다. 21 은 다시 6을 더해서 27을 만들어 줄 수 있다.
 
-  
-
 ```python
 class Solution:
     def leastOpsExpressTarget(self, x: int, target: int) -> int:
@@ -43,14 +41,12 @@ class Solution:
             if k >= len(cost):
                 return float('inf')
             t,r = divmod(val, x)
-						# 현재 숫자로만 다 구현 할 때, 적당히 빼서 더 높은 차수를 만들 때, 적당히 더해서 더 높은 차수를 만들 때
-						memo[(k,val)] =  min(val*cost[k], dfs(k+1, t) + r*cost[k], dfs(k+1, t+1) + (x-r) * cost[k])
+      # 현재 숫자로만 다 구현 할 때, 적당히 빼서 더 높은 차수를 만들 때, 적당히 더해서 더 높은 차수를 만들 때
+      memo[(k,val)] =  min(val*cost[k], dfs(k+1, t) + r*cost[k], dfs(k+1, t+1) + (x-r) * cost[k])
             return memo[(k,val)]
-				# 맨 앞의 항은 + 나 - 같은 operator 가 없기 때문에 1을 뺀다.
+    # 맨 앞의 항은 + 나 - 같은 operator 가 없기 때문에 1을 뺀다.
         return dfs(0, target) - 1
 ```
-
-  
 
 ## Bottom Up DP
 
@@ -78,7 +74,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

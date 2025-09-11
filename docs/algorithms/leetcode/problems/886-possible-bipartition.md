@@ -40,23 +40,23 @@ dislike 을 edge 로 생각하고 사람들을 vertex 로 생각한다면 인접
 ```python
 class Solution:
     def possibleBipartition(self, N: int, dislikes: List[List[int]]) -> bool:
-				# 그래프로 표현합니다.
+    # 그래프로 표현합니다.
         graph = collections.defaultdict(set)
         for u, v in dislikes:
             graph[u].add(v)
             graph[v].add(u)
-				# 어떤 노드을 무슨색으로 칠했는지 저장합니다.
+    # 어떤 노드을 무슨색으로 칠했는지 저장합니다.
         visited = dict()
-				# 모든 노드가 연결되어 잇다는 이야기가 없기 때문에 모든 노드에 대해서 BFS 을 해줍니다.
+    # 모든 노드가 연결되어 잇다는 이야기가 없기 때문에 모든 노드에 대해서 BFS 을 해줍니다.
         for i in range(1, N+1):
             if i not in visited:
-								# BFS 을 합니다.
+        # BFS 을 합니다.
                 queue = collections.deque()
                 queue.append((i, 0))
                 while len(queue)> 0:
                     node, color = queue.popleft()
                     if node in visited:
-												# 두 가지 색깔이 상충한다면 False 을 리턴합니다.
+            # 두 가지 색깔이 상충한다면 False 을 리턴합니다.
                         if color != visited[node]:
                             return False
                         continue

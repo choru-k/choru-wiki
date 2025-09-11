@@ -32,8 +32,6 @@ tags:
 
 의 식을 나타낼 수 있다. 즉 어떠한 state 에서 마지막이 word 로 끝날 때 최소의 비용은 word 을 사용하지 않은 state 을 가진 dp 중에서 end_word와 word 의 거리의 합이 최소가 되게 만들면 된다.
 
-  
-
 위의 식까지 유추했다면 이제 구현만 하면 된다. state 는 bit 을 이용하겠다.
 
 ## Solution
@@ -46,20 +44,20 @@ class Solution:
         for i in range(n):
             for j in range(n):
                 word1, word2 = A[i], A[j]
-								# word1 과 word2 가 겹치는 최대 길이를 graph[i][j] 라고 한다.
+        # word1 과 word2 가 겹치는 최대 길이를 graph[i][j] 라고 한다.
                 graph[i][j] = max([l for l in range(1, min(len(word1), len(word2))) if word1[-l:] == word2[:l]] or [0])
         memo = dict()
         def dfs(state, word_idx):
-						# state 을 업데이트
+      # state 을 업데이트
             cur_state = state | (1 << word_idx)
-						# 만약 state 가 마지막 상태이면 자기자신만 존재.
+      # 만약 state 가 마지막 상태이면 자기자신만 존재.
             if cur_state == (2**n) - 1:
                 return A[word_idx]
             if (cur_state, word_idx) not in memo:
                 res = ''
                 for i in range(n):
                     if cur_state >> i & 1 == 0:
-												# i 가 마지막인 정답에서 word_idx 을 추가하여서 정답 후보를 만듬.
+            # i 가 마지막인 정답에서 word_idx 을 추가하여서 정답 후보를 만듬.
                         candidate = dfs(cur_state, i) + A[word_idx][graph[i][word_idx]:]
                         if res == '' or len(candidate) < len(res):
                             res = candidate
@@ -73,7 +71,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

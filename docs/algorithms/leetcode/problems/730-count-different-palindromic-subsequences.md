@@ -30,24 +30,24 @@ class Solution:
             if i>j: 
                 return 0
             if i==j:
-								# 문자열이 1개일 경우다.
+        # 문자열이 1개일 경우다.
                 return 1 if k == s[i] else 0
             
             if (i, j, k) in cache:
                 return cache[(i,j,k)]
             if s[i] != k:
-								# 우리는 k 로 덮힌 판다드롬만 생각하기 때문에 그 외라면 무시한다.
+        # 우리는 k 로 덮힌 판다드롬만 생각하기 때문에 그 외라면 무시한다.
                 cache[(i,j,k)] = dfs(i+1,j,k)
             elif s[j] != k:
                 cache[(i,j,k)] = dfs(i,j-1,k)
             else:
-								# 판다드럼이기 때문에 {a}, {aa} 최소 2가지 경우가 나온다.
-								# 여기서 i+1 == j 이면 {a} 의 경우를 위의 i==j 을 건너띄기 때문에 
-								# 여기서 한꺼번에 2개로 세준다.
+        # 판다드럼이기 때문에 {a}, {aa} 최소 2가지 경우가 나온다.
+        # 여기서 i+1 == j 이면 {a} 의 경우를 위의 i==j 을 건너띄기 때문에 
+        # 여기서 한꺼번에 2개로 세준다.
                 cache[(i,j,k)] = 2
                 for m in ['a','b','c','d']:
-										# 만약 현재 k가 a 라면
-										# aa___aa, ab___ba, ac___ca, ad___da 을 구하고 다 더하는 것이다.
+          # 만약 현재 k가 a 라면
+          # aa___aa, ab___ba, ac___ca, ad___da 을 구하고 다 더하는 것이다.
                     cache[(i, j, k)] += dfs(i+1, j-1, m)
                     cache[(i, j, k)] %= mod
             return cache[(i, j, k)]
@@ -62,7 +62,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

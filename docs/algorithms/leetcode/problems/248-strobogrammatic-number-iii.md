@@ -18,8 +18,6 @@ tags:
 
 비슷
 
-  
-
 일반적인 DFS
 
 Time Exceed
@@ -56,10 +54,6 @@ class Solution:
         
         return high_cnt - down_cnt
 ```
-
-  
-
-  
 
 최적화
 
@@ -98,10 +92,6 @@ class Solution:
         
         return res
 ```
-
-  
-
-  
 
 DP
 
@@ -148,7 +138,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -16,8 +16,6 @@ tags:
 
 ## Binary Search
 
-  
-
 ![[Attachments/E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7202 5.svg|E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7202 5.svg]]
 
 의 경우를 생각해보자. 높이가 4 라는 이야기는 높이가 3까지는 다 꽉차있고 그 뒤 높이가 4 인 노드들이
@@ -25,8 +23,6 @@ tags:
 `1~2^(4-1)` 개 가 존재한다는 것이다. 이제 우리가 구할 것은 `1 ~ 8` 개의 노드 중 몇개가 있냐만 보면 된다.
 
 fully completed 하기 때문에 3번째 노드가 존재하면 1, 2 번 째 노드는 무조건 존재한다. 즉 binary search 을 할 수가 있다.
-
-  
 
 ```python
 # Definition for a binary tree node.
@@ -64,10 +60,6 @@ class Solution:
         return left
 ```
 
-  
-
-  
-
 ## DFS
 
 위의 방법과 비슷하지만 좀더 다르게 생각해보자.
@@ -82,11 +74,7 @@ class Solution:
 
 그 말은 다시 오른쪽이 꽉차있다는 것이다
 
-  
-
 ![[Attachments/E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7202 5.svg|E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7202 5.svg]]
-
-  
 
 ```python
 # Definition for a binary tree node.
@@ -117,7 +105,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

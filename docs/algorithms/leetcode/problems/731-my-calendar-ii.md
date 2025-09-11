@@ -19,8 +19,6 @@ tags:
 
 그 뒤에 겹치는 부분만 overlaps 에 넣는다.
 
-  
-
 ```python
 class MyCalendarTwo:
     def __init__(self):
@@ -38,19 +36,13 @@ class MyCalendarTwo:
         return True
 ```
 
-  
-
 이 방법은 매우 간단하다. 이제 조금 더 발전시켜보자.
-
-  
 
 [https://leetcode.com/problems/my-calendar-i/](https://leetcode.com/problems/my-calendar-i/)
 
 위의 문제에서는 binary search tree 을 사용 할 수 있었다.
 
 이번에도 binary search tree 을 사용할 수 잇지 않을까?
-
-  
 
 ```python
 class Node:
@@ -113,15 +105,9 @@ class MyCalendarTwo:
 # param_1 = obj.book(start,end)
 ```
 
-  
-
 우리는 겹치는 4가지 경우를 생각할 수 있고, 3개의 범위로 범위가 나뉘어 진다는 것을 알 수 있다.
 
 현재 node 의 start, end 을 바꾸는 것으로 범위를 쉽게 업데이트 할 수 있다.
-
-  
-
-  
 
 ## Lazy SegmentTree
 
@@ -163,7 +149,6 @@ class MyCalendarTwo:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

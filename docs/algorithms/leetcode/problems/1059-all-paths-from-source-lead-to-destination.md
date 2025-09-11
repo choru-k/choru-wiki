@@ -14,8 +14,6 @@ tags:
 
 전형적인 Cycle detection 문제이다.
 
-  
-
 Cycle detection 은 vertex 을 white, grey, black 3개 나누어서 할수 있다.
 
 각각 undone, doing, done 이라고 생각하면 편하다.
@@ -24,7 +22,6 @@ Cycle detection 은 vertex 을 white, grey, black 3개 나누어서 할수 있�
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

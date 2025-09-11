@@ -49,8 +49,6 @@ $cnt = 9 * _{9}P_{l-1}$
 
 `8760 ~ 8765`
 
-  
-
 X 의 앞에 숫자로 선택되어 있는 부분을 prefix 라고 하자.
 
 그러면 우리의 prefix 에 repeat 가 없고, 이번에 선택할 숫자가 N 보다 작게 하면서 나머지를 채우면 된다.
@@ -68,7 +66,7 @@ class Solution:
                 tmp *= n-i
             return tmp
         
-				# N+1 미만의 숫자들 중에서 찾는다.
+    # N+1 미만의 숫자들 중에서 찾는다.
         digits = list(map(int, str(N+1)))
         cnt = 0
         for i in range(1, len(digits)):
@@ -92,15 +90,12 @@ class Solution:
         return N-cnt
 ```
 
-  
-
 [https://leetcode.com/problems/numbers-with-repeated-digits/discuss/256725/JavaPython-Count-the-Number-Without-Repeated-Digit](https://leetcode.com/problems/numbers-with-repeated-digits/discuss/256725/JavaPython-Count-the-Number-Without-Repeated-Digit)
 
 ## 복잡도 분석
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

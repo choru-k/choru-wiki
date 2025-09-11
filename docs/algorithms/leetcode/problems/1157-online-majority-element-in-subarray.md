@@ -19,8 +19,6 @@ tags:
 1. 정답 후보를 구한다
 2. 정답이 맞는지를 체크를 한다.
 
-  
-
 일단 2부터 생각해보자.
 
 어떠한 숫자가 있을 때 숫자가 주어진 query 에 대해서 majority 인지 어떻게 알 수 있을까?
@@ -28,8 +26,6 @@ tags:
 다시 생각해보자. 숫자가 주어질 때 주어진 query 안에서 갯수를 어떻게 알 수 있을까?
 
 binary search 을 통해서 쉽게 할 수 있다.
-
-  
 
 ```python
 class MajorityChecker:
@@ -45,10 +41,6 @@ class MajorityChecker:
             return num
         return -1
 ```
-
-  
-
-  
 
 이제 남은 Candidate 을 구하는 방법을 생각해보자.
 
@@ -84,9 +76,7 @@ class MajorityChecker:
 # param_1 = obj.query(left,right,threshold)
 ```
 
-  
-
-## 모든 경우에 대해 해보기.
+## 모든 경우에 대해 해보기
 
 candidates 에 모든 숫자를 넣는다. 가장 자주 나왔던 숫자의 순서대로 넣는다.
 
@@ -104,7 +94,7 @@ class MajorityChecker:
     
     def query(self, left: int, right: int, threshold: int) -> int:
         for num in self.candidates:
-						# arr 전체에 num 이 등장한 횟수보다 threshold 가 더 크면 안함.
+      # arr 전체에 num 이 등장한 횟수보다 threshold 가 더 크면 안함.
             if len(self.pos[num]) < threshold:
                 return -1
             
@@ -119,8 +109,6 @@ class MajorityChecker:
 # obj = MajorityChecker(arr)
 # param_1 = obj.query(left,right,threshold)
 ```
-
-  
 
 ## Segment Tree
 

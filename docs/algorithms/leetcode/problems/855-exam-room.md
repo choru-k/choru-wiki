@@ -17,8 +17,6 @@ chairs 을 sort 한 상태로 가지고 있다고 하면 그 다음 앉을 곳�
 
 chair 을 맨 앞과 맨 뒤는 예외 케이스로 생각 하고 나머지의 경우에는 chair 들의 가운데를 비교하자.
 
-  
-
 ```python
 class ExamRoom:
 
@@ -50,10 +48,6 @@ class ExamRoom:
         self.chairs.pop(idx)
         # print(self.chairs)
 ```
-
-  
-
-  
 
 ## Use Heap and Hash
 
@@ -135,8 +129,6 @@ class ExamRoom:
 # param_1 = obj.seat()
 # obj.leave(p)
 ```
-
-  
 
 ## SortedList 을 사용
 
@@ -234,7 +226,6 @@ class ExamRoom:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

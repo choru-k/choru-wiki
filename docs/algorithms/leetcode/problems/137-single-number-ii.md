@@ -11,7 +11,7 @@ tags:
 
 [LeetCode 137](https://leetcode.com/problems/single-number-ii/) • **Easy**
 
-### 1개인 숫자가 비트가 0일때. 총 비트는 3n 개가 나온다.
+### 1개인 숫자가 비트가 0일때. 총 비트는 3n 개가 나온다
 
 이번에 추가하는 x 가 비트가 1일때
 
@@ -53,10 +53,6 @@ class Solution:
         return seen_once
 ```
 
-  
-
-  
-
 비트를 세어서 풀 수도 있다. 마이너스의 경우만 마지막 비트를 잘 활용하자.
 
 ```python
@@ -81,7 +77,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

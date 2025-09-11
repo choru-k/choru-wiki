@@ -34,8 +34,6 @@ class Solution:
         return ans
 ```
 
-  
-
 Heap
 
 ```python
@@ -58,7 +56,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

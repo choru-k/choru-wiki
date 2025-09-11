@@ -65,26 +65,22 @@ def parents(mouse, cat, trun):
                 yield mouse, pre_cat, CAT
 ```
 
-  
-
 만약 그 전의 turn 과 현재의 node 의 필승자가 일치하면 그전의 turn 에서 무조건 현재의 node 로 이동하는걸 선택하기 때문에 그 전의 node 도 필승 node 가 된다.
 
 ```python
 while len(q) > 0:
-	  mouse, cat, turn, who_win = q.popleft()
-	  # 그 다음 노드는 pre_turn 이 선택
-	  for pre_mouse, pre_cat, pre_turn in parents(mouse, cat, turn):
-	      # 이미 이 상태에 대해서 누가 이길지 알면 계산 안해도 됨
-	      if color[(pre_mouse, pre_cat, pre_turn)] != DRAW:
-	          continue
-	      # pre_turn 이 다음 노드를 선택하는데, 만약 다음 노드들 중 내가 무조건 이기는 경우의 수가 있다면 그걸 선택하겠지
-				# 예를 들어서 현재의 node (mouse, cat, turn) 의 승리자가 mouse 이고, 
-				# pre_turn 이 mouse 면 pre_turn mouse 가 무조건 현재의 node 로 움직일 것이다.
-	      if pre_turn == who_win:
-	          color_add(pre_mouse, pre_cat, pre_turn, who_win)
+   mouse, cat, turn, who_win = q.popleft()
+   # 그 다음 노드는 pre_turn 이 선택
+   for pre_mouse, pre_cat, pre_turn in parents(mouse, cat, turn):
+       # 이미 이 상태에 대해서 누가 이길지 알면 계산 안해도 됨
+       if color[(pre_mouse, pre_cat, pre_turn)] != DRAW:
+           continue
+       # pre_turn 이 다음 노드를 선택하는데, 만약 다음 노드들 중 내가 무조건 이기는 경우의 수가 있다면 그걸 선택하겠지
+    # 예를 들어서 현재의 node (mouse, cat, turn) 의 승리자가 mouse 이고, 
+    # pre_turn 이 mouse 면 pre_turn mouse 가 무조건 현재의 node 로 움직일 것이다.
+       if pre_turn == who_win:
+           color_add(pre_mouse, pre_cat, pre_turn, who_win)
 ```
-
-  
 
 만약 필승 현재의 어떠한 node 들에서 내 턴에서 이동할 수 있는 모든 node 가 필패 node 밖에 없다면 필패 node 가 된다. 이걸 쉽게 구하기 위해서 모든 child_node 의 수를 미리 구해놓는다.
 
@@ -99,8 +95,6 @@ for mouse in range(N):
         draw_childs[(mouse, cat, CAT)] = len(graph[cat]) - (1 if 0 in graph[cat] else 0)
 ```
 
-  
-
 만약 draw_child 가 0 이 되었다는건, `(pre_mouse, pre_cat, pre_turn)` 는 무조건 pre_turn 이 지는 경우의 수 밖에 없다는 것이다. 왜냐하면 q 에는 항상, 필승 또는 필패가 정해진 node 만 들어간다. 만약 필승 node가 있었다면 필승 node 을 선택하였을 것이고, draw child 가 1개라도 있다면 이 경우의 수에 들어가지 않앗을 것이다.
 
 ```python
@@ -111,10 +105,6 @@ if draw_childs[(pre_mouse, pre_cat, pre_turn)] == 0:
     pre_win = CAT if pre_turn == MOUSE else MOUSE
     color_add(pre_mouse, pre_cat, pre_turn, pre_win)
 ```
-
-  
-
-  
 
 위의 코드를 다 조합하면 밑이 된다. 매우 어렵기 때문에 하나하나 고민하면서 생각해보면 알 수 있다.
 
@@ -140,7 +130,7 @@ class Solution(object):
         # (mouse 의 위치, CAT 의 위치, 움직일 차례)
         color = collections.defaultdict(lambda : DRAW)
         q = collections.deque()
-				# q 는 항상 필패, 필승이 정해진 node 만 들어간다.
+    # q 는 항상 필패, 필승이 정해진 node 만 들어간다.
         def color_add(mouse, cat, turn, who_win):
             color[(mouse, cat, turn)] = who_win
             q.append((mouse, cat, turn, who_win))

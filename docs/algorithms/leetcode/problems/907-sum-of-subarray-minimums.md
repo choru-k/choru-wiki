@@ -23,17 +23,13 @@ tags:
 ```python
 ans = 0
 for i in range(len(A)):
-	for j in range(i+1, len(A)):
-		arr = A[i:j]
-		value = min(arr)
-		ans += value
+ for j in range(i+1, len(A)):
+  arr = A[i:j]
+  value = min(arr)
+  ans += value
 ```
 
-  
-
 이 방법은 꽤나 시간 복잡도가 크다.
-
-  
 
 그 전의 결과를 사용할 수 있을까?
 
@@ -42,13 +38,11 @@ for i in range(len(A)):
 ```python
 ans = 0
 for i in range(len(A)):
-	value = A[i]
-	for j in range(i+1, len(A)):
-		value = min(value, A[j])
-		ans += value
+ value = A[i]
+ for j in range(i+1, len(A)):
+  value = min(value, A[j])
+  ans += value
 ```
-
-  
 
 조금 더 생각을 해보자. `A[j]` 가 가장 오른쪽에 있는 subarray 들을 생각해보자.
 
@@ -60,8 +54,6 @@ for i in range(len(A)):
 12는 2 + 2+ 3 + 5 였다. 즉 자기자신부터 시작하여서 왼쪽으로 이동하면서 가장 최솟값들을 더한다.  
 
 j=4 가 되면 1 + 1+ 1+ 1 + 1 이 된다.
-
-  
 
 스택으로 생각해보자.
 
@@ -102,8 +94,6 @@ class Solution:
             ans = (ans % (pow(10,9) + 7))
         return ans
 ```
-
-  
 
 stack 은 최대 N 만큼 append 되기 때문에 pop 또한 최대 O(N) 만큼 실행되기 때문에 전체 시간 복잡도는 O(N) 이다
 

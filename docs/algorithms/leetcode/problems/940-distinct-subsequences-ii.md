@@ -38,11 +38,7 @@ endswith 'b': ["ab","b"]
 result: 6
 ```
 
-  
-
 로 된다. 즉 밑의 코드로 표현이 된다.
-
-  
 
 ```python
 class Solution:
@@ -59,7 +55,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

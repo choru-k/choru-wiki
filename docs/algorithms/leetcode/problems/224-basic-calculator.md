@@ -25,7 +25,7 @@ tags:
 ```python
 class Solution:
     def calculate(self, s: str) -> int:
-				# 현재 괄호을 계산한다.
+    # 현재 괄호을 계산한다.
         def calc(st):
             cur = st.pop()
             ret = cur[0]
@@ -41,12 +41,12 @@ class Solution:
                 st.append([])
                 continue
             if c == ')':
-								# 방금까지의 괄호을 계산하고, 그 값을 다시 넣는다.
+        # 방금까지의 괄호을 계산하고, 그 값을 다시 넣는다.
                 val = calc(st)
                 st[-1].append(val)
                 continue
             if c.isdigit():
-								# 숫자면 숫자로 바꿔서 넣는다.
+        # 숫자면 숫자로 바꿔서 넣는다.
                 st[-1].append(int(c))
                 continue
             st[-1].append(c)
@@ -62,7 +62,7 @@ class Solution:
         st = [[]]
         def calculate(exp):
             if exp[0]=='-':
-								# deque 사용하면 최적화 가능
+        # deque 사용하면 최적화 가능
                 exp = exp[1:]
                 ret = -exp[0]
             else:
@@ -90,7 +90,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -45,20 +45,18 @@ class Solution:
         )
 ```
 
-
 ```python
 class Solution:
 
-	def mostExpensiveItem(self, primeOne: int, primeTwo: int) -> int:
+ def mostExpensiveItem(self, primeOne: int, primeTwo: int) -> int:
 
-		return primeOne * primeTwo - primeOne - primeTwo
+  return primeOne * primeTwo - primeOne - primeTwo
 ```
 
 ## 복잡도 분석
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

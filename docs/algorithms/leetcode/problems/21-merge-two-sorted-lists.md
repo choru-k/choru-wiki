@@ -23,15 +23,11 @@ tags:
 
 항상 문제을 풀 때 주어진 조건을 최대한 활용하는 것이 좋습니다.
 
-  
-
 우리가 원하는 정답 리스트의 맨 처음 헤더는 두 링크드 리스트의 헤더 2개 중 1개 가 될 것 입니다.
 
 헤더 2개중 더 작은 것이 우리가 원하는 정답이 되겟죠.
 
 이제 그 헤더 1개을 사용하고 남은 링크드 리스트을 생각하여 봅시다. 이 뒤에 이어질 링크드 리스트는 남은 링크드 리스트로 만들어진 리스트의 소팅된 값 입니다.
-
-  
 
 대략적으로 밑처럼 표현될 것 입니다.
 
@@ -74,10 +70,6 @@ class Solution:
         return header
 ```
 
-  
-
-  
-
 공간복잡도의 최적화을 위해서 재귀함수을 사용하지 않고 문제을 풀어봅시다.
 
 밑의 코드는 공간복잡도 `O(1)` 이 됩니다.
@@ -90,7 +82,7 @@ class Solution:
 #         self.next = next
 class Solution:
     def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
-			# 맨 처음의 header 을 l1, l2 중 한개을 잡아야 하지만 가독성을 위해서 dump 헤더을 한개 만듭니다.
+   # 맨 처음의 header 을 l1, l2 중 한개을 잡아야 하지만 가독성을 위해서 dump 헤더을 한개 만듭니다.
         header= ListNode()
         cur = header
         while l1 != None and l2 != None:

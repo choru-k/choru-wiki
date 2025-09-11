@@ -38,10 +38,6 @@ class Solution:
         return ans
 ```
 
-  
-
-  
-
 우리는 Stack 을 통해서 보다 효율적으로 구할 수 있다.
 
 ![[Attachments/__2 2.svg|__2 2.svg]]
@@ -66,7 +62,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

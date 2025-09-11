@@ -36,9 +36,9 @@ class Solution:
                 
             abbre_to_word[key].append(word)
             word_to_abbre[word] = key
-						# 만약 중복이 있다면 queue 에 넣고, 나중에 다시 해본다.
+      # 만약 중복이 있다면 queue 에 넣고, 나중에 다시 해본다.
             if len(abbre_to_word[key]) == 2:
-								# key 와 prefix 의 길이. 
+        # key 와 prefix 의 길이. 
                 q.append((key, 1))
         for key, l in q:
             for word in abbre_to_word[key]:
@@ -51,12 +51,6 @@ class Solution:
                     q.append((new_key, l+1))
         return [word_to_abbre[word] for word in words]
 ```
-
-  
-
-  
-
-  
 
 ## Use Prefix with Trie
 
@@ -73,13 +67,13 @@ class Solution:
     def wordsAbbreviation(self, words: List[str]) -> List[str]:
         group = collections.defaultdict(list)
         for word in words:
-						# 모든 각 group 을 만들고 trie 을 고려한다.
+      # 모든 각 group 을 만들고 trie 을 고려한다.
             group[(word[0], len(word)-2, word[-1])].append(word)
         
         word_to_abb = dict()
         for word_list in group.values():
             trie = Trie()
-						# 그룹마다 trie 을 만들고 prefix을 찾는다.
+      # 그룹마다 trie 을 만들고 prefix을 찾는다.
             for word in word_list:
                 cur = trie
                 for c in word:
@@ -89,11 +83,11 @@ class Solution:
             for word in word_list:
                 cur = trie
                 for idx, c in enumerate(word):
-										# 만약 prefix 가 유일하다면 여기서 스탑.
+          # 만약 prefix 가 유일하다면 여기서 스탑.
                     if cur.cnt == 1:
                         break
                     cur = cur.children[c]
-								# 최소 앞에 글자 1개는 필요하기 때문에
+        # 최소 앞에 글자 1개는 필요하기 때문에
                 idx = max(idx, 1)
                 abb = word[:idx]+ str(len(word)-idx-1)+ word[-1]
                 if len(abb) >= len(word):

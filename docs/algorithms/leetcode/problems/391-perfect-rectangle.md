@@ -113,7 +113,7 @@ class Solution:
             ys.add(y1)
             ys.add(y2)
 
-				# 현재 색칠되어 있는 범위을 cur 로 표시합니다.
+    # 현재 색칠되어 있는 범위을 cur 로 표시합니다.
         cur = set()
         for y in sorted(ys)[:-1]:
             for x1, x2 in closes[y]:
@@ -121,7 +121,7 @@ class Solution:
                     cur.remove(x)
             for x1, x2 in opens[y]:
                 for x in range(x1, x2):
-										# 중복 발생
+          # 중복 발생
                     if x in cur:
                         return False
                     cur.add(x)
@@ -239,10 +239,6 @@ class Solution:
             return False
         return True
 ```
-
-  
-
-  
 
 ```python
 from sortedcontainers import SortedList

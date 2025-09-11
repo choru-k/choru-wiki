@@ -38,10 +38,6 @@ class Solution:
         return dfs(0, D)
 ```
 
-  
-
-  
-
 ```python
 class Solution:
     def shipWithinDays(self, weights: List[int], D: int) -> int:
@@ -104,7 +100,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

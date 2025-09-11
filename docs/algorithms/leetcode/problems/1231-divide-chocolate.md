@@ -24,7 +24,7 @@ tags:
 ```python
 class Solution:
     def maximizeSweetness(self, sweetness: List[int], K: int) -> int:
-				# check(val) == True 면 K 조각으로 됨
+    # check(val) == True 면 K 조각으로 됨
         # check(val) == False 면 K+1 조각 또는 그 이상으로 됨.
         # 우리가 원하는건 K+1 조각으로 나누면서 최댓값
         # check(val) == True 인 최소의 val 이 존재할 때 val-1 은 K+1 조각으로 나누면서 그러한 최댓값
@@ -52,7 +52,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

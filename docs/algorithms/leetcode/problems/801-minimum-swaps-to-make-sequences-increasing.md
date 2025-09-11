@@ -17,8 +17,6 @@ tags:
 
 혹은 반대
 
-  
-
 그러면 `A[:i], B[:i]` 의 최적 값을 알아도 그 최적 값이 어떠한 상태를 가지고 있다는게 알게 된다.
 
 `A[i], B[i]` 의 swap 유무에 따라 `A[:i+1] B[:i+1]` 의 최적 값이 달라진다. 마지막 값 이외는 영향을 받지 않는다. 그렇기 때문에 보다 우리는 `최적 값 + 상태`를 저장해야 한다. 상태는 2가지만 존재한다.
@@ -30,11 +28,11 @@ swap, not_swap 2개의 경우로 나누어서 DP 을 구성한다.
 만약
 
 - `A[i], B[i]` 가 swap 된 상태일 때
-    - `A[i] < A[i+1], B[i] < B[i+1]` 의 상태 여도 A[i], B[i] 가 swap 되었기 때문에 A[i+1], B[i+1] 도 swap 을 해줘야 한다. `swap[i+1] = swap[i]+1`
-    - `A[i] < B[i+1], B[i] < A[i+1]` 이미 swap 된 상태 이기 때문에 swap 을 하지 않아도 된다. `not_swap[i+1] = swap[i]`
+  - `A[i] < A[i+1], B[i] < B[i+1]` 의 상태 여도 A[i], B[i] 가 swap 되었기 때문에 A[i+1], B[i+1] 도 swap 을 해줘야 한다. `swap[i+1] = swap[i]+1`
+  - `A[i] < B[i+1], B[i] < A[i+1]` 이미 swap 된 상태 이기 때문에 swap 을 하지 않아도 된다. `not_swap[i+1] = swap[i]`
 - `A[i], B[i]` 가 not_swap 상태일 때
-    - `A[i] < A[i+1], B[i] < B[i+1]` 의 상태. `not_swap[i+1] = not_swap[i]`
-    - `A[i] < B[i+1], B[i] < A[i+1]` → `swap[i+1] = not_swap[i]+1`
+  - `A[i] < A[i+1], B[i] < B[i+1]` 의 상태. `not_swap[i+1] = not_swap[i]`
+  - `A[i] < B[i+1], B[i] < A[i+1]` → `swap[i+1] = not_swap[i]+1`
 
 ## Solution
 
@@ -63,7 +61,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

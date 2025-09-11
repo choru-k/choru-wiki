@@ -21,11 +21,7 @@ tags:
 
 만약 길이가 3 이라면? 각 node 들을 순회하면서 자기와 연결된 neighbor 들중 최댓값 2개를 구한다.
 
-  
-
 이제 길이가 4일 경우를 생각하자.
-
-  
 
 edge 들을 순회하면서 2개의 node 들을 구하고, 각 node 들의 neighbor 중 최댓값 을 1개씩 구하고 그것들을 더해주면 된다.
 
@@ -66,7 +62,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

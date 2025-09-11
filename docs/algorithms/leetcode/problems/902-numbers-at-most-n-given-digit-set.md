@@ -17,13 +17,9 @@ tags:
 
 만약 n 이 10자리 숫자라면, 9자리 숫자까지는 고민할 필요 없이 쉽게 구할 수 있다.
 
-  
-
 `sum(len(digits) ** i for i in range(1, len(n)))`
 
 문제는 10자리 숫자 들은 대소비교가 들어가야 한다.
-
-  
 
 일단 끝에서 부터 하나하나 생각해 보자.
 
@@ -44,8 +40,6 @@ class Solution:
                     dp[i+1] += dp[i]
         return dp[-1] + sum(len(digits) ** i for i in range(1, len(n)))
 ```
-
-  
 
 ```python
 class Solution:
@@ -70,7 +64,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

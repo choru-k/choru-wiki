@@ -15,15 +15,11 @@ tags:
 
 python은 Queue와 Threading 을 통해서 기본적인 multi thread 방법을 구현할 수 있다.
 
-  
-
 ## Queue
 
 [https://docs.python.org/ko/3.7/library/queue.html](https://docs.python.org/ko/3.7/library/queue.html)
 
 멀티 쓰레드에서 사용하는 Queue이다.
-
-  
 
 ## Threading
 
@@ -32,12 +28,6 @@ python은 Queue와 Threading 을 통해서 기본적인 multi thread 방법을 �
 `Lock` Class 을 통해서 유일하게 실행될 부분을 정의할 수 있다.
 
 `Lock.acquire()`, `Lock.release()` dd
-
-  
-
-  
-
-  
 
 ```python
 # """
@@ -71,7 +61,7 @@ class Solution:
         
         def worker():
             while True:
-								# queue.join()을 하면 여기서 멈춰있다.
+        # queue.join()을 하면 여기서 멈춰있다.
                 url = queue.get()
                 if url is None:
                     return
@@ -106,7 +96,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

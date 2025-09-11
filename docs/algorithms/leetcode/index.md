@@ -35,18 +35,21 @@ A comprehensive collection of LeetCode problem solutions with detailed explanati
 ## Learning Path
 
 ### Beginner (Foundation)
+
 1. Start with [array and string manipulation](topics.md#arrays-strings)
 2. Learn [basic sorting and searching](topics.md#sorting-searching)
 3. Understand [two-pointer technique](patterns.md#two-pointers)
 4. Practice [hash table problems](topics.md#hash-tables)
 
 ### Intermediate (Core Patterns)
+
 1. Master [Binary Search variations](patterns.md#binary-search)
 2. Learn [BFS/DFS patterns](patterns.md#graph-traversal)
 3. Understand [Dynamic Programming basics](patterns.md#dynamic-programming)
 4. Practice [Sliding Window technique](patterns.md#sliding-window)
 
 ### Advanced (Complex Problems)
+
 1. Advanced [Dynamic Programming](patterns.md#advanced-dp)
 2. [Segment Trees and Advanced Data Structures](patterns.md#advanced-ds)
 3. [Graph algorithms](patterns.md#advanced-graphs)
@@ -55,11 +58,13 @@ A comprehensive collection of LeetCode problem solutions with detailed explanati
 ## Problem Categories
 
 ### By Difficulty
+
 - [Easy Problems](difficulty/easy.md)
 - [Medium Problems](difficulty/medium.md)
 - [Hard Problems](difficulty/hard.md)
 
 ### By Company
+
 - [Google Top Questions](company/google.md)
 - [Amazon Top Questions](company/amazon.md)
 - [Meta Top Questions](company/meta.md)

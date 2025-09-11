@@ -44,10 +44,6 @@ def get_max_average(self, nums, k):
         return result
 ```
 
-  
-
-  
-
 좀더 고민해보자. 어떠한 범위에서 평균이 x 이상이라는 것은 밑의 식처럼 쓸수가 잇다.
 
 $\sum ^j_{i=1} nums[i] / (j-i+1) > x \\ = \sum ^j_{i=1} nums[i] > (j-i+1)x \\ = \sum ^j_{i=1} (nums[i]-x) > 0$
@@ -55,8 +51,6 @@ $\sum ^j_{i=1} nums[i] / (j-i+1) > x \\ = \sum ^j_{i=1} nums[i] > (j-i+1)x \\ = 
 즉 보다 쉬운 0 이상이라는 문제로 바꿀 수 있다. 이제 어떠한 범위에서 평균이 x 이상인지를 쉽게 알 수 있다.
 
 최대 평균을 알기위해서는 binary search 을 사용할 수 있겠다. 하지만 한가지 문제가 있다. 그건 최소길이가 K 이상이여야 하는 것이다. 이 문제를 위해서 sliding window 에 어떠한 조건을 더하자.
-
-  
 
 ```python
 class Solution:
@@ -87,13 +81,7 @@ class Solution:
         return lo
 ```
 
-  
-
 ![[__10.svg]]
-
-  
-
-  
 
 ```python
 class Solution:
@@ -115,8 +103,6 @@ class Solution:
             ans = max(ans, get_slope(hull[0],j))
         return ans
 ```
-
-  
 
 길이 제한이 없다면.
 
@@ -165,7 +151,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

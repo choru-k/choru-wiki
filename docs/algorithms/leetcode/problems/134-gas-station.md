@@ -16,8 +16,6 @@ tags:
 
 이 문제는 Greedy 한 방법이지만 살짝의 증명이 필요하다.
 
-  
-
 밑이 정답코드이다.
 
 ## Solution
@@ -43,11 +41,7 @@ class Solution:
         return -1
 ```
 
-  
-
 왜 이렇게 풀면 정답이 되는지 증명해보자.
-
-  
 
 ![[abc.png]]
 
@@ -67,7 +61,6 @@ $\sum_{i=ans}^{start'} gas[i]-cost[i] >0$
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

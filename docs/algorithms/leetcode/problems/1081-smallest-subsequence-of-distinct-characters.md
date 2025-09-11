@@ -42,7 +42,6 @@ stack 을 쓴다면?
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
 
-
 ---
 
 *Note: 이 문제는 개인 노트에서 마이그레이션되었습니다. Solution은 지속적으로 개선되고 있습니다.*

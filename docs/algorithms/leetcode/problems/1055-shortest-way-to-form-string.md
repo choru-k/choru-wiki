@@ -47,11 +47,7 @@ class Solution:
         return ans
 ```
 
-  
-
 Hash Table 을 사용해서 매번 다음 문자열 까지 1개씩 가는게 아니라 바로 jump 을 하자.
-
-  
 
 ```python
 class Solution:
@@ -64,7 +60,7 @@ class Solution:
         cache = dict()
         s_to_nxt = [None] * len(source)
         
-				# s_to_nxt[i]['a'] 는 soure[i]에서 다음 a 가 있는 index
+    # s_to_nxt[i]['a'] 는 soure[i]에서 다음 a 가 있는 index
         for idx,c in list(enumerate(source+source))[::-1]:
             if idx < len(source):
                 s_to_nxt[idx] = cache.copy()
@@ -72,7 +68,7 @@ class Solution:
         # print(cache)
         # print(s_to_nxt)
         
-				# 첫 시작은 target[0] 이 있는곳. 1개씩 걸어가면서 찾아도 되지만 cache 을 사용하자.
+    # 첫 시작은 target[0] 이 있는곳. 1개씩 걸어가면서 찾아도 되지만 cache 을 사용하자.
         idx_s = cache[target[0]]
         ans = 1
         for c in target[1:]:
@@ -89,7 +85,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

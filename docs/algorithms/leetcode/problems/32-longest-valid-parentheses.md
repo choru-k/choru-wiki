@@ -45,8 +45,6 @@ class Solution:
         return max(dp)
 ```
 
-  
-
 이제 스택을 이용해서 풀어보자. 일반적으로 `( )` 괄호 문제는 stack 을 이용하는게 일반적이기 때문에 오히려 이쪽이 더 쉽게 생각 할 수 있는 사람도 있을 수 있다.
 
 똑같이 `)` 이 더 많다면 스택을 초기화 해준다. 그리고 괄호가 시작하면 0 을 넣어준다.
@@ -55,11 +53,9 @@ class Solution:
 
 가장 위의 스택이 현재만들어지고 있는 가장긴 괄호가 된다.
 
-  
-
 ```python
 class Solution:
-	def longestValidParentheses2(self, s: str) -> int:
+ def longestValidParentheses2(self, s: str) -> int:
         st = [0]
         ret = 0
         for c in s:
@@ -74,8 +70,6 @@ class Solution:
         return r
 ```
 
-  
-
 마지막 방법은 보다 직관적인 방법일 수도 있다.
 
 일반적으로 `(` 와 `)` 의 수가 같다면 알맞은 괄호일 것이다.
@@ -84,11 +78,9 @@ class Solution:
 
 단순히 위의 방법으로 할 경우`(()` 의 경우엔 0이 된다. 이걸 대비해서 오른쪽으로도 한번세어주면 된다.
 
-  
-
 ```python
 class Solution:
-	def longestValidParentheses3(self, s: str) -> int:
+ def longestValidParentheses3(self, s: str) -> int:
         def helper(s, reverse=False):
             cnt_l = cnt_r = ret = 0
             for c in (s[::-1] if reverse else s):
@@ -109,7 +101,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 665]() • **Hard**
+[LeetCode 665](https://leetcode.com/problems/non-decreasing-array/) • **Hard**
 
 ## 핵심 아이디어
 
@@ -20,8 +20,8 @@ tags:
 
 ```python
 for idx in range(len(nums)-1):
-	if nums[idx] > nums[idx+1]:
-		return False
+ if nums[idx] > nums[idx+1]:
+  return False
 ```
 
 이제 1개만 허용한다는 조건을 생각해보자.
@@ -34,16 +34,16 @@ class Solution:
         p = -1
         for idx in range(len(nums)-1):
             if nums[idx] > nums[idx+1]:
-		        # 두번이러면 False
+          # 두번이러면 False
                 if p != -1:
                     return False
-	            # 한번은 봐줌
+             # 한번은 봐줌
                 p = idx
                 
-		# 1번도 없거나
-		# nums[p] 를 바꾸면 문제가 없거나
-		# nums[p+1] 를 바꾸면 문제가 없거나
-		
+  # 1번도 없거나
+  # nums[p] 를 바꾸면 문제가 없거나
+  # nums[p+1] 를 바꾸면 문제가 없거나
+  
         return p == -1 or nums[p-1] <= nums[p+1] or nums[p] <= nums[p+2]
 ```
 
@@ -51,7 +51,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -17,8 +17,6 @@ tags:
 
 그건 바로 3 부분의 `1` 의 갯수가 일치해야 한다는 것이다.
 
-  
-
 이게 가장 큰 힌트이다.
 
 밑의 코드을 보면 알기 쉽다.
@@ -34,11 +32,7 @@ def threeEqualParts(self, A: List[int]) -> List[int]:
             return [0, len(A)-1]
 ```
 
-  
-
 즉 우리가 원하는 나누는 기준점은 각 부분이 1/3 개씩 가지고 있을 때, 사이에 있는 0들중 한개일 것이다.
-
-  
 
 우리가 원하는 숫자가 몇인지 확정할 수 있을까?
 
@@ -46,10 +40,8 @@ def threeEqualParts(self, A: List[int]) -> List[int]:
 
 즉 왼쪽, 중간, 오른쪽으로 나눌 때 오른쪽 부분으로 우리는 숫자을 확정 할 수 있다.
 
-  
-
 ```python
-				first = second = third = None
+    first = second = third = None
         
         cur = 0
         for idx, c in enumerate(A):
@@ -61,11 +53,9 @@ def threeEqualParts(self, A: List[int]) -> List[int]:
                 if cur == 2*ones//3:
                     third = idx
                 cur += 1
-	      # third 로 숫자을 확정 시킬 수 있다.
+       # third 로 숫자을 확정 시킬 수 있다.
         l = len(A[third:])
 ```
-
-  
 
 나머지는 확정 시킨 숫자을 비교해 주는 것이다.
 

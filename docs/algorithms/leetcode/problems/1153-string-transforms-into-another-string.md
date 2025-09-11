@@ -20,8 +20,6 @@ c1 → c2 로 바꾼다.
 
 만약 `len(set(strMap.values()))` 가 26 이라면 우리는 바꿀수 없다.
 
-  
-
 문자열이 a,b,c 만 존재한다고 하자.
 
 abc → bca 로 바꾸는 것이 가능할까? 이것은 불가능 하다. 왜냐하면 a→b 로 바꾸는 순간 b→c 로 바꾸면 ccc가 된다.
@@ -41,8 +39,6 @@ b = temp
 ```
 
 의 하는 것과 동일하다.
-
-  
 
 ```python
 class Solution:
@@ -64,7 +60,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -38,8 +38,6 @@ class Solution:
         return "".join(ans)
 ```
 
-  
-
 ## KMP
 
 ```python
@@ -78,7 +76,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

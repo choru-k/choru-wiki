@@ -16,23 +16,20 @@ tags:
 
 매우 간단한 문제이다. 하나의 규칙만 찾으면 된다. 그건 정답이 입력값 이거나 또는 9로 끝나는 수이다.
 
-  
-
 즉 `num[:k] + '9'*(len(num)-k)` 형식으로 된다.
 
 ## Solution
 
 ```python
 def solve(self, num):
-	num = list(str(num))
-	while k < str
+ num = list(str(num))
+ while k < str
 ```
 
 ## 복잡도 분석
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

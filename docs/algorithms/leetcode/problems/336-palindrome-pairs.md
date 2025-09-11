@@ -23,13 +23,9 @@ tags:
 
 이제 좀더 생각을 해보자.
 
-  
-
 문자열 A 와 문자열 C 가 합쳐서 parlindrome 이 되기위한 조건을 찾아보자.
 
 A을 A'A'' 로 나누면 A'A''C 가 합친 문자열이 된다. A''가 그자체로 palindrome 이고 A' == C.reverse() 라면 전체 문자열이 Palindrome 이 된다. 반대의 경우도 마찬가지이다.
-
-  
 
 이 경우 하나의 문자열 마다 나누는 작업 `O(L)` , A' 가 기존 문자열과 일치하는지 `O(N)` 이 된다. 기존 문자열들을 전부다 Hash 에 넣는다면 이 작업이 `O(1)` 이 되기 때문에 보다 효율적이다.
 
@@ -53,8 +49,6 @@ class Solution:
                     ans.add((dic[suffix], k))
         return list(map(list, list(ans)))
 ```
-
-  
 
 시간복잡도는 `O(N * K^2)` 가 된다.
 

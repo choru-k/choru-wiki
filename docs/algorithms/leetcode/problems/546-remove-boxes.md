@@ -32,17 +32,17 @@ class Solution:
     def removeBoxes(self, boxes: List[int]) -> int:
         @functools.lru_cache(None)
         def dfs(l, r, k):
-						# 박스가 없는 경우
+      # 박스가 없는 경우
             if l > r:
                 return 0
-						# 항상 우리는 이 박스와 이어진 모든 박스를 지우던가, 안 지우고 다른 박스로 넘어가는 경우 2개 밖에 없다.
+      # 항상 우리는 이 박스와 이어진 모든 박스를 지우던가, 안 지우고 다른 박스로 넘어가는 경우 2개 밖에 없다.
             cnt = 0
             while l+cnt <= r and boxes[l] == boxes[l+cnt]:
                 cnt +=1
-						# 이어진 모든 박스를 지우면 res 가 된다. 이때 k 는 그전까지 나온 l 과 같은 박스가 된다.
+      # 이어진 모든 박스를 지우면 res 가 된다. 이때 k 는 그전까지 나온 l 과 같은 박스가 된다.
             res= (k+cnt)**2 + dfs(l+cnt, r, 0)
             for l2 in range(l+cnt, r+1):
-								# 현재의 박스를 그 다음의 박스을 지울 때 사용할 수 있도록 넘긴다.
+        # 현재의 박스를 그 다음의 박스을 지울 때 사용할 수 있도록 넘긴다.
                 if boxes[l2] ==boxes[l]:
                     res = max(res, dfs(l+cnt, l2-1,0) + dfs(l2, r, cnt+k))
             return res
@@ -54,7 +54,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

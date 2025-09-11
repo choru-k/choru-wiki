@@ -16,8 +16,6 @@ tags:
 
 [https://leetcode.com/problems/merge-k-sorted-lists/](https://leetcode.com/problems/merge-k-sorted-lists/)
 
-  
-
 매우 유명한 문제입니다.
 
 그리고 21번 알고리즘을 그대로 사용할 수 있습니다.
@@ -64,10 +62,6 @@ class Solution:
         return head.next
 ```
 
-  
-
-  
-
 이제 위의 방법을 조금 더 최적화 해봅시다.
 
 우리는 최솟값을 매번 반복문을 통해 찾습니다. 이걸 보다 효율적으로 찾는 방법이 있을까요?
@@ -103,8 +97,6 @@ class Solution:
             
         return head.next
 ```
-
-  
 
 이제 merge sort 을 사용해서 풀어보도록 합시다.
 
@@ -155,8 +147,6 @@ class Solution:
             cur.next = l2
         return header.next
 ```
-
-  
 
 이제 공간복잡도을 최적화 하겠습니다. 그 전의 148 문제와 마찬가지로 우리는 Top-Down 재귀을 Bottom-up 반복문으로 바꿀 수 있습니다.
 

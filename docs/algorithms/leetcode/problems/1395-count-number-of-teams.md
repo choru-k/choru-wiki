@@ -35,8 +35,6 @@ class Solution:
         return ret
 ```
 
-  
-
 이제 조금 최적화을 해봅시다.
 
 만약 배열이 `[1,2,3,4,2,1]` 라고 할때 (1,3,4) (2,3,4) 모두 팀이 될 수 있지만 이 때 우리는 3 뒤에 큰 수가 4밖에 없다는 걸 알지만 매번 반복문을 통해서 새로 찾습니다.
@@ -58,7 +56,7 @@ class Solution:
         
         for i in range(len(rating)):
             for j in range(i+1, len(rating)):
-								# 만약 (rating[i] > rating[j]) 면 rating[j] 보다 작으면서, 더 오른쪽에 있는 갯수을 더해주면 된다. 
+        # 만약 (rating[i] > rating[j]) 면 rating[j] 보다 작으면서, 더 오른쪽에 있는 갯수을 더해주면 된다. 
                 if rating[i] > rating[j]:
                     ret += less[j]
                 elif rating[i] < rating[j]:
@@ -66,19 +64,13 @@ class Solution:
         return ret
 ```
 
-  
-
 보다 최적화을 해봅시다.
 
 nums[j] 가 존재할 때, i<j 을 만족하면서 nums[i] < nums[j] 을 만족하는 갯수을 지금까지는 반복문을 통해서 구했습니다. 만약 `nums[0~j]` 까지 미리 정렬 되어 있는 배열이 있다면 우리는 binary search 을 통해서 쉽게 갯수을 구할 수 있습니다. 그리고 nums[j] 을 그 정렬되어 있는 배열에 잘 넣는다면 지속적으로 정렬된 배열을 가져가면서 갯수을 쉽게 구할 수 있을 것 같습니다.
 
 일반적으로 이러한 자료구조는 Red-Black Tree, AVL Tree 같은 Self-balanced Tree 또는 Skip List 등으로 구현 할 수 있습니다. C++, Java 에서는 `Map` , `Set` 으로 구현 되어 있지만 Python 에서는 기본 자료구조가 아니기 때문에 sortedcontainer 을 임포트 해서 사용해야 합니다.
 
-  
-
 밑의 코드의 시간복잡도는 `O(NlogN)` 이 됩니다.
-
-  
 
 ```python
 from sortedcontainers import SortedList

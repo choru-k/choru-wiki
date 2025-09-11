@@ -20,10 +20,6 @@ Block 의 순서와 상관없이 worker 는 1개를 설치하고 집을 가던�
 
 모든 작업은 parallel 하기 때문에 동시에 3명이 2명씩 총 6명을 부르는 작업을 해도 결국 걸리는 시간은 split 이다.
 
-  
-
-  
-
 가장 무식한 방법은 DP로 1개씩 하는것이다
 
 ## Solution
@@ -31,21 +27,19 @@ Block 의 순서와 상관없이 worker 는 1개를 설치하고 집을 가던�
 ```python
 class Solution:
     def minBuildTime(self, blocks: List[int], split: int) -> int:
-				# 약간의 greedy 
+    # 약간의 greedy 
         blocks.sort(reverse=True)
         memo = dict()
         def dfs(i, j):
             if i == j:
                 return blocks[i]
             if (i, j) not in memo:
-								
+        
                 memo[i, j] = min([max(dfs(i, k), dfs(k+1, j)) + split for k in range(i, j)])
             return memo[i, j]
         ans= dfs(0, len(blocks)-1)
         return ans
 ```
-
-  
 
 DP 을 조금더 똑똑하게 해보자.
 
@@ -60,20 +54,18 @@ class Solution:
                 return 0
             if k == 0:
                 return float('inf')
-						# 만약 나머지 worker 로 다 건설할 수 있다면 max(blocks[idx:])가 되고, blocks[idx]
+      # 만약 나머지 worker 로 다 건설할 수 있다면 max(blocks[idx:])가 되고, blocks[idx]
             if len(blocks)-idx <= k:
                 return blocks[idx]
             if (idx, k) not in memo:
                 memo[idx, k] = min(\
-																	# 지금 worker 로 처리하던가
+                 # 지금 worker 로 처리하던가
                                   max(dp(idx+1, k-1), blocks[idx]),\
-																	# 다같이 친구 2명을 부르던가
+                 # 다같이 친구 2명을 부르던가
                                   dp(idx, k*2)+split)
             return memo[idx, k]
         return dp(0, 1)
 ```
-
-  
 
 이제 조금더 생각을 해보자.
 

@@ -23,8 +23,6 @@ tags:
 
 가장 극단적인 경우를 생각하자. 그리고 한개씩 바꾸어 보면서 규칙을 찾자.
 
-  
-
 ```python
 class Solution:
     def findPermutation(self, s: str) -> List[int]:
@@ -49,7 +47,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

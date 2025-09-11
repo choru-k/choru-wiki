@@ -36,16 +36,16 @@ tags:
 ```python
 class Solution:
     def maxUncrossedLines(self, A: List[int], B: List[int]) -> int:
-				# a_idx 와 b_idx 을 선을 긋는다. (그을
+    # a_idx 와 b_idx 을 선을 긋는다. (그을
         @functools.lru_cache(None)
         def dfs(a_idx, b_idx):
-						# 한쪽이 끝났다면 0
+      # 한쪽이 끝났다면 0
             if a_idx == len(A) or b_idx == len(B):
                 return 0
-						# a을 한쪽 사용안하거나, b 을 한쪽 사용안하거나
-						# 선을 긋지 않는 경우
+      # a을 한쪽 사용안하거나, b 을 한쪽 사용안하거나
+      # 선을 긋지 않는 경우
             res = max(dfs(a_idx+1, b_idx), dfs(a_idx, b_idx+1))
-						# 선을 긋는 경우
+      # 선을 긋는 경우
             if A[a_idx] == B[b_idx]:
                 res = max(res, 1 + dfs(a_idx+1, b_idx+1))
             return res
@@ -56,7 +56,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

@@ -15,11 +15,7 @@ tags:
 
 이러한 문제는 전형적인 minimax 문제이다.
 
-  
-
 minimax의 중요한 점은 니턴 내턴은 구분해야 한다는 것이다.
-
-  
 
 내턴 일때는 가장 최댓값을 리턴하도록 하고, 니턴 일때는 가장 최솟값을 리턴하도록 한다.
 
@@ -41,19 +37,17 @@ class Solution:
                     if idx+i >= len(piles):
                         break
                     cur += piles[idx+i]
-										# Alice 는 최선의 선택을 함
+          # Alice 는 최선의 선택을 함
                     res = max(res, cur+max_alice(idx+i+1, max(m, i+1), -who))
                 return res
             else:
-								# Bob 은 자신이 최대가 되도록 행동한다.
-								# 이 게임은 제로섬 게임이기 때문에
-								# Alice 가 가장 불리하게 되도록 선택한다랑 일맥상통한다.
+        # Bob 은 자신이 최대가 되도록 행동한다.
+        # 이 게임은 제로섬 게임이기 때문에
+        # Alice 가 가장 불리하게 되도록 선택한다랑 일맥상통한다.
                 return min(max_alice(idx+i+1, max(m,i+1), -who) for i in range(2*m))
         
         return max_alice(0, 1, 1)
 ```
-
-  
 
 보다 정확하게 구할 수도 있다.
 
@@ -69,7 +63,7 @@ class Solution:
             
             res = [0,0]
             for x in range(1, 2*m+1):
-								# return 을 list등의 object로 할 경우 복사해주고 사용하자.
+        # return 을 list등의 object로 할 경우 복사해주고 사용하자.
                 cur = minimax(start+x, max(m, x), who^1)[:]
                 cur[who] += sum(piles[start:start+x])
                 res = max(res, cur, key=lambda x: x[who])
@@ -84,7 +78,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

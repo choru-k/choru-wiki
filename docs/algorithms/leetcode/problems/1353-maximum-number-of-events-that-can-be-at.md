@@ -42,8 +42,6 @@ class Solution:
         return ans
 ```
 
-  
-
 위의 코드는 모든 날짜를 시뮬레이션 하기 때문에 보다 최적화를 하였다.
 
 만약 현재 참가가능한 이벤트가 없다면, 참가가능한 이벤트가 존재하는 가장 첫날로 날짜를 점프시켜서 보다 최적화를 하였다.
@@ -75,7 +73,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

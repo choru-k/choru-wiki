@@ -21,8 +21,6 @@ tags:
 
 각 point 에서 다음 point 로 갈 수 있을 때 서로 연결 되어 있는 Node 라고 생각하면 이 문제를 단순하게 그래프가 주어졌을 때 목적지 까지의 최단 거리를 구하는 것이 된다.
 
-  
-
 목적지까지 최단 거리를 구하는 방법은 다익스트라를 쓰면 된다.
 
 ## Solution
@@ -57,7 +55,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

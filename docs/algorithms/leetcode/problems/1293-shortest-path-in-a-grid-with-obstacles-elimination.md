@@ -27,7 +27,7 @@ tags:
 class Solution:
     def shortestPath(self, grid: List[List[int]], k: int) -> int:
         h, w = len(grid), len(grid[0])
-				# memo[(y,x,d)] y, x, d 까지 올 때 최소의 l
+    # memo[(y,x,d)] y, x, d 까지 올 때 최소의 l
         memo = set()
         queue = collections.deque([(0,0,0,0)])
         
@@ -36,7 +36,7 @@ class Solution:
             y, x, d, l = queue.popleft()
             if (y,x,d) in memo or d > k:
                 continue
-						# BFS 이기 때문에 l 이 항상 최소의 l
+      # BFS 이기 때문에 l 이 항상 최소의 l
             memo.add((y,x,d))
             
             if y==h-1 and x==w-1 and ans >l:
@@ -49,8 +49,6 @@ class Solution:
         return ans if ans != float('inf') else -1
 ```
 
-  
-
 만약 벽을 충분히 많이 부실수 있다면 그냥 직선거리가 최소의 거리가 된다.
 
 최악의 경우의 시간복잡도는 같다.
@@ -59,7 +57,7 @@ class Solution:
 class Solution:
     def shortestPath(self, grid: List[List[int]], k: int) -> int:
         h, w = len(grid), len(grid[0])
-				# 이부분 추가.
+    # 이부분 추가.
         if h + w - 2 <= k:
             return h + w - 2
         memo = set()
@@ -82,8 +80,6 @@ class Solution:
         
         return ans if ans != float('inf') else -1
 ```
-
-  
 
 조금 더 생각해보면 만약 특정 점 (y,x) 까지 갈 때 벽을 더 많이 부시고 왔다면 우리는 그걸 무시해도 된다. 어차피 queue 이기 때문에 l 이 더 크다. 즉 l 도 크고, d도 더 크면 우리는 그걸 무시해도 된다.
 
@@ -105,7 +101,7 @@ class Solution:
             if (y,x,d) in memo or d > k:
                 continue
             # (y,x) 까지 더 큰 d 로 옴 (더 많은 벽을 부셔서옴)
-						# queue 즉 BFS 이기 때문에 나중에 오면 항상 L 이 더 큼
+      # queue 즉 BFS 이기 때문에 나중에 오면 항상 L 이 더 큼
             if (y,x) in memo_d and memo_d[(y,x)] <= d:
                 continue
             memo.add((y,x,d))

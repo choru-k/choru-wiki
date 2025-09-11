@@ -15,8 +15,6 @@ tags:
 
 간단한 knapsack problem 이다.
 
-  
-
 다만 한가지 조건이 들어간다.
 
 같은 캘린더는 들을수 없다.
@@ -50,7 +48,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

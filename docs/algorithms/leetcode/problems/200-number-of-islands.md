@@ -29,7 +29,7 @@ class Solution:
         def dfs(i: int, j: int) -> None:
             if i < 0 or j < 0 or i >= N or j >= M or grid[i][j] == "0":
                 return
-						# 한번 탐험한 곳은 다시 탐험하지 않도록 0으로 바꾸어 줍니다.
+      # 한번 탐험한 곳은 다시 탐험하지 않도록 0으로 바꾸어 줍니다.
             grid[i][j] = "0"
 
             positions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
@@ -37,7 +37,7 @@ class Solution:
             for pos in positions:
                 neighbor_i = i + pos[0]
                 neighbor_j = j + pos[1]
-								# 인접 한 곳으로 이동합니다.
+        # 인접 한 곳으로 이동합니다.
                 dfs(neighbor_i, neighbor_j)
 
         if len(grid) == 0 or len(grid[0]) == 0:
@@ -50,7 +50,7 @@ class Solution:
         for i in range(N):
             for j in range(M):
                 if grid[i][j] == "1":
-										# 한번 탐색을 시작하면 그부분을 포함하는 섬 전부가 0이 됩니다.
+          # 한번 탐색을 시작하면 그부분을 포함하는 섬 전부가 0이 됩니다.
                     island_num += 1
                     dfs(i, j)
 
@@ -61,7 +61,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

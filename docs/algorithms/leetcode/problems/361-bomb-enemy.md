@@ -18,13 +18,9 @@ tags:
 
 하지만 곰곰히 생각해보면
 
-  
-
 ![[Attachments/E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7202 3.svg|E1848CE185A6E18486E185A9E186A820E1848BE185A5E186B9E1848BE185B3E186B7202 3.svg]]
 
 벽을 만나기 전까지의 x 방향의 값은 모두 같고, y 방향도 그렇다.
-
-  
 
 그렇다면 어떻게 이러한 값을 어떻게 구할 수 잇을까?
 
@@ -76,8 +72,6 @@ class Solution:
         # print(col_memo)
         return ans
 ```
-
-  
 
 ## left → right, right → left
 

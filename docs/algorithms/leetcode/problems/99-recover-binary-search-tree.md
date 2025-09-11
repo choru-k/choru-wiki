@@ -21,8 +21,6 @@ tags:
 
 일단 탐색을 하다가 두 숫자가 틀릴경우 저장을 하고 다시 틀린 부분이 나타나면 업데이트 해주는 방식으로 하자.
 
-  
-
 이제 InOrder 을 어떻게 구현을 할까?
 
 밑의 방법 전부다 시간복잡도는 `O(N)` 이다. 공간 복잡도의 차이만 있다.
@@ -60,8 +58,6 @@ class Solution:
             
         ans[0].val, ans[1].val = ans[1].val, ans[0].val
 ```
-
-  
 
 ## DFS 을 사용하는 방법 O(H) H:트리의 높이
 
@@ -101,8 +97,6 @@ class Solution:
         
         ans[0].val, ans[1].val = ans[1].val, ans[0].val
 ```
-
-  
 
 ## Morris Traversal 을 사용하는 방법 O(1)
 

@@ -16,11 +16,7 @@ tags:
 
 문제가 정말 깔끔.
 
-  
-
 기본 문제: [https://leetcode.com/problems/merge-k-sorted-lists/](https://leetcode.com/problems/merge-k-sorted-lists/)
-
-  
 
 색깔 칠하기
 
@@ -61,8 +57,6 @@ class Solution:
         return ans
 ```
 
-  
-
 ```python
 from heapq import heappush, heappop
 
@@ -91,7 +85,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

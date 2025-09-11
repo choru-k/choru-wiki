@@ -17,8 +17,6 @@ tags:
 
 우리가 i 번째 페인트를 칠한다면 i 번째의 time + 1 만큼의 free painter 을 사용할 수 있다.
 
-  
-
 단순한게 보면 cost 길이가 500, time 크기가 500 이니 `500*500` 만큼 time 의 가짓수가 나오나? 라고 생각할 수 있지만 그러지 않는다.
 
 time 은 1씩 빠지기 때문에 최소 -500 까지만 갈 수 있고, 또한 500 이 넘어가면 나머지에 대해서는 바로 0 을 return 할 수 있다.
@@ -39,7 +37,7 @@ class Solution:
             if idx == len(cost):
                 return 0 if remain_time >= 0 else float('inf')
             remain_painter = len(cost) - idx
-						# 나머지를 전부다 공짜로 칠할 수 있다.
+      # 나머지를 전부다 공짜로 칠할 수 있다.
             if remain_painter <= remain_time:
                 return 0
             
@@ -51,10 +49,6 @@ class Solution:
         
         return dfs(0, 0)
 ```
-
-  
-
-  
 
 ```python
 class Solution:
@@ -73,7 +67,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

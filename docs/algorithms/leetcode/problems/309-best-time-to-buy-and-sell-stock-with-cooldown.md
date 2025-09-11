@@ -21,8 +21,6 @@ tags:
 
 주식을 보유하지 않고 Cooltime이 아닌 상태
 
-  
-
 각각의 상태를 hold, not_hold_cooltime, not_hold 라고 해보자. 그리고 그 값을 각각의 상태일 때 최대의 profix 이라고 해보자.
 
 `hold = max(hold, not_hold-price)` 의 식이 성립한다.
@@ -37,8 +35,6 @@ tags:
 
 방금 주식을 파는게 이득이였는지, 그전에 팔았는게 이득이었는지를 체크한다.
 
-  
-
 전체 코드는 밑이다.
 
 ```python
@@ -49,10 +45,6 @@ class Solution:
             hold, not_hold_cooltime, not_hold = max(hold, not_hold-price), hold+price, max(not_hold, not_hold_cooltime)
         return max(not_hold_cooltime, not_hold)
 ```
-
-  
-
-  
 
 ## 다른 접근방법
 
@@ -76,8 +68,6 @@ class Solution:
 
 `sell[i] = max(buy[i-1]+price, sell[i-1])` 이 된다는 것을 알 수가 있다.
 
-  
-
 ```python
 class Solution:
     def maxProfit(self, prices):
@@ -96,7 +86,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

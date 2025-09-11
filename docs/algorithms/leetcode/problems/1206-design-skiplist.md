@@ -19,8 +19,6 @@ tags:
 
 이러면 level 0 에는 모든 node 가 존재하고 level 1 에는 n/2, level 2 에는 n/4 의 노드가 존재하고 확률적으로 총 2n 개의 node 가 존재한다.
 
-  
-
 만약 정렬된 노드를 얻고 싶을때는 level 0 의 노드들을 return 하면 된다.
 
 ## Solution
@@ -72,7 +70,7 @@ class Skiplist:
             node.pre, node.nxt = pre, nxt
             node.down = prev
             prev = node
-						# 50퍼 확률로 그 윗단계의 레벨에도 존재하게 한다.
+      # 50퍼 확률로 그 윗단계의 레벨에도 존재하게 한다.
             if random.random() < 0.5:
                 break
 
@@ -93,11 +91,7 @@ class Skiplist:
 # param_3 = obj.erase(num)
 ```
 
-  
-
 만약 n 번째 node 을 알고 싶을 때는 각 노드들의 너비 cnt 을 저장해 둔다. 이건 현재 노드와 다음 노드 까지 몇개의 node 가 skip 되었는지를 나타낸다. 이걸 통해서 쉽게 k-th element 을 구할 수 있다.
-
-  
 
 ```python
 class Node:
@@ -187,7 +181,6 @@ class Skiplist:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

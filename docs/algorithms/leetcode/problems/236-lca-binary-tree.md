@@ -9,6 +9,7 @@ Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in
 The LCA is defined as: "The lowest common ancestor is the node that is the deepest node that has both p and q as descendants (where we allow a node to be a descendant of itself)."
 
 **Constraints:**
+
 - The number of nodes in the tree is in the range `[2, 10^5]`
 - `-10^9 <= Node.val <= 10^9`
 - All `Node.val` are unique
@@ -62,6 +63,7 @@ class Solution:
 ```
 
 **Complexity:**
+
 - Time: O(n) - Visit each node once
 - Space: O(n) - Store paths
 
@@ -85,6 +87,7 @@ class Solution:
 ```
 
 **Key Insights:**
+
 - If current node is `p` or `q`, return it
 - If both subtrees return non-null, current node is LCA
 - If only one subtree returns non-null, propagate it up
@@ -149,6 +152,7 @@ class Solution:
 ```
 
 **Complexity:**
+
 - Preprocessing: O(n log n) time, O(n log n) space
 - Query: O(log n) time
 - Efficient for multiple queries on the same tree
@@ -159,7 +163,7 @@ class Solution:
 
 1. **LCA in BST** - [235. LCA of BST](235-lca-bst.md)
    - Can use BST properties for optimization
-   
+
 2. **LCA with Parent Pointers** - [1650. LCA III](1650-lca-iii.md)
    - Convert to linked list intersection problem
 
@@ -179,7 +183,7 @@ class Solution:
 
 1. **Not handling null nodes** - Check base cases
 2. **Assuming balanced tree** - Height can be O(n) in worst case
-3. **Parent pointer confusion** - In binary lifting, parent[node][i] means 2^i-th ancestor
+3. **Parent pointer confusion** - In binary lifting, `parent[node][i]` means 2^i-th ancestor
 
 ## Interview Tips
 
@@ -208,6 +212,7 @@ class Solution:
 ## Advanced Applications
 
 ### 1. Distance Between Nodes
+
 ```python
 def distance(root, p, q):
     lca_node = lowestCommonAncestor(root, p, q)
@@ -215,6 +220,7 @@ def distance(root, p, q):
 ```
 
 ### 2. Path Between Nodes
+
 ```python
 def findPath(root, p, q):
     lca_node = lowestCommonAncestor(root, p, q)

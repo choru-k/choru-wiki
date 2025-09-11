@@ -70,10 +70,6 @@ class Solution:
         return S[ans[1]:ans[1]+ans[0]] if ans[0] < len(S) else ''
 ```
 
-  
-
-  
-
 ## 최적화
 
 문제를 좀 다른 방식으로 생각해보자. 이 문제를 2-pointer sliding 문제로 바꿀 수 있다.
@@ -104,7 +100,7 @@ class Solution:
             if t == len(T):
                 left = right
                 t -= 1
-								# 뒤에서 부터 t을 세어주면서 최적화. 즉 left->right / right->left 방식의 최적화다.
+        # 뒤에서 부터 t을 세어주면서 최적화. 즉 left->right / right->left 방식의 최적화다.
                 while t >= 0:
                     left -= 1
                     if S[left] == T[t]:
@@ -118,8 +114,6 @@ class Solution:
             return ''
         return S[ans[0]:ans[1]]
 ```
-
-  
 
 left, right 대신 s 하나만을 사용한 방법.
 

@@ -15,8 +15,6 @@ tags:
 
 가장 작은 쌍 찾기 O(NM). 그걸 N 번 실행 O(N^2M)
 
-  
-
 ## Sort
 
 ```python

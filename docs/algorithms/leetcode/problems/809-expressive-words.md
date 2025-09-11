@@ -47,11 +47,7 @@ class Solution:
         return ans
 ```
 
-  
-
 최적화를 위해서 (문자, s_r-s_l) 을 저장해놓자. 이러면 매번 S 을 비교하지 않아도 된다.
-
-  
 
 ```python
 class Solution:
@@ -85,8 +81,6 @@ class Solution:
                 ans += 1
         return ans
 ```
-
-  
 
 Group 을 word 에도 적용. word 을 2번 돌기 때문에 위의 코드보다 느림. 하지만 이해하기는 보다 편해졌다.
 
@@ -122,7 +116,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

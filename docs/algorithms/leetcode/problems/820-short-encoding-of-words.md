@@ -15,11 +15,7 @@ tags:
 
 이 문제는 여러가지 푸는 방법이 있다.
 
-  
-
 가장 쉽게 생각 할 수 있는 방법부터 생각해보자.
-
-  
 
 가장 긴 문자열이 다른 문자열에 포함 될 수는 없을 것이다.
 
@@ -46,15 +42,9 @@ class Solution:
         return idx
 ```
 
-  
-
-  
-
 조금 더 생각을 해보자.
 
 위의 방법을 사용할 경우 우리는 각 문자열의 index 을 구할 수 있다. 하지만 우리에게 필요한건 단순하게 길이이다. 핵심은 중복되는 부분 문자열을 지우는 것이다.
-
-  
 
 ```python
 class Solution:
@@ -63,7 +53,7 @@ class Solution:
         
         for word in words:
             for i in range(1, len(word)):
-								# word[i:] 배열을 자르는 행위가 O(K)
+        # word[i:] 배열을 자르는 행위가 O(K)
                 word_set.discard(word[i:])
         
         return sum(len(word) + 1 for word in word_set)
@@ -73,13 +63,7 @@ class Solution:
 
 TimeComplexity 는 `O(N * K^2)` 가 된다.(N 단어 갯수, K 문자열 길이)
 
-  
-
-  
-
 조금 더 생각해 보자. 우리는 HashMap 이외의 자료구조를 사용할 수도 있을 것이다.
-
-  
 
 ```python
 class Node:

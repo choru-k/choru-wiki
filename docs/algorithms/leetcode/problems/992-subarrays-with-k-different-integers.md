@@ -27,8 +27,8 @@ class Solution:
         counter = collections.Counter()
         l = 0
         res = 0
-			
-				# 한번의 loop 마다 r 에서 끝나는 배열의 갯수를 더한다.
+   
+    # 한번의 loop 마다 r 에서 끝나는 배열의 갯수를 더한다.
         for r in range(len(A)):
             counter[A[r]] += 1
             while len(counter) > K:
@@ -36,21 +36,17 @@ class Solution:
                 if counter[A[l]] == 0:
                     del counter[A[l]]
                 l+=1
-						# [l:r+1], [l+1:r+1], [l+2:r+1], ..., [r:r+1] 전부다 정답이 되기 때문에
-						# res += r-l+1 이 된다.
+      # [l:r+1], [l+1:r+1], [l+2:r+1], ..., [r:r+1] 전부다 정답이 되기 때문에
+      # res += r-l+1 이 된다.
             res += r-l+1
         return res
 ```
-
-  
 
 그렇다면 정확히 K 만큼 다른 문자열은 어떻게 하면 될까?
 
 `최대 K 만큼의 다른 문자열 허용` - `최대 K-1 만큼 다른 문자허용` 을 하면 `정확히 K 만큼 허용` 이 될 것 이다.
 
 정확히 K 라는걸 최대문제로 바꾸어서 쉽게 구하는 아이디어가 중요하다.
-
-  
 
 ```python
 class Solution:
@@ -70,10 +66,6 @@ class Solution:
             return res
         return helper(K) - helper(K-1)
 ```
-
-  
-
-  
 
 한번에 풀기.
 
@@ -110,7 +102,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

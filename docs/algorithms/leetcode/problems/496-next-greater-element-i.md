@@ -39,8 +39,6 @@ class Solution:
         return ans
 ```
 
-  
-
 ## 최적화
 
 일단 최적화 시킬 수 있는 곳이 하나 보이네요.
@@ -64,8 +62,6 @@ class Solution:
                 ans.append(-1)
         return ans
 ```
-
-  
 
 ## 최적화 2
 
@@ -92,8 +88,6 @@ class Solution:
 [6] 이 되고, 5,4,1 의 next greater 는 6 이 됩니다.
 
 이제 더 이상 들어올 숫자는 없고 stack 에 남아있는 숫자들은 next greater 가 존재하지 않습니다.
-
-  
 
 이 알고리즘을 구현한 코드가 밑에 있습니다. 시간복잡도는 `O(N)` 이 됩니다.
 

@@ -25,14 +25,14 @@ class Solution:
         lo, hi = 0, len(nums)-1
         while lo < hi:
             mid = (lo+hi) // 2
-						# mid 보다 작은 hi 가 존재하기 때문에 +1 해도 됨
+      # mid 보다 작은 hi 가 존재하기 때문에 +1 해도 됨
             if nums[mid] > nums[hi]:
                 lo = mid+1
-						# mid 가 더 작기 때문에 mid 는 계속 가지고 감.
+      # mid 가 더 작기 때문에 mid 는 계속 가지고 감.
             elif nums[mid] < nums[hi]:
                 hi = mid
             else:
-								# duplicate 가 존재하기 때문에 이 경우에는 1개씩 체크를 해주어야 한다.
+        # duplicate 가 존재하기 때문에 이 경우에는 1개씩 체크를 해주어야 한다.
                 hi-=1
         return nums[lo]
 ```
@@ -41,7 +41,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

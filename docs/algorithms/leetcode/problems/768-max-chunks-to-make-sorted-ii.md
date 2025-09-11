@@ -46,10 +46,6 @@ class Solution:
         return ans
 ```
 
-  
-
-  
-
 조금 더 생각해보자.
 
 chunk 의 결과는 정렬된 배열이다.
@@ -95,8 +91,6 @@ class Solution:
                 ret +=1
         return ret
 ```
-
-  
 
 위의 방법을 좀더 발전시켜보자.
 

@@ -14,11 +14,7 @@ tags:
 
 이 문제의 핵심은 경우를 잘 나누어서 생각하자이다.
 
-  
-
 문제를 쉽게 생각해보자.
-
-  
 
 아무 조건없이 _**largest variance**_ 을 구하기 위해서는 우리가 원하는 문자 2개 c1, c2 를 고르고
 
@@ -39,19 +35,15 @@ class Solution:
                     cur += 1
                 elif c == c2:
                     cur -= 1
-								cur = max(cur, 0)
+        cur = max(cur, 0)
                 ret = max(ret, cur)
         
         return ret
 ```
 
-  
-
 이제 조건을 조금더 추가해보자.
 
 최소한 c2 가 한개는 꼭 들어가야 한다.
-
-  
 
 ```python
 class Solution:
@@ -72,13 +64,11 @@ class Solution:
                 if has_c2:
                     ret = max(ret, cur)
                 if cur < 0:
-										cur = 0
-										has_c2 = False
+          cur = 0
+          has_c2 = False
         
         return ret
 ```
-
-  
 
 위의 조건으로는 만족못시키는 경우의 수를 생각해보자.
 
@@ -87,8 +77,6 @@ class Solution:
 문제의 원인은 맨 앞에 c2 가 있는 경우는 cur 이 -1 이 되기때문에 초기화 되어버린다.
 
 그렇기 때문에 처음 시작을 0 이 아닌 -1 로 해야한다.
-
-  
 
 ```python
 class Solution:
@@ -123,7 +111,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

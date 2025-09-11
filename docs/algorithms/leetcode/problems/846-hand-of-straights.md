@@ -35,13 +35,9 @@ class Solution:
         return True
 ```
 
-  
-
 [https://leetcode.com/problems/hand-of-straights/discuss/135598/C++JavaPython-O(MlogM)-Complexity](https://leetcode.com/problems/hand-of-straights/discuss/135598/C++JavaPython-O(MlogM)-Complexity)
 
 `O(NLogN)`
-
-  
 
 ```python
 class Solution:

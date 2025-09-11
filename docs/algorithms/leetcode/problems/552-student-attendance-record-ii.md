@@ -17,8 +17,6 @@ Absent 은 1번만 들어갈 수 있다. 나중에 추가하기 쉬운 조건이
 
 그러면 남은 조건은 연속된 Late 2개까지만 허용이 된다.
 
-  
-
 DP 의 형식으로 풀어야 될 거 같다.
 
 어떠한 DP 을 사용해야 할까?
@@ -34,8 +32,6 @@ LP, LLP 도 마찬가지 이다. 그렇다면 왜 PL 이나 LPP 같은 경우는
 absent 가 존재하는 건 dp 을 이용해서 쉽게 구할 수 있다.
 
 얘를 들어 n=5 라면 `A****`, `*A***`, `**A**`, `***A*` , `****A` 을 구하면 된다.
-
-  
 
 ```python
 class Solution:
@@ -57,15 +53,9 @@ class Solution:
         return result
 ```
 
-  
-
-  
-
 ## 공간 최적화
 
 그 전의 dp(n) 을 noA(n) 으로 쓰자. 그 뒤 우리가 원하는 정답은 withA(n) 이라고 쓴다. withA 라고 썻지만 실제로는 A 가 0 or 1 개가 있는 문자열의 수이다.
-
-  
 
 일단 noA 는 위의 식과 일치한다.
 
@@ -74,8 +64,6 @@ withA 을 곰곰히 생각해보자.
 같은 방법으로 `P + withA(n-1)` + `LP + withA(n-2)` + `LLP + withA(n-3)` 을 통해서 withA 에 P 와 L 을 합쳤다. `A + noA(n-1)` + `LA + noA(n-2)` + `LLA + noA(n-3)` 으로 noA 에 새로운 A 을 붙여줄수 있다.
 
 즉 withA(n) = `P + withA(n-1)` + `LP + withA(n-2)` + `LLP + withA(n-3)` + `A + noA(n-1)` + `LA + noA(n-2)` + `LAA + noA(n-3)` 로 쓸 수 있다.
-
-  
 
 ```python
 class Solution:
@@ -94,24 +82,18 @@ class Solution:
         return withA[-1] % m
 ```
 
-  
-
-  
-
 ## Log N 행렬
 
 a는 `A` 가 없음. b 는 `A` 가 존재.
 
 $\left[$
 
-  
-
 ```python
 import numpy as np
 
 class Solution:
     def checkRecord(self, n: int) -> int:
-				
+    
         A = np.matrix([
             [1,1,1,0,0,0],
             [1,0,0,0,0,0],
@@ -135,7 +117,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

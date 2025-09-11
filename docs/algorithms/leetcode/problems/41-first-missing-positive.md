@@ -26,8 +26,6 @@ index 가 존재한다면 nums[index] 을 음수로 만든다.
 
 즉 원래배열에서 1이 있는지 일단 검사를 하자.
 
-  
-
 그 후 0 과 음수들을 1로 바꾸어 주자.
 
 이제 남은 경우는 원래 배열에 배열길이보다 더 큰 숫자가 있을 때 이다.
@@ -45,8 +43,8 @@ class Solution:
             nums[i] = 1 if nums[i] <= 0 else nums[i]
         for num in nums:
             if abs(num) <= len(nums):
-								# 1을 0에 저장을 해주자! 항상 절댓값을 사용해주자.
-								# 우리는 nums 을 전부 양수로 수정하였다.  
+        # 1을 0에 저장을 해주자! 항상 절댓값을 사용해주자.
+        # 우리는 nums 을 전부 양수로 수정하였다.  
                 nums[abs(num)-1] = -abs(nums[abs(num)-1])
         # print(nums)
         return min(
@@ -60,7 +58,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

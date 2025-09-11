@@ -18,8 +18,6 @@ tags:
 
 왜냐하면 현재의 Node 에서 갈수 있는 next Node 가 1개 밖에 없기 때문이다.
 
-  
-
 가장 간단한 방법을 생각해보면 각 Node 에서마다 Circular Array Loop 가 되는지 확인해 보는 것이다.
 
 ## Solution
@@ -39,15 +37,13 @@ class Solution:
                 path[k] = order
                 order+=1
                 k = (k + nums[k]) % n
-						# Loop 가 만들어 졌는지 k in path 로 확인
-						# order - path[k] == 1 이라는 것은 현재 loop 가 길이가 1이상인걸 확인
+      # Loop 가 만들어 졌는지 k in path 로 확인
+      # order - path[k] == 1 이라는 것은 현재 loop 가 길이가 1이상인걸 확인
             if k in path and order - path[k] > 1:
                 return True
                 
         return False
 ```
-
-  
 
 ```python
 class Solution:
@@ -62,7 +58,7 @@ class Solution:
             while k not in path and nums[i] * nums[k] > 0:
                 path.add(k)
                 k = (k + nums[k]) % n
-						# 길이가 1 이상인건 nums[k]%n != 0 로 확인 가능.
+      # 길이가 1 이상인건 nums[k]%n != 0 로 확인 가능.
             if k in path and nums[k]%n != 0:
                 return True
                 
@@ -70,8 +66,6 @@ class Solution:
 ```
 
 위의 방법들은 시간복잡도 `O(N^2)` 공간복잡도 `O(N)` 이 된다.
-
-  
 
 일반적으로 Graph 에서 Cycle 을 찾을때 grey-black 으로 색깔을 칠하는 방법이 유명하다
 
@@ -101,7 +95,7 @@ class Solution:
                 return False
             grey.add(node)
             nxt = (node + nums[node]) % len(nums)
-						# 1개로만 cycle 을 만들면 안된다.
+      # 1개로만 cycle 을 만들면 안된다.
             if nxt != node and find_circle(nxt, nums[node]) == True:
                 return True
             grey.remove(node)
@@ -117,8 +111,6 @@ class Solution:
                 return True
         return False
 ```
-
-  
 
 숫자의 범위가 나와있기 때문에 1000 보다 큰 수을 이용해서 공간복잡도을 줄일 수 있다.
 

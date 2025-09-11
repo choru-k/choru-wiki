@@ -17,9 +17,9 @@ tags:
 ```python
 class Solution:
     def calculate(self, s: str) -> int:
-				# 마지막을 쉽게 알기 위해 '$' 을 붙였다.
+    # 마지막을 쉽게 알기 위해 '$' 을 붙였다.
         s = s+'$'
-				# 공백은 정답과 영향이 없기때문에 미리 삭제를 한다.
+    # 공백은 정답과 영향이 없기때문에 미리 삭제를 한다.
         s = s.replace(' ','')
         idx = 0
         def dfs():
@@ -27,12 +27,12 @@ class Solution:
             stack = []
             sign = '+'
             num = 0
-						# Basic Calculator 2 와 유사하다.
+      # Basic Calculator 2 와 유사하다.
             while idx < len(s):
                 c = s[idx]
                 if c.isdigit():
                     num = num*10 + int(c)
-								# 괄호의 끝, 식의 끝, 숫자의 끝에서 값을 업데이트한다.
+        # 괄호의 끝, 식의 끝, 숫자의 끝에서 값을 업데이트한다.
                 if c in '+-*/$)':
                     if sign == '+':
                         stack.append(num)
@@ -47,7 +47,7 @@ class Solution:
                 if c == '(':
                     idx+=1
                     num = dfs()
-										# dfs 가 끝나는 시점에 idx 는 ')'의 위치에 존재한다.
+          # dfs 가 끝나는 시점에 idx 는 ')'의 위치에 존재한다.
                 if c == ')':
                     return sum(stack)
                 idx+=1
@@ -60,7 +60,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 

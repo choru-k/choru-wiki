@@ -67,8 +67,6 @@ class Solution:
 
 하지만 파이썬은 존재하지 않기 때문에 다른 방법을 생각해보자.
 
-  
-
 크기가 valueDiff 인 bucket 을 생각해보자. 만약 이 bucket 에 두개의 원소가 들어있다면 무조건 그 두개의 원소의 길이는 valueDiff 이하가 될 것 이다. 만약 같은 bucket 에 있지 않지만 두 원소의 길이가 valueDiff 이하인 경우는 어떻게 처리할까?
 
 우리는 두 원소의 길이가 valueDiff 이하라면 최대 버킷의 차이가 1이란걸 알수 있다. 즉 자신이 속한 bucket 과 그 주변만 고려해주면 된다.
@@ -80,9 +78,9 @@ class Solution:
         bucket = dict()
 
         for idx, num in enumerate(nums):
-						# 0 일때는 나누지 말고 그대로 사용. 단 주변을 보지 않음
+      # 0 일때는 나누지 말고 그대로 사용. 단 주변을 보지 않음
             key = num // max(valueDiff, 1)
-						# 한 버킷에 두개의 키가 존재
+      # 한 버킷에 두개의 키가 존재
             if key in bucket:
                 return True
             bucket[key] = num
@@ -91,7 +89,7 @@ class Solution:
                     return True
                 if key+1 in bucket and abs(num - bucket[key+1]) <= valueDiff:
                     return True
-						# k 만큼의 거리만 유지.            
+      # k 만큼의 거리만 유지.            
             if idx-indexDiff >= 0:
                 bucket.pop(nums[idx-indexDiff] // max(valueDiff, 1))
         return False
@@ -101,7 +99,6 @@ class Solution:
 
 - **Time Complexity:** 분석 필요
 - **Space Complexity:** 분석 필요
-
 
 ---
 
