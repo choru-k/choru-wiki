@@ -21,7 +21,7 @@ tags:
 
 Kubernetes에서 CPU 메트릭은 kubelet에 내장된 cAdvisor가 cgroup 파일시스템을 통해 수집합니다
 
-```
+```text
 cgroup CPU Accounting:
 ┌─────────────────────────────────┐
 │  /sys/fs/cgroup/cpu,cpuacct/    │
@@ -77,8 +77,6 @@ sum(rate(container_cpu_usage_seconds_total{
 # container="" (빈 값)인 메트릭도 포함됨
 container_cpu_usage_seconds_total{container="",pod="app-123",cpu="total"} 1.5
 container_cpu_usage_seconds_total{container="app",pod="app-123",cpu="total"} 1.5
-```
-
 ```
 
 ### 정확한 쿼리 방법

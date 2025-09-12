@@ -65,7 +65,7 @@ spec:
 
 **동작 원리:**
 
-```
+```text
 Client Request → NLB → Pod IP:Port (Direct)
 ```
 
@@ -106,7 +106,7 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 
 **동작 원리:**
 
-```
+```text
 Client Request → NLB → Node IP:NodePort → iptables → Pod IP:Port
 ```
 
@@ -430,7 +430,7 @@ spec:
 
 **증상:**
 
-```
+```text
 error: failed to create target group: ValidationError: A target group can have at most 500 targets
 ```
 
