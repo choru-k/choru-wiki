@@ -10,11 +10,6 @@ tags:
 
 # Linux 인터럽트 처리의 모든 것 (2): Top-half, Bottom-half 그리고 ksoftirqd의 비밀
 
----
-
-tags: [linux, interrupt, top-half, bottom-half, softirq, tasklet, workqueue, ksoftirqd, napi, network-performance]
----
-
 ## 들어가며
 
 서버를 운영하다 보면 이런 상황을 만나게 됩니다: "ksoftirqd/0이 CPU 100%를 먹고 있어요!", "네트워크 트래픽이 높을 때 시스템이 느려져요". 이런 문제의 근본 원인은 Linux가 인터럽트를 "두 단계"로 처리하기 때문입니다. 오늘은 Top-half와 Bottom-half, 그리고 악명 높은 ksoftirqd에 대해 알아보겠습니다.
@@ -23,7 +18,7 @@ tags: [linux, interrupt, top-half, bottom-half, softirq, tasklet, workqueue, kso
 
 ### 문제 상황
 
-```
+```text
 키보드 인터럽트 처리 시간:
 1. 하드웨어에서 키 값 읽기: 1 마이크로초
 2. 키 값을 버퍼에 저장: 1 마이크로초
@@ -38,7 +33,7 @@ tags: [linux, interrupt, top-half, bottom-half, softirq, tasklet, workqueue, kso
 
 ### 해결책: 작업 분할
 
-```
+```text
 Top-half (긴급한 것만):
 1. 하드웨어에서 키 값 읽기: 1 마이크로초
 2. 키 값을 버퍼에 저장: 1 마이크로초
@@ -55,7 +50,7 @@ Bottom-half (나중에 처리):
 
 ### Top-half의 특징
 
-```
+```text
 Top-half가 실행되는 동안:
 ┌─────────────────────────────────┐
 │ ✗ 다른 인터럽트 비활성화        │
@@ -173,7 +168,7 @@ enum {
 
 ### Softirq가 실행되는 때
 
-```
+```text
 1. 하드웨어 인터럽트 처리 직후 (가장 일반적)
    Top-half 완료 → do_IRQ() → irq_exit() → invoke_softirq()
 
@@ -211,7 +206,7 @@ $ cat /proc/softirqs
 
 ### ksoftirqd가 필요한 이유
 
-```
+```text
 문제 상황: Softirq 폭풍
 
 패킷 도착 → Softirq 실행 → 처리 중 더 많은 패킷 도착 
@@ -265,7 +260,7 @@ paste /tmp/softirqs1 /tmp/softirqs2 | awk '
         
         if (cpu0_diff > 10000 || cpu1_diff > 10000 || 
             cpu2_diff > 10000 || cpu3_diff > 10000) {
-            printf "%-10s CPU0:%-8d CPU1:%-8d CPU2:%-8d CPU3:%-8d\n",
+            printf "%-10s CPU0:%-8d CPU1:%-8d CPU2:%-8d CPU3:%-8d, ",
                    name, cpu0_diff, cpu1_diff, cpu2_diff, cpu3_diff
         }
     }
@@ -345,7 +340,7 @@ $ ethtool -C eth0 rx-frames 64  # 또는 64 프레임마다
 
 ### Softirq vs Workqueue
 
-```
+```text
 Softirq/Tasklet:
 - 인터럽트 컨텍스트
 - Sleep 불가
@@ -445,7 +440,7 @@ $ chrt -f -p 50 $(pgrep ksoftirqd/0)
 
 ## 실전 트러블슈팅 플로우
 
-```
+```text
 증상: 시스템 느림
 ↓
 1. top 확인 → ksoftirqd 높음?

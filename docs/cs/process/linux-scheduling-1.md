@@ -10,11 +10,6 @@ tags:
 
 # Linux 스케줄링 완벽 가이드 (1): 스케줄링의 진화와 기본 개념
 
----
-
-tags: [linux, scheduling, cfs, context-switching, load-average, nice, process-state, performance, operating-system]
----
-
 ## 들어가며
 
 "왜 내 프로세스가 CPU를 100% 쓰는데도 시스템이 멈추지 않지?", "nice -20과 nice 19의 실제 차이가 뭐야?", "컨텍스트 스위칭이 많으면 왜 느려지는 거야?" 시스템을 운영하다 보면 이런 의문들이 생깁니다. 오늘은 Linux 스케줄링의 기초부터 시작해 실제 동작 원리를 파헤쳐보겠습니다.
@@ -23,7 +18,7 @@ tags: [linux, scheduling, cfs, context-switching, load-average, nice, process-st
 
 ### 간단한 비유
 
-```
+```text
 식당 주방장(CPU)과 요리 주문(프로세스):
 
 방법 1: 순서대로 (FIFO)
@@ -45,7 +40,7 @@ Linux CFS: 공정하게 (Completely Fair)
 
 ### CPU와 프로세스
 
-```
+```text
 실제 상황:
 - CPU 코어: 4개
 - 실행 가능한 프로세스: 100개
@@ -61,7 +56,7 @@ Linux CFS: 공정하게 (Completely Fair)
 
 ### 프로세스 상태 전이
 
-```
+```text
      생성(fork)
          ↓
     TASK_RUNNING ←──────────┐
@@ -194,7 +189,7 @@ jiffies                                 : 4295678901
 
 ### 컨텍스트 스위칭이란?
 
-```
+```text
 프로세스 A → 프로세스 B 전환:
 
 1. A의 상태 저장
@@ -255,7 +250,7 @@ int main() {
     long ns = (end.tv_sec - start.tv_sec) * 1000000000 + 
               (end.tv_nsec - start.tv_nsec);
     
-    printf("컨텍스트 스위치: %ld ns\n", ns / (iterations * 2));
+    printf("컨텍스트 스위치: %ld ns, ", ns / (iterations * 2));
     return 0;
 }
 ```
@@ -374,7 +369,7 @@ Low (nice 10): 1234567
 
 ### Load Average란?
 
-```
+```text
 Load Average: 실행 가능 + 대기 중인 태스크의 평균 수
 
 1분, 5분, 15분 평균:

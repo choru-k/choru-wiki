@@ -10,11 +10,6 @@ tags:
 
 # Process vs Thread 심화 (3): 스케줄링, 시그널, 그리고 실전 선택 가이드
 
----
-
-tags: [linux, scheduling, signals, cpu-affinity, synchronization, performance, process-selection, thread-selection, operating-system]
----
-
 ## 들어가며
 
 앞선 두 편에서 프로세스와 스레드가 커널 레벨에서는 모두 task이며, 메모리 공유 수준만 다르다는 것을 확인했습니다. 이번 편에서는 스케줄링과 시그널 처리의 차이, 그리고 실전에서 언제 무엇을 선택해야 하는지 다루겠습니다.
@@ -119,7 +114,7 @@ void manage_cpu_affinity() {
     sched_getaffinity(0, sizeof(cpuset), &cpuset);
     for (int i = 0; i < CPU_SETSIZE; i++) {
         if (CPU_ISSET(i, &cpuset)) {
-            printf("CPU %d is set\n", i);
+            printf("CPU %d is set, ", i);
         }
     }
 }
@@ -260,7 +255,7 @@ void async_signals() {
         
         while (1) {
             sigwait(&set, &sig);  // 동기적으로 대기
-            printf("Signal %d received\n", sig);
+            printf("Signal %d received, ", sig);
             handle_signal(sig);
         }
         return NULL;
@@ -377,7 +372,7 @@ void benchmark_sync() {
         sem_post(sysv_sem);
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
-    printf("Process + SysV: %ld ns/op\n", 
+    printf("Process + SysV: %ld ns/op, ", 
            time_diff(start, end) / iterations);
     
     // 2. 스레드 + Mutex
@@ -388,7 +383,7 @@ void benchmark_sync() {
         pthread_mutex_unlock(&mutex);
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
-    printf("Thread + Mutex: %ld ns/op\n",
+    printf("Thread + Mutex: %ld ns/op, ",
            time_diff(start, end) / iterations);
     
     // 결과:
@@ -428,7 +423,7 @@ void measure_context_switch() {
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
     
-    printf("Process switch: %ld ns\n",
+    printf("Process switch: %ld ns, ",
            time_diff(start, end) / (iterations * 2));
     
     // 스레드 버전도 유사하게 측정

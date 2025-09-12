@@ -77,15 +77,15 @@ Raft는 복잡한 Paxos 알고리즘을 대체하기 위해 **이해하기 쉽�
 ```mermaid
 graph TD
     subgraph "Raft의 3가지 핵심 요소"
-        LE[Leader Election<br/>리더 선출<br/>"누가 보스인가?"]
-        LR[Log Replication<br/>로그 복제<br/>"명령어를 어떻게 동기화?"]
-        S[Safety<br/>안전성<br/>"일관성을 어떻게 보장?"]
+        LE[Leader Election - 리더 선출 - 누가 보스인가?]
+        LR[Log Replication - 로그 복제 - 명령어를 어떻게 동기화?]
+        S[Safety - 안전성 - 일관성을 어떻게 보장?]
     end
     
     subgraph "노드 상태"
-        F[Follower<br/>팔로워<br/>"명령어 수신"]
-        C[Candidate<br/>후보자<br/>"선거 진행"]  
-        L[Leader<br/>리더<br/>"명령어 발행"]
+        F[Follower - 팔로워 - 명령어 수신]
+        C[Candidate - 후보자 - 선거 진행]  
+        L[Leader - 리더 - 명령어 발행]
     end
     
     LE --> F
@@ -359,13 +359,13 @@ def simulate_log_replication():
     commands = ['SET x=1', 'SET y=2', 'DELETE z', 'SET x=5']
     
     for cmd in commands:
-        print(f"\n=== 클라이언트 요청: {cmd} ===")
+        print(f", === 클라이언트 요청: {cmd} ===")
         result = leader.client_request(cmd)
         print(f"결과: {result}")
         time.sleep(0.1)  # 네트워크 지연 시뮬레이션
     
     # 최종 로그 상태 출력
-    print(f"\n=== 최종 로그 상태 ===")
+    print(f", === 최종 로그 상태 ===")
     for i, entry in enumerate(leader.log):
         status = "✅ COMMITTED" if entry['committed'] else "⏳ PENDING"  
         print(f"Log[{i}]: {entry['command']} (term={entry['term']}) {status}")
@@ -448,7 +448,7 @@ def simulate_log_inconsistency_resolution():
     print(f"Partition 2 (C,D,E): {[e['command'] for e in partition2_log]}")
     
     # 분할 해결: C가 더 높은 term이므로 새 리더
-    print("\n=== 분할 해결: C가 새 리더 ===")
+    print(", === 분할 해결: C가 새 리더 ===")
     
     # A와 B는 C의 로그를 받아들여야 함
     def resolve_conflict(follower_log, leader_log):
@@ -474,7 +474,7 @@ def simulate_log_inconsistency_resolution():
     # A와 B의 로그를 C의 로그로 수정
     final_log = resolve_conflict(partition1_log, partition2_log)
     
-    print(f"\n=== 최종 일치된 로그 ===")
+    print(f", === 최종 일치된 로그 ===")
     for entry in final_log:
         print(f"Log[{entry['index']}]: {entry['command']} (term={entry['term']})")
 
@@ -499,10 +499,10 @@ Raft는 **Crash Fault**만 고려합니다. 하지만 악의적인 노드나 임
 ```mermaid
 graph TD
     subgraph "비잔틴 장군 문제"
-        G1[장군 A<br/>"공격하자"]
-        G2[장군 B<br/>"공격하자"]  
-        G3[장군 C<br/>"후퇴하자"<br/>(배신자)]
-        G4[장군 D<br/>"공격하자"]
+        G1[장군 A - 공격하자]
+        G2[장군 B - 공격하자]  
+        G3[장군 C - 후퇴하자 - 배신자]
+        G4[장군 D - 공격하자]
     end
     
     subgraph "메시지 전달"
@@ -516,8 +516,8 @@ graph TD
     end
     
     subgraph "문제점"
-        P1[배신자가 다른 말을<br/>각 장군에게 전달]
-        P2[어떤 메시지가<br/>진실인지 알 수 없음]
+        P1[배신자가 다른 말을, 각 장군에게 전달]
+        P2[어떤 메시지가, 진실인지 알 수 없음]
         P3[합의 불가능]
     end
     
@@ -703,7 +703,7 @@ def simulate_pbft_with_byzantine():
     byzantine_nodes = {2, 5}
     
     # Primary 노드 0이 클라이언트 요청 처리
-    print("\n--- 클라이언트 요청: 'TRANSFER $100 Alice->Bob' ---")
+    print(", --- 클라이언트 요청: 'TRANSFER $100 Alice->Bob' ---")
     
     request = "TRANSFER $100 Alice->Bob"
     primary = nodes[0]
@@ -720,7 +720,7 @@ def simulate_pbft_with_byzantine():
             # 정상 노드: 올바른 처리
             print(f"✅ Honest Node {i}: 정상 처리")
     
-    print(f"\n--- 결과 분석 ---")
+    print(f", --- 결과 분석 ---")
     print(f"정상 노드 5개 >= 2f+1=5 → 합의 달성!")
     print(f"비잔틴 노드 2개 <= f=2 → 공격 실패!")
     print(f"최종 합의: '{request}' 실행")

@@ -103,10 +103,10 @@ def process_order(order_data):
 ```mermaid
 stateDiagram-v2
     [*] --> Closed
-    Closed --> Open : 임계치 초과<br/>실패 발생
-    Open --> HalfOpen : 타임아웃 후<br/>복구 시도  
-    HalfOpen --> Closed : 성공<br/>서비스 복구
-    HalfOpen --> Open : 실패<br/>아직 불안정
+    Closed --> Open : 임계치 초과, 실패 발생
+    Open --> HalfOpen : 타임아웃 후, 복구 시도  
+    HalfOpen --> Closed : 성공, 서비스 복구
+    HalfOpen --> Open : 실패, 아직 불안정
     
     note right of Closed
         정상 상태
@@ -368,7 +368,7 @@ def simulate_circuit_breaker():
     
     payment_client = PaymentServiceClient()
     
-    print("\n--- 정상 상황 (Circuit Breaker CLOSED) ---")
+    print(", --- 정상 상황 (Circuit Breaker CLOSED) ---")
     for i in range(3):
         try:
             result = payment_client.charge_payment(f"user_{i}", 100.0)
@@ -376,9 +376,9 @@ def simulate_circuit_breaker():
         except Exception as e:
             print(f"❌ Payment {i}: {e}")
     
-    print(f"\n📊 Metrics: {payment_client.circuit_breaker.get_metrics()}")
+    print(f", 📊 Metrics: {payment_client.circuit_breaker.get_metrics()}")
     
-    print("\n--- 장애 상황 시뮬레이션 (Payment Service 다운) ---")
+    print(", --- 장애 상황 시뮬레이션 (Payment Service 다운) ---")
     # Payment Service가 다운되었다고 가정
     original_call = payment_client._call_payment_api
     payment_client._call_payment_api = lambda user_id, amount: exec('raise Exception("Service unavailable")')
@@ -390,9 +390,9 @@ def simulate_circuit_breaker():
         except Exception as e:
             print(f"❌ Payment {i}: {e}")
     
-    print(f"\n📊 Metrics: {payment_client.circuit_breaker.get_metrics()}")
+    print(f", 📊 Metrics: {payment_client.circuit_breaker.get_metrics()}")
     
-    print("\n--- Circuit Breaker OPEN 상태에서 호출 ---")
+    print(", --- Circuit Breaker OPEN 상태에서 호출 ---")
     for i in range(3):
         try:
             result = payment_client.charge_payment(f"user_{i}", 100.0)
@@ -400,7 +400,7 @@ def simulate_circuit_breaker():
         except Exception as e:
             print(f"❌ Payment {i}: {e}")
     
-    print(f"\n📊 Final Metrics: {payment_client.circuit_breaker.get_metrics()}")
+    print(f", 📊 Final Metrics: {payment_client.circuit_breaker.get_metrics()}")
 
 # 실행
 simulate_circuit_breaker()
@@ -621,7 +621,7 @@ def simulate_bulkhead_pattern():
     order_service = OrderService()
     
     # 정상 주문들
-    print("\n--- 정상 주문 처리 ---")
+    print(", --- 정상 주문 처리 ---")
     for i in range(3):
         order = {
             'id': f'order_{i}',
@@ -634,12 +634,12 @@ def simulate_bulkhead_pattern():
         print(f"Order {i}: {result['status']}")
     
     # 메트릭 확인
-    print("\n--- Bulkhead 메트릭 ---")
+    print(", --- Bulkhead 메트릭 ---")
     for service in ['payment', 'inventory', 'email', 'analytics']:
         metrics = order_service.bulkhead.get_metrics(service)
         print(f"{service}: {metrics}")
     
-    print("\n--- 장애 상황: Email Service 다운 ---")
+    print(", --- 장애 상황: Email Service 다운 ---")
     # Email Service가 모든 요청에 실패한다고 가정
     original_email = order_service._send_confirmation_email
     order_service._send_confirmation_email = lambda user_id, order_id: exec('raise Exception("Email service completely down")')
@@ -656,7 +656,7 @@ def simulate_bulkhead_pattern():
         result = order_service.process_order(order)
         print(f"Order during email outage {i}: {result['status']} (주문은 성공)")
     
-    print("\n--- 최종 Bulkhead 메트릭 ---")
+    print(", --- 최종 Bulkhead 메트릭 ---")
     for service in ['payment', 'inventory', 'email', 'analytics']:
         metrics = order_service.bulkhead.get_metrics(service)
         success_rate = (metrics['completed_tasks'] / max(metrics['submitted_tasks'], 1)) * 100
@@ -941,11 +941,11 @@ def simulate_saga_pattern():
         'shipping_address': '123 Main St, City, State'
     }
     
-    print("\n--- 성공 케이스 ---")
+    print(", --- 성공 케이스 ---")
     result1 = order_saga.process_order(order_data)
     print(f"Order Result: {result1}")
     
-    print("\n--- 실패 케이스 (보상 트랜잭션 실행) ---")
+    print(", --- 실패 케이스 (보상 트랜잭션 실행) ---")
     order_data_2 = order_data.copy()
     order_data_2['order_id'] = 'order_67890'
     
@@ -1249,14 +1249,14 @@ def simulate_choreography_saga():
         'total_amount': 200.0
     }
     
-    print("\n--- 주문 처리 시작 (이벤트 체인 시작) ---")
+    print(", --- 주문 처리 시작 (이벤트 체인 시작) ---")
     correlation_id = order_service.create_order(order_data)
     
     # 이벤트 처리 시간 대기
-    print("\n--- 이벤트 처리 대기 중... ---")
+    print(", --- 이벤트 처리 대기 중... ---")
     time.sleep(2)
     
-    print(f"\n--- Saga 결과 확인 ---")
+    print(f", --- Saga 결과 확인 ---")
     print(f"Order status: {order_service.orders.get(order_data['order_id'], {}).get('status', 'unknown')}")
     print(f"Inventory reservations: {len(inventory_service.reservations)}")
     print(f"Payments: {len(payment_service.payments)}")
@@ -1555,7 +1555,7 @@ def simulate_cqrs_pattern():
     
     cqrs = CQRSSystem()
     
-    print("\n--- Command 실행 (쓰기) ---")
+    print(", --- Command 실행 (쓰기) ---")
     
     # 사용자 생성
     create_cmd = CreateUserCommand(
@@ -1583,10 +1583,10 @@ def simulate_cqrs_pattern():
     result3 = cqrs.execute_command(update_cmd)
     print(f"Update Email: {result3}")
     
-    print("\n--- 이벤트 처리 대기 ---")
+    print(", --- 이벤트 처리 대기 ---")
     time.sleep(0.1)  # 비동기 이벤트 처리 대기
     
-    print("\n--- Query 실행 (읽기) ---")
+    print(", --- Query 실행 (읽기) ---")
     
     # 개별 사용자 조회
     get_user_query = GetUserQuery(user_id="user123")
@@ -1602,7 +1602,7 @@ def simulate_cqrs_pattern():
     example_users = cqrs.execute_query(example_domain_query)
     print(f"Example.com Users: {len(example_users)} users")
     
-    print("\n--- Event Store 확인 ---")
+    print(", --- Event Store 확인 ---")
     events = cqrs.event_store.get_events("user123")
     print(f"User123 Events: {[type(e).__name__ for e in events]}")
 

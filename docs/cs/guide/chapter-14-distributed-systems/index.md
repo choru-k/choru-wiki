@@ -186,17 +186,17 @@ Event 2 (Server B): purchase_item at 14:30:45.890
 ```mermaid
 graph TD
     subgraph "분산 시스템 도전과제"
-        SF[부분적 실패<br/>Partial Failures]
-        NC[네트워크 신뢰성<br/>Network Unreliability]  
-        CT[시계 동기화<br/>Clock Synchronization]
-        CS[데이터 일관성<br/>Data Consistency]
+        SF[부분적 실패, Partial Failures]
+        NC[네트워크 신뢰성, Network Unreliability]  
+        CT[시계 동기화, Clock Synchronization]
+        CS[데이터 일관성, Data Consistency]
     end
     
     subgraph "핵심 해결 기법"
-        FT[장애 허용<br/>Fault Tolerance]
-        RC[복제와 합의<br/>Replication & Consensus]
-        EC[최종 일관성<br/>Eventual Consistency]
-        PT[분산 트랜잭션<br/>Distributed Transactions]
+        FT[장애 허용, Fault Tolerance]
+        RC[복제와 합의, Replication & Consensus]
+        EC[최종 일관성, Eventual Consistency]
+        PT[분산 트랜잭션, Distributed Transactions]
     end
     
     subgraph "실전 패턴"

@@ -10,11 +10,6 @@ tags:
 
 # Process vs Thread 심화 (1): Linux의 충격적 진실 - 모든 것은 clone()이다
 
----
-
-tags: [linux, process, thread, kernel, clone, task_struct, operating-system, system-programming]
----
-
 ## 들어가며
 
 "프로세스는 독립적이고 스레드는 메모리를 공유한다" - 이것이 교과서적 설명입니다. 하지만 Linux 커널 소스를 열어보면 충격적인 사실을 발견합니다: **커널은 프로세스와 스레드를 구분하지 않습니다.** 모든 것은 `task_struct`이고, 차이는 단지 공유하는 리소스의 종류뿐입니다.
@@ -117,9 +112,9 @@ pid_t create_thread() {
 #include <sys/syscall.h>
 
 void show_all_ids() {
-    printf("getpid(): %d\n", getpid());           // TGID 반환
-    printf("gettid(): %ld\n", syscall(SYS_gettid)); // 실제 TID
-    printf("getppid(): %d\n", getppid());         // 부모의 TGID
+    printf("getpid(): %d, ", getpid());           // TGID 반환
+    printf("gettid(): %ld, ", syscall(SYS_gettid)); // 실제 TID
+    printf("getppid(): %d, ", getppid());         // 부모의 TGID
     
     // /proc/self/status 확인
     system("grep -E 'Pid:|Tgid:|PPid:' /proc/self/status");
@@ -139,7 +134,7 @@ pid_t main_tid, child_tid;
 
 void* thread_func(void* arg) {
     child_tid = syscall(SYS_gettid);
-    printf("Thread: getpid()=%d, gettid()=%ld\n", 
+    printf("Thread: getpid()=%d, gettid()=%ld, ", 
            getpid(), child_tid);
     
     // /proc에서 확인
@@ -152,7 +147,7 @@ void* thread_func(void* arg) {
 
 int main() {
     main_tid = syscall(SYS_gettid);
-    printf("Main: getpid()=%d, gettid()=%ld\n", 
+    printf("Main: getpid()=%d, gettid()=%ld, ", 
            getpid(), main_tid);
     
     pthread_t thread;
@@ -160,9 +155,9 @@ int main() {
     pthread_join(thread, NULL);
     
     // 놀라운 사실: /proc에 두 개의 "프로세스"가 보임
-    printf("\n/proc entries:\n");
-    printf("/proc/%ld exists\n", main_tid);
-    printf("/proc/%ld exists\n", child_tid);
+    printf(", /proc entries:, ");
+    printf("/proc/%ld exists, ", main_tid);
+    printf("/proc/%ld exists, ", child_tid);
 }
 ```
 
@@ -247,7 +242,7 @@ int child_func(void* arg) {
     // 전역 변수 수정
     shared_var = 200;
     
-    printf("Child: fd=%d, var=%d\n", fd, shared_var);
+    printf("Child: fd=%d, var=%d, ", fd, shared_var);
     return 0;
 }
 
@@ -256,7 +251,7 @@ void test_sharing() {
     clone(child_func, child_stack + 8192,
           CLONE_VM | SIGCHLD, NULL);
     sleep(1);
-    printf("After VM share: var=%d\n", shared_var);  // 200
+    printf("After VM share: var=%d, ", shared_var);  // 200
     
     // 2. 파일만 공유
     shared_var = 100;
@@ -264,7 +259,7 @@ void test_sharing() {
     clone(child_func, child_stack + 8192,
           CLONE_FILES | SIGCHLD, NULL);
     sleep(1);
-    printf("After FILES share: var=%d\n", shared_var);  // 100
+    printf("After FILES share: var=%d, ", shared_var);  // 100
     // 하지만 child가 연 파일이 parent에도 보임!
 }
 ```
@@ -345,7 +340,7 @@ renice(-5, tid2);  // 스레드 2는 높은 우선순위
 
 ## LWP (Light Weight Process)의 유래
 
-```
+```text
 역사적 배경:
 1. 초기 Unix: 프로세스만 존재
 2. System V: 프로세스 생성 비용 문제

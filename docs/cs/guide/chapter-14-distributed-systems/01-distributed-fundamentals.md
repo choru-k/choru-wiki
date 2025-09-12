@@ -119,20 +119,20 @@ order6 = place_order(333, "iPhone")  # Slave에서 stock=5 읽음 → 성공!
 
 ```mermaid
 graph TD
-    subgraph "CAP Triangle"
-        C[Consistency<br/>일관성<br/>"모든 노드가 같은 데이터"]
-        A[Availability<br/>가용성<br/>"시스템이 항상 응답"]  
-        P[Partition Tolerance<br/>분할 허용성<br/>"네트워크 장애 견딤"]
+    subgraph CAP_TRIANGLE["CAP Triangle"]
+        C[Consistency 일관성]
+        A[Availability 가용성]  
+        P[Partition Tolerance 분할허용성]
     end
     
     C -.-> A
     A -.-> P  
     P -.-> C
     
-    subgraph "가능한 조합"
-        CA[CA Systems<br/>전통적 RDBMS<br/>(단일 노드)]
-        CP[CP Systems<br/>MongoDB, Redis<br/>(일관성 우선)]
-        AP[AP Systems<br/>Cassandra, DynamoDB<br/>(가용성 우선)]
+    subgraph COMBINATIONS["가능한 조합"]
+        CA[CA Systems 전통적RDBMS]
+        CP[CP Systems MongoDB Redis]
+        AP[AP Systems Cassandra DynamoDB]
     end
     
     style C fill:#ffcdd2
@@ -330,19 +330,19 @@ CAP는 단순화된 모델입니다. 현실에서는 다양한 일관성 레벨�
 ```mermaid
 graph TD
     subgraph "일관성 강도 스펙트럼"
-        SC[Strong Consistency<br/>강한 일관성<br/>ACID 트랜잭션]
-        BEC[Bounded Eventual Consistency<br/>제한된 최종 일관성<br/>시간/버전 제한]
-        EC[Eventual Consistency<br/>최종 일관성<br/>언젠가는 일치]  
-        WC[Weak Consistency<br/>약한 일관성<br/>일치 보장 없음]
+        SC[Strong Consistency, 강한 일관성, ACID 트랜잭션]
+        BEC[Bounded Eventual Consistency, 제한된 최종 일관성, 시간/버전 제한]
+        EC[Eventual Consistency, 최종 일관성, 언젠가는 일치]  
+        WC[Weak Consistency, 약한 일관성, 일치 보장 없음]
     end
     
     SC --> BEC --> EC --> WC
     
     subgraph "실제 사용 사례"
-        SC_USE[은행 거래<br/>재고 관리]
-        BEC_USE[소셜미디어 피드<br/>추천 시스템] 
-        EC_USE[DNS<br/>캐시 시스템]
-        WC_USE[실시간 게임<br/>센서 데이터]
+        SC_USE[은행 거래, 재고 관리]
+        BEC_USE[소셜미디어 피드, 추천 시스템] 
+        EC_USE[DNS, 캐시 시스템]
+        WC_USE[실시간 게임, 센서 데이터]
     end
     
     SC --> SC_USE
@@ -445,19 +445,19 @@ result2 = db.read(user_id=123, query="SELECT count FROM views")  # 1000 or 1005
 
 ```mermaid
 graph TD
-    subgraph "PACELC 의사결정 트리"
-        P_START{네트워크 분할<br/>발생했나?}
+    subgraph PACELC_TREE["PACELC 의사결정 트리"]
+        P_START{네트워크 분할 발생했나?}
         
-        subgraph "Partition 상황"
-            PA_OR_C{Availability vs<br/>Consistency}
-            PA[Availability 선택<br/>서비스 유지]
-            PC[Consistency 선택<br/>서비스 중단]
+        subgraph PARTITION_CASE["Partition 상황"]
+            PA_OR_C{Availability vs Consistency}
+            PA[Availability 선택 서비스유지]
+            PC[Consistency 선택 서비스중단]
         end
         
-        subgraph "정상 상황 (Else)"
-            EL_OR_C{Latency vs<br/>Consistency}  
-            EL[Latency 선택<br/>빠른 응답<br/>(캐시/복제본 활용)]
-            EC[Consistency 선택<br/>느린 응답<br/>(동기화 대기)]
+        subgraph NORMAL_CASE["정상 상황 Else"]
+            EL_OR_C{Latency vs Consistency}  
+            EL[Latency 선택 빠른응답]
+            EC[Consistency 선택 느린응답]
         end
     end
     

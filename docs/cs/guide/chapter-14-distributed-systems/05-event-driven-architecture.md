@@ -71,7 +71,7 @@ graph TD
         B1 --> C1[Service C] 
         C1 --> D1[Service D]
         
-        note1[순차 처리<br/>강한 결합<br/>장애 전파]
+        note1[순차 처리, 강한 결합, 장애 전파]
     end
     
     subgraph "이벤트 기반 방식"
@@ -80,7 +80,7 @@ graph TD
         EB --> C2[Service C]
         EB --> D2[Service D]
         
-        note2[병렬 처리<br/>느슨한 결합<br/>장애 격리]
+        note2[병렬 처리, 느슨한 결합, 장애 격리]
     end
     
     style A1 fill:#ffcdd2
@@ -389,7 +389,7 @@ def simulate_message_queue():
     notification_service = NotificationService(event_bus)
     analytics_service = AnalyticsService(event_bus)
     
-    print("\n--- 영화 시청 시작 ---")
+    print(", --- 영화 시청 시작 ---")
     
     # 사용자들이 영화 시청 시작
     users = [
@@ -402,10 +402,10 @@ def simulate_message_queue():
         result = video_service.start_watching(user_id, video_id, video_title)
         print(f"✅ {result['message']} (session: {result['session_id']})")
     
-    print("\n--- 이벤트 처리 대기 ---")
+    print(", --- 이벤트 처리 대기 ---")
     time.sleep(3)  # 비동기 이벤트 처리 대기
     
-    print(f"\n--- 결과 확인 ---")
+    print(f", --- 결과 확인 ---")
     print(f"추천 서비스: {len(recommendation_service.user_preferences)}명의 취향 업데이트")
     print(f"알림 서비스: {len(notification_service.sent_notifications)}개 알림 전송")
     print("📈 Analytics Service: 일부 실패했지만 전체 시스템은 정상 동작")
@@ -785,7 +785,7 @@ def simulate_event_streaming():
     analytics_service = RealTimeAnalyticsService(event_stream)
     personalization_service = PersonalizationService(event_stream)
     
-    print("\n--- 스트리밍 시작 ---")
+    print(", --- 스트리밍 시작 ---")
     
     # 여러 사용자가 동시 스트리밍 시작
     users = [
@@ -801,7 +801,7 @@ def simulate_event_streaming():
         sessions.append(result['session_id'])
         time.sleep(0.1)  # 약간의 시간차
     
-    print("\n--- 스트리밍 중 이벤트들 ---")
+    print(", --- 스트리밍 중 이벤트들 ---")
     
     # 품질 변경
     video_service.update_quality(sessions[0], '1080p')  # Alice: 4K → 1080p
@@ -813,10 +813,10 @@ def simulate_event_streaming():
             video_service.send_heartbeat(session_id)
         time.sleep(1)
     
-    print("\n--- 이벤트 처리 대기 ---")
+    print(", --- 이벤트 처리 대기 ---")
     time.sleep(2)
     
-    print("\n--- 실시간 메트릭 확인 ---")
+    print(", --- 실시간 메트릭 확인 ---")
     metrics = analytics_service.get_real_time_metrics()
     print(f"동시 시청자: {metrics['concurrent_viewers']}명")
     print(f"품질 분포: {metrics['quality_distribution']}")
@@ -1150,7 +1150,7 @@ def simulate_event_sourcing():
     event_store = EventStore()
     account_repo = EventSourcedAccountRepository(event_store)
     
-    print("\n--- 계좌 생성 및 거래 ---")
+    print(", --- 계좌 생성 및 거래 ---")
     
     # 새 계좌 생성
     account = BankAccount.create_account("ACC001", initial_deposit=1000.0, overdraft_limit=500.0)
@@ -1180,27 +1180,27 @@ def simulate_event_sourcing():
         except Exception as e:
             print(f"❌ {transaction_type.title()} 실패: {e}")
     
-    print(f"\n현재 잔고: ${account.balance}")
+    print(f", 현재 잔고: ${account.balance}")
     
-    print("\n--- 이벤트 히스토리 조회 ---")
+    print(", --- 이벤트 히스토리 조회 ---")
     events = event_store.get_events("ACC001")
     for event in events:
         print(f"📝 {event.timestamp.strftime('%H:%M:%S')} - {event.event_type}: {event.event_data}")
     
-    print("\n--- 특정 시점 상태 복원 ---")
+    print(", --- 특정 시점 상태 복원 ---")
     # 처음 3개 이벤트만으로 상태 복원
     partial_events = events[:3]
     past_account = BankAccount.from_history("ACC001", partial_events)
     print(f"📅 3번째 이벤트 시점 잔고: ${past_account.balance}")
     
-    print("\n--- 스냅샷 생성 및 활용 ---")
+    print(", --- 스냅샷 생성 및 활용 ---")
     account_repo.create_snapshot("ACC001")
     
     # 스냅샷 기반으로 계좌 재구성
     recovered_account = account_repo.get_by_id("ACC001")
     print(f"📸 스냅샷 기반 복구 잔고: ${recovered_account.balance}")
     
-    print("\n--- 동시성 테스트 ---")
+    print(", --- 동시성 테스트 ---")
     try:
         # 동시에 두 개의 거래 시도 (버전 충돌)
         account1 = account_repo.get_by_id("ACC001")

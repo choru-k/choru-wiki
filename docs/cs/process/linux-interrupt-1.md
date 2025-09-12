@@ -20,7 +20,7 @@ tags:
 
 인터럽트를 이해하는 가장 쉬운 방법은 일상 생활과 비교하는 것입니다:
 
-```
+```text
 폴링(Polling) 방식:
 당신: "피자 왔나요?"
 배달원: "아직이요"
@@ -36,7 +36,7 @@ tags:
 초인종: 딩동!
 당신: (하던 일 멈추고) "네?"
 배달원: "피자 배달입니다!"
-```
+```text
 
 CPU도 마찬가지입니다. 계속 확인하는 대신, 이벤트가 발생하면 알림을 받습니다.
 
@@ -62,7 +62,7 @@ while (1) {
     
     // CPU 100% 사용 중... 다른 일 못 함!
 }
-```
+```text
 
 **문제점:**
 
@@ -74,7 +74,7 @@ while (1) {
 
 ### 인터럽트 발생 시 CPU의 동작
 
-```
+```text
 1. 하드웨어 이벤트 발생 (예: 키보드 키 누름)
    ↓
 2. 인터럽트 컨트롤러가 CPU에 신호
@@ -90,7 +90,7 @@ while (1) {
 7. 저장된 상태 복원
    ↓
 8. 원래 작업 계속
-```
+```text
 
 ### 간단한 실습: 인터럽트 관찰하기
 
@@ -110,7 +110,7 @@ $ watch -n 1 'cat /proc/interrupts | head -5'
 # 키보드 치면서 관찰
 $ watch -n 0.1 'cat /proc/interrupts | grep i8042'
 # 키보드 칠 때마다 숫자 증가!
-```
+```text
 
 **해석:**
 
@@ -125,7 +125,7 @@ $ watch -n 0.1 'cat /proc/interrupts | grep i8042'
 
 ### 1. 하드웨어 인터럽트 (External)
 
-```
+```text
 외부 디바이스가 발생시키는 인터럽트:
 
 키보드 인터럽트 (IRQ 1):
@@ -136,7 +136,7 @@ $ watch -n 0.1 'cat /proc/interrupts | grep i8042'
 
 디스크 인터럽트 (IRQ 14):
 [I/O 완료] → [디스크 컨트롤러] → [인터럽트 발생] → [CPU]
-```
+```text
 
 ### 2. 소프트웨어 인터럽트 (Exception)
 
@@ -152,15 +152,15 @@ int result = 10 / 0;  // → Divide Error (인터럽트 0번)
 
 // 3. System Call: 사용자가 커널 서비스 요청
 write(1, "Hello", 5);  // → System Call (인터럽트 0x80 또는 syscall)
-```
+```text
 
 ### 3. Inter-Processor Interrupt (IPI)
 
-```
+```text
 CPU 간 통신:
 CPU0: "CPU1아, 스케줄링 다시 해!"
       → IPI 전송 → CPU1 인터럽트 받음
-```
+```text
 
 ## IRQ와 인터럽트 벡터
 
@@ -168,7 +168,7 @@ CPU0: "CPU1아, 스케줄링 다시 해!"
 
 전통적인 PC의 IRQ 할당:
 
-```
+```text
 IRQ 0:  System Timer      (매우 중요!)
 IRQ 1:  Keyboard
 IRQ 2:  Cascade (IRQ 8-15 연결)
@@ -185,7 +185,7 @@ IRQ 12: PS/2 Mouse
 IRQ 13: Math Coprocessor
 IRQ 14: Primary IDE
 IRQ 15: Secondary IDE
-```
+```text
 
 ### 실습: IRQ 충돌과 공유
 
@@ -200,13 +200,13 @@ $ lspci -v | grep -E "^[0-9]|IRQ"
 # IRQ 16을 공유하는 디바이스들
 $ cat /proc/interrupts | grep " 16:"
  16:    1234    5678   IO-APIC  16-fasteoi   i801_smbus, snd_hda_intel
-```
+```text
 
 ## 인터럽트 컨트롤러의 진화
 
 ### 1세대: 8259 PIC (Programmable Interrupt Controller)
 
-```
+```text
 간단하지만 제한적:
 ┌──────────────┐
 │  Master PIC  │ ← IRQ 0-7
@@ -224,11 +224,11 @@ $ cat /proc/interrupts | grep " 16:"
 - 최대 15개 IRQ만 지원
 - CPU 하나만 지원
 - 우선순위 고정
-```
+```text
 
 ### 2세대: APIC (Advanced PIC)
 
-```
+```text
 현대적 멀티코어 지원:
 ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
 │  CPU 0  │ │  CPU 1  │ │  CPU 2  │ │  CPU 3  │
@@ -247,7 +247,7 @@ $ cat /proc/interrupts | grep " 16:"
 - 각 CPU가 Local APIC 보유
 - 224개 인터럽트 지원
 - 동적 라우팅 가능
-```
+```text
 
 ### 실습: APIC 정보 확인
 
@@ -265,13 +265,13 @@ $ dmesg | grep -i apic
 $ lspci -v | grep MSI
         Capabilities: [80] MSI: Enable+ Count=1/1 Maskable- 64bit-
         Capabilities: [70] MSI-X: Enable+ Count=10 Masked-
-```
+```text
 
 ## 인터럽트 벡터 테이블
 
 ### CPU가 핸들러를 찾는 방법
 
-```
+```text
 인터럽트 발생 → 벡터 번호 → 테이블 조회 → 핸들러 주소 → 실행
 
 x86 인터럽트 벡터 (0-255):
@@ -288,7 +288,7 @@ x86 인터럽트 벡터 (0-255):
 │        PCI 디바이스들          │
 │        MSI/MSI-X 벡터          │
 └────────────────────────────────┘
-```
+```text
 
 ### 실습: 벡터 할당 확인
 
@@ -305,7 +305,7 @@ $ cat /proc/interrupts | head -20
 # 벡터 번호 계산
 # IRQ 24 = 벡터 24 + 32 = 56
 # MSI는 48 이상의 동적 벡터 사용
-```
+```text
 
 ## CPU 친화도 (IRQ Affinity)
 
@@ -330,11 +330,11 @@ $ sudo echo 2 > /proc/irq/24/smp_affinity_list
 # 결과 확인
 $ watch -n 1 'cat /proc/interrupts | grep "24:"'
 # CPU2 열의 숫자만 증가!
-```
+```text
 
 ### 왜 중요한가?
 
-```
+```text
 시나리오: 웹서버 최적화
 
 나쁜 예:
@@ -350,13 +350,13 @@ CPU1: 애플리케이션 스레드 1
 CPU2: 애플리케이션 스레드 2
 CPU3: 디스크 I/O 인터럽트
 → 부하 분산, 성능 향상
-```
+```text
 
 ## MSI: 현대적 인터럽트
 
 ### Legacy IRQ vs MSI
 
-```
+```text
 Legacy IRQ (전통적 방식):
 디바이스 → 물리적 인터럽트 선 → I/O APIC → CPU
 - 선 공유 필요 (IRQ 부족)
@@ -368,7 +368,7 @@ MSI (Message Signaled Interrupts):
 - 공유 불필요
 - 다수 벡터 (이론상 무제한)
 - 효율적 라우팅
-```
+```text
 
 ### 실습: MSI 확인
 
@@ -384,20 +384,20 @@ $ lspci -v | grep -A3 MSI-X
         Capabilities: [70] MSI-X: Enable+ Count=10 Masked-
         Vector table: BAR=4 offset=00000000
         PBA: BAR=4 offset=00000800
-```
+```text
 
 ## 인터럽트 스톰과 문제 해결
 
 ### 인터럽트 스톰이란?
 
-```
+```text
 정상:
 인터럽트 → 처리 → 완료 → (휴식) → 인터럽트 → 처리 → 완료
 
 스톰:
 인터럽트→인터럽트→인터럽트→인터럽트→인터럽트→
 (처리 못 함, CPU 100%)
-```
+```text
 
 ### 진단과 해결
 
@@ -415,7 +415,7 @@ $ echo 0 > /proc/irq/19/smp_affinity  # 모든 CPU에서 제거
 
 # 4. 근본 해결: 드라이버 파라미터 조정
 $ ethtool -C eth0 rx-usecs 100  # 인터럽트 합치기 (coalescing)
-```
+```text
 
 ## 실전 최적화 예제
 
@@ -443,7 +443,7 @@ done
 
 # 4. 애플리케이션을 다른 CPU에
 taskset -c $QUEUES-$(($(nproc)-1)) ./my_application
-```
+```text
 
 ## 정리
 

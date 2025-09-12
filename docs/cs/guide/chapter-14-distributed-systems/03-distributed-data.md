@@ -55,19 +55,19 @@ mysql> INSERT INTO posts (user_id, content) VALUES (1234567, 'Hello');
 ```mermaid
 graph TD
     subgraph "데이터 분산 전략"
-        H[Horizontal Partitioning<br/>수평 분할<br/>Sharding]
-        V[Vertical Partitioning<br/>수직 분할<br/>Column 분리]
+        H[Horizontal Partitioning, 수평 분할, Sharding]
+        V[Vertical Partitioning, 수직 분할, Column 분리]
     end
     
     subgraph "데이터 복제 전략"
-        R1[Master-Slave<br/>Replication]
-        R2[Master-Master<br/>Replication]
-        R3[Multi-Master<br/>with Conflict Resolution]
+        R1[Master-Slave, Replication]
+        R2[Master-Master, Replication]
+        R3[Multi-Master, with Conflict Resolution]
     end
     
     subgraph "결합된 아키텍처"
-        SR[Sharded Replication<br/>각 샤드를 복제]
-        RS[Replicated Sharding<br/>복제본을 샤딩]
+        SR[Sharded Replication, 각 샤드를 복제]
+        RS[Replicated Sharding, 복제본을 샤딩]
     end
     
     H --> SR
@@ -347,7 +347,7 @@ def simulate_consistent_hashing():
     # 테스트 키들의 초기 배치
     test_keys = ['user123', 'user456', 'user789', 'user111', 'user222']
     
-    print("\n--- 초기 배치 ---")
+    print(", --- 초기 배치 ---")
     initial_placement = {}
     for key in test_keys:
         node = ch.get_node(key)
@@ -355,7 +355,7 @@ def simulate_consistent_hashing():
         print(f"{key} → {node}")
     
     # 새 노드 추가
-    print("\n--- server5 추가 후 ---")
+    print(", --- server5 추가 후 ---")
     ch.add_node('server5')
     
     moved_keys = 0
@@ -369,7 +369,7 @@ def simulate_consistent_hashing():
         else:
             print(f"{key}: {old_node} (그대로)")
     
-    print(f"\n이동된 키: {moved_keys}/{len(test_keys)} ({moved_keys/len(test_keys)*100:.1f}%)")
+    print(f", 이동된 키: {moved_keys}/{len(test_keys)} ({moved_keys/len(test_keys)*100:.1f}%)")
     print("👍 일반 해싱이라면 80% 이상 이동했을 것!")
 
 # 실행
@@ -970,7 +970,7 @@ def simulate_vector_clocks():
     node_b = DistributedDataWithVectorClock('B', ['A', 'C']) 
     node_c = DistributedDataWithVectorClock('C', ['A', 'B'])
     
-    print("\n--- 순차적 업데이트 (충돌 없음) ---")
+    print(", --- 순차적 업데이트 (충돌 없음) ---")
     # 1. A가 쓰기
     node_a.write_local('user:123', 'Alice')
     
@@ -985,14 +985,14 @@ def simulate_vector_clocks():
     node_a.receive_update('user:123', 'Alice Smith',
                          node_b.data_store['user:123']['vector_clock'], 'B')
     
-    print("\n--- 동시 업데이트 (충돌 발생) ---")
+    print(", --- 동시 업데이트 (충돌 발생) ---")
     
     # 5. A와 C가 동시에 다른 값으로 업데이트 (네트워크 분할 상황)
     node_a.write_local('user:456', 'Bob')
     node_c.write_local('user:456', 'Robert')
     
     # 6. 네트워크 복구 후 서로의 업데이트를 받음
-    print("\n--- 네트워크 복구: 충돌 감지 및 해결 ---")
+    print(", --- 네트워크 복구: 충돌 감지 및 해결 ---")
     node_a.receive_update('user:456', 'Robert',
                          node_c.data_store['user:456']['vector_clock'], 'C')
     

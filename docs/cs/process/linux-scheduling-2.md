@@ -18,7 +18,7 @@ tags:
 
 ### 이상적인 공정성
 
-```
+```text
 이상적인 CPU (무한 분할 가능):
 4개 태스크가 동시에 각각 25%씩 사용
 
@@ -35,7 +35,7 @@ Task C:         ████    ████
 Task D:             ████    ████
 
 CFS 목표: 현실을 이상에 최대한 가깝게!
-```
+```text
 
 ### CFS의 해법: 가상 런타임
 
@@ -48,7 +48,7 @@ struct sched_entity {
 
 // 가장 적게 실행된 태스크 선택
 next_task = task_with_minimum_vruntime();
-```
+```text
 
 ## vruntime: 가상 실행 시간
 
@@ -61,7 +61,7 @@ vruntime += delta_exec * (NICE_0_LOAD / task_load);
 // Nice 0 태스크: vruntime = 실제 시간
 // Nice -20 태스크: vruntime이 천천히 증가 (더 많이 실행)
 // Nice 19 태스크: vruntime이 빨리 증가 (적게 실행)
-```
+```text
 
 ### 실습: vruntime 관찰
 
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     int nice_val = argc > 1 ? atoi(argv[1]) : 0;
     setpriority(PRIO_PROCESS, 0, nice_val);
     
-    printf("PID: %d, Nice: %d\n", getpid(), nice_val);
+    printf("PID: %d, Nice: %d, ", getpid(), nice_val);
     
     while(1) {
         // CPU 집약 작업
@@ -118,7 +118,7 @@ done
 # nr_switches                          :            345
 
 killall vruntime_test
-```
+```text
 
 ### Nice 값과 가중치
 
@@ -138,7 +138,7 @@ const int sched_prio_to_weight[40] = {
 // Nice 0 = 1024 (기준점)
 // Nice -1 = 1277 (25% 더 많은 CPU)
 // Nice +1 = 820 (20% 적은 CPU)
-```
+```text
 
 ### 실험: Nice 값별 CPU 시간 비율
 
@@ -172,13 +172,13 @@ wait
 # Nice 0: 1000000
 # Nice 5: 400000   (약 40%)
 # Nice 10: 100000  (약 10%)
-```
+```text
 
 ## Red-Black Tree: O(log n) 스케줄링
 
 ### 왜 Red-Black Tree인가?
 
-```
+```text
 요구사항:
 1. 가장 작은 vruntime 찾기: O(1) - leftmost 캐시
 2. 태스크 삽입: O(log n)
@@ -195,7 +195,7 @@ Red-Black Tree 구조:
 vruntime 기준 정렬:
 - 왼쪽: 더 작은 vruntime (더 우선)
 - 오른쪽: 더 큰 vruntime (나중에)
-```
+```text
 
 ### CFS 런큐 구조
 
@@ -212,7 +212,7 @@ struct cfs_rq {
     
     struct rb_node *rb_leftmost;           // 캐시된 leftmost
 };
-```
+```text
 
 ### 실습: RB-tree 시각화
 
@@ -228,7 +228,7 @@ import re
 
 def get_tasks():
     tasks = []
-    for proc in subprocess.check_output(['ps', 'aux']).decode().split('\n')[1:]:
+    for proc in subprocess.check_output(['ps', 'aux']).decode().split(', ')[1:]:
         if proc:
             parts = proc.split()
             pid = parts[1]
@@ -251,7 +251,7 @@ for pid, cmd, vrt in get_tasks()[:20]:
 EOF
 
 python3 show_rbtree.py
-```
+```text
 
 ## 스케줄링 레이턴시와 그래뉼러티
 
@@ -273,7 +273,7 @@ $ cat /proc/sys/kernel/sched_wakeup_granularity_ns
 # 계산:
 # nr_tasks <= 8: 각 태스크 3ms (24ms / 8)
 # nr_tasks > 8: period = nr_tasks * min_granularity
-```
+```text
 
 ### 실험: 태스크 수와 타임슬라이스
 
@@ -311,13 +311,13 @@ test_timeslice 2   # 각 12ms
 test_timeslice 4   # 각 6ms
 test_timeslice 8   # 각 3ms
 test_timeslice 16  # 각 3ms (최소값)
-```
+```text
 
 ## 슬리퍼 페어니스 (Sleeper Fairness)
 
 ### 문제: 깨어난 태스크의 불이익
 
-```
+```text
 시나리오:
 Task A: CPU 집약 (계속 실행) → vruntime 계속 증가
 Task B: I/O 집약 (자주 잠듦) → vruntime 증가 멈춤
@@ -325,7 +325,7 @@ Task B: I/O 집약 (자주 잠듦) → vruntime 증가 멈춤
 Task B 깨어남:
 - vruntime이 너무 작음 → 독점 위험
 - 해결: vruntime 조정
-```
+```text
 
 ### CFS의 슬리퍼 보상
 
@@ -336,7 +336,7 @@ if (GENTLE_FAIR_SLEEPERS) {
     // 약간의 보상은 주되, 독점은 방지
     vruntime = max(vruntime, min_vruntime - sched_latency/2);
 }
-```
+```text
 
 ### 실습: 슬리퍼 페어니스 관찰
 
@@ -363,16 +363,16 @@ int main(int argc, char *argv[]) {
     if (argc < 2) return 1;
     
     if (argv[1][0] == 'c') {
-        printf("CPU burner (PID %d)\n", getpid());
+        printf("CPU burner (PID %d), ", getpid());
         cpu_burner();
     } else {
-        printf("I/O simulator (PID %d)\n", getpid());
+        printf("I/O simulator (PID %d), ", getpid());
         io_simulator();
     }
     
     return 0;
 }
-```
+```text
 
 ```bash
 gcc sleeper_test.c -o sleeper_test
@@ -394,13 +394,13 @@ cat /proc/$IO_PID/sched | grep vruntime
 # 너무 차이나지 않도록 조정됨
 
 kill $CPU_PID $IO_PID
-```
+```text
 
 ## 그룹 스케줄링
 
 ### 왜 그룹 스케줄링이 필요한가?
 
-```
+```text
 문제 상황:
 User A: 1개 프로세스
 User B: 100개 프로세스
@@ -410,7 +410,7 @@ User B: 100개 프로세스
 - 사용자 레벨: 불공정!
 
 해결: 계층적 스케줄링
-```
+```text
 
 ### autogroup: 자동 그룹화
 
@@ -434,7 +434,7 @@ done
 # autogroup 비활성화
 $ sudo sysctl -w kernel.sched_autogroup_enabled=0
 # 이제 11개 프로세스가 각각 ~9% 사용
-```
+```text
 
 ### CPU cgroup으로 수동 그룹화
 
@@ -457,7 +457,7 @@ echo $$ > /sys/fs/cgroup/cpu/mygroup/cgroup.procs
 │       └── cpu.shares (1024)
 └── mygroup/
     └── cpu.shares (2048)  # 2배 가중치
-```
+```text
 
 ## CFS 튜닝
 
@@ -477,7 +477,7 @@ sudo sysctl -w kernel.sched_wakeup_granularity_ns=10000000
 # 3. 마이그레이션 비용
 sudo sysctl -w kernel.sched_migration_cost_ns=5000000  # 5ms
 # 이 시간 내 마이그레이션 금지 (캐시 친화성)
-```
+```text
 
 ### 실전 튜닝 예제
 
@@ -513,7 +513,7 @@ benchmark "High throughput"
 # 기본값 복원
 sudo sysctl -w kernel.sched_latency_ns=24000000
 sudo sysctl -w kernel.sched_min_granularity_ns=3000000
-```
+```text
 
 ## CFS 모니터링과 디버깅
 
@@ -539,7 +539,7 @@ for cpu in 0 1 2 3; do
     echo
 done
 
-echo -e "\n=== 태스크별 vruntime TOP 10 ==="
+echo -e ", === 태스크별 vruntime TOP 10 ==="
 for pid in $(ps -eo pid --no-headers | head -100); do
     if [ -r /proc/$pid/sched ]; then
         vrt=$(grep vruntime /proc/$pid/sched 2>/dev/null | awk '{print $3}')
@@ -550,7 +550,7 @@ done | sort -n | head -10
 EOF
 
 bash analyze_sched.sh
-```
+```text
 
 ### perf를 이용한 스케줄링 추적
 
@@ -566,7 +566,7 @@ sudo perf sched map
 
 # 특정 태스크 추적
 sudo perf sched timehist -p $(pgrep firefox)
-```
+```text
 
 ## 실전 문제 해결
 
@@ -590,7 +590,7 @@ $ ps -p 1234 -o pid,ni,pri,psr,pcpu,comm,cls
 
 # 해결: Nice 값 조정
 $ sudo renice 19 -p 1234
-```
+```text
 
 ### 케이스 2: 그룹 스케줄링 불균형
 
@@ -609,7 +609,7 @@ $ cat /sys/fs/cgroup/cpu/docker/*/cpu.shares
 # 해결: shares 조정
 $ docker update --cpu-shares 1024 web
 $ docker update --cpu-shares 1024 db
-```
+```text
 
 ## 정리
 

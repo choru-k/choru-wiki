@@ -10,11 +10,6 @@ tags:
 
 # Linux 인터럽트 처리의 모든 것 (3): 타이머, 시간 관리, 그리고 CPU Isolation
 
----
-
-tags: [linux, timer, hrtimer, tickless, nohz, cpu-isolation, realtime, low-latency, jiffies, clock-source]
----
-
 ## 들어가며
 
 "왜 1000Hz로 설정했는데 정확히 1ms마다 실행되지 않지?", "CPU가 놀고 있는데도 타이머 인터럽트가 계속 발생해요", "실시간 처리를 위해 CPU를 독점하고 싶어요". 저지연 시스템이나 실시간 애플리케이션을 운영하다 보면 이런 문제들을 만나게 됩니다. 오늘은 Linux의 시간 관리와 CPU isolation에 대해 알아보겠습니다.
@@ -23,7 +18,7 @@ tags: [linux, timer, hrtimer, tickless, nohz, cpu-isolation, realtime, low-laten
 
 ### 시간의 종류
 
-```
+```text
 Linux가 관리하는 시간들:
 
 1. Wall Clock Time (실제 시간)
@@ -95,7 +90,7 @@ while (time_before(jiffies, timeout)) {
 
 ### Timer Wheel: O(1) 타이머 관리
 
-```
+```text
 Timer Wheel 구조:
 ┌─────────────────────────────┐
 │   TV1: 256 buckets (256ms)  │ ← 가장 가까운 미래
@@ -138,7 +133,7 @@ int main() {
         
         long actual = (end.tv_sec - start.tv_sec) * 1000 + 
                      (end.tv_nsec - start.tv_nsec) / 1000000;
-        printf("요청: %dms, 실제: %ldms\n", ms, actual);
+        printf("요청: %dms, 실제: %ldms, ", ms, actual);
     }
 }
 EOF
@@ -158,7 +153,7 @@ gcc test_jiffy.c -o test_jiffy
 
 ### hrtimer의 필요성
 
-```
+```text
 Jiffy 기반 타이머의 한계:
 - HZ=1000이어도 최소 1ms 단위
 - 멀티미디어, 실시간 처리에 부족
@@ -183,7 +178,7 @@ enum hrtimer_restart timer_callback(struct hrtimer *timer)
 {
     // 정확한 시간에 실행됨
     ktime_t now = ktime_get();
-    printk("Timer fired at %lld ns\n", ktime_to_ns(now));
+    printk("Timer fired at %lld ns, ", ktime_to_ns(now));
     
     // 다음 타이머 설정
     hrtimer_forward_now(timer, period);
@@ -230,7 +225,7 @@ $ cyclictest -p 90 -t 4 -n -I 1000 -l 10000
 
 ### 전통적 방식 vs Tickless
 
-```
+```text
 전통적 방식 (HZ=1000):
 │││││││││││││││││││││││││││││││││
 └─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴

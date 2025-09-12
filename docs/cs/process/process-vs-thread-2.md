@@ -10,11 +10,6 @@ tags:
 
 # Process vs Thread 심화 (2): 메모리 공유와 격리의 실제 구현
 
----
-
-tags: [linux, memory-management, virtual-memory, page-table, cow, mmap, tls, shared-memory, operating-system]
----
-
 ## 들어가며
 
 "스레드는 메모리를 공유하고 프로세스는 격리된다" - 이 간단한 문장 뒤에는 복잡한 메커니즘이 숨어있습니다. 어떻게 같은 물리 메모리를 여러 task가 다르게 보는 걸까요? 왜 스레드는 포인터를 그대로 공유할 수 있을까요? 이번 편에서는 Linux의 메모리 관리 구조를 파헤쳐봅니다.
@@ -130,7 +125,7 @@ void print_memory_layout(pid_t pid) {
                &start, &end, perms, &offset,
                &major, &minor, &inode, pathname);
         
-        printf("VMA: 0x%lx-0x%lx %s %s\n",
+        printf("VMA: 0x%lx-0x%lx %s %s, ",
                start, end, perms, pathname);
     }
 }
@@ -143,7 +138,7 @@ void print_memory_layout(pid_t pid) {
 
 ## 페이지 테이블: 가상→물리 변환
 
-```
+```text
 4-Level Page Table (x86_64):
 ┌──────────────────────────────────────────┐
 │   Virtual Address (48 bits used)         │
@@ -191,12 +186,12 @@ void demonstrate_page_tables() {
     pid_t pid = fork();
     if (pid == 0) {
         // 자식 프로세스: 다른 페이지 테이블
-        printf("Child: value=%d at %p\n",
+        printf("Child: value=%d at %p, ",
                *(int*)shared_memory, shared_memory);
         
         // 페이지 테이블 엔트리 확인
         unsigned long pte = get_pte(shared_memory);
-        printf("Child PTE: 0x%lx\n", pte);
+        printf("Child PTE: 0x%lx, ", pte);
         
         *(int*)shared_memory = 100;
         exit(0);
@@ -206,11 +201,11 @@ void demonstrate_page_tables() {
     pthread_t thread;
     pthread_create(&thread, NULL, [](void* arg) -> void* {
         // 같은 페이지 테이블 사용!
-        printf("Thread: value=%d at %p\n",
+        printf("Thread: value=%d at %p, ",
                *(int*)shared_memory, shared_memory);
         
         unsigned long pte = get_pte(shared_memory);
-        printf("Thread PTE: 0x%lx\n", pte);  // 부모와 동일!
+        printf("Thread PTE: 0x%lx, ", pte);  // 부모와 동일!
         
         *(int*)shared_memory = 200;
         return NULL;
@@ -231,13 +226,13 @@ void* thread_func(void* arg) {
     int thread_num = *(int*)arg;
     tls_var = thread_num;
     
-    printf("Thread %d: TLS at %p = %d\n",
+    printf("Thread %d: TLS at %p = %d, ",
            thread_num, &tls_var, tls_var);
     
     sleep(1);
     
     // 다른 스레드가 바꿔도 내 값은 유지
-    printf("Thread %d: TLS still %d\n",
+    printf("Thread %d: TLS still %d, ",
            thread_num, tls_var);
     
     return NULL;
@@ -256,7 +251,7 @@ struct pthread {
 
 ### TLS 메모리 레이아웃
 
-```
+```text
 Process Virtual Memory:
 ┌─────────────────────────────┐
 │        Shared Code          │
@@ -367,7 +362,7 @@ int setup_sysv_shm() {
     }
     
     wait(NULL);
-    printf("Parent sees: %d\n", *(int*)addr1);  // 42
+    printf("Parent sees: %d, ", *(int*)addr1);  // 42
     
     // 정리
     shmdt(addr1);
@@ -422,7 +417,7 @@ void demonstrate_file_mapping() {
     }
     
     wait(NULL);
-    printf("Parent sees: %s\n", (char*)map1);
+    printf("Parent sees: %s, ", (char*)map1);
     
     munmap(map1, 4096);
     close(fd);
@@ -482,7 +477,7 @@ void numa_aware_allocation() {
     memset(remote_mem, 0, 1024*1024);
     clock_t remote_time = clock() - start;
     
-    printf("Local: %ld, Remote: %ld\n", 
+    printf("Local: %ld, Remote: %ld, ", 
            local_time, remote_time);
     // Remote가 약 20-30% 느림
 }
@@ -538,13 +533,13 @@ void setup_memory_protection() {
 }
 
 void segv_handler(int sig, siginfo_t* info, void* context) {
-    printf("Segfault at %p\n", info->si_addr);
+    printf("Segfault at %p, ", info->si_addr);
     
     // 접근 타입
     if (info->si_code == SEGV_MAPERR) {
-        printf("Address not mapped\n");
+        printf("Address not mapped, ");
     } else if (info->si_code == SEGV_ACCERR) {
-        printf("Permission denied\n");
+        printf("Permission denied, ");
     }
     
     // 페이지 권한 변경으로 복구 가능
