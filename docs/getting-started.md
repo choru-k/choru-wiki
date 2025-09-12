@@ -34,7 +34,7 @@ The development server will automatically reload when you make changes to your d
 
 ### File Structure
 
-```
+```text
 docs/
 ├── index.md          # Homepage
 ├── getting-started.md # This file
