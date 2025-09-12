@@ -40,28 +40,28 @@ graph TB
         APP[Application]
         FD[File Descriptor<br/>0,1,2,3...]
     end
-    
+
     subgraph "Kernel Layer"
         VFS[VFS<br/>Virtual File System]
         FC[File Cache<br/>Page Cache]
         FS[File Systems<br/>ext4, xfs, btrfs]
         BIO[Block I/O Layer]
     end
-    
+
     subgraph "Hardware Layer"
         DISK[Disk Driver]
         SSD[SSD/HDD]
         NET[Network Device]
         DEV[Character Device]
     end
-    
+
     subgraph "I/O Models"
         SYNC[Synchronous I/O]
         ASYNC[Asynchronous I/O]
         EPOLL[epoll/kqueue]
         URING[io_uring]
     end
-    
+
     APP --> FD
     FD --> VFS
     VFS --> FC
@@ -69,15 +69,15 @@ graph TB
     FS --> BIO
     BIO --> DISK
     DISK --> SSD
-    
+
     VFS -.-> NET
     VFS -.-> DEV
-    
+
     APP --> SYNC
     APP --> ASYNC
     ASYNC --> EPOLL
     ASYNC --> URING
-    
+
     style FD fill:#FFE082
     style VFS fill:#81C784
     style BIO fill:#64B5F6
@@ -150,15 +150,6 @@ graph TB
 - 🔄 **SMB/CIFS**: Windows 호환 파일시스템 최적화
 - 🐳 **컨테이너 환경**: Docker/Kubernetes에서의 NFS 활용
 
-### [6-8: 고급 스토리지 트러블슈팅](08-advanced-storage-troubleshooting.md)
-
-**"RAID 배열이 깨졌어요"**
-
-- 💾 **RAID 복구**: 하드웨어/소프트웨어 RAID 문제 해결
-- 🔧 **LVM 관리**: 논리 볼륨 확장과 문제 해결
-- 📚 **ZFS 고급**: 스냅샷, 압축, 중복제거 활용
-- 🆘 **응급 복구**: 데이터 손실 최소화 전략
-
 ## 실습 환경 준비
 
 이 장의 예제들을 직접 실행해보려면 다음 도구들이 필요합니다:
@@ -187,11 +178,11 @@ $ cat /proc/meminfo | grep -i cache
 
 ## 이 장을 읽고 나면
 
-✅ **FD 마스터**: 파일 디스크립터의 내부 동작 완벽 이해  
-✅ **VFS 이해**: 다양한 파일시스템의 통합 원리 파악  
-✅ **I/O 최적화**: 디스크 I/O 병목 현상 해결 능력  
-✅ **비동기 프로그래밍**: 고성능 네트워크 서버 구현  
-✅ **시스템 튜닝**: 워크로드에 맞는 I/O 설정 최적화  
+✅ **FD 마스터**: 파일 디스크립터의 내부 동작 완벽 이해
+✅ **VFS 이해**: 다양한 파일시스템의 통합 원리 파악
+✅ **I/O 최적화**: 디스크 I/O 병목 현상 해결 능력
+✅ **비동기 프로그래밍**: 고성능 네트워크 서버 구현
+✅ **시스템 튜닝**: 워크로드에 맞는 I/O 설정 최적화
 
 ## 핵심 개념 미리보기
 
@@ -258,19 +249,19 @@ mindmap
 ```mermaid
 graph TD
     Start[I/O 문제 발생] --> Type{문제 유형?}
-    
+
     Type -->|FD 고갈| FDLimit[FD 제한 확인]
     FDLimit --> Ulimit[ulimit 증가]
     Ulimit --> FDLeak[FD 누수 확인]
-    
+
     Type -->|느린 I/O| SlowIO[I/O 패턴 분석]
     SlowIO --> Random[랜덤 vs 순차]
     Random --> Scheduler[I/O 스케줄러 변경]
-    
+
     Type -->|높은 지연| Latency[블로킹 원인 분석]
     Latency --> Sync[동기 I/O 확인]
     Sync --> Async[비동기 I/O 전환]
-    
+
     Type -->|캐시 미스| Cache[Page Cache 분석]
     Cache --> Memory[메모리 크기 확인]
     Memory --> Tuning[vm 파라미터 튜닝]
