@@ -35,7 +35,7 @@ avg-cpu:  %user   %nice %system %iowait  %steal   %idle
 Device     r/s     w/s   rkB/s   wkB/s   await  %util
 sda      245.0    12.0  3920.0   192.0   45.23  100.0
 # CPU는 89.3% iowait! 디스크가 100% 사용 중!
-```
+```text
 
 "아... CPU가 아무리 빨라도 디스크가 따라오지 못하면 소용없군요."
 
@@ -58,7 +58,7 @@ $ dd if=/dev/zero of=test bs=1G count=1
 $ dd if=/dev/zero of=test bs=1G count=1
 1073741824 bytes (1.1 GB) copied, 0.3 s, 3.5 GB/s
 # 눈 깜빡할 새에!
-```
+```text
 
 ### 💡 실전 경험: 잘못된 스케줄러로 인한 재앙
 
@@ -75,7 +75,7 @@ $ cat /sys/block/sda/queue/scheduler
 # 해결
 $ echo noop > /sys/block/sda/queue/scheduler
 # 성능 30% 향상! 🚀
-```
+```text
 
 블록 I/O 계층은 이러한 다양한 스토리지 디바이스를 추상화하고, I/O 요청을 효율적으로 스케줄링하여 성능을 최대화합니다.
 
@@ -94,42 +94,42 @@ $ echo noop > /sys/block/sda/queue/scheduler
 
 ```mermaid
 graph TB
-    subgraph "Application Layer"
-        APP["Application]
-        SYSCALL[System Call"]
+    subgraph APP_LAYER["Application Layer"]
+        APP[Application]
+        SYSCALL[System Call]
     end
     
-    subgraph "File System Layer"
-        VFS["VFS]
-        FS[File System"]
+    subgraph FS_LAYER["File System Layer"]
+        VFS[VFS]
+        FS[File System]
         PC[Page Cache]
     end
     
-    subgraph "Block Layer"
-        BIO["BIO Layer]
-        REQ[Request Queue"]
+    subgraph BLOCK_LAYER["Block Layer"]
+        BIO[BIO Layer]
+        REQ[Request Queue]
         
-        subgraph "I/O Schedulers"
-            NOOP["noop]
-            CFQ[cfq"]
-            DEADLINE["deadline]
-            BFQ[bfq"]
-            MQ["mq-deadline]
+        subgraph IO_SCHEDULERS["I/O Schedulers"]
+            NOOP[noop]
+            CFQ[cfq]
+            DEADLINE[deadline]
+            BFQ[bfq]
+            MQ[mq-deadline]
         end
         
-        PLUG[Plugging"]
+        PLUG[Plugging]
         MERGE[Request Merging]
     end
     
-    subgraph "Device Driver"
-        SCSI["SCSI Layer]
-        NVME[NVMe Driver"]
+    subgraph DEVICE_DRIVER["Device Driver"]
+        SCSI[SCSI Layer]
+        NVME[NVMe Driver]
         AHCI[AHCI Driver]
     end
     
-    subgraph "Hardware"
-        HDD["HDD]
-        SSD[SATA SSD"]
+    subgraph HARDWARE["Hardware"]
+        HDD[HDD]
+        SSD[SATA SSD]
         NVMESSD[NVMe SSD]
     end
     
@@ -152,7 +152,7 @@ graph TB
     SCSI --> HDD
     AHCI --> SSD
     NVME --> NVMESSD
-```
+```text
 
 ### 🧩 BIO (Block I/O) 구조체: I/O의 레고 블록
 
@@ -169,7 +169,7 @@ for (int i = 0; i < 256; i++) {
     bio_add_page(bio, pages[i], PAGE_SIZE, 0);
 }
 submit_bio(bio);
-```
+```text
 
 ```c
 // BIO: Block I/O의 기본 단위
@@ -212,42 +212,56 @@ struct bvec_iter {
     unsigned int    bi_bvec_done;  // 현재 벡터에서 완료된 바이트
 };
 
-// BIO 할당과 초기화
+// BIO 할당 및 초기화 - 고성능 블록 I/O의 핵심 메모리 관리
+// 실제 사용: 모든 파일시스템 I/O (ext4, xfs, btrfs), 데이터베이스 I/O (MySQL, PostgreSQL)
 struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
                              struct bio_set *bs) {
     struct bio *bio;
     void *p;
     
-    // 메모리 풀에서 BIO 할당
+    // ⭐ 1단계: 메모리 풀에서 BIO 구조체 할당
+    // mempool_alloc: 고성능을 위한 전용 메모리 풀 사용 (slab allocator + emergency reserves)
+    // 장점: kmalloc보다 10-20% 빠름, OOM 상황에서도 안정적 할당 보장
     p = mempool_alloc(&bs->bio_pool, gfp_mask);
     if (unlikely(!p))
         return NULL;
-        
+    
+    // ⭐ 2단계: front_pad 오프셋을 적용하여 실제 BIO 위치 계산
+    // front_pad: 드라이버별 추가 데이터를 위한 공간 (예: RAID 메타데이터, NVMe completion 정보)
+    // 실무 예시: dm-raid는 stripe 정보를 위해 64바이트, NVMe는 completion context로 32바이트 사용
     bio = p + bs->front_pad;
     bio_init(bio, NULL, 0);
     
+    // ⭐ 3단계: I/O 벡터 할당 전략 - 크기별 최적화
     if (nr_iovecs > BIO_INLINE_VECS) {
-        // 큰 I/O는 별도 벡터 할당
+        // 📊 대용량 I/O 처리 (일반적으로 16개 초과 세그먼트)
+        // 사용 사례: 데이터베이스의 대량 배치 작업, 백업/복원, 비디오 스트리밍
         struct bio_vec *bvl = bvec_alloc(&bs->bvec_pool, nr_iovecs, gfp_mask);
         if (unlikely(!bvl))
             goto err_free;
             
         bio->bi_max_vecs = nr_iovecs;
-        bio->bi_io_vec = bvl;
+        bio->bi_io_vec = bvl;  // 동적 할당된 벡터 배열 사용
     } else if (nr_iovecs) {
-        // 작은 I/O는 인라인 벡터 사용
+        // 🚀 소용량 I/O 최적화 (16개 이하 세그먼트)
+        // 사용 사례: 일반적인 파일 읽기/쓰기, 메타데이터 업데이트
+        // 성능 이점: 추가 메모리 할당 없이 BIO 구조체 내부 배열 직접 사용 → 캐시 친화적
         bio->bi_max_vecs = BIO_INLINE_VECS;
-        bio->bi_io_vec = bio->bi_inline_vecs;
+        bio->bi_io_vec = bio->bi_inline_vecs;  // 인라인 벡터 배열 사용
     }
     
+    // ⭐ 4단계: 메모리 풀 역참조 설정 (해제 시 필요)
+    // bio_put() 호출 시 올바른 풀로 반환하기 위한 정보 저장
     bio->bi_pool = bs;
     return bio;
     
 err_free:
+    // ⭐ 오류 처리: 메모리 풀에 BIO 구조체 반환
+    // mempool_free: 풀의 여유 슬롯에 반환하여 재사용 가능하게 함
     mempool_free(p, &bs->bio_pool);
     return NULL;
 }
-```
+```text
 
 ### 📦 Request 구조체: BIO들의 컨테이너
 
@@ -271,7 +285,7 @@ $ dd if=/dev/sda of=/dev/null bs=4k count=1000
 $ echo 0 > /sys/block/sda/queue/nomerges
 $ dd if=/dev/sda of=/dev/null bs=4k count=1000
 1000+0 records -> 125 IOPS (8개씩 병합!)
-```
+```text
 
 ### Request 구조체와 큐 관리
 
@@ -390,7 +404,7 @@ struct queue_limits {
     unsigned char       raid_partial_stripes_expensive;
     enum blk_zoned_model zoned;
 };
-```
+```text
 
 ## I/O 스케줄러 알고리즘
 
@@ -408,7 +422,7 @@ avg-cpu:  %iowait
 avg-cpu:  %iowait  
            12.3
 # 응답 시간 70% 감소!
-```
+```text
 
 각 스케줄러의 특징:
 
@@ -452,7 +466,7 @@ static struct elevator_type elevator_noop = {
     .elevator_name = "noop",
     .elevator_owner = THIS_MODULE,
 };
-```
+```text
 
 ### ⏰ Deadline 스케줄러: 마감 시간의 마법
 
@@ -468,7 +482,7 @@ write_expire = 5000ms # 쓰기는 5초 내에
 # 원리:
 # 1. 디스크 헤드 위치에 따라 정렬 (seek 최소화)
 # 2. 하지만 마감 시간이 지나면 무조건 처리!
-```
+```text
 
 제가 테스트한 결과:
 
@@ -481,7 +495,7 @@ for _ in range(1000):
 
 # NOOP: 평균 45ms/request (디스크 헤드가 미친듯이 움직임)
 # Deadline: 평균 12ms/request (정렬해서 처리!)
-```
+```text
 
 ### Deadline 스케줄러
 
@@ -580,7 +594,7 @@ static struct request *deadline_check_expired(struct deadline_data *dd,
         
     return NULL;
 }
-```
+```text
 
 ### ⚖️ BFQ (Budget Fair Queueing): 공정한 분배
 
@@ -596,7 +610,7 @@ BFQ는 "네트워크 QoS"를 디스크에 적용한 것입니다.
 
 # CFQ: Steam이 모든 I/O 독차지
 # BFQ: 모두에게 공정하게 분배
-```
+```text
 
 제가 데스크탑에서 테스트한 결과:
 
@@ -605,7 +619,7 @@ BFQ는 "네트워크 QoS"를 디스크에 적용한 것입니다.
 # CFQ: 브라우저 클릭 후 3초 대기
 # BFQ: 브라우저 클릭 후 0.1초 대기
 # 체감 차이가 엄청납니다!
-```
+```text
 
 ### BFQ (Budget Fair Queueing) 스케줄러
 
@@ -706,7 +720,7 @@ static void bfq_calc_finish(struct bfq_entity *entity, unsigned long service) {
     entity->finish = entity->start +
                     div64_ul(service * entity->weight, entity->orig_weight);
 }
-```
+```text
 
 ## 멀티큐 블록 계층
 
@@ -723,7 +737,7 @@ CPU1 -----> [Single Queue] --> NVMe SSD
         /                      (1M IOPS 가능)
 CPU95 -/
 # 실제 IOPS: 200K (락 경합으로 인한 성능 저하)
-```
+```text
 
 blk-mq의 해결책:
 
@@ -733,7 +747,7 @@ CPU0 --> [Queue 0] --\
 CPU1 --> [Queue 1] ----> NVMe SSD
 CPU2 --> [Queue 2] --/   (65536개 큐 지원!)
 # 실제 IOPS: 3.5M (병렬 처리!)
-```
+```text
 
 ### blk-mq 아키텍처
 
@@ -858,7 +872,7 @@ out_unlock:
     spin_unlock(&nvmeq->sq_lock);
     return ret;
 }
-```
+```text
 
 ### 🤝 요청 병합과 플러깅: I/O 최적화의 비밀
 
@@ -880,7 +894,7 @@ write(fd, buf2, 4096);  // 플러그에 저장
 write(fd, buf3, 4096);  // 플러그에 저장
 blk_finish_plug(&plug); // 한 번에 전송!
 // 1번의 디스크 접근 (12KB)
-```
+```text
 
 실제 효과:
 
@@ -889,7 +903,7 @@ blk_finish_plug(&plug); // 한 번에 전송!
 # 플러깅 비활성화: 1000 TPS
 # 플러깅 활성화: 3500 TPS
 # 3.5배 향상!
-```
+```text
 
 ### 요청 병합과 플러깅
 
@@ -976,7 +990,7 @@ static void blk_mq_plug_issue_direct(struct blk_plug *plug, bool from_schedule) 
     if (hctx)
         blk_mq_commit_rqs(hctx, &queued, from_schedule);
 }
-```
+```text
 
 ## NVMe 최적화
 
@@ -998,7 +1012,7 @@ NVMe는 SSD를 위해 처음부터 새롭게 설계된 프로토콜입니다.
 - 큐당 65,536개 명령
 - 폴링 가능 (인터럽트 없이)
 - 최대 7GB/s (PCIe 4.0)
-```
+```text
 
 ### 🎯 도어벨(Doorbell)의 비밀
 
@@ -1014,7 +1028,7 @@ wait_for_interrupt();
 submit_command();
 ring_doorbell();  // SSD에게 "새 명령 있어!"
 // CPU는 다른 일 계속 가능!
-```
+```text
 
 ### NVMe 드라이버 구현
 
@@ -1145,7 +1159,7 @@ static inline int nvme_process_cq(struct nvme_queue *nvmeq, u16 *start,
         
     return found;
 }
-```
+```text
 
 ### 🔄 io_uring: 비동기 I/O의 혁명
 
@@ -1168,7 +1182,7 @@ for (int i = 0; i < 1000; i++) {
 }
 io_uring_submit(&ring);  // 커널 진입 1번!
 // 성능: 3.5M IOPS
-```
+```text
 
 제가 실제로 경험한 성능 차이:
 
@@ -1182,7 +1196,7 @@ io_uring_submit(&ring);  // 커널 진입 1번!
 # epoll: 85% (sys 60%)
 # io_uring: 45% (sys 15%)
 # 커널 오버헤드 대폭 감소!
-```
+```text
 
 ### io_uring을 사용한 비동기 I/O
 
@@ -1318,7 +1332,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr) {
     
     return submitted;
 }
-```
+```text
 
 ## 성능 모니터링과 튜닝
 
@@ -1343,7 +1357,7 @@ $ blktrace -d /dev/nvme0n1
   8,0   1   1     0.000000000  1234  Q   R 1234567+8 [mysqld]
   8,0   1   2     0.000001234  1234  C   R 1234567+8 [0]
 # Q: 큐에 등록, C: 완료
-```
+```text
 
 ### I/O 통계 수집
 
@@ -1401,7 +1415,7 @@ static int diskstats_show(struct seq_file *seqf, void *v) {
               "%lu %lu %lu %lu "
               "%lu %lu %lu %lu "
               "%u %u %u "
-              "%lu %lu %lu %lu %lu\n",
+              "%lu %lu %lu %lu %lu, ",
               MAJOR(gp->part0.bd_dev), MINOR(gp->part0.bd_dev),
               disk_name(gp, 0, buf),
               stat.ios[STAT_READ],
@@ -1428,7 +1442,7 @@ static int diskstats_show(struct seq_file *seqf, void *v) {
               
     return 0;
 }
-```
+```text
 
 ### 🎯 I/O 스케줄러 튜닝: 워크로드별 최적화
 
@@ -1463,7 +1477,7 @@ echo 256 > /sys/block/sda/queue/read_ahead_kb
 # NVMe 특정 튜닝
 echo 0 > /sys/block/nvme0n1/queue/io_poll       # Polling 활성화
 echo 0 > /sys/block/nvme0n1/queue/io_poll_delay # Polling 지연
-```
+```text
 
 ## 요약
 
@@ -1507,7 +1521,7 @@ echo none > /sys/block/nvme0n1/queue/scheduler
 echo mq-deadline > /sys/block/sda/queue/scheduler
 # 데스크탑 HDD
 echo bfq > /sys/block/sda/queue/scheduler
-```
+```text
 
 블록 I/O 계층은 보이지 않는 곳에서 엄청난 최적화를 수행합니다. 적절한 스케줄러와 튜닝만으로도 시스템 성능을 2-3배 향상시킬 수 있습니다! 🚀
 

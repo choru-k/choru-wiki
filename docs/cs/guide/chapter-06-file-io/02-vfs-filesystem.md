@@ -38,7 +38,7 @@ sysfs on /sys type sysfs (rw,nosuid,nodev)       # 시스템 정보
 tmpfs on /tmp type tmpfs (rw,nosuid,nodev)       # 메모리 파일시스템
 nfs:/shared on /mnt/nfs type nfs4 (rw,relatime)  # 네트워크 파일시스템
 fuse.sshfs on /mnt/ssh type fuse (rw,nosuid)     # FUSE 파일시스템
-```
+```text
 
 "78개!" 후배의 눈이 휘둥그래졌습니다. "그런데 어떻게 `cat`이나 `ls` 같은 명령어가 이 모든 파일시스템에서 동작하나요?"
 
@@ -68,7 +68,7 @@ tmpfs on /cache type tmpfs
 
 # FUSE: 클라우드 스토리지
 s3fs on /s3 type fuse.s3fs
-```
+```text
 
 애플리케이션은 이 복잡한 구조를 전혀 몰랐습니다. 그냥 `open()`, `read()`, `write()`만 호출했을 뿐이죠. 이게 바로 VFS의 마법입니다! 🪄
 
@@ -135,7 +135,7 @@ graph TB
     BTRFS --> BIO
     BIO --> SCHED
     SCHED --> DEVICE
-```
+```text
 
 ### 🎯 VFS 핵심 객체들: 4대 천왕
 
@@ -300,7 +300,7 @@ struct inode_operations {
     int (*tmpfile) (struct inode *, struct dentry *, umode_t);
     int (*set_acl)(struct inode *, struct posix_acl *, int);
 };
-```
+```text
 
 ## 경로명 조회 메커니즘
 
@@ -320,7 +320,7 @@ openat(AT_FDCWD, "/home/user/test.txt", O_RDONLY) = 3
 # 3. "user" 컴포넌트 찾기
 # 4. "test.txt" 파일 찾기
 # 5. 각 단계마다 권한 확인!
-```
+```text
 
 ### 🚀 덴트리 캐시의 위력
 
@@ -336,7 +336,7 @@ for (int i = 0; i < 1000; i++) {
 // 결과:
 // 첫 번째 open(): 45 microseconds (디스크 접근)
 // 두 번째부터: 2 microseconds (캐시 히트!)
-```
+```text
 
 22.5배 빨라졌습니다! 이게 바로 dcache의 힘입니다.
 
@@ -368,43 +368,65 @@ struct nameidata {
     int             dfd;
 };
 
-// 경로명 조회 구현
+// 경로명 해석 핵심 알고리즘 - 모든 파일 접근의 시작점
+// 실제 사용: open(), stat(), access() 등 모든 파일 시스템 호출에서 실행 (1초당 수만 번)
+// 성능: 경로 해석은 전체 I/O 성능의 20-30%를 차지하는 중요한 부분
 static int link_path_walk(const char *name, struct nameidata *nd) {
     int err;
     
+    // ⭐ 1단계: 입력 경로 유효성 검증
+    // IS_ERR: 커널 포인터 에러 체크 (예: -ENOMEM, -EFAULT)
     if (IS_ERR(name))
         return PTR_ERR(name);
     
+    // ⭐ 2단계: 경로 시작 부분의 슬래시 제거
+    // 예시: "///usr///bin//ls" → "usr///bin//ls"
+    // 성능 최적화: 불필요한 루프 반복 방지
     while (*name=='/')
         name++;
     if (!*name)
-        return 0;
+        return 0;  // 루트 경로만 있는 경우 ("/" or "///" 등)
         
+    // ⭐ 3단계: 경로 컴포넌트별 순차 처리 루프
+    // 실무 예시: "/usr/bin/gcc" → "usr" → "bin" → "gcc" 순서로 처리
     for(;;) {
-        u64 hash_len;
-        int type;
+        u64 hash_len;  // 해시값과 길이를 64비트로 패킹 (성능 최적화)
+        int type;      // 컴포넌트 타입 (일반/현재디렉토리/상위디렉토리)
         
+        // ⭐ 4단계: 디렉토리 탐색 권한 확인
+        // may_lookup: 현재 디렉토리에 대한 실행 권한 검사 (x 비트)
+        // 실무 중요성: 권한 없는 디렉토리 조기 차단으로 보안 강화
         err = may_lookup(nd);
         if (err)
             return err;
             
+        // ⭐ 5단계: 컴포넌트 이름 해시 계산
+        // hash_name: dcache 조회를 위한 해시값 생성 (빠른 캐시 탐색)
+        // 성능: O(1) 해시 테이블 조회로 디스크 접근 최소화
         hash_len = hash_name(nd->path.dentry, name);
         
+        // ⭐ 6단계: 특수 디렉토리 처리 ("." and "..")
         type = LAST_NORM;
         if (name[0] == '.') switch (hashlen_len(hash_len)) {
             case 2:
                 if (name[1] == '.') {
+                    // ".." 상위 디렉토리: 마운트 경계 검사 필요
                     type = LAST_DOTDOT;
-                    nd->flags |= LOOKUP_JUMPED;
+                    nd->flags |= LOOKUP_JUMPED;  // 경계 넘나듦 플래그
                 }
                 break;
             case 1:
+                // "." 현재 디렉토리: 실제 탐색 없이 현재 위치 유지
                 type = LAST_DOT;
         }
         
+        // ⭐ 7단계: 일반 파일명에 대한 파일시스템별 해시 처리
         if (likely(type == LAST_NORM)) {
             struct dentry *parent = nd->path.dentry;
             nd->flags &= ~LOOKUP_JUMPED;
+            
+            // 파일시스템별 커스텀 해시 함수 (예: case-insensitive FS)
+            // 실무 예시: FAT32는 대소문자 구분 안함, NTFS는 Unicode 정규화
             if (unlikely(parent->d_flags & DCACHE_OP_HASH)) {
                 struct qstr this = { 
                     .hash_len = hash_len, 
@@ -418,36 +440,48 @@ static int link_path_walk(const char *name, struct nameidata *nd) {
             }
         }
         
+        // ⭐ 8단계: 현재 컴포넌트 정보 nameidata에 저장
+        // 다음 단계 (walk_component)에서 사용할 정보 준비
         nd->last.hash_len = hash_len;
         nd->last.name = name;
         nd->last_type = type;
         
+        // ⭐ 9단계: 다음 컴포넌트 위치로 이동
         name += hashlen_len(hash_len);
         if (!*name)
-            goto OK;
+            goto OK;  // 경로 끝 도달: 마지막 컴포넌트 처리 완료
             
-        // 중간 컴포넌트는 디렉토리여야 함
+        // ⭐ 10단계: 중간 경로 유효성 검증
+        // 중간 컴포넌트는 반드시 디렉토리여야 함 (예: /usr/bin/gcc에서 usr, bin)
         if (*name != '/') {
-            return -ENOTDIR;
+            return -ENOTDIR;  // "file.txt/invalid" 같은 잘못된 경로
         }
         
-        // 다음 컴포넌트로
+        // ⭐ 11단계: 연속된 슬래시 처리
+        // 예시: "usr///bin" → 다음 "bin" 위치로 이동
+        // POSIX 호환성: 여러 슬래시를 하나로 처리
         do {
             name++;
         } while (unlikely(*name == '/'));
         
         if (unlikely(!*name)) {
 OK:
-            // 경로 끝에 도달
+            // 경로 끝에 도달: 성공적으로 모든 컴포넌트 파싱 완료
             return 0;
         }
         
+        // ⭐ 12단계: 실제 디렉토리 탐색 실행
+        // walk_component: dcache 조회 → 캐시 미스 시 디스크 I/O
+        // WALK_FOLLOW: 심볼릭 링크 따라가기, WALK_MORE: 더 많은 컴포넌트 존재
         err = walk_component(nd, WALK_FOLLOW | WALK_MORE);
         if (err < 0)
             return err;
             
+        // ⭐ 13단계: 심볼릭 링크 처리
         if (err) {
-            // 심볼릭 링크 처리
+            // 심볼릭 링크 발견: 링크 대상으로 경로 재해석 필요
+            // 실무 예시: /usr/bin → /bin 심볼릭 링크 처리
+            // 보안: 무한 루프 방지를 위한 깊이 제한 (40단계)
             return nested_symlink(nd);
         }
     }
@@ -494,7 +528,7 @@ static struct dentry *__d_lookup_rcu(const struct dentry *parent,
     
     return NULL;
 }
-```
+```text
 
 ## 마운트 메커니즘
 
@@ -516,7 +550,7 @@ $ tree -L 1 /
 
 # 하나의 디렉토리 트리처럼 보이지만
 # 실제로는 5개의 다른 파일시스템!
-```
+```text
 
 ### 🎪 마운트 네임스페이스: 컨테이너의 비밀
 
@@ -534,7 +568,7 @@ user@host:~$ mount | head -3
 /dev/sda1 on / type ext4        # 호스트 루트
 proc on /proc type proc          # 호스트 proc
 tmpfs on /tmp type tmpfs         # 호스트 tmp
-```
+```text
 
 각자 자신만의 "마운트 우주"에 살고 있습니다!
 
@@ -666,7 +700,7 @@ static int do_new_mount(struct path *path, const char *fstype,
     put_filesystem(type);
     return err;
 }
-```
+```text
 
 ## VFS 캐시 시스템
 
@@ -693,7 +727,7 @@ time find /usr -name "*.so" > /dev/null
 real    0m0.156s   # 0.15초!
 
 # 52배 빨라짐! 🚀
-```
+```text
 
 ### 덴트리 캐시 (dcache)
 
@@ -786,7 +820,7 @@ static void shrink_dcache_sb(struct super_block *sb, int nr_to_scan) {
     // 덴트리 해제
     shrink_dentry_list(&dispose);
 }
-```
+```text
 
 ### 📄 페이지 캐시: 메모리의 마법
 
@@ -809,7 +843,7 @@ start = time.time()
 with open('/var/log/huge.log', 'r') as f:
     data = f.read()  # 같은 파일
 print(f"Second read: {time.time() - start:.2f}s")  # 0.02s
-```
+```text
 
 왜 빨라졌을까요? 페이지 캐시가 메모리에 데이터를 남겨두었기 때문입니다!
 
@@ -877,7 +911,7 @@ static void do_sync_mmap_readahead(struct vm_area_struct *vma,
         force_page_cache_readahead(mapping, file, start, end - start);
     }
 }
-```
+```text
 
 ## 파일 시스템별 구현
 
@@ -897,7 +931,7 @@ ext4는 리눅스의 "토요타 캐리"입니다. 화려하지 않지만 믿을 
 $ filefrag large_file.dat
 large_file.dat: 2 extents found
 # 전통적인 블록 맵핑이었다면 수천 개!
-```
+```text
 
 #### Extent Tree의 비밀
 
@@ -1009,7 +1043,7 @@ out:
     
     return err;
 }
-```
+```text
 
 ### 🌲 Btrfs: 미래의 파일시스템
 
@@ -1031,7 +1065,7 @@ btrfs subvolume snapshot /snapshots/home-20240115 /home
 $ df -h /home
 /dev/sda2  1TB  500GB  500GB  50%  /home
 # 30개의 스냅샷이 있지만 공간은 변경된 부분만 차지!
-```
+```text
 
 #### B-Tree 구조의 우아함
 
@@ -1194,7 +1228,7 @@ free_pending:
     
     return ret;
 }
-```
+```text
 
 ## 특수 파일 시스템
 
@@ -1219,7 +1253,7 @@ MemAvailable:   20000000 kB
 $ ls /proc/self/
 cmdline  environ  exe  fd/  maps  status  ...
 # self는 현재 프로세스를 가리키는 마법의 링크!
-```
+```text
 
 #### /proc/[pid]/maps의 매력
 
@@ -1232,7 +1266,7 @@ $ cat /proc/self/maps | head -5
 00652000-00653000 rw-p /usr/bin/cat      # 읽기/쓰기 데이터
 7ffff7dd3000-7ffff7dfc000 r-xp /lib/x86_64-linux-gnu/ld-2.31.so
 7ffffffde000-7ffffffff000 rw-p [stack]   # 스택!
-```
+```text
 
 디버깅할 때 정말 유용합니다!
 
@@ -1303,7 +1337,7 @@ static int show_map_vma(struct seq_file *m, struct vm_area_struct *vma) {
               
     if (file) {
         seq_pad(m, ' ');
-        seq_file_path(m, file, "\n");
+        seq_file_path(m, file, ", ");
         goto done;
     }
     
@@ -1336,11 +1370,11 @@ done:
         seq_pad(m, ' ');
         seq_puts(m, name);
     }
-    seq_putc(m, '\n');
+    seq_putc(m, ', ');
     
     return 0;
 }
-```
+```text
 
 ### 💨 tmpfs: RAM 디스크의 속도
 
@@ -1360,7 +1394,7 @@ cp -r project /tmp/build/
 cd /tmp/build/project
 time make -j16
 real    1m45.2s  # 30% 빨라짐!
-```
+```text
 
 #### tmpfs의 비밀
 
@@ -1372,7 +1406,7 @@ real    1m45.2s  # 30% 빨라짐!
 # Docker가 tmpfs를 사용하는 이유
 $ docker run --tmpfs /tmp:size=1G myapp
 # 컨테이너 내부의 임시 파일은 디스크에 안 남음!
-```
+```text
 
 ### tmpfs: 메모리 기반 파일 시스템
 
@@ -1461,7 +1495,7 @@ out_release:
     put_page(page);
     return error;
 }
-```
+```text
 
 ## 성능 최적화와 튜닝
 
@@ -1484,7 +1518,7 @@ $ cat /proc/sys/fs/dentry-state
 echo 3 > /proc/sys/vm/drop_caches  # 모든 캐시 비우기
 echo 1 > /proc/sys/vm/drop_caches  # 페이지 캐시만
 echo 2 > /proc/sys/vm/drop_caches  # 덴트리/아이노드 캐시만
-```
+```text
 
 #### 캐시 최적화 전략
 
@@ -1496,7 +1530,7 @@ echo 2 > /proc/sys/vm/drop_caches  # 덴트리/아이노드 캐시만
 # 데이터베이스 서버용 설정
 echo 10 > /proc/sys/vm/swappiness        # 스왑 최소화
 echo 50 > /proc/sys/vm/vfs_cache_pressure # 캐시 적극 유지
-```
+```text
 
 ### VFS 캐시 튜닝
 
@@ -1564,7 +1598,7 @@ out:
     cond_resched();
     return freed;
 }
-```
+```text
 
 ## 요약
 
@@ -1603,7 +1637,7 @@ df -i  # inode 사용량
 # VFS 성능 분석
 slabtop  # 커널 캐시 사용량
 vmstat 1  # 캐시 활동 모니터링
-```
+```text
 
 VFS는 "보이지 않는 곳에서 일하는 영웅"입니다. 우리가 파일을 열고 읽고 쓸 때마다, VFS가 뒤에서 복잡한 파일시스템들을 조율하고 있습니다. 🎭
 

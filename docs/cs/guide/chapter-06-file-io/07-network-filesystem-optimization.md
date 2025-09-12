@@ -50,7 +50,7 @@ graph TD
         Q[프로토콜 버전]
         R[마운트 옵션]
     end
-```
+```text
 
 ## 1. NFS 성능 분석기
 
@@ -147,14 +147,14 @@ int parse_nfs_mounts(nfs_mount_info_t* mounts, int max_count) {
 
 // NFS 서버 네트워크 지연시간 측정
 void measure_network_latency(const char* server, nfs_mount_info_t* mount_info) {
-    printf("=== 네트워크 지연시간 측정: %s ===\n", server);
+    printf("=== 네트워크 지연시간 측정: %s ===, ", server);
     
     char cmd[512];
     snprintf(cmd, sizeof(cmd), "ping -c 10 -q %s 2>/dev/null", server);
     
     FILE* ping = popen(cmd, "r");
     if (!ping) {
-        printf("ping 실행 실패\n");
+        printf("ping 실행 실패, ");
         return;
     }
     
@@ -167,14 +167,14 @@ void measure_network_latency(const char* server, nfs_mount_info_t* mount_info) {
                 mount_info->rtt_avg = avg;
                 mount_info->rtt_max = max;
                 
-                printf("RTT: %.1f/%.1f/%.1f ms (min/avg/max)\n", min, avg, max);
+                printf("RTT: %.1f/%.1f/%.1f ms (min/avg/max), ", min, avg, max);
                 
                 if (avg > 10) {
-                    printf("⚠️  높은 네트워크 지연시간이 감지되었습니다.\n");
+                    printf("⚠️  높은 네트워크 지연시간이 감지되었습니다., ");
                 } else if (avg > 5) {
-                    printf("⚠️  중간 수준의 네트워크 지연시간입니다.\n");
+                    printf("⚠️  중간 수준의 네트워크 지연시간입니다., ");
                 } else {
-                    printf("✅ 네트워크 지연시간이 양호합니다.\n");
+                    printf("✅ 네트워크 지연시간이 양호합니다., ");
                 }
             }
             break;
@@ -230,7 +230,7 @@ void collect_nfs_stats(const char* mount_point, nfs_stats_t* read_stats, nfs_sta
 
 // I/O 성능 벤치마크
 void benchmark_nfs_performance(const char* mount_point, nfs_performance_t* perf) {
-    printf("\n=== NFS 성능 벤치마크: %s ===\n", mount_point);
+    printf(", === NFS 성능 벤치마크: %s ===, ", mount_point);
     
     char test_dir[1024];
     snprintf(test_dir, sizeof(test_dir), "%s/.nfs_benchmark_%d", mount_point, getpid());
@@ -244,7 +244,7 @@ void benchmark_nfs_performance(const char* mount_point, nfs_performance_t* perf)
     double elapsed;
     
     // 1. 메타데이터 성능 테스트 (1000개 작은 파일 생성/삭제)
-    printf("메타데이터 성능 테스트 (1000개 파일)...\n");
+    printf("메타데이터 성능 테스트 (1000개 파일)..., ");
     gettimeofday(&start, NULL);
     
     for (int i = 0; i < 1000; i++) {
@@ -263,11 +263,11 @@ void benchmark_nfs_performance(const char* mount_point, nfs_performance_t* perf)
     perf->small_file_ops_per_sec = 1000 / elapsed;
     perf->metadata_latency = elapsed * 1000 / 1000;  // ms per operation
     
-    printf("메타데이터 성능: %.0f ops/sec, 평균 지연시간: %.2f ms\n",
+    printf("메타데이터 성능: %.0f ops/sec, 평균 지연시간: %.2f ms, ",
            perf->small_file_ops_per_sec, perf->metadata_latency);
     
     // 2. 순차 쓰기 성능 테스트 (10MB 파일)
-    printf("순차 쓰기 성능 테스트 (10MB)...\n");
+    printf("순차 쓰기 성능 테스트 (10MB)..., ");
     char large_file[1024];
     snprintf(large_file, sizeof(large_file), "%s/large_write_test", test_dir);
     
@@ -289,11 +289,11 @@ void benchmark_nfs_performance(const char* mount_point, nfs_performance_t* perf)
     perf->write_throughput = 10.0 / elapsed;  // MB/s
     perf->write_latency = elapsed * 1000;     // ms
     
-    printf("쓰기 성능: %.2f MB/s, 지연시간: %.0f ms\n",
+    printf("쓰기 성능: %.2f MB/s, 지연시간: %.0f ms, ",
            perf->write_throughput, perf->write_latency);
     
     // 3. 순차 읽기 성능 테스트
-    printf("순차 읽기 성능 테스트 (10MB)...\n");
+    printf("순차 읽기 성능 테스트 (10MB)..., ");
     gettimeofday(&start, NULL);
     
     fd = open(large_file, O_RDONLY);
@@ -309,11 +309,11 @@ void benchmark_nfs_performance(const char* mount_point, nfs_performance_t* perf)
     perf->read_throughput = 10.0 / elapsed;   // MB/s
     perf->read_latency = elapsed * 1000;      // ms
     
-    printf("읽기 성능: %.2f MB/s, 지연시간: %.0f ms\n",
+    printf("읽기 성능: %.2f MB/s, 지연시간: %.0f ms, ",
            perf->read_throughput, perf->read_latency);
     
     // 4. 랜덤 I/O 성능 테스트
-    printf("랜덤 I/O 성능 테스트...\n");
+    printf("랜덤 I/O 성능 테스트..., ");
     gettimeofday(&start, NULL);
     
     fd = open(large_file, O_RDWR);
@@ -335,7 +335,7 @@ void benchmark_nfs_performance(const char* mount_point, nfs_performance_t* perf)
     elapsed = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
     perf->large_file_ops_per_sec = 100 / elapsed;
     
-    printf("랜덤 I/O 성능: %.0f ops/sec\n", perf->large_file_ops_per_sec);
+    printf("랜덤 I/O 성능: %.0f ops/sec, ", perf->large_file_ops_per_sec);
     
     // 정리
     char cleanup_cmd[1024];
@@ -347,131 +347,131 @@ void benchmark_nfs_performance(const char* mount_point, nfs_performance_t* perf)
 
 // NFS 최적화 권장사항
 void suggest_nfs_optimizations(nfs_mount_info_t* mount_info, nfs_performance_t* perf) {
-    printf("\n=== NFS 최적화 권장사항 ===\n");
+    printf(", === NFS 최적화 권장사항 ===, ");
     
     // 네트워크 지연시간 기반 권장사항
     if (mount_info->rtt_avg > 10) {
-        printf("🔧 높은 네트워크 지연시간 최적화:\n");
-        printf("   - rsize/wsize 증가: rsize=1048576,wsize=1048576\n");
-        printf("   - 읽기 ahead 증가: racache\n");
-        printf("   - 비동기 I/O 활성화: async\n");
+        printf("🔧 높은 네트워크 지연시간 최적화:, ");
+        printf("   - rsize/wsize 증가: rsize=1048576,wsize=1048576, ");
+        printf("   - 읽기 ahead 증가: racache, ");
+        printf("   - 비동기 I/O 활성화: async, ");
     }
     
     // 메타데이터 성능 기반 권장사항
     if (perf->small_file_ops_per_sec < 50) {
-        printf("🔧 메타데이터 성능 최적화:\n");
-        printf("   - 속성 캐시 시간 증가: ac=60\n");
-        printf("   - 디렉토리 캐시 시간 증가: acdirmin=30,acdirmax=60\n");
-        printf("   - 파일 캐시 시간 증가: acregmin=30,acregmax=60\n");
+        printf("🔧 메타데이터 성능 최적화:, ");
+        printf("   - 속성 캐시 시간 증가: ac=60, ");
+        printf("   - 디렉토리 캐시 시간 증가: acdirmin=30,acdirmax=60, ");
+        printf("   - 파일 캐시 시간 증가: acregmin=30,acregmax=60, ");
     }
     
     // 처리량 기반 권장사항
     if (perf->read_throughput < 50 || perf->write_throughput < 50) {
-        printf("🔧 처리량 최적화:\n");
-        printf("   - 대용량 I/O 블록: rsize=1048576,wsize=1048576\n");
-        printf("   - TCP 사용: proto=tcp\n");
-        printf("   - 다중 연결: nconnect=4\n");
+        printf("🔧 처리량 최적화:, ");
+        printf("   - 대용량 I/O 블록: rsize=1048576,wsize=1048576, ");
+        printf("   - TCP 사용: proto=tcp, ");
+        printf("   - 다중 연결: nconnect=4, ");
     }
     
     // 일관성 vs 성능 트레이드오프
-    printf("🔧 일관성 vs 성능 옵션:\n");
-    printf("   - 엄격한 일관성: sync,cto\n");
-    printf("   - 느슨한 일관성 (성능 향상): async,nocto\n");
-    printf("   - 읽기 전용: ro,noatime\n");
+    printf("🔧 일관성 vs 성능 옵션:, ");
+    printf("   - 엄격한 일관성: sync,cto, ");
+    printf("   - 느슨한 일관성 (성능 향상): async,nocto, ");
+    printf("   - 읽기 전용: ro,noatime, ");
     
     // 마운트 옵션 예제
-    printf("\n📋 권장 마운트 옵션 예제:\n");
+    printf(", 📋 권장 마운트 옵션 예제:, ");
     
     if (mount_info->rtt_avg < 5 && perf->small_file_ops_per_sec > 100) {
-        printf("고성능 LAN 환경:\n");
-        printf("   mount -t nfs4 -o rsize=1048576,wsize=1048576,hard,intr,proto=tcp %s:%s %s\n",
+        printf("고성능 LAN 환경:, ");
+        printf("   mount -t nfs4 -o rsize=1048576,wsize=1048576,hard,intr,proto=tcp %s:%s %s, ",
                mount_info->server, mount_info->export_path, mount_info->mount_point);
     } else {
-        printf("일반적인 환경:\n");
-        printf("   mount -t nfs4 -o rsize=262144,wsize=262144,hard,intr,proto=tcp,ac=60 %s:%s %s\n",
+        printf("일반적인 환경:, ");
+        printf("   mount -t nfs4 -o rsize=262144,wsize=262144,hard,intr,proto=tcp,ac=60 %s:%s %s, ",
                mount_info->server, mount_info->export_path, mount_info->mount_point);
     }
     
-    printf("\nWAN/고지연 환경:\n");
-    printf("   mount -t nfs4 -o rsize=1048576,wsize=1048576,hard,intr,proto=tcp,ac=300,async %s:%s %s\n",
+    printf(", WAN/고지연 환경:, ");
+    printf("   mount -t nfs4 -o rsize=1048576,wsize=1048576,hard,intr,proto=tcp,ac=300,async %s:%s %s, ",
            mount_info->server, mount_info->export_path, mount_info->mount_point);
 }
 
 // NFS 서버 튜닝 가이드
 void show_server_tuning_guide() {
-    printf("\n=== NFS 서버 튜닝 가이드 ===\n");
+    printf(", === NFS 서버 튜닝 가이드 ===, ");
     
-    printf("📈 서버 성능 향상:\n");
-    printf("1. NFS 데몬 수 증가:\n");
-    printf("   # /etc/nfs.conf에서 threads 수 조정\n");
-    printf("   echo 'nfsd --nfs-version 4 --nfs-version 3 --threads 64' > /etc/default/nfs-kernel-server\n\n");
+    printf("📈 서버 성능 향상:, ");
+    printf("1. NFS 데몬 수 증가:, ");
+    printf("   # /etc/nfs.conf에서 threads 수 조정, ");
+    printf("   echo 'nfsd --nfs-version 4 --nfs-version 3 --threads 64' > /etc/default/nfs-kernel-server, , ");
     
-    printf("2. 커널 매개변수 조정:\n");
-    printf("   echo 'net.core.rmem_default = 262144' >> /etc/sysctl.conf\n");
-    printf("   echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf\n");
-    printf("   echo 'net.core.wmem_default = 262144' >> /etc/sysctl.conf\n");
-    printf("   echo 'net.core.wmem_max = 16777216' >> /etc/sysctl.conf\n\n");
+    printf("2. 커널 매개변수 조정:, ");
+    printf("   echo 'net.core.rmem_default = 262144' >> /etc/sysctl.conf, ");
+    printf("   echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf, ");
+    printf("   echo 'net.core.wmem_default = 262144' >> /etc/sysctl.conf, ");
+    printf("   echo 'net.core.wmem_max = 16777216' >> /etc/sysctl.conf, , ");
     
-    printf("3. 내보내기 옵션 최적화:\n");
-    printf("   # /etc/exports\n");
-    printf("   /export *(rw,sync,no_subtree_check,no_root_squash)\n");
-    printf("   # 성능 우선시: async,no_wdelay\n");
-    printf("   # 안정성 우선시: sync,wdelay\n\n");
+    printf("3. 내보내기 옵션 최적화:, ");
+    printf("   # /etc/exports, ");
+    printf("   /export *(rw,sync,no_subtree_check,no_root_squash), ");
+    printf("   # 성능 우선시: async,no_wdelay, ");
+    printf("   # 안정성 우선시: sync,wdelay, , ");
     
-    printf("4. 파일시스템 최적화:\n");
-    printf("   # ext4: noatime,data=writeback\n");
-    printf("   # XFS: noatime,largeio,swalloc\n");
-    printf("   # ZFS: recordsize=1M,compression=lz4\n\n");
+    printf("4. 파일시스템 최적화:, ");
+    printf("   # ext4: noatime,data=writeback, ");
+    printf("   # XFS: noatime,largeio,swalloc, ");
+    printf("   # ZFS: recordsize=1M,compression=lz4, , ");
     
-    printf("5. SSD 최적화:\n");
-    printf("   # NVMe SSD의 경우\n");
-    printf("   echo mq-deadline > /sys/block/nvme0n1/queue/scheduler\n");
-    printf("   echo 256 > /sys/block/nvme0n1/queue/nr_requests\n");
+    printf("5. SSD 최적화:, ");
+    printf("   # NVMe SSD의 경우, ");
+    printf("   echo mq-deadline > /sys/block/nvme0n1/queue/scheduler, ");
+    printf("   echo 256 > /sys/block/nvme0n1/queue/nr_requests, ");
 }
 
 // Docker 컨테이너 NFS 최적화
 void show_docker_nfs_optimization() {
-    printf("\n=== Docker NFS 최적화 ===\n");
+    printf(", === Docker NFS 최적화 ===, ");
     
-    printf("🐳 Docker Compose NFS 볼륨:\n");
-    printf("```yaml\n");
-    printf("version: '3.8'\n");
-    printf("services:\n");
-    printf("  app:\n");
-    printf("    image: myapp\n");
-    printf("    volumes:\n");
-    printf("      - type: volume\n");
-    printf("        source: nfs-data\n");
-    printf("        target: /data\n");
-    printf("        volume:\n");
-    printf("          nocopy: true\n");
-    printf("\n");
-    printf("volumes:\n");
-    printf("  nfs-data:\n");
-    printf("    driver: local\n");
-    printf("    driver_opts:\n");
-    printf("      type: nfs4\n");
-    printf("      o: addr=nfs-server,rsize=1048576,wsize=1048576,hard,intr,proto=tcp\n");
-    printf("      device: ':/export/data'\n");
-    printf("```\n\n");
+    printf("🐳 Docker Compose NFS 볼륨:, ");
+    printf("```yaml, ");
+    printf("version: '3.8', ");
+    printf("services:, ");
+    printf("  app:, ");
+    printf("    image: myapp, ");
+    printf("    volumes:, ");
+    printf("      - type: volume, ");
+    printf("        source: nfs-data, ");
+    printf("        target: /data, ");
+    printf("        volume:, ");
+    printf("          nocopy: true, ");
+    printf(", ");
+    printf("volumes:, ");
+    printf("  nfs-data:, ");
+    printf("    driver: local, ");
+    printf("    driver_opts:, ");
+    printf("      type: nfs4, ");
+    printf("      o: addr=nfs-server,rsize=1048576,wsize=1048576,hard,intr,proto=tcp, ");
+    printf("      device: ':/export/data', ");
+    printf("```, , ");
     
-    printf("🚀 고성능 옵션:\n");
-    printf("   o: addr=nfs-server,rsize=1048576,wsize=1048576,hard,intr,proto=tcp,ac=60,async\n\n");
+    printf("🚀 고성능 옵션:, ");
+    printf("   o: addr=nfs-server,rsize=1048576,wsize=1048576,hard,intr,proto=tcp,ac=60,async, , ");
     
-    printf("📁 컨테이너 내 캐시 최적화:\n");
-    printf("   # 컨테이너에 tmpfs 마운트\n");
-    printf("   docker run --tmpfs /tmp:rw,noexec,nosuid,size=1g myapp\n");
+    printf("📁 컨테이너 내 캐시 최적화:, ");
+    printf("   # 컨테이너에 tmpfs 마운트, ");
+    printf("   docker run --tmpfs /tmp:rw,noexec,nosuid,size=1g myapp, ");
 }
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        printf("사용법: %s <command> [options]\n", argv[0]);
-        printf("Commands:\n");
-        printf("  scan                    - NFS 마운트 스캔 및 분석\n");
-        printf("  benchmark <mount_point> - 성능 벤치마크\n");
-        printf("  analyze <mount_point>   - 상세 분석\n");
-        printf("  server-guide            - 서버 튜닝 가이드\n");
-        printf("  docker-guide            - Docker NFS 가이드\n");
+        printf("사용법: %s <command> [options], ", argv[0]);
+        printf("Commands:, ");
+        printf("  scan                    - NFS 마운트 스캔 및 분석, ");
+        printf("  benchmark <mount_point> - 성능 벤치마크, ");
+        printf("  analyze <mount_point>   - 상세 분석, ");
+        printf("  server-guide            - 서버 튜닝 가이드, ");
+        printf("  docker-guide            - Docker NFS 가이드, ");
         return 1;
     }
     
@@ -482,18 +482,18 @@ int main(int argc, char* argv[]) {
         int count = parse_nfs_mounts(mounts, 32);
         
         if (count <= 0) {
-            printf("NFS 마운트를 찾을 수 없습니다.\n");
+            printf("NFS 마운트를 찾을 수 없습니다., ");
             return 1;
         }
         
-        printf("=== NFS 마운트 정보 ===\n");
-        printf("%-20s %-30s %-20s %-10s %-10s\n", 
+        printf("=== NFS 마운트 정보 ===, ");
+        printf("%-20s %-30s %-20s %-10s %-10s, ", 
                "서버", "내보내기", "마운트포인트", "버전", "프로토콜");
-        printf("%-20s %-30s %-20s %-10s %-10s\n", 
+        printf("%-20s %-30s %-20s %-10s %-10s, ", 
                "----", "------", "----------", "----", "------");
         
         for (int i = 0; i < count; i++) {
-            printf("%-20s %-30s %-20s %-10s %-10s\n",
+            printf("%-20s %-30s %-20s %-10s %-10s, ",
                    mounts[i].server, mounts[i].export_path, mounts[i].mount_point,
                    mounts[i].version, mounts[i].protocol);
             
@@ -504,16 +504,16 @@ int main(int argc, char* argv[]) {
             nfs_stats_t read_stats = {0}, write_stats = {0};
             collect_nfs_stats(mounts[i].mount_point, &read_stats, &write_stats);
             
-            printf("  읽기: %llu 작업, %llu 바이트, %.1f ms 평균 RTT\n",
+            printf("  읽기: %llu 작업, %llu 바이트, %.1f ms 평균 RTT, ",
                    read_stats.ops, read_stats.bytes, read_stats.avg_rtt);
-            printf("  쓰기: %llu 작업, %llu 바이트, %.1f ms 평균 RTT\n",
+            printf("  쓰기: %llu 작업, %llu 바이트, %.1f ms 평균 RTT, ",
                    write_stats.ops, write_stats.bytes, write_stats.avg_rtt);
             
             if (read_stats.errors > 0 || write_stats.errors > 0) {
-                printf("  ⚠️ 오류: 읽기 %llu, 쓰기 %llu\n", 
+                printf("  ⚠️ 오류: 읽기 %llu, 쓰기 %llu, ", 
                        read_stats.errors, write_stats.errors);
             }
-            printf("\n");
+            printf(", ");
         }
         
     } else if (strcmp(command, "benchmark") == 0 && argc >= 3) {
@@ -537,12 +537,12 @@ int main(int argc, char* argv[]) {
     } else if (strcmp(command, "analyze") == 0 && argc >= 3) {
         const char* mount_point = argv[2];
         
-        printf("=== NFS 상세 분석: %s ===\n", mount_point);
+        printf("=== NFS 상세 분석: %s ===, ", mount_point);
         
         // 현재 마운트 옵션 표시
         char cmd[512];
         snprintf(cmd, sizeof(cmd), "mount | grep ' %s '", mount_point);
-        printf("현재 마운트 옵션:\n");
+        printf("현재 마운트 옵션:, ");
         system(cmd);
         
         // 성능 벤치마크
@@ -568,13 +568,13 @@ int main(int argc, char* argv[]) {
         show_docker_nfs_optimization();
         
     } else {
-        printf("알 수 없는 명령어입니다.\n");
+        printf("알 수 없는 명령어입니다., ");
         return 1;
     }
     
     return 0;
 }
-```
+```text
 
 ## 2. 네트워크 파일시스템 자동 최적화 스크립트
 
@@ -1218,6 +1218,6 @@ check_dependencies() {
 # 스크립트 실행
 check_dependencies
 main "$@"
-```
+```text
 
 이제 Chapter 5의 마지막 문서를 작성하겠습니다.

@@ -52,7 +52,7 @@ graph TD
         P[badblocks - 배드블록 검사]
         Q[debugfs - 상세 분석]
     end
-```
+```text
 
 ## 1. 파일시스템 진단 도구
 
@@ -154,7 +154,7 @@ void analyze_kernel_messages(error_summary_t* summary) {
     summary->io_errors = 0;
     summary->mount_errors = 0;
     
-    printf("=== 파일시스템 관련 커널 메시지 ===\n");
+    printf("=== 파일시스템 관련 커널 메시지 ===, ");
     
     while (fgets(line, sizeof(line), dmesg)) {
         printf("%s", line);
@@ -179,19 +179,19 @@ void analyze_kernel_messages(error_summary_t* summary) {
     pclose(dmesg);
     
     if (summary->error_count == 0) {
-        printf("파일시스템 관련 오류 메시지가 없습니다.\n");
+        printf("파일시스템 관련 오류 메시지가 없습니다., ");
     } else {
-        printf("\n=== 오류 요약 ===\n");
-        printf("총 오류 메시지: %d개\n", summary->error_count);
-        printf("파일시스템 오류: %d개\n", summary->fs_errors);
-        printf("I/O 오류: %d개\n", summary->io_errors);
-        printf("마운트 오류: %d개\n", summary->mount_errors);
+        printf(", === 오류 요약 ===, ");
+        printf("총 오류 메시지: %d개, ", summary->error_count);
+        printf("파일시스템 오류: %d개, ", summary->fs_errors);
+        printf("I/O 오류: %d개, ", summary->io_errors);
+        printf("마운트 오류: %d개, ", summary->mount_errors);
     }
 }
 
 // ext 파일시스템 상세 분석
 void analyze_ext_filesystem(const char* device) {
-    printf("\n=== EXT 파일시스템 상세 분석: %s ===\n", device);
+    printf(", === EXT 파일시스템 상세 분석: %s ===, ", device);
     
     // dumpe2fs를 사용한 상세 정보
     char cmd[512];
@@ -199,7 +199,7 @@ void analyze_ext_filesystem(const char* device) {
     
     FILE* dumpe2fs = popen(cmd, "r");
     if (!dumpe2fs) {
-        printf("dumpe2fs 실행 실패\n");
+        printf("dumpe2fs 실행 실패, ");
         return;
     }
     
@@ -216,7 +216,7 @@ void analyze_ext_filesystem(const char* device) {
             printf("오류 동작: %s", strchr(line, ':') + 2);
         } else if (strstr(line, "Filesystem errors:")) {
             sscanf(line, "Filesystem errors: %d", &error_count);
-            printf("파일시스템 오류 횟수: %d\n", error_count);
+            printf("파일시스템 오류 횟수: %d, ", error_count);
         } else if (strstr(line, "Last checked:")) {
             printf("마지막 검사: %s", strchr(line, ':') + 2);
         } else if (strstr(line, "Mount count:")) {
@@ -229,20 +229,20 @@ void analyze_ext_filesystem(const char* device) {
     pclose(dumpe2fs);
     
     if (max_mount_count > 0) {
-        printf("마운트 횟수: %d/%d\n", mount_count, max_mount_count);
+        printf("마운트 횟수: %d/%d, ", mount_count, max_mount_count);
         if (mount_count >= max_mount_count * 0.9) {
-            printf("⚠️  곧 강제 fsck가 실행될 예정입니다.\n");
+            printf("⚠️  곧 강제 fsck가 실행될 예정입니다., ");
         }
     }
     
     if (error_count > 0) {
-        printf("🔴 파일시스템에 %d개의 오류가 기록되어 있습니다.\n", error_count);
+        printf("🔴 파일시스템에 %d개의 오류가 기록되어 있습니다., ", error_count);
     }
 }
 
 // XFS 파일시스템 분석
 void analyze_xfs_filesystem(const char* device, const char* mount_point) {
-    printf("\n=== XFS 파일시스템 분석: %s ===\n", device);
+    printf(", === XFS 파일시스템 분석: %s ===, ", device);
     
     // xfs_info 실행
     char cmd[512];
@@ -269,10 +269,10 @@ void analyze_xfs_filesystem(const char* device, const char* mount_point) {
 
 // 파일시스템 무결성 검사
 int check_filesystem_integrity(const char* device, const char* fs_type, int read_only) {
-    printf("\n=== 파일시스템 무결성 검사: %s (%s) ===\n", device, fs_type);
+    printf(", === 파일시스템 무결성 검사: %s (%s) ===, ", device, fs_type);
     
     if (!read_only) {
-        printf("⚠️  파일시스템이 마운트되어 있습니다. 읽기 전용 검사만 수행합니다.\n");
+        printf("⚠️  파일시스템이 마운트되어 있습니다. 읽기 전용 검사만 수행합니다., ");
     }
     
     char cmd[512];
@@ -285,34 +285,34 @@ int check_filesystem_integrity(const char* device, const char* fs_type, int read
             snprintf(cmd, sizeof(cmd), "e2fsck -f -n %s", device);
         }
         
-        printf("실행 중: %s\n", cmd);
+        printf("실행 중: %s, ", cmd);
         result = system(cmd);
         
         if (result == 0) {
-            printf("✅ 파일시스템이 정상입니다.\n");
+            printf("✅ 파일시스템이 정상입니다., ");
         } else {
-            printf("🔴 파일시스템에 오류가 있습니다. (종료 코드: %d)\n", WEXITSTATUS(result));
-            printf("복구를 위해 다음 명령어를 실행하세요 (언마운트 후):\n");
-            printf("  e2fsck -f -y %s\n", device);
+            printf("🔴 파일시스템에 오류가 있습니다. (종료 코드: %d), ", WEXITSTATUS(result));
+            printf("복구를 위해 다음 명령어를 실행하세요 (언마운트 후):, ");
+            printf("  e2fsck -f -y %s, ", device);
         }
         
     } else if (strcmp(fs_type, "xfs") == 0) {
         if (read_only) {
             snprintf(cmd, sizeof(cmd), "xfs_repair -n %s", device);
         } else {
-            printf("XFS는 마운트된 상태에서 검사할 수 없습니다.\n");
-            printf("언마운트 후 다음 명령어를 실행하세요:\n");
-            printf("  xfs_repair -n %s  # 검사만\n", device);
-            printf("  xfs_repair %s     # 복구\n", device);
+            printf("XFS는 마운트된 상태에서 검사할 수 없습니다., ");
+            printf("언마운트 후 다음 명령어를 실행하세요:, ");
+            printf("  xfs_repair -n %s  # 검사만, ", device);
+            printf("  xfs_repair %s     # 복구, ", device);
             return -1;
         }
         
-        printf("실행 중: %s\n", cmd);
+        printf("실행 중: %s, ", cmd);
         result = system(cmd);
         
     } else if (strcmp(fs_type, "btrfs") == 0) {
         snprintf(cmd, sizeof(cmd), "btrfs check --readonly %s", device);
-        printf("실행 중: %s\n", cmd);
+        printf("실행 중: %s, ", cmd);
         result = system(cmd);
     }
     
@@ -321,7 +321,7 @@ int check_filesystem_integrity(const char* device, const char* fs_type, int read
 
 // 디스크 건강 상태 확인
 void check_disk_health(const char* device) {
-    printf("\n=== 디스크 건강 상태 확인 ===\n");
+    printf(", === 디스크 건강 상태 확인 ===, ");
     
     // SMART 정보 확인
     char cmd[512];
@@ -338,32 +338,32 @@ void check_disk_health(const char* device) {
         }
         pclose(smart);
     } else {
-        printf("SMART 정보를 확인할 수 없습니다.\n");
+        printf("SMART 정보를 확인할 수 없습니다., ");
     }
     
     // 상세 SMART 속성
     snprintf(cmd, sizeof(cmd), "smartctl -A %s 2>/dev/null | grep -E '(Reallocated_Sector_Ct|Current_Pending_Sector|Offline_Uncorrectable|UDMA_CRC_Error_Count)'", device);
     
-    printf("\n주요 SMART 속성:\n");
+    printf(", 주요 SMART 속성:, ");
     system(cmd);
     
     // I/O 오류 통계
-    printf("\n디스크 I/O 오류:\n");
+    printf(", 디스크 I/O 오류:, ");
     snprintf(cmd, sizeof(cmd), "cat /proc/diskstats | grep %s", strrchr(device, '/') + 1);
     system(cmd);
 }
 
 // 배드블록 검사
 void scan_bad_blocks(const char* device, int destructive) {
-    printf("\n=== 배드블록 검사: %s ===\n", device);
+    printf(", === 배드블록 검사: %s ===, ", device);
     
     if (destructive) {
-        printf("⚠️  파괴적 테스트는 데이터를 손실시킬 수 있습니다!\n");
+        printf("⚠️  파괴적 테스트는 데이터를 손실시킬 수 있습니다!, ");
         printf("계속하려면 'YES'를 입력하세요: ");
         
         char response[10];
-        if (fgets(response, sizeof(response), stdin) == NULL || strcmp(response, "YES\n") != 0) {
-            printf("테스트가 취소되었습니다.\n");
+        if (fgets(response, sizeof(response), stdin) == NULL || strcmp(response, "YES, ") != 0) {
+            printf("테스트가 취소되었습니다., ");
             return;
         }
     }
@@ -375,147 +375,147 @@ void scan_bad_blocks(const char* device, int destructive) {
         snprintf(cmd, sizeof(cmd), "badblocks -nsv %s", device);
     }
     
-    printf("실행 중: %s\n", cmd);
-    printf("이 작업은 시간이 오래 걸릴 수 있습니다...\n");
+    printf("실행 중: %s, ", cmd);
+    printf("이 작업은 시간이 오래 걸릴 수 있습니다..., ");
     
     int result = system(cmd);
     if (result == 0) {
-        printf("✅ 배드블록이 발견되지 않았습니다.\n");
+        printf("✅ 배드블록이 발견되지 않았습니다., ");
     } else {
-        printf("🔴 배드블록이 발견되었습니다!\n");
+        printf("🔴 배드블록이 발견되었습니다!, ");
     }
 }
 
 // 파일시스템 복구 가이드
 void show_recovery_guide(const char* device, const char* fs_type, int error_level) {
-    printf("\n=== 복구 가이드: %s (%s) ===\n", device, fs_type);
+    printf(", === 복구 가이드: %s (%s) ===, ", device, fs_type);
     
     if (error_level == 0) {
-        printf("✅ 파일시스템이 정상 상태입니다.\n");
+        printf("✅ 파일시스템이 정상 상태입니다., ");
         return;
     }
     
-    printf("복구 단계별 가이드:\n\n");
+    printf("복구 단계별 가이드:, , ");
     
-    printf("1️⃣ 데이터 백업 (가능한 경우)\n");
-    printf("   # 중요 데이터를 먼저 백업하세요\n");
-    printf("   cp -a /mount/point/important_data /backup/location/\n\n");
+    printf("1️⃣ 데이터 백업 (가능한 경우), ");
+    printf("   # 중요 데이터를 먼저 백업하세요, ");
+    printf("   cp -a /mount/point/important_data /backup/location/, , ");
     
-    printf("2️⃣ 파일시스템 언마운트\n");
-    printf("   umount %s\n", device);
-    printf("   # 언마운트가 안 되면: fuser -km /mount/point\n\n");
+    printf("2️⃣ 파일시스템 언마운트, ");
+    printf("   umount %s, ", device);
+    printf("   # 언마운트가 안 되면: fuser -km /mount/point, , ");
     
-    printf("3️⃣ 파일시스템 검사 및 복구\n");
+    printf("3️⃣ 파일시스템 검사 및 복구, ");
     
     if (strncmp(fs_type, "ext", 3) == 0) {
-        printf("   # 검사만 (안전)\n");
-        printf("   e2fsck -n %s\n\n", device);
-        printf("   # 자동 복구 (주의: 데이터 손실 가능)\n");
-        printf("   e2fsck -f -y %s\n\n", device);
-        printf("   # 대화형 복구 (권장)\n");
-        printf("   e2fsck -f %s\n\n", device);
+        printf("   # 검사만 (안전), ");
+        printf("   e2fsck -n %s, , ", device);
+        printf("   # 자동 복구 (주의: 데이터 손실 가능), ");
+        printf("   e2fsck -f -y %s, , ", device);
+        printf("   # 대화형 복구 (권장), ");
+        printf("   e2fsck -f %s, , ", device);
         
         if (error_level > 2) {
-            printf("   # 심각한 손상의 경우\n");
-            printf("   e2fsck -f -y -c %s  # 배드블록 검사 포함\n", device);
-            printf("   mke2fs -S %s        # 슈퍼블록만 복구 (최후의 수단)\n\n", device);
+            printf("   # 심각한 손상의 경우, ");
+            printf("   e2fsck -f -y -c %s  # 배드블록 검사 포함, ", device);
+            printf("   mke2fs -S %s        # 슈퍼블록만 복구 (최후의 수단), , ", device);
         }
         
     } else if (strcmp(fs_type, "xfs") == 0) {
-        printf("   # 검사만\n");
-        printf("   xfs_repair -n %s\n\n", device);
-        printf("   # 복구\n");
-        printf("   xfs_repair %s\n\n", device);
+        printf("   # 검사만, ");
+        printf("   xfs_repair -n %s, , ", device);
+        printf("   # 복구, ");
+        printf("   xfs_repair %s, , ", device);
         
         if (error_level > 2) {
-            printf("   # 강제 복구 (위험)\n");
-            printf("   xfs_repair -L %s  # 로그 초기화\n\n", device);
+            printf("   # 강제 복구 (위험), ");
+            printf("   xfs_repair -L %s  # 로그 초기화, , ", device);
         }
         
     } else if (strcmp(fs_type, "btrfs") == 0) {
-        printf("   # 검사\n");
-        printf("   btrfs check %s\n\n", device);
-        printf("   # 복구\n");
-        printf("   btrfs check --repair %s\n\n", device);
-        printf("   # 강제 복구\n");
-        printf("   btrfs rescue super-recover %s\n\n", device);
+        printf("   # 검사, ");
+        printf("   btrfs check %s, , ", device);
+        printf("   # 복구, ");
+        printf("   btrfs check --repair %s, , ", device);
+        printf("   # 강제 복구, ");
+        printf("   btrfs rescue super-recover %s, , ", device);
     }
     
-    printf("4️⃣ 복구 후 재마운트\n");
-    printf("   mount %s /mount/point\n\n", device);
+    printf("4️⃣ 복구 후 재마운트, ");
+    printf("   mount %s /mount/point, , ", device);
     
-    printf("5️⃣ 데이터 무결성 확인\n");
-    printf("   # 중요 파일들이 정상인지 확인\n");
-    printf("   # 로그 파일에서 추가 오류 확인\n\n");
+    printf("5️⃣ 데이터 무결성 확인, ");
+    printf("   # 중요 파일들이 정상인지 확인, ");
+    printf("   # 로그 파일에서 추가 오류 확인, , ");
     
-    printf("6️⃣ 예방 조치\n");
-    printf("   # 정기적인 파일시스템 검사 설정\n");
-    printf("   # 하드웨어 모니터링 강화\n");
-    printf("   # 백업 정책 재검토\n");
+    printf("6️⃣ 예방 조치, ");
+    printf("   # 정기적인 파일시스템 검사 설정, ");
+    printf("   # 하드웨어 모니터링 강화, ");
+    printf("   # 백업 정책 재검토, ");
 }
 
 // 응급 복구 모드
 void emergency_recovery_mode(const char* device) {
-    printf("\n=== 🚨 응급 복구 모드 ===\n");
-    printf("파일시스템에 심각한 손상이 있습니다.\n\n");
+    printf(", === 🚨 응급 복구 모드 ===, ");
+    printf("파일시스템에 심각한 손상이 있습니다., , ");
     
-    printf("즉시 수행해야 할 작업:\n");
-    printf("1. 추가 손상 방지를 위해 시스템 사용 중단\n");
-    printf("2. 가능한 데이터 즉시 백업\n");
-    printf("3. 하드웨어 상태 확인\n\n");
+    printf("즉시 수행해야 할 작업:, ");
+    printf("1. 추가 손상 방지를 위해 시스템 사용 중단, ");
+    printf("2. 가능한 데이터 즉시 백업, ");
+    printf("3. 하드웨어 상태 확인, , ");
     
-    printf("데이터 복구 시도:\n");
-    printf("# 읽기 전용으로 마운트하여 데이터 구조\n");
-    printf("mkdir -p /mnt/recovery\n");
-    printf("mount -o ro %s /mnt/recovery\n\n", device);
+    printf("데이터 복구 시도:, ");
+    printf("# 읽기 전용으로 마운트하여 데이터 구조, ");
+    printf("mkdir -p /mnt/recovery, ");
+    printf("mount -o ro %s /mnt/recovery, , ", device);
     
-    printf("# 가능한 파일들 복사\n");
-    printf("find /mnt/recovery -type f -exec cp {} /backup/ \\; 2>/dev/null\n\n");
+    printf("# 가능한 파일들 복사, ");
+    printf("find /mnt/recovery -type f -exec cp {} /backup/ \\; 2>/dev/null, , ");
     
-    printf("# ddrescue를 사용한 이미지 생성 (가능한 경우)\n");
-    printf("ddrescue %s /backup/disk_image.img /backup/recovery.log\n\n", device);
+    printf("# ddrescue를 사용한 이미지 생성 (가능한 경우), ");
+    printf("ddrescue %s /backup/disk_image.img /backup/recovery.log, , ", device);
     
-    printf("⚠️  전문가의 도움이 필요할 수 있습니다.\n");
+    printf("⚠️  전문가의 도움이 필요할 수 있습니다., ");
 }
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        printf("사용법: %s <command> [options]\n", argv[0]);
-        printf("Commands:\n");
-        printf("  scan                    - 모든 파일시스템 스캔\n");
-        printf("  analyze <device>        - 특정 디바이스 분석\n");
-        printf("  check <device> <fstype> - 파일시스템 검사\n");
-        printf("  health <device>         - 디스크 건강도 확인\n");
-        printf("  badblocks <device>      - 배드블록 검사\n");
-        printf("  recovery <device> <fstype> - 복구 가이드\n");
-        printf("  emergency <device>      - 응급 복구 모드\n");
+        printf("사용법: %s <command> [options], ", argv[0]);
+        printf("Commands:, ");
+        printf("  scan                    - 모든 파일시스템 스캔, ");
+        printf("  analyze <device>        - 특정 디바이스 분석, ");
+        printf("  check <device> <fstype> - 파일시스템 검사, ");
+        printf("  health <device>         - 디스크 건강도 확인, ");
+        printf("  badblocks <device>      - 배드블록 검사, ");
+        printf("  recovery <device> <fstype> - 복구 가이드, ");
+        printf("  emergency <device>      - 응급 복구 모드, ");
         return 1;
     }
     
     const char* command = argv[1];
     
     if (strcmp(command, "scan") == 0) {
-        printf("=== 파일시스템 종합 분석 ===\n");
+        printf("=== 파일시스템 종합 분석 ===, ");
         
         filesystem_info_t filesystems[32];
         int count = get_mounted_filesystems(filesystems, 32);
         
         if (count <= 0) {
-            printf("마운트된 파일시스템을 찾을 수 없습니다.\n");
+            printf("마운트된 파일시스템을 찾을 수 없습니다., ");
             return 1;
         }
         
-        printf("\n=== 마운트된 파일시스템 ===\n");
-        printf("%-15s %-20s %-8s %-8s %-10s %-10s\n", 
+        printf(", === 마운트된 파일시스템 ===, ");
+        printf("%-15s %-20s %-8s %-8s %-10s %-10s, ", 
                "디바이스", "마운트포인트", "타입", "상태", "사용량", "여유공간");
-        printf("%-15s %-20s %-8s %-8s %-10s %-10s\n", 
+        printf("%-15s %-20s %-8s %-8s %-10s %-10s, ", 
                "-------", "----------", "----", "----", "------", "--------");
         
         for (int i = 0; i < count; i++) {
             double usage_gb = (filesystems[i].total_size - filesystems[i].available_size) / (1024.0 * 1024.0 * 1024.0);
             double free_gb = filesystems[i].available_size / (1024.0 * 1024.0 * 1024.0);
             
-            printf("%-15s %-20s %-8s %-8s %-10.1fG %-10.1fG\n",
+            printf("%-15s %-20s %-8s %-8s %-10.1fG %-10.1fG, ",
                    filesystems[i].device,
                    filesystems[i].mount_point,
                    filesystems[i].fs_type,
@@ -555,7 +555,7 @@ int main(int argc, char* argv[]) {
         if (blkid) {
             char fs_type[64];
             if (fgets(fs_type, sizeof(fs_type), blkid)) {
-                fs_type[strcspn(fs_type, "\n")] = 0;  // 개행 제거
+                fs_type[strcspn(fs_type, ", ")] = 0;  // 개행 제거
                 
                 if (strncmp(fs_type, "ext", 3) == 0) {
                     analyze_ext_filesystem(device);
@@ -591,13 +591,13 @@ int main(int argc, char* argv[]) {
         emergency_recovery_mode(device);
         
     } else {
-        printf("알 수 없는 명령어입니다.\n");
+        printf("알 수 없는 명령어입니다., ");
         return 1;
     }
     
     return 0;
 }
-```
+```text
 
 ## 2. 자동 파일시스템 복구 스크립트
 
@@ -660,7 +660,7 @@ send_notification() {
     
     # 텔레그램 알림
     if [[ -n "$TELEGRAM_BOT_TOKEN" && -n "$TELEGRAM_CHAT_ID" ]]; then
-        local telegram_message="🚨 $subject\n\n$message"
+        local telegram_message="🚨 $subject, , $message"
         curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
              -d chat_id="$TELEGRAM_CHAT_ID" \
              -d text="$telegram_message" \
@@ -1098,6 +1098,6 @@ main() {
 
 # 스크립트 실행
 main "$@"
-```
+```text
 
 계속해서 다음 문서를 작성하겠습니다.

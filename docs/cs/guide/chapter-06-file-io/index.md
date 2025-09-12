@@ -38,13 +38,13 @@ Unix의 천재적인 통찰: "Everything is a file"
 graph TB
     subgraph "Application Layer"
         APP[Application]
-        FD[File Descriptor<br/>0,1,2,3...]
+        FD[File Descriptor, 0,1,2,3...]
     end
 
     subgraph "Kernel Layer"
-        VFS[VFS<br/>Virtual File System]
-        FC[File Cache<br/>Page Cache]
-        FS[File Systems<br/>ext4, xfs, btrfs]
+        VFS[VFS, Virtual File System]
+        FC[File Cache, Page Cache]
+        FS[File Systems, ext4, xfs, btrfs]
         BIO[Block I/O Layer]
     end
 
@@ -81,7 +81,7 @@ graph TB
     style FD fill:#FFE082
     style VFS fill:#81C784
     style BIO fill:#64B5F6
-```
+```text
 
 ## 이 장의 구성
 
@@ -174,7 +174,7 @@ $ blktrace                 # 블록 I/O 추적
 $ free -h                  # 버퍼/캐시 메모리
 $ vmstat 1                 # 가상 메모리 통계
 $ cat /proc/meminfo | grep -i cache
-```
+```text
 
 ## 이 장을 읽고 나면
 
@@ -242,7 +242,7 @@ mindmap
         io_uring
         SPDK
         DPDK
-```
+```text
 
 ## I/O 문제 진단 플로우차트
 
@@ -265,7 +265,7 @@ graph TD
     Type -->|캐시 미스| Cache[Page Cache 분석]
     Cache --> Memory[메모리 크기 확인]
     Memory --> Tuning[vm 파라미터 튜닝]
-```
+```text
 
 ## 다음 단계
 

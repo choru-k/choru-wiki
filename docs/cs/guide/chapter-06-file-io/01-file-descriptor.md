@@ -33,7 +33,7 @@ $ ls -la /proc/self/fd/
 lrwx------ 1 user user 64 Nov 19 10:23 0 -> /dev/pts/0  # stdin
 lrwx------ 1 user user 64 Nov 19 10:23 1 -> /dev/pts/0  # stdout
 lrwx------ 1 user user 64 Nov 19 10:23 2 -> /dev/pts/0  # stderr
-```
+```text
 
 "모든 유닉스 프로세스는 태어날 때부터 3개의 선물을 받습니다. stdin(0), stdout(1), stderr(2)죠. 그래서 당신이 여는 첫 번째 파일은 항상 3번이 되는 겁니다."
 
@@ -61,7 +61,7 @@ read(pipefd[0], buffer, 1024);  // 역시 똑같은 read()!
 // 디바이스 읽기
 int fd3 = open("/dev/random", O_RDONLY);
 read(fd3, buffer, 1024);  // 여전히 똑같은 read()!
-```
+```text
 
 일반 파일, 네트워크 연결, 프로세스 간 통신, 하드웨어 디바이스... 모두 똑같은 인터페이스로 다룰 수 있습니다! 이게 바로 유닉스의 마법입니다. 🪄
 
@@ -80,7 +80,7 @@ $ ulimit -n
 65536
 
 # 헉! 파일 디스크립터가 거의 다 소진됨!
-```
+```text
 
 원인은 간단했습니다. HTTP 요청마다 파일을 열고... 닫는 걸 까먹었죠:
 
@@ -91,7 +91,7 @@ def handle_request(request):
     f.write(request.data)
     # f.close()를 깜빡!  😱
     return "OK"
-```
+```text
 
 이 단순해 보이는 정수 뒤에는 복잡한 커널 자료구조가 숨어 있습니다. 파일 디스크립터는 프로세스별 파일 디스크립터 테이블의 인덱스이며, 이는 다시 시스템 전역 파일 테이블을 가리키고, 최종적으로 inode나 소켓 구조체와 연결됩니다.
 
@@ -109,7 +109,7 @@ def handle_request(request):
 $ strace -e openat cat /etc/passwd 2>&1 | head -3
 openat(AT_FDCWD, "/etc/passwd", O_RDONLY) = 3
 # fd 3이 반환됨!
-```
+```text
 
 이 숫자 3이 가리키는 것을 따라가보면:
 
@@ -152,7 +152,7 @@ graph TB
     FT1 --> IN1
     FT2 --> IN2
     FT3 --> IN3
-```
+```text
 
 ### 📊 핵심 자료구조 정의
 
@@ -291,7 +291,7 @@ struct inode {
     
     void                    *i_private;  // 파일시스템 전용
 };
-```
+```text
 
 ## 파일 디스크립터 할당 메커니즘
 
@@ -319,11 +319,11 @@ int main() {
     
     // 다음 open()은 뭘 반환할까요?
     int fd4 = open("/dev/null", O_RDONLY);
-    printf("Next fd: %d\n", fd4);  // 4! (가장 작은 빈 번호)
+    printf("Next fd: %d, ", fd4);  // 4! (가장 작은 빈 번호)
     
     return 0;
 }
-```
+```text
 
 커널은 항상 **가장 작은 사용 가능한 번호**를 할당합니다. 이를 위해 비트맵을 사용하죠.
 
@@ -420,7 +420,7 @@ static int expand_files(struct files_struct *files, unsigned int nr) {
     wake_up_all(&files->resize_wait);
     return expanded;
 }
-```
+```text
 
 ### 🔄 파일 디스크립터 복사와 공유
 
@@ -454,7 +454,7 @@ int main() {
     // 파일 내용은? "ParentChildParent2"!
     // 왜? 파일 오프셋을 공유하기 때문!
 }
-```
+```text
 
 이건 버그가 아니라 **feature**입니다! 파이프 구현의 핵심이죠.
 
@@ -487,80 +487,106 @@ out:
     return error;
 }
 
-// 파일 디스크립터 테이블 복제
+// 파일 디스크립터 테이블 복제 - fork()의 핵심 구현
+// 실제 사용: 모든 프로세스 생성 시점에서 실행 (bash, docker, systemd 등)
 static struct files_struct *dup_fd(struct files_struct *oldf, int *errorp) {
-    struct files_struct *newf;
-    struct file **old_fds, **new_fds;
-    unsigned int open_files, i;
-    struct fdtable *old_fdt, *new_fdt;
+    struct files_struct *newf;   // 새 프로세스의 파일 테이블
+    struct file **old_fds, **new_fds;  // 파일 포인터 배열들
+    unsigned int open_files, i;  // 열린 파일 개수와 반복자
+    struct fdtable *old_fdt, *new_fdt;  // 부모/자식 FD 테이블
     
-    *errorp = -ENOMEM;
+    // ⭐ 1단계: 에러 코드 초기 설정 및 새 files_struct 할당
+    *errorp = -ENOMEM;  // 메모리 부족을 기본 에러로 설정
+    // files_cachep: 성능 최적화를 위한 전용 메모리 캐시 (slab allocator)
     newf = kmem_cache_alloc(files_cachep, GFP_KERNEL);
     if (!newf)
-        goto out;
+        goto out;  // 할당 실패: 즉시 에러 반환
     
-    atomic_set(&newf->count, 1);
-    spin_lock_init(&newf->file_lock);
-    newf->resize_in_progress = false;
-    init_waitqueue_head(&newf->resize_wait);
-    newf->next_fd = 0;
-    new_fdt = &newf->fdtab;
-    new_fdt->max_fds = NR_OPEN_DEFAULT;
+    // ⭐ 2단계: 새 파일 테이블 기본 초기화
+    // 실제 예: bash가 fork()할 때 자식 프로세스의 FD 테이블 설정
+    atomic_set(&newf->count, 1);        // 참조 카운트 1로 시작
+    spin_lock_init(&newf->file_lock);   // 동시성 제어를 위한 락 초기화
+    newf->resize_in_progress = false;   // 테이블 확장 진행 중 플래그
+    init_waitqueue_head(&newf->resize_wait);  // 확장 대기 큐 초기화
+    newf->next_fd = 0;  // 다음에 할당할 FD 힌트 (성능 최적화)
+    
+    // ⭐ 3단계: 기본 FD 테이블 설정 (작은 프로세스용 최적화)
+    new_fdt = &newf->fdtab;  // 기본 내장 테이블 사용
+    new_fdt->max_fds = NR_OPEN_DEFAULT;  // 기본값: 64개 FD
+    // 비트맵들을 기본 정적 배열로 초기화 (동적 할당 회피)
     new_fdt->close_on_exec = newf->close_on_exec_init;
     new_fdt->open_fds = newf->open_fds_init;
     new_fdt->full_fds_bits = newf->full_fds_bits_init;
-    new_fdt->fd = &newf->fd_array[0];
+    new_fdt->fd = &newf->fd_array[0];  // 기본 FD 배열 포인터 설정
     
+    // ⭐ 4단계: 부모 프로세스 FD 테이블 락 및 분석
+    // 중요: 부모의 FD가 변경되는 것을 방지하기 위한 락
     spin_lock(&oldf->file_lock);
-    old_fdt = files_fdtable(oldf);
-    open_files = count_open_files(old_fdt);
+    old_fdt = files_fdtable(oldf);  // RCU 보호된 테이블 접근
+    open_files = count_open_files(old_fdt);  // 실제 열린 파일 개수 계산
     
-    // 복사할 파일 수가 기본 크기를 초과하면 확장
+    // ⭐ 5단계: 대용량 FD 테이블 처리 (서버 프로세스 등)
+    // 실제 예: nginx worker가 수천 개 연결을 가진 상태에서 fork()
     if (open_files > NR_OPEN_DEFAULT) {
-        spin_unlock(&oldf->file_lock);
+        spin_unlock(&oldf->file_lock);  // 락 해제 후 동적 할당
         
+        // 필요한 크기만큼 FD 테이블 동적 할당
         new_fdt = alloc_fdtable(open_files - 1);
         if (!new_fdt) {
             *errorp = -ENOMEM;
-            goto out_release;
+            goto out_release;  // 할당 실패: 정리 후 에러
         }
         
+        // 재락: 할당 중에 부모 테이블이 변경되었을 수 있음
         spin_lock(&oldf->file_lock);
-        old_fdt = files_fdtable(oldf);
-        open_files = count_open_files(old_fdt);
+        old_fdt = files_fdtable(oldf);  // 테이블 재획득
+        open_files = count_open_files(old_fdt);  // 파일 수 재계산
     }
     
-    // 비트맵 복사
+    // ⭐ 6단계: FD 비트맵 복사 (열린 파일 추적 정보)
+    // open_fds: 어떤 FD가 사용 중인지, close_on_exec: exec 시 닫을 FD
     copy_fd_bitmaps(new_fdt, old_fdt, open_files);
     
-    old_fds = old_fdt->fd;
-    new_fds = new_fdt->fd;
+    // ⭐ 7단계: 파일 포인터 배열 준비
+    old_fds = old_fdt->fd;  // 부모의 파일 포인터 배열
+    new_fds = new_fdt->fd;  // 자식의 파일 포인터 배열
     
-    // 파일 포인터 복사 및 참조 카운트 증가
+    // ⭐ 8단계: 파일 포인터 복사 및 참조 카운트 증가
+    // 핵심: 실제 파일은 복사하지 않고 포인터만 복사 (파일 오프셋 공유)
     for (i = open_files; i != 0; i--) {
-        struct file *f = *old_fds++;
+        struct file *f = *old_fds++;  // 부모의 파일 포인터 획득
         if (f) {
+            // ⭐ 참조 카운트 증가: 동일 파일을 두 프로세스가 공유
+            // 실제 효과: 자식이 파일을 닫아도 부모 것은 영향 없음
             get_file(f);
         } else {
+            // NULL 포인터: 비어있는 FD 슬롯 처리
             __clear_open_fd(open_files - i, new_fdt);
         }
+        // RCU 보호된 포인터 할당: 동시 읽기 안전성 보장
         rcu_assign_pointer(*new_fds++, f);
     }
-    spin_unlock(&oldf->file_lock);
+    spin_unlock(&oldf->file_lock);  // 부모 테이블 락 해제
     
-    // 나머지 슬롯 초기화
+    // ⭐ 9단계: 사용하지 않는 FD 슬롯들을 NULL로 초기화
+    // 보안: 이전 프로세스의 잔여 포인터 정보 제거
     memset(new_fds, 0, (new_fdt->max_fds - open_files) * sizeof(struct file *));
     
+    // ⭐ 10단계: 새 FD 테이블을 files_struct에 연결
+    // RCU: 다른 CPU에서 안전하게 읽을 수 있도록 메모리 배리어와 함께 할당
     rcu_assign_pointer(newf->fdt, new_fdt);
     
-    return newf;
+    return newf;  // 성공: 완전히 복제된 FD 테이블 반환
     
+    // ⭐ 에러 처리 경로들
 out_release:
+    // files_struct은 할당했지만 FD 테이블 할당 실패
     kmem_cache_free(files_cachep, newf);
 out:
+    // 초기 할당부터 실패
     return NULL;
 }
-```
+```text
 
 ## 파일 연산 디스패치
 
@@ -599,7 +625,7 @@ struct file_operations pipe_file_operations = {
     .write = pipe_write,
     .open = NULL,  // 파이프는 pipe()로 생성!
 };
-```
+```text
 
 이제 `read(fd, buf, size)`를 호출하면:
 
@@ -698,7 +724,7 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
     inc_syscr(current);
     return ret;
 }
-```
+```text
 
 ## 특수 파일 디스크립터
 
@@ -715,7 +741,7 @@ $ ps aux | grep python | wc -l
 # 2. grep의 stdin을 파이프의 read end로
 # 3. grep의 stdout을 또 다른 파이프의 write end로
 # 4. wc의 stdin을 그 파이프의 read end로
-```
+```text
 
 직접 구현해보면 이해가 쉽습니다:
 
@@ -744,12 +770,12 @@ int main() {
     
     int n = read(pipefd[0], buf, sizeof(buf));
     buf[n] = '\0';
-    printf("Parent received: %s\n", buf);
+    printf("Parent received: %s, ", buf);
     
     close(pipefd[0]);
     return 0;
 }
-```
+```text
 
 ### 파이프와 FIFO
 
@@ -811,7 +837,7 @@ err_read_pipe:
     fput(files[1]);
     return error;
 }
-```
+```text
 
 ### 🌐 소켓: 네트워크도 파일이다
 
@@ -829,7 +855,7 @@ read(fd, buf, sizeof(buf));
 int sock = socket(AF_INET, SOCK_STREAM, 0);
 connect(sock, &server_addr, sizeof(server_addr));
 read(sock, buf, sizeof(buf));  // 똑같은 read()!
-```
+```text
 
 심지어 `select()`나 `epoll()`로 파일과 소켓을 동시에 감시할 수도 있습니다:
 
@@ -842,7 +868,7 @@ FD_SET(STDIN_FILENO, &readfds); // 표준 입력
 
 select(max_fd + 1, &readfds, NULL, NULL, NULL);
 // 셋 중 아무거나 읽을 준비가 되면 깨어남!
-```
+```text
 
 ### 소켓 파일 디스크립터
 
@@ -888,7 +914,7 @@ static int sock_map_fd(struct socket *sock, int flags) {
     fd_install(fd, newfile);
     return fd;
 }
-```
+```text
 
 ### 🎪 eventfd와 signalfd: 이벤트도 파일로
 
@@ -921,7 +947,7 @@ void worker_thread() {
         
         uint64_t val;
         read(wake_fd, &val, sizeof(val));
-        printf("일어났다! 작업 %llu개 처리\n", val);
+        printf("일어났다! 작업 %llu개 처리, ", val);
         
         process_jobs();
     }
@@ -934,7 +960,7 @@ void main_thread() {
     uint64_t wake = 1;
     write(wake_fd, &wake, sizeof(wake));
 }
-```
+```text
 
 pthread condition variable보다 훨씬 가볍고 빠릅니다!
 
@@ -968,14 +994,14 @@ void modern_signal_handling() {
     struct signalfd_siginfo fdsi;
     while (read(sfd, &fdsi, sizeof(fdsi)) == sizeof(fdsi)) {
         if (fdsi.ssi_signo == SIGINT) {
-            printf("Ctrl-C pressed! (pid=%d)\n", fdsi.ssi_pid);
+            printf("Ctrl-C pressed! (pid=%d), ", fdsi.ssi_pid);
         } else if (fdsi.ssi_signo == SIGTERM) {
-            printf("Termination requested\n");
+            printf("Termination requested, ");
             break;
         }
     }
 }
-```
+```text
 
 시그널을 이벤트 루프에 통합할 수 있다니, 정말 우아하지 않나요? 😊
 
@@ -1048,7 +1074,7 @@ SYSCALL_DEFINE4(signalfd4, int, ufd, sigset_t __user *, user_mask,
     
     return ufd;
 }
-```
+```text
 
 ## 파일 디스크립터 최적화
 
@@ -1066,7 +1092,7 @@ $ perf stat -e syscalls:* ./my_server
 # read() 호출: 1,234,567회/초
 # 각 read()마다 fd 검증 필요
 # 락을 쓰면? 💀 성능 재앙
-```
+```text
 
 그래서 리눅스는 RCU(Read-Copy-Update)를 사용합니다!
 
@@ -1117,7 +1143,7 @@ struct file *fget(unsigned int fd) {
     
     return file;
 }
-```
+```text
 
 ### 💾 파일 디스크립터 캐싱
 
@@ -1133,7 +1159,7 @@ while (1) {
 }
 
 // 90% 이상이 fd 0, 1, 2에 집중!
-```
+```text
 
 그래서 Per-CPU 캐시가 효과적입니다:
 
@@ -1173,7 +1199,7 @@ struct file *fget_cached(unsigned int fd) {
     
     return file;
 }
-```
+```text
 
 ## 실전 활용 예제
 
@@ -1195,7 +1221,7 @@ if (fork() == 0) {
     char buf[1000];
     read(secret_fd, buf, sizeof(buf));  // 여전히 읽을 수 있음!
 }
-```
+```text
 
 해결책: **O_CLOEXEC** 플래그!
 
@@ -1203,7 +1229,7 @@ if (fork() == 0) {
 // 안전한 코드
 int secret_fd = open("/etc/shadow", O_RDONLY | O_CLOEXEC);
 // 이제 exec() 시 자동으로 닫힘
-```
+```text
 
 ### 파일 디스크립터 상속 제어
 
@@ -1258,7 +1284,7 @@ int set_close_on_exec(unsigned int fd, int flag) {
     spin_unlock(&files->file_lock);
     return 0;
 }
-```
+```text
 
 ### 📊 파일 디스크립터 한계 관리
 
@@ -1292,12 +1318,12 @@ while true; do
             echo "$count $pid $name"
         fi
     done | sort -rn | head -5 | while read count pid name; do
-        printf "  %-20s %5d fds (pid=%d)\n" "$name" "$count" "$pid"
+        printf "  %-20s %5d fds (pid=%d), " "$name" "$count" "$pid"
     done
     
     sleep 2
 done
-```
+```text
 
 이걸로 어느 프로세스가 fd를 펑펑 쓰는지 바로 찾을 수 있습니다!
 
@@ -1356,10 +1382,10 @@ void show_fd_statistics(void) {
     }
     rcu_read_unlock();
     
-    printk(KERN_INFO "Total open fds: %lu, Max per process: %lu\n",
+    printk(KERN_INFO "Total open fds: %lu, Max per process: %lu, ",
            total_fds, max_fds);
 }
-```
+```text
 
 ## 요약
 
@@ -1398,7 +1424,7 @@ lsof /path/to/file
 
 # 네트워크 연결 확인
 lsof -i :8080
-```
+```text
 
 파일 디스크립터는 단순한 정수이지만, 그 뒤에는 정교한 3단계 구조가 있습니다. 이 구조를 이해하면, "Too many open files" 에러를 만났을 때 당황하지 않고 침착하게 대응할 수 있습니다.
 

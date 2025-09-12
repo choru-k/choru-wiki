@@ -36,7 +36,7 @@ for (int i = 0; i < 10000; i++) {
 // - 스레드당 1MB 스택 = 10GB 메모리!
 // - 컨텍스트 스위칭으로 CPU 100%
 // - 서버 폭발! 💥
-```
+```text
 
 ### 💡 실전 경험: nginx의 비밀
 
@@ -52,7 +52,7 @@ Memory usage: 2.5GB
 $ ab -n 10000 -c 1000 http://localhost/
 Requests per second: 15,000 [#/sec]  # 17배!
 Memory usage: 15MB  # 166분의 1!
-```
+```text
 
 비동기 I/O와 이벤트 기반 프로그래밍이 바로 이 마법의 비밀입니다!
 
@@ -74,7 +74,7 @@ for (int fd = 0; fd <= max_fd; fd++) {
         // O(n) 복잡도
     }
 }
-```
+```text
 
 제가 겪은 select의 한계:
 
@@ -83,7 +83,7 @@ for (int fd = 0; fd <= max_fd; fd++) {
 # CPU 사용률: 45% (FD 검사만으로!)
 # 실제 I/O 처리: 55%
 # 오버헤드가 거의 절반!
-```
+```text
 
 ### select: 최초의 I/O 멀티플렉서
 
@@ -264,7 +264,7 @@ static int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time) {
     
     return retval;
 }
-```
+```text
 
 ### 📊 poll: select의 진화
 
@@ -279,7 +279,7 @@ fd_set readfds;  // 최대 1024개
 // poll: 동적 배열
 struct pollfd *fds = malloc(10000 * sizeof(struct pollfd));
 // 10000개 가능!
-```
+```text
 
 하지만 여전한 문제:
 
@@ -290,7 +290,7 @@ for (int i = 0; i < nfds; i++) {
         // 여전히 O(n)!
     }
 }
-```
+```text
 
 ### poll: select의 개선
 
@@ -304,88 +304,116 @@ struct pollfd {
     short revents;    // 발생한 이벤트
 };
 
-// poll 기반 이벤트 루프
+// poll 기반 이벤트 루프 - C10K 문제 해결의 핵심
+// 실제 사용: nginx, Apache (event MPM), Node.js 초기 버전에서 활용
 void poll_event_loop(void) {
     struct pollfd *pollfds;
-    int nfds = 0;
-    int capacity = 100;
+    int nfds = 0;           // 현재 모니터링하는 파일 디스크립터 수
+    int capacity = 100;     // 동적 배열 초기 크기
     
+    // ⭐ 1단계: 동적 pollfd 배열 초기화
+    // select와 달리 poll은 FD_SETSIZE(1024) 제한이 없음
     pollfds = calloc(capacity, sizeof(struct pollfd));
     
-    // 리스닝 소켓 추가
+    // ⭐ 2단계: 리스닝 소켓을 poll 세트에 추가
+    // 실제 예: 웹서버가 80/443 포트를 열고 연결 대기
     int listen_fd = create_listen_socket(8080);
-    pollfds[nfds].fd = listen_fd;
-    pollfds[nfds].events = POLLIN;
-    nfds++;
+    pollfds[nfds].fd = listen_fd;       // 모니터링할 파일 디스크립터
+    pollfds[nfds].events = POLLIN;      // 읽기 가능 이벤트에 관심
+    nfds++;  // 활성 FD 카운터 증가
     
+    // ⭐ 메인 이벤트 루프: 무한 대기하며 I/O 이벤트 처리
     while (1) {
-        int ready = poll(pollfds, nfds, 1000);  // 1초 타임아웃
+        // ⭐ 3단계: poll() 시스템 콜로 이벤트 대기
+        // 1000ms 타임아웃: 1초마다 깨어나서 유지보수 작업 가능
+        int ready = poll(pollfds, nfds, 1000);
         
+        // ⭐ 4단계: poll() 결과 분석 및 에러 처리
         if (ready < 0) {
+            // EINTR: 시그널에 의한 중단 (정상적, 재시도)
             if (errno == EINTR)
                 continue;
+            // 실제 에러 발생: 시스템 자원 고갈 등
             perror("poll");
             break;
         }
         
+        // ⭐ 타임아웃 처리: 주기적 유지보수 작업
         if (ready == 0) {
+            // 실제 예: keep-alive 연결 정리, 통계 업데이트
             handle_timeout();
             continue;
         }
         
-        // 이벤트 발생한 FD 처리
+        // ⭐ 5단계: 준비된 파일 디스크립터들 순회 처리
+        // ready 카운터로 조기 종료 최적화 (모든 이벤트 처리 완료 시)
         for (int i = 0; i < nfds && ready > 0; i++) {
+            // revents가 0이면 이 FD에서는 아무 이벤트 없음
             if (pollfds[i].revents == 0)
                 continue;
                 
-            ready--;
+            ready--;  // 처리할 이벤트 수 감소
             
+            // ⭐ 6-1단계: POLLIN 이벤트 처리 (읽기 가능)
             if (pollfds[i].revents & POLLIN) {
                 if (pollfds[i].fd == listen_fd) {
-                    // 새 연결 수락
+                    // ⭐ 새 클라이언트 연결 수락
+                    // 실제 예: HTTP 클라이언트가 서버에 연결 시도
                     int client_fd = accept(listen_fd, NULL, NULL);
                     if (client_fd >= 0) {
+                        // 논블로킹 모드 설정: read/write가 즉시 반환
                         set_nonblocking(client_fd);
                         
-                        // pollfd 배열 확장
+                        // ⭐ 동적 배열 확장: 연결 수 증가에 대응
+                        // C10K: 10,000개 동시 연결 처리 가능
                         if (nfds >= capacity) {
-                            capacity *= 2;
+                            capacity *= 2;  // 지수적 확장으로 재할당 최소화
                             pollfds = realloc(pollfds,
                                             capacity * sizeof(struct pollfd));
                         }
                         
+                        // ⭐ 새 클라이언트 FD를 poll 세트에 추가
                         pollfds[nfds].fd = client_fd;
+                        // POLLIN: 클라이언트 요청 대기
+                        // POLLOUT: 응답 전송 준비 상태 확인
                         pollfds[nfds].events = POLLIN | POLLOUT;
-                        nfds++;
+                        nfds++;  // 모니터링 FD 수 증가
                     }
                 } else {
-                    // 데이터 읽기
+                    // ⭐ 기존 클라이언트로부터 데이터 읽기
+                    // 실제 예: HTTP 요청, WebSocket 메시지 수신
                     handle_read(pollfds[i].fd);
                 }
             }
             
+            // ⭐ 6-2단계: POLLOUT 이벤트 처리 (쓰기 가능)
             if (pollfds[i].revents & POLLOUT) {
+                // TCP 송신 버퍼에 여유 공간 생김: 응답 전송 가능
                 handle_write(pollfds[i].fd);
             }
             
+            // ⭐ 6-3단계: 에러 및 연결 종료 처리
             if (pollfds[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
-                // 에러 처리
+                // POLLERR: 소켓 에러, POLLHUP: 연결 종료
+                // POLLNVAL: 유효하지 않은 파일 디스크립터
                 close(pollfds[i].fd);
                 
-                // 배열에서 제거 (압축)
+                // ⭐ 배열 압축: 중간 요소 제거 후 뒤 요소들을 앞으로 이동
+                // O(n) 복잡도이지만 배열 구조 유지 위해 필수
                 if (i < nfds - 1) {
                     memmove(&pollfds[i], &pollfds[i + 1],
                            (nfds - i - 1) * sizeof(struct pollfd));
                 }
-                nfds--;
-                i--;  // 다시 검사
+                nfds--;  // 활성 FD 수 감소
+                i--;     // 현재 인덱스 재검사 (새 요소가 현 위치로 이동)
             }
         }
     }
     
+    // ⭐ 정리: 동적 할당한 메모리 해제
     free(pollfds);
 }
-```
+```text
 
 ### ⚡ epoll: O(1) 이벤트 통지의 혁명
 
@@ -404,7 +432,7 @@ ready_fds = epoll_wait();
 for (ready_fds) {  // 준비된 것만!
     process();
 }
-```
+```text
 
 제가 측정한 성능 차이:
 
@@ -422,7 +450,7 @@ Latency: 12ms
 # epoll
 CPU usage: 5%  # 헉!
 Latency: 0.5ms  # 30배 빨라짐!
-```
+```text
 
 #### Edge-Triggered vs Level-Triggered
 
@@ -446,7 +474,7 @@ ev.events = EPOLLIN | EPOLLET;
 while ((n = read(fd, buf, sizeof(buf))) > 0) {
     process(buf, n);
 }
-```
+```text
 
 ### epoll: O(1) 이벤트 통지
 
@@ -644,7 +672,7 @@ struct epitem {
     
     struct epoll_event event;    // 이벤트 마스크와 데이터
 };
-```
+```text
 
 ## io_uring: 차세대 비동기 I/O
 
@@ -682,7 +710,7 @@ graph TB
     WORKER --> FS
     WORKER --> NET
     WORKER --> BLK
-```
+```text
 
 ### io_uring 구현
 
@@ -846,100 +874,128 @@ void submit_send(struct io_uring_server *server, int fd,
     io_uring_submit(&server->ring);
 }
 
+// io_uring 서버 루프 - 차세대 비동기 I/O의 핵심
+// 실제 사용: 고성능 데이터베이스 (PostgreSQL, ScyllaDB), 클라우드 서비스
 void io_uring_server_loop(struct io_uring_server *server) {
-    struct io_uring_cqe *cqe;
-    unsigned head;
-    unsigned count = 0;
+    struct io_uring_cqe *cqe;  // Completion Queue Entry - 완료된 작업 정보
+    unsigned head;              // CQ 헤드 인덱스 (민간에서 읽어올 위치)
+    unsigned count = 0;         // 이번 루프에서 처리한 CQE 개수
     
+    // ⭐ 메인 이벤트 루프: epoll보다 10배 빠른 비동기 I/O
     while (1) {
+        // ⭐ 1단계: SQ에 있는 대기 작업들 제출하고 완료 대기
+        // epoll_wait()과 비슷하지만, 시스템 콜 없이 mmap된 링버퍼로 소통
         io_uring_submit_and_wait(&server->ring, 1);
         
-        // 배치 CQE 처리
+        // ⭐ 2단계: 완료된 작업들을 배치로 처리
+        // zero-copy: 커널에서 유저스페이스로 데이터 복사 없음
         io_uring_for_each_cqe(&server->ring, head, cqe) {
+            // ⭐ 3단계: user_data에서 이벤트 타입과 컨텍스트 추출
+            // 64비트 전체를 이벤트 타입(32비트) + FD(32비트)로 분할 사용
             __u64 user_data = cqe->user_data;
-            int event_type = user_data & 0xFFFFFFFF;
-            int fd = user_data >> 32;
+            int event_type = user_data & 0xFFFFFFFF;      // 하위 32비트: 이벤트 타입
+            int fd = user_data >> 32;                     // 상위 32빔트: 파일 디스크립터
             
+            // ⭐ 4단계: 이벤트 타입에 따른 처리 분기
             switch (event_type) {
             case ACCEPT_EVENT:
+                // ⭐ 새 클라이언트 연결 수락 완료
                 if (cqe->res >= 0) {
+                    // cqe->res는 accept()의 반환값: 새 클라이언트 FD
                     int client_fd = cqe->res;
                     
-                    // 새 연결에 대해 recv 제출
+                    // ⭐ 새 연결에 대해 즉시 recv 작업 예약
+                    // 비동기: 코드가 블록되지 않고 즉시 다음 연결 처리 가능
                     submit_recv(server, client_fd, -1);
                     
-                    // 멀티샷 accept이 계속되도록 함
+                    // ⭐ 멀티샷 accept 지속성 유지
+                    // IORING_CQE_F_MORE: 동일 작업이 계속 수행될 예정
                     if (!(cqe->flags & IORING_CQE_F_MORE)) {
+                        // 멀티샷이 종료되면 새로 시작
                         submit_multishot_accept(server);
                     }
                 }
                 break;
                 
             case RECV_EVENT:
+                // ⭐ 데이터 수신 완료
                 if (cqe->res > 0) {
-                    // 버퍼 선택 모드: 버퍼 ID 추출
+                    // ⭐ 버퍼 선택 모드: 커널이 자동으로 버퍼 선택
+                    // 전통적 방식: 유저가 버퍼 미리 할당, io_uring: 필요 시 동적 선택
                     int bid = cqe->flags >> IORING_CQE_BUFFER_SHIFT;
                     char *buffer = get_buffer(server, bid);
                     
-                    // 데이터 처리
+                    // ⭐ 비즈니스 로직 처리
+                    // 실제 예: HTTP 요청 파싱, JSON 디코딩, 데이터베이스 쿼리
                     process_request(server, fd, buffer, cqe->res);
                     
-                    // 버퍼 반환
+                    // ⭐ 버퍼 풀에 반환: 메모리 재사용으로 성능 최적화
                     return_buffer(server, bid);
                     
-                    // 다음 recv 제출
+                    // ⭐ 다음 수신 준비: keep-alive 연결 유지
                     submit_recv(server, fd, -1);
                 } else if (cqe->res == 0 || cqe->res == -ECONNRESET) {
-                    // 연결 종료
+                    // ⭐ 연결 종료 처리
+                    // res == 0: 정상 종료 (FIN), -ECONNRESET: 네트워크 에러
                     close(fd);
                 }
                 break;
                 
             case SEND_EVENT:
+                // ⭐ 데이터 전송 완료
                 if (cqe->res < 0) {
-                    // 전송 실패
+                    // ⭐ 전송 실패: 네트워크 단절, TCP 오류 등
+                    // 실제 예: 클라이언트가 연결을 갑자기 종료
                     close(fd);
                 }
                 break;
             }
             
-            count++;
+            count++;  // 처리한 CQE 개수 증가
         }
         
-        // CQ 전진
+        // ⭐ 5단계: Completion Queue 전진
+        // 커널에게 "이 CQE들은 처리 끝!"이라고 알려주어 재사용 가능하게 함
         io_uring_cq_advance(&server->ring, count);
-        count = 0;
+        count = 0;  // 다음 라운드를 위해 카운터 초기화
     }
 }
 
-// 링크된 연산 (의존성 체인)
+// 링크된 연산 (의존성 체인) - io_uring의 강력한 기능
+// 실제 사용: 마이크로서비스에서 파일 읽기 -> 처리 -> 전솤 -> 정리를 한 번에 설정
 void submit_linked_operations(struct io_uring *ring, int fd) {
-    struct io_uring_sqe *sqe;
+    struct io_uring_sqe *sqe;  // Submission Queue Entry - 수행할 작업 명세서
     
-    // 1. 파일 오픈
+    // ⭐ 1단계: 파일 오픈 작업 준비
+    // 동기 I/O라면: open() -> read() -> send() -> close() 반복으로 4번 블록
     sqe = io_uring_get_sqe(ring);
     io_uring_prep_openat(sqe, AT_FDCWD, "data.txt", O_RDONLY, 0);
-    sqe->flags |= IOSQE_IO_LINK;  // 다음 연산과 링크
+    sqe->flags |= IOSQE_IO_LINK;  // ⭐ 다음 작업과 연결: 실패시 체인 중단
     
-    // 2. 파일 읽기 (오픈 성공 시에만)
+    // ⭐ 2단계: 파일 읽기 작업 (오픈 성공 시에만 실행)
+    // IORING_FILE_INDEX_ALLOC: 커널이 자동으로 FD 할당 및 관리
     sqe = io_uring_get_sqe(ring);
     io_uring_prep_read(sqe, -1, buffer, 4096, 0);
     sqe->flags |= IOSQE_FIXED_FILE | IOSQE_IO_LINK;
-    sqe->fd = IORING_FILE_INDEX_ALLOC;  // 자동 FD 할당
+    sqe->fd = IORING_FILE_INDEX_ALLOC;  // 이전 단계의 FD를 자동 사용
     
-    // 3. 네트워크로 전송 (읽기 성공 시에만)
+    // ⭐ 3단계: 네트워크 전송 (읽기 성공 시에만 실행)
+    // zero-copy sendfile 효과: 디스크 -> 커널 -> 네트워크 직통
     sqe = io_uring_get_sqe(ring);
     io_uring_prep_send(sqe, fd, buffer, 4096, MSG_NOSIGNAL);
-    sqe->flags |= IOSQE_IO_LINK;
+    sqe->flags |= IOSQE_IO_LINK;  // ⭐ 마지막 링크: 전송 실패시 정리 작업도 중단
     
-    // 4. 파일 닫기 (항상 실행)
+    // ⭐ 4단계: 자원 정리 (성공/실패 관계없이 항상 실행)
+    // IOSQE_IO_LINK 없음: 이전 단계 실패와 무관하게 실행
     sqe = io_uring_get_sqe(ring);
     io_uring_prep_close(sqe, -1);
-    sqe->flags |= IOSQE_FIXED_FILE;
+    sqe->flags |= IOSQE_FIXED_FILE;  // 커널이 관리하는 FD 테이블 사용
     
+    // ⭐ 모든 링크된 작업을 한 번에 제출
+    // 장점: 비동기 파이프라인 처리로 지연 시간 최소화
     io_uring_submit(ring);
 }
-```
+```text
 
 ## 리액터 패턴 구현
 
@@ -1156,7 +1212,7 @@ void http_handle_write(event_handler_t *self) {
         }
     }
 }
-```
+```text
 
 ## 프로액터 패턴과 완료 포트
 
@@ -1356,7 +1412,7 @@ void post_read(iocp_server_t *server, struct connection *conn) {
         close_connection(conn);
     }
 }
-```
+```text
 
 ## 고성능 네트워크 프로그래밍 기법
 
@@ -1435,7 +1491,7 @@ int splice_data(int in_fd, int out_fd, size_t len) {
     
     return total;
 }
-```
+```text
 
 ### TCP 최적화
 
@@ -1490,7 +1546,7 @@ void enable_tcp_fastopen(int listen_fd) {
               &qlen, sizeof(qlen));
     #endif
 }
-```
+```text
 
 ## 요약
 
