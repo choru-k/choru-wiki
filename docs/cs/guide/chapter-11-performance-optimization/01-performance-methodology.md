@@ -87,9 +87,9 @@ graph TD
     end
     
     subgraph "USE 관점"
-        U[Utilization<br/>사용률<br/>"얼마나 바쁜가?"]
-        S[Saturation<br/>포화도<br/>"대기 중인 작업이 있나?"]  
-        E[Errors<br/>오류율<br/>"실패가 발생하는가?"]
+        U[Utilization 사용률]
+        S[Saturation 포화도]  
+        E[Errors 오류율]
     end
     
     CPU --> U
@@ -561,7 +561,7 @@ cat /proc/loadavg | awk '{print "Load: " $1 " " $2 " " $3}'
 echo "Errors:"
 dmesg | grep -c -i "cpu\|thermal"
 
-echo -e "\n=== Memory Analysis ==="
+echo -e ", === Memory Analysis ==="
 echo "Utilization:"
 free -h | grep "Mem:" | awk '{print "Used: " $3 "/" $2}'
 
@@ -571,7 +571,7 @@ vmstat 1 2 | tail -1 | awk '{print "Swap I/O: " $7 " " $8}'
 echo "Errors:"  
 dmesg | grep -c -i "out of memory\|oom"
 
-echo -e "\n=== Storage Analysis ==="
+echo -e ", === Storage Analysis ==="
 echo "Utilization:"
 iostat -x 1 1 | grep -v "^$" | tail -n +4 | awk '{print $1 ": " $10 "%"}'
 
@@ -590,8 +590,11 @@ smartctl -a /dev/sda | grep -c -i error 2>/dev/null || echo "smartctl not availa
 #include <stdlib.h>
 #include <string.h>
 
-// 병목점 1: O(n²) 문자열 연결
+// 병목점 1: O(n²) 문자열 연결 - 전형적인 성능 안티패턴
+// 실제 사용: 로그 집계, HTML 생성, JSON 구성 등에서 자주 발생하는 실수
 char* slow_string_concat(int n) {
+    // ⭐ 1단계: 최소 크기 메모리 할당 (성능 문제의 시작점)
+    // 초기 1바이트만 할당하여 매번 realloc을 강제로 발생시킴
     char* result = malloc(1);
     result[0] = '\0';
     
@@ -599,30 +602,44 @@ char* slow_string_concat(int n) {
         char temp[20];
         sprintf(temp, "item_%d_", i);
         
-        // 매번 realloc + strcat = O(n²)
+        // ⭐ 2단계: 성능 킬러 - 매번 전체 문자열 크기 재계산 및 메모리 재할당
+        // strlen(result): O(현재 길이) 시간 복잡도로 이미 연결된 모든 문자열 스캔
+        // realloc: 기존 데이터를 새 메모리 위치로 복사 (O(현재 길이))
+        // strcat: 다시 전체 문자열을 스캔하여 끝 위치 찾고 새 문자열 추가 (O(현재 길이))
+        // 결과: 각 반복마다 O(현재 길이) × 3번 = 전체 O(n²) 시간 복잡도
         result = realloc(result, strlen(result) + strlen(temp) + 1);
         strcat(result, temp);
     }
     
+    // 최종 결과: n=10,000일 때 약 100MB 메모리 복사 및 10억 번 문자 비교 발생
     return result;
 }
 
-// 병목점 2: 캐시 비친화적 메모리 접근  
+// 병목점 2: 캐시 비친화적 메모리 접근 - 현대 CPU 성능을 무시하는 패턴
+// 실제 사용: 해시 테이블 순회, 그래프 탐색, 랜덤 인덱싱에서 흔히 발생
 long cache_unfriendly_sum(int* arr, int n) {
     long sum = 0;
     
-    // Random access로 캐시 미스 유발
+    // ⭐ CPU 캐시 계층구조 무시한 메모리 접근 패턴
+    // L1 캐시: 64바이트 라인 단위로 메모리 로드 (연속된 16개 int 동시 캐시)
+    // L2/L3 캐시: 공간 지역성(spatial locality)으로 인접 데이터 미리 적재
+    // 문제: 7919라는 소수로 인한 의사 랜덤 접근이 모든 캐시 최적화를 무효화
     for (int i = 0; i < n; i++) {
+        // ⭐ 성능 킬러: 캐시 미스 유발 메모리 접근 패턴
+        // (i * 7919) % n: 메모리를 무작위로 점프하여 접근
+        // 결과: 캐시 히트율 < 5%, 메모리 접근마다 100+ 사이클 지연
+        // 연속 접근 대비 20-50배 느린 성능 (RAM 속도로 제한됨)
         sum += arr[(i * 7919) % n];  // 소수로 random access
     }
     
+    // 최적화 힌트: 순차 접근 시 캐시 히트율 > 95%, 3-5배 성능 향상 가능
     return sum;
 }
 
 int main() {
     // 테스트 1: 문자열 연결
     char* str = slow_string_concat(10000);
-    printf("String length: %zu\n", strlen(str));
+    printf("String length: %zu, ", strlen(str));
     free(str);
     
     // 테스트 2: 캐시 미스
@@ -630,7 +647,7 @@ int main() {
     for (int i = 0; i < 1000000; i++) arr[i] = i;
     
     long sum = cache_unfriendly_sum(arr, 1000000);
-    printf("Sum: %ld\n", sum);
+    printf("Sum: %ld, ", sum);
     
     free(arr);
     return 0;

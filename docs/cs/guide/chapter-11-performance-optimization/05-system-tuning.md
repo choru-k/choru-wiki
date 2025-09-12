@@ -108,11 +108,11 @@ else
 fi
 
 # 4. 네트워크 상태 확인
-echo -e "\n네트워크 상태:"
+echo -e ", 네트워크 상태:"
 ss -s | grep -E "TCP:|UDP:"
 
 # 5. 프로세스별 리소스 소비 Top 5
-echo -e "\nTop 5 리소스 소비 프로세스:"
+echo -e ", Top 5 리소스 소비 프로세스:"
 ps aux --sort=-%cpu | head -6
 ```
 
@@ -214,7 +214,7 @@ sudo cat /tmp/performance_tuning.conf >> /etc/sysctl.conf
 echo "✅ 커널 매개변수 최적화 완료"
 
 # 현재 적용된 주요 설정 확인
-echo -e "\n현재 적용된 주요 설정:"
+echo -e ", 현재 적용된 주요 설정:"
 echo "TCP 버퍼 크기: $(sysctl net.ipv4.tcp_rmem)"
 echo "최대 연결 수: $(sysctl net.core.somaxconn)"
 echo "가상 메모리 스왑: $(sysctl vm.swappiness)"
@@ -245,7 +245,7 @@ void set_cpu_affinity(int cpu_id) {
         return;
     }
     
-    printf("프로세스를 CPU %d에 고정했습니다.\n", cpu_id);
+    printf("프로세스를 CPU %d에 고정했습니다., ", cpu_id);
 }
 
 // 프로세스 우선순위 설정
@@ -255,7 +255,7 @@ void set_process_priority(int nice_value) {
         return;
     }
     
-    printf("프로세스 우선순위를 %d로 설정했습니다.\n", nice_value);
+    printf("프로세스 우선순위를 %d로 설정했습니다., ", nice_value);
 }
 
 // 실시간 스케줄링 설정
@@ -268,7 +268,7 @@ void set_realtime_scheduling() {
         return;
     }
     
-    printf("실시간 스케줄링 모드로 설정했습니다.\n");
+    printf("실시간 스케줄링 모드로 설정했습니다., ");
 }
 
 // CPU 바인딩 성능 테스트
@@ -277,7 +277,7 @@ void* cpu_intensive_task(void* arg) {
     
     // 현재 실행 중인 CPU 확인
     int current_cpu = sched_getcpu();
-    printf("스레드 %d가 CPU %d에서 실행 중\n", thread_id, current_cpu);
+    printf("스레드 %d가 CPU %d에서 실행 중, ", thread_id, current_cpu);
     
     // CPU 집약적 작업 시뮬레이션
     volatile long sum = 0;
@@ -285,7 +285,7 @@ void* cpu_intensive_task(void* arg) {
         sum += i;
     }
     
-    printf("스레드 %d 완료 (CPU %d), 결과: %ld\n", 
+    printf("스레드 %d 완료 (CPU %d), 결과: %ld, ", 
            thread_id, sched_getcpu(), sum);
     
     return NULL;
@@ -296,7 +296,7 @@ void test_cpu_binding() {
     pthread_t threads[num_threads];
     int thread_ids[num_threads];
     
-    printf("\n=== CPU 바인딩 성능 테스트 ===\n");
+    printf(", === CPU 바인딩 성능 테스트 ===, ");
     
     struct timeval start, end;
     gettimeofday(&start, NULL);
@@ -323,11 +323,11 @@ void test_cpu_binding() {
     double elapsed = (end.tv_sec - start.tv_sec) + 
                     (end.tv_usec - start.tv_usec) / 1000000.0;
     
-    printf("CPU 바인딩 테스트 완료: %.2f초\n", elapsed);
+    printf("CPU 바인딩 테스트 완료: %.2f초, ", elapsed);
 }
 
 int main() {
-    printf("시스템 CPU 코어 수: %ld\n", sysconf(_SC_NPROCESSORS_ONLN));
+    printf("시스템 CPU 코어 수: %ld, ", sysconf(_SC_NPROCESSORS_ONLN));
     
     // 1. CPU 친화도 설정 (메인 프로세스를 CPU 0에 고정)
     set_cpu_affinity(0);
@@ -339,7 +339,7 @@ int main() {
     test_cpu_binding();
     
     // 4. 실시간 스케줄링 테스트 (root 권한 필요)
-    printf("\n실시간 스케줄링 시도 중...\n");
+    printf(", 실시간 스케줄링 시도 중..., ");
     set_realtime_scheduling();
     
     return 0;
@@ -421,12 +421,12 @@ echo "export JAVA_OPTS=\"$JVM_OPTS\"" > /tmp/jvm_optimized.sh
 echo "JVM 설정이 /tmp/jvm_optimized.sh에 저장되었습니다."
 
 # 사용법 안내
-echo -e "\n사용법:"
+echo -e ", 사용법:"
 echo "source /tmp/jvm_optimized.sh"
 echo "java \$JAVA_OPTS -jar your-application.jar"
 
 # GC 로그 분석 도구 추천
-echo -e "\nGC 로그 분석 도구:"
+echo -e ", GC 로그 분석 도구:"
 echo "1. GCViewer: https://github.com/chewiebug/GCViewer"
 echo "2. GCPlot: https://gcplot.com/"
 echo "3. CRaC (Coordinated Restore at Checkpoint): Java 17+"
@@ -706,7 +706,7 @@ http {
         # ============ 헬스 체크 ============
         location /nginx-health {
             access_log off;
-            return 200 "healthy\n";
+            return 200 "healthy, ";
             add_header Content-Type text/plain;
         }
         
@@ -1124,7 +1124,7 @@ class SystemPerformanceMonitor:
 """
         
         for process_name, proc_stats in list(stats['top_processes'].items())[:5]:
-            report += f"   {process_name}: CPU {proc_stats['cpu_percent']:.1f}%, MEM {proc_stats['memory_percent']:.1f}%\n"
+            report += f"   {process_name}: CPU {proc_stats['cpu_percent']:.1f}%, MEM {proc_stats['memory_percent']:.1f}%, "
         
         return report
     
@@ -1152,7 +1152,7 @@ def main():
         monitor.save_stats_to_file('system_performance.json')
         
     except KeyboardInterrupt:
-        print("\n모니터링을 중단합니다.")
+        print(", 모니터링을 중단합니다.")
     
     finally:
         monitor.stop_monitoring()

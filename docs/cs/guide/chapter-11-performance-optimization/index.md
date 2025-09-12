@@ -95,25 +95,25 @@ $ perf script | flamegraph.pl > flame.svg
 ```mermaid
 graph TD
     subgraph "1단계: 현상 파악"
-        A[사용자 불만<br/>'느려요!'] --> B[시스템 모니터링<br/>htop, iostat]
-        B --> C[증상 분류<br/>CPU/Memory/I/O/Network]
+        A[사용자 불만, '느려요!'] --> B[시스템 모니터링, htop, iostat]
+        B --> C[증상 분류, CPU/Memory/I/O/Network]
     end
     
     subgraph "2단계: 병목점 발견" 
-        C --> D[프로파일링<br/>perf, flamegraph]
-        D --> E[Hot Path 식별<br/>80/20 법칙]
-        E --> F[근본 원인 분석<br/>알고리즘, 아키텍처]
+        C --> D[프로파일링, perf, flamegraph]
+        D --> E[Hot Path 식별, 80/20 법칙]
+        E --> F[근본 원인 분석, 알고리즘, 아키텍처]
     end
     
     subgraph "3단계: 최적화 실행"
-        F --> G[최적화 전략 선택<br/>알고리즘 vs 하드웨어]
-        G --> H[코드 개선<br/>측정 기반 최적화]  
-        H --> I[성능 검증<br/>Before/After 비교]
+        F --> G[최적화 전략 선택, 알고리즘 vs 하드웨어]
+        G --> H[코드 개선, 측정 기반 최적화]  
+        H --> I[성능 검증, Before/After 비교]
     end
     
     subgraph "4단계: 지속적 관리"
-        I --> J[모니터링 구축<br/>성능 회귀 방지]
-        J --> K[팀 지식 공유<br/>최적화 노하우 전수]
+        I --> J[모니터링 구축, 성능 회귀 방지]
+        J --> K[팀 지식 공유, 최적화 노하우 전수]
     end
     
     style A fill:#ffcccb
@@ -136,9 +136,9 @@ graph TD
 ```mermaid
 graph LR
     subgraph "성능 분석 3단계"
-        L1[Level 1<br/>전체 시스템<br/>htop, glances]
-        L2[Level 2<br/>리소스별 분석<br/>perf, iostat]  
-        L3[Level 3<br/>심층 프로파일링<br/>flamegraph, strace]
+        L1[Level 1, 전체 시스템, htop, glances]
+        L2[Level 2, 리소스별 분석, perf, iostat]  
+        L3[Level 3, 심층 프로파일링, flamegraph, strace]
     end
     
     L1 --> L2 --> L3

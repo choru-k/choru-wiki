@@ -43,12 +43,12 @@ tags:
 ```mermaid
 graph TD
     subgraph "Storage Performance Hierarchy"
-        CPU_CACHE[CPU Cache<br/>~1ns<br/>64KB]
-        MEMORY[RAM<br/>~100ns<br/>32GB]
-        NVME[NVMe SSD<br/>~25μs<br/>2TB]
-        SATA_SSD[SATA SSD<br/>~100μs<br/>4TB]
-        HDD[HDD<br/>~10ms<br/>16TB]
-        NETWORK[Network Storage<br/>~1ms<br/>Unlimited]
+        CPU_CACHE[CPU Cache, ~1ns, 64KB]
+        MEMORY[RAM, ~100ns, 32GB]
+        NVME[NVMe SSD, ~25μs, 2TB]
+        SATA_SSD[SATA SSD, ~100μs, 4TB]
+        HDD[HDD, ~10ms, 16TB]
+        NETWORK[Network Storage, ~1ms, Unlimited]
     end
     
     CPU_CACHE --> MEMORY
@@ -74,10 +74,10 @@ echo "=== 현재 I/O 상태 분석 ==="
 echo "1. 전체 I/O 통계:"
 iostat -x 1 3
 
-echo -e "\n2. 프로세스별 I/O 사용량:"
+echo -e ", 2. 프로세스별 I/O 사용량:"
 iotop -a -o
 
-echo -e "\n3. 디스크별 상세 통계:"
+echo -e ", 3. 디스크별 상세 통계:"
 for disk in $(lsblk -d -n -o NAME | grep -v loop); do
     echo "--- /dev/$disk ---"
     iostat -x /dev/$disk 1 1
@@ -87,18 +87,18 @@ for disk in $(lsblk -d -n -o NAME | grep -v loop); do
     echo "스케줄러: $(cat /sys/block/$disk/queue/scheduler)"
 done
 
-echo -e "\n4. 파일 시스템 캐시 통계:"
+echo -e ", 4. 파일 시스템 캐시 통계:"
 cat /proc/meminfo | grep -E "Cached|Buffers|Dirty"
 
-echo -e "\n5. I/O 대기 시간 분석:"
+echo -e ", 5. I/O 대기 시간 분석:"
 vmstat 1 5 | awk 'NR>2 {sum+=$16; count++} END {print "평균 I/O 대기:", sum/count "%"}'
 
-echo -e "\n6. 파일 디스크립터 사용량:"
+echo -e ", 6. 파일 디스크립터 사용량:"
 echo "시스템 전체: $(cat /proc/sys/fs/file-nr | cut -f1)"
 echo "프로세스별 상위 10개:"
 lsof | awk '{print $2}' | sort | uniq -c | sort -nr | head -10
 
-echo -e "\n=== I/O 병목 진단 ==="
+echo -e ", === I/O 병목 진단 ==="
 echo "디스크 사용률 > 90%: I/O 병목 가능성 높음"
 echo "평균 대기시간 > 10ms: 디스크 포화 상태"
 echo "큐 깊이가 높음: 비동기 I/O 고려 필요"
@@ -141,7 +141,7 @@ void sync_file_copy(const char* source, const char* dest) {
     fclose(src);
     fclose(dst);
     
-    printf("동기 I/O 복사 시간: %.2f초\n", 
+    printf("동기 I/O 복사 시간: %.2f초, ", 
            (double)(end - start) / CLOCKS_PER_SEC);
 }
 
@@ -171,13 +171,13 @@ void optimized_sync_copy(const char* source, const char* dest) {
     fclose(src);
     fclose(dst);
     
-    printf("최적화된 동기 I/O: %.2f초\n", 
+    printf("최적화된 동기 I/O: %.2f초, ", 
            (double)(end - start) / CLOCKS_PER_SEC);
 }
 
 int main() {
     // 테스트 파일 생성 (100MB)
-    printf("테스트 파일 생성 중...\n");
+    printf("테스트 파일 생성 중..., ");
     FILE* test_file = fopen("test_large.bin", "wb");
     char data[1024];
     for (int i = 0; i < 1024; i++) data[i] = i % 256;
@@ -242,7 +242,7 @@ void async_file_read(const char* filename) {
     fstat(fd, &st);
     size_t file_size = st.st_size;
     
-    printf("파일 크기: %zu bytes\n", file_size);
+    printf("파일 크기: %zu bytes, ", file_size);
     
     // 여러 비동기 요청 준비
     struct iocb* iocbs[MAX_EVENTS];
@@ -282,7 +282,7 @@ void async_file_read(const char* filename) {
         num_requests++;
     }
     
-    printf("비동기 요청 %d개 제출\n", num_requests);
+    printf("비동기 요청 %d개 제출, ", num_requests);
     
     // 모든 요청 제출
     if (io_submit(ctx, num_requests, iocbs) != num_requests) {
@@ -305,9 +305,9 @@ void async_file_read(const char* filename) {
             long res = events[i].res;
             
             if (res < 0) {
-                printf("I/O 에러: %s\n", strerror(-res));
+                printf("I/O 에러: %s, ", strerror(-res));
             } else {
-                printf("완료: %ld bytes 읽음\n", res);
+                printf("완료: %ld bytes 읽음, ", res);
                 // 실제로는 여기서 데이터 처리
             }
             completed++;
@@ -319,8 +319,8 @@ void async_file_read(const char* filename) {
     double elapsed = (end.tv_sec - start.tv_sec) + 
                     (end.tv_usec - start.tv_usec) / 1000000.0;
     
-    printf("비동기 I/O 완료 시간: %.2f초\n", elapsed);
-    printf("처리량: %.2f MB/s\n", 
+    printf("비동기 I/O 완료 시간: %.2f초, ", elapsed);
+    printf("처리량: %.2f MB/s, ", 
            (file_size / 1024.0 / 1024.0) / elapsed);
     
     // 정리
@@ -378,7 +378,7 @@ void uring_file_copy(const char* source, const char* dest) {
         return;
     }
     
-    printf("io_uring 파일 복사 시작 (크기: %zu bytes)\n", file_size);
+    printf("io_uring 파일 복사 시작 (크기: %zu bytes), ", file_size);
     
     struct timeval start, end;
     gettimeofday(&start, NULL);
@@ -425,7 +425,7 @@ void uring_file_copy(const char* source, const char* dest) {
         int result = cqe->res;
         
         if (result < 0) {
-            printf("I/O 오류: %s\n", strerror(-result));
+            printf("I/O 오류: %s, ", strerror(-result));
             io_uring_cqe_seen(&ring, cqe);
             break;
         }
@@ -456,8 +456,8 @@ void uring_file_copy(const char* source, const char* dest) {
     double elapsed = (end.tv_sec - start.tv_sec) + 
                     (end.tv_usec - start.tv_usec) / 1000000.0;
     
-    printf("io_uring 복사 완료: %.2f초\n", elapsed);
-    printf("처리량: %.2f MB/s\n", 
+    printf("io_uring 복사 완료: %.2f초, ", elapsed);
+    printf("처리량: %.2f MB/s, ", 
            (file_size / 1024.0 / 1024.0) / elapsed);
     
     // 정리
@@ -537,7 +537,7 @@ void handle_client(int epoll_fd, int client_fd) {
     
     if (bytes_read == 0) {
         // 클라이언트 연결 종료
-        printf("클라이언트 연결 종료: fd=%d\n", client_fd);
+        printf("클라이언트 연결 종료: fd=%d, ", client_fd);
         epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
         close(client_fd);
     }
@@ -600,7 +600,7 @@ void run_epoll_server(int port) {
         return;
     }
     
-    printf("epoll 서버 시작 (포트: %d)\n", port);
+    printf("epoll 서버 시작 (포트: %d), ", port);
     
     // 메인 이벤트 루프
     while (1) {
@@ -639,7 +639,7 @@ void run_epoll_server(int port) {
                     continue;
                 }
                 
-                printf("새 클라이언트 연결: %s:%d (fd=%d)\n",
+                printf("새 클라이언트 연결: %s:%d (fd=%d), ",
                        inet_ntoa(client_addr.sin_addr),
                        ntohs(client_addr.sin_port),
                        client_fd);
@@ -707,7 +707,7 @@ void optimize_tcp_socket(int socket_fd) {
         perror("TCP_CORK 설정 실패");
     }
     
-    printf("TCP 소켓 최적화 완료\n");
+    printf("TCP 소켓 최적화 완료, ");
 }
 
 // 대량 데이터 전송을 위한 최적화된 send 함수
@@ -754,7 +754,7 @@ ssize_t zero_copy_file_send(int socket_fd, const char* filename) {
     fstat(file_fd, &st);
     size_t file_size = st.st_size;
     
-    printf("제로 카피로 파일 전송 시작: %zu bytes\n", file_size);
+    printf("제로 카피로 파일 전송 시작: %zu bytes, ", file_size);
     
     struct timeval start, end;
     gettimeofday(&start, NULL);
@@ -767,7 +767,7 @@ ssize_t zero_copy_file_send(int socket_fd, const char* filename) {
     double elapsed = (end.tv_sec - start.tv_sec) + 
                     (end.tv_usec - start.tv_usec) / 1000000.0;
     
-    printf("제로 카피 전송 완료: %.2f초, %.2f MB/s\n", 
+    printf("제로 카피 전송 완료: %.2f초, %.2f MB/s, ", 
            elapsed, (file_size / 1024.0 / 1024.0) / elapsed);
     
     close(file_fd);
@@ -814,11 +814,11 @@ ssize_t vectorized_send(int socket_fd, struct iovec* iov, int iovcnt) {
 void send_http_response(int client_fd, const char* body, size_t body_len) {
     char header[512];
     snprintf(header, sizeof(header),
-             "HTTP/1.1 200 OK\r\n"
-             "Content-Type: text/html\r\n"
-             "Content-Length: %zu\r\n"
-             "Connection: keep-alive\r\n"
-             "\r\n", body_len);
+             "HTTP/1.1 200 OK\r, "
+             "Content-Type: text/html\r, "
+             "Content-Length: %zu\r, "
+             "Connection: keep-alive\r, "
+             "\r, ", body_len);
     
     // vectorized I/O로 헤더와 바디를 한 번에 전송
     struct iovec iov[2];
@@ -828,7 +828,7 @@ void send_http_response(int client_fd, const char* body, size_t body_len) {
     iov[1].iov_len = body_len;
     
     ssize_t sent = vectorized_send(client_fd, iov, 2);
-    printf("HTTP 응답 전송: %zd bytes\n", sent);
+    printf("HTTP 응답 전송: %zd bytes, ", sent);
 }
 ```
 
@@ -853,7 +853,7 @@ echo "현재 마운트 상태:"
 mount | grep -E "ext[34]|xfs|btrfs"
 
 # 2. 파일 시스템별 최적화
-echo -e "\n2. 파일 시스템별 최적화:"
+echo -e ", 2. 파일 시스템별 최적화:"
 
 # ext4 최적화
 echo "ext4 최적화:"
@@ -865,7 +865,7 @@ echo "XFS 최적화:"
 echo "  sudo mount -o remount,noatime,nobarrier,logbufs=8,logbsize=256k /"
 
 # 3. I/O 스케줄러 최적화
-echo -e "\n3. I/O 스케줄러 확인 및 변경:"
+echo -e ", 3. I/O 스케줄러 확인 및 변경:"
 for disk in $(lsblk -d -n -o NAME | grep -v loop); do
     scheduler=$(cat /sys/block/$disk/queue/scheduler)
     echo "$disk: $scheduler"
@@ -877,7 +877,7 @@ for disk in $(lsblk -d -n -o NAME | grep -v loop); do
 done
 
 # 4. 파일 시스템 캐시 조정
-echo -e "\n4. 시스템 캐시 설정:"
+echo -e ", 4. 시스템 캐시 설정:"
 echo "현재 설정:"
 cat /proc/sys/vm/dirty_ratio
 cat /proc/sys/vm/dirty_background_ratio
@@ -889,7 +889,7 @@ echo "echo 10 > /proc/sys/vm/dirty_background_ratio"
 echo "echo 500 > /proc/sys/vm/dirty_writeback_centisecs"  # 더 자주 플러시
 
 # 5. 대용량 파일 처리를 위한 readahead 조정
-echo -e "\n5. readahead 설정:"
+echo -e ", 5. readahead 설정:"
 for disk in $(lsblk -d -n -o NAME | grep -v loop); do
     current_readahead=$(blockdev --getra /dev/$disk)
     echo "/dev/$disk 현재 readahead: $current_readahead"
@@ -960,7 +960,7 @@ void direct_io_example(const char* filename) {
         return;
     }
     
-    printf("Direct I/O 읽기 시작\n");
+    printf("Direct I/O 읽기 시작, ");
     
     struct timeval start, end;
     gettimeofday(&start, NULL);
@@ -978,8 +978,8 @@ void direct_io_example(const char* filename) {
     double elapsed = (end.tv_sec - start.tv_sec) + 
                     (end.tv_usec - start.tv_usec) / 1000000.0;
     
-    printf("Direct I/O 완료: %zd bytes, %.2f초\n", total_read, elapsed);
-    printf("처리량: %.2f MB/s\n", 
+    printf("Direct I/O 완료: %zd bytes, %.2f초, ", total_read, elapsed);
+    printf("처리량: %.2f MB/s, ", 
            (total_read / 1024.0 / 1024.0) / elapsed);
     
     free(buffer);
@@ -1039,7 +1039,7 @@ int stream_reader_read_line(StreamReader* reader, char* line, size_t max_len) {
         
         char c = reader->buffer[reader->buffer_pos++];
         
-        if (c == '\n') {
+        if (c == ', ') {
             break;
         }
         
@@ -1062,7 +1062,7 @@ void stream_reader_destroy(StreamReader* reader) {
 void process_large_text_file(const char* filename) {
     StreamReader* reader = stream_reader_create(filename, 1024 * 1024);  // 1MB 버퍼
     if (!reader) {
-        printf("스트림 리더 생성 실패\n");
+        printf("스트림 리더 생성 실패, ");
         return;
     }
     
@@ -1077,7 +1077,7 @@ void process_large_text_file(const char* filename) {
         // 실제로는 여기서 라인 처리
         
         if (line_count % 100000 == 0) {
-            printf("처리된 라인: %d\n", line_count);
+            printf("처리된 라인: %d, ", line_count);
         }
     }
     
@@ -1086,8 +1086,8 @@ void process_large_text_file(const char* filename) {
     double elapsed = (end.tv_sec - start.tv_sec) + 
                     (end.tv_usec - start.tv_usec) / 1000000.0;
     
-    printf("총 %d 라인 처리 완료: %.2f초\n", line_count, elapsed);
-    printf("처리 속도: %.0f 라인/초\n", line_count / elapsed);
+    printf("총 %d 라인 처리 완료: %.2f초, ", line_count, elapsed);
+    printf("처리 속도: %.0f 라인/초, ", line_count / elapsed);
     
     stream_reader_destroy(reader);
 }
@@ -1097,7 +1097,7 @@ int main() {
     size_t file_size;
     void* mapped = mmap_file_read("test.txt", &file_size);
     if (mapped) {
-        printf("메모리 맵으로 %zu bytes 읽음\n", file_size);
+        printf("메모리 맵으로 %zu bytes 읽음, ", file_size);
         munmap(mapped, file_size);
     }
     
@@ -1126,11 +1126,11 @@ echo "1. 디스크 I/O 통계 (5초간):"
 iostat -x 1 5
 
 # 2. iotop으로 프로세스별 I/O 사용량
-echo -e "\n2. 프로세스별 I/O 사용량 (상위 10개):"
+echo -e ", 2. 프로세스별 I/O 사용량 (상위 10개):"
 iotop -b -n 1 | head -20
 
 # 3. 각 디스크별 큐 상태
-echo -e "\n3. 디스크 큐 상태:"
+echo -e ", 3. 디스크 큐 상태:"
 for disk in $(lsblk -d -n -o NAME | grep -v loop); do
     echo "=== /dev/$disk ==="
     echo "큐 깊이: $(cat /sys/block/$disk/queue/nr_requests)"
@@ -1140,31 +1140,31 @@ for disk in $(lsblk -d -n -o NAME | grep -v loop); do
     # I/O 통계
     echo "I/O 통계:"
     cat /sys/block/$disk/stat | awk '{
-        printf "읽기: %d 섹터, 쓰기: %d 섹터\n", $3, $7
-        printf "읽기 시간: %d ms, 쓰기 시간: %d ms\n", $4, $8
-        printf "진행 중인 I/O: %d, 총 I/O 시간: %d ms\n", $9, $10
+        printf "읽기: %d 섹터, 쓰기: %d 섹터, ", $3, $7
+        printf "읽기 시간: %d ms, 쓰기 시간: %d ms, ", $4, $8
+        printf "진행 중인 I/O: %d, 총 I/O 시간: %d ms, ", $9, $10
     }'
 done
 
 # 4. 파일 시스템 캐시 상태
-echo -e "\n4. 파일 시스템 캐시 상태:"
+echo -e ", 4. 파일 시스템 캐시 상태:"
 free -h | grep -E "Mem:|Buffer|Cache"
 cat /proc/meminfo | grep -E "Cached|Buffers|Dirty|Writeback"
 
 # 5. I/O 압박 상황 확인
-echo -e "\n5. I/O 압박 및 대기 상태:"
+echo -e ", 5. I/O 압박 및 대기 상태:"
 vmstat 1 3 | awk 'NR>2 {
-    printf "I/O 대기: %d%%, 시스템: %d%%, 사용자: %d%%, 유휴: %d%%\n", 
+    printf "I/O 대기: %d%%, 시스템: %d%%, 사용자: %d%%, 유휴: %d%%, ", 
            $16, $14, $13, $15
 }'
 
 # 6. 네트워크 I/O 상태
-echo -e "\n6. 네트워크 I/O 상태:"
+echo -e ", 6. 네트워크 I/O 상태:"
 ss -s  # 소켓 통계
 netstat -i  # 인터페이스별 통계
 
 # 7. 실행 중인 프로세스의 I/O 패턴 분석
-echo -e "\n7. 현재 I/O 집약적 프로세스:"
+echo -e ", 7. 현재 I/O 집약적 프로세스:"
 ps aux --sort=-%cpu | head -10 | while read user pid cpu mem vsz rss tty stat start time command; do
     if [ "$pid" != "PID" ] && [ -r "/proc/$pid/io" ]; then
         echo "PID: $pid, 명령어: $command"
@@ -1174,7 +1174,7 @@ ps aux --sort=-%cpu | head -10 | while read user pid cpu mem vsz rss tty stat st
 done
 
 # 8. I/O 병목 진단
-echo -e "\n8. I/O 병목 진단:"
+echo -e ", 8. I/O 병목 진단:"
 avg_util=$(iostat -x 1 3 | awk '/^[sv]d/ {sum+=$10; count++} END {if(count>0) print sum/count; else print 0}')
 echo "평균 디스크 사용률: ${avg_util}%"
 
