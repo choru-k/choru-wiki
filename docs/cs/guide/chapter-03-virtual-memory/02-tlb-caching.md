@@ -39,36 +39,36 @@ graph TD
         DTLB["L1 DTLB
 64 entries
 4-way"]
-        
+
         STLB["L2 STLB
 1536 entries
 12-way
 Unified"]
-        
+
         ITLB -->|miss| STLB
         DTLB -->|miss| STLB
-        
+
         STLB -->|miss| PWC["Page Walk Cache]
         PWC -->|miss| WALK[Page Table Walk"]
     end
-    
+
     subgraph "접근 시간"
         T1["1 cycle]
         T2[7 cycles"]
         T3["14 cycles]
         T4[100+ cycles"]
     end
-    
+
     ITLB -.-> T1
     STLB -.-> T2
     PWC -.-> T3
     WALK -.-> T4
-    
+
     style ITLB fill:#4CAF50
     style DTLB fill:#4CAF50
     style STLB fill:#FFE082
     style WALK fill:#FF5252
-```text
+```
 
 ### 1.2 TLB 엔트리 구조: 각 항목이 담는 비밀
 
@@ -80,26 +80,26 @@ typedef struct {
     // 주소 정보
     uint64_t vpn : 36;      // Virtual Page Number (48-bit VA, 12-bit offset)
     uint64_t pfn : 36;      // Physical Frame Number
-    
+
     // 프로세스 식별
     uint16_t asid : 12;     // Address Space ID
     uint16_t pcid : 12;     // Process Context ID (x86)
-    
+
     // 권한 비트
     uint8_t valid : 1;      // 유효한 엔트리
     uint8_t global : 1;     // 모든 프로세스 공유
     uint8_t writable : 1;   // 쓰기 가능
     uint8_t user : 1;       // 사용자 모드 접근
     uint8_t nx : 1;         // No Execute
-    
+
     // 캐시 속성
     uint8_t cacheable : 1;  // 캐시 가능
     uint8_t wt : 1;         // Write Through
     uint8_t uc : 1;         // Uncacheable
-    
+
     // 페이지 크기
     uint8_t page_size : 2;  // 00=4K, 01=2M, 10=1G
-    
+
     // LRU 정보
     uint8_t lru_bits : 3;   // LRU 교체용
     uint8_t age : 5;        // 나이 카운터
@@ -114,7 +114,7 @@ typedef struct {
     tlb_entry_t entries[L1_DTLB_SETS][L1_DTLB_WAYS];
     uint8_t lru[L1_DTLB_SETS];  // LRU 정보
 } l1_dtlb_t;
-```text
+```
 
 ### 1.3 TLB 검색 과정: 1 사이클의 마법
 
@@ -127,41 +127,41 @@ uint64_t tlb_lookup(l1_dtlb_t* tlb, uint64_t vaddr, uint16_t asid) {
     static uint64_t tlb_hits = 0;
     tlb_accesses++;
     uint64_t vpn = vaddr >> 12;
-    
+
     // Set-associative 캐시 인덱싱
     uint32_t set_index = vpn & (L1_DTLB_SETS - 1);
-    
+
     // 해당 set의 모든 way 병렬 검색
     for (int way = 0; way < L1_DTLB_WAYS; way++) {
         tlb_entry_t* entry = &tlb->entries[set_index][way];
-        
+
         // Tag 비교
         if (entry->valid &&
             entry->vpn == vpn &&
             (entry->global || entry->asid == asid)) {
-            
+
             // TLB Hit! 대박! 100 사이클 절약!
             tlb_hits++;
-            printf("TLB Hit! (적중률: %.1f%%), ", 
+            printf("TLB Hit! (적중률: %.1f%%), ",
                    100.0 * tlb_hits / tlb_accesses);
             update_lru(tlb, set_index, way);
-            
+
             // 권한 검사
             if (!check_permissions(entry, current_mode())) {
                 raise_exception(PROTECTION_FAULT);
                 return 0;
             }
-            
+
             // 물리 주소 생성
             return (entry->pfn << 12) | (vaddr & 0xFFF);
         }
     }
-    
+
     // TLB Miss - 아쉽, 느린 길로 가야 함 (100 사이클)
     printf("TLB Miss! 페이지 테이블 워크 필요, ");
     return TLB_MISS;
 }
-```text
+```
 
 ## 2. TLB Miss 처리: 비상 탈출구
 
@@ -181,10 +181,10 @@ typedef struct {
 
 uint64_t hardware_page_walk(page_walker_t* walker, uint64_t vaddr) {
     uint64_t cr3 = read_cr3();
-    
+
     // PWC (Page Walk Cache) 확인
     uint64_t pml4_idx = (vaddr >> 39) & 0x1FF;
-    
+
     // PML4 캐시 확인
     for (int i = 0; i < 16; i++) {
         if (walker->pml4_cache[i] == (cr3 | pml4_idx)) {
@@ -193,18 +193,18 @@ uint64_t hardware_page_walk(page_walker_t* walker, uint64_t vaddr) {
             return continue_walk_from_pdpt(vaddr);
         }
     }
-    
+
     walker->pwc_misses++;
-    
+
     // 전체 페이지 워크
     uint64_t paddr = full_page_walk(vaddr);
-    
+
     // PWC 업데이트
     update_pwc(walker, vaddr, paddr);
-    
+
     return paddr;
 }
-```text
+```
 
 ### 2.2 Software TLB Management: 수동 기어 방식
 
@@ -215,13 +215,13 @@ MIPS나 일부 RISC CPU는 하드웨어 워커가 없습니다. OS가 직접 TLB
 void tlb_refill_handler(uint64_t bad_vaddr) {
     // 페이지 테이블에서 엔트리 찾기
     pte_t* pte = walk_page_table(bad_vaddr);
-    
+
     if (!pte || !pte->present) {
         // 페이지 폴트
         do_page_fault(bad_vaddr);
         return;
     }
-    
+
     // TLB 엔트리 생성
     tlb_entry_t new_entry = {
         .vpn = bad_vaddr >> 12,
@@ -232,12 +232,12 @@ void tlb_refill_handler(uint64_t bad_vaddr) {
         .user = pte->user,
         .global = pte->global
     };
-    
+
     // TLB에 삽입 (Random 또는 LRU)
     int index = tlb_get_random_index();
     write_tlb_entry(index, &new_entry);
 }
-```text
+```
 
 ### 2.3 TLB Miss 비용 분석: 숫자로 보는 충격
 
@@ -250,19 +250,19 @@ void tlb_refill_handler(uint64_t bad_vaddr) {
 
 void measure_tlb_miss_cost() {
     printf("=== TLB Miss 비용 측정 실험 ===, ");
-    
+
     size_t page_size = 4096;
     size_t tlb_entries = 64;  // L1 DTLB 크기 (Intel Core i7)
-    
+
     // TLB 크기보다 큰 메모리 할당
     size_t size = tlb_entries * page_size * 10;
     char* memory = malloc(size);
-    
+
     // 워밍업 - TLB 채우기
     for (size_t i = 0; i < tlb_entries * page_size; i += page_size) {
         memory[i] = 1;
     }
-    
+
     // TLB Hit 측정
     clock_t start = clock();
     for (int iter = 0; iter < 1000000; iter++) {
@@ -271,7 +271,7 @@ void measure_tlb_miss_cost() {
         }
     }
     clock_t hit_time = clock() - start;
-    
+
     // TLB Miss 측정
     start = clock();
     for (int iter = 0; iter < 1000000; iter++) {
@@ -280,17 +280,17 @@ void measure_tlb_miss_cost() {
         volatile char c = memory[idx];  // TLB Miss 가능성 높음
     }
     clock_t miss_time = clock() - start;
-    
+
     printf(", === 측정 결과 ===, ");
     printf("TLB Hit 시간:  %ld cycles (초고속!), ", hit_time);
     printf("TLB Miss 시간: %ld cycles (느림...), ", miss_time);
-    printf(", 충격적인 사실: TLB Miss는 %.2f배 느립니다!, ", 
+    printf(", 충격적인 사실: TLB Miss는 %.2f배 느립니다!, ",
            (double)miss_time / hit_time);
     printf(", 결론: TLB Hit Rate가 98%%만 되어도 성능은 50배 차이!, ");
-    
+
     free(memory);
 }
-```text
+```
 
 ## 3. TLB Shootdown: 멀티코어의 악몽
 
@@ -304,20 +304,20 @@ sequenceDiagram
     participant CPU1
     participant CPU2
     participant CPU3
-    
+
     Note over CPU0: 페이지 테이블 변경
     CPU0->>CPU0: 로컬 TLB 무효화
     CPU0->>CPU1: IPI (TLB Shootdown)
     CPU0->>CPU2: IPI (TLB Shootdown)
     CPU0->>CPU3: IPI (TLB Shootdown)
-    
+
     CPU1-->>CPU0: ACK
     CPU2-->>CPU0: ACK
     CPU3-->>CPU0: ACK
-    
+
     Note over CPU0: 모든 ACK 대기
     Note over CPU0: 계속 진행
-```text
+```
 
 ### 3.2 TLB Shootdown 구현: 비싼 대가
 
@@ -334,8 +334,8 @@ struct tlb_flush_info {
     bool freed_tables;
 };
 
-void flush_tlb_mm_range(struct mm_struct* mm, 
-                        unsigned long start, 
+void flush_tlb_mm_range(struct mm_struct* mm,
+                        unsigned long start,
                         unsigned long end) {
     struct tlb_flush_info info = {
         .mm = mm,
@@ -343,25 +343,25 @@ void flush_tlb_mm_range(struct mm_struct* mm,
         .end = end,
         .new_tlb_gen = atomic64_inc_return(&mm->tlb_gen)
     };
-    
+
     // 로컬 TLB 플러시
     local_flush_tlb(&info);
-    
+
     // 모든 CPU에게 "긴급! TLB 비워!" 신호 전송
     cpumask_t cpus_to_flush = mm->cpu_bitmap;
     cpumask_clear_cpu(smp_processor_id(), &cpus_to_flush);
-    
+
     if (!cpumask_empty(&cpus_to_flush)) {
-        printf("[TLB Shootdown] %d개 CPU에 IPI 전송 시작, ", 
+        printf("[TLB Shootdown] %d개 CPU에 IPI 전송 시작, ",
                cpumask_weight(&cpus_to_flush));
-        
+
         // IPI(Inter-Processor Interrupt) 전송
         // 이 한 줄이 수백 마이크로초를 소모할 수 있음!
         smp_call_function_many(&cpus_to_flush,
                               flush_tlb_func_remote,
                               &info,
                               1);  // 모든 CPU가 완료할 때까지 대기
-        
+
         printf("[TLB Shootdown] 완료 - 비용: ~500 microseconds, ");
     }
 }
@@ -369,12 +369,12 @@ void flush_tlb_mm_range(struct mm_struct* mm,
 // 원격 CPU에서 실행되는 핸들러
 void flush_tlb_func_remote(void* info) {
     struct tlb_flush_info* f = info;
-    
+
     // TLB generation number 확인
     if (this_cpu_read(cpu_tlbstate.tlb_gen) >= f->new_tlb_gen) {
         return;  // 이미 플러시됨
     }
-    
+
     // 범위 기반 플러시
     if (f->end - f->start <= PAGE_SIZE) {
         // 단일 페이지
@@ -388,10 +388,10 @@ void flush_tlb_func_remote(void* info) {
         // 큰 범위 - 전체 플러시
         flush_tlb_all();
     }
-    
+
     this_cpu_write(cpu_tlbstate.tlb_gen, f->new_tlb_gen);
 }
-```text
+```
 
 ### 3.3 TLB Shootdown 최적화: 비용 줄이기
 
@@ -409,9 +409,9 @@ static DEFINE_PER_CPU(struct tlb_batch, tlb_batch);
 
 void queue_tlb_flush(unsigned long addr) {
     struct tlb_batch* batch = this_cpu_ptr(&tlb_batch);
-    
+
     batch->pages[batch->nr_pages++] = addr;
-    
+
     if (batch->nr_pages >= TLB_BATCH_SIZE) {
         flush_tlb_batch(batch);
         batch->nr_pages = 0;
@@ -419,11 +419,11 @@ void queue_tlb_flush(unsigned long addr) {
 }
 
 // PCID를 활용한 최적화
-void switch_mm_irqs_off(struct mm_struct* prev, 
+void switch_mm_irqs_off(struct mm_struct* prev,
                        struct mm_struct* next) {
     uint16_t prev_pcid = prev->pcid;
     uint16_t next_pcid = next->pcid;
-    
+
     if (static_cpu_has(X86_FEATURE_PCID)) {
         // PCID 지원 - TLB 플러시 불필요
         write_cr3(build_cr3(next->pgd, next_pcid));
@@ -432,7 +432,7 @@ void switch_mm_irqs_off(struct mm_struct* prev,
         write_cr3(build_cr3(next->pgd, 0));
     }
 }
-```text
+```
 
 ## 4. TLB와 CPU 캐시의 상호작용: 두 친구의 협력
 
@@ -461,19 +461,19 @@ typedef struct {
 // VIPT 캐시: 똑똑한 접근 방식
 void vipt_cache_access(uint64_t vaddr) {
     printf("[VIPT] 가상 주소로 캐시 인덱싱 시작, ");
-    
+
     // 천재적인 최적화: TLB와 캐시를 동시에 접근!
     uint32_t cache_index = (vaddr >> 6) & 0x3F;  // 가상 주소로 인덱싱
     uint64_t physical_addr = tlb_lookup(vaddr);   // TLB 검색 (병렬)
-    
+
     printf("[VIPT] TLB와 캐시 검색 동시 진행 - 1 cycle 절약!, ");
-    
+
     // 태그 비교는 물리 주소 필요
     if (cache[cache_index].physical_tag == (physical_addr >> 12)) {
         printf("[VIPT] Cache Hit! TLB와 캐시 모두 성공, ");
     }
 }
-```text
+```
 
 ### 4.2 TLB와 캐시 일관성: 두 친구를 동기화하기
 
@@ -493,17 +493,17 @@ void update_page_mapping(uint64_t vaddr, uint64_t new_paddr) {
     // 1. 기존 매핑의 캐시 라인 무효화
     uint64_t old_paddr = get_physical_addr(vaddr);
     invalidate_cache_lines(old_paddr, PAGE_SIZE);
-    
+
     // 2. TLB 엔트리 무효화
     invlpg(vaddr);
-    
+
     // 3. 페이지 테이블 업데이트
     update_pte(vaddr, new_paddr);
-    
+
     // 4. 다른 코어에 통지 (TLB shootdown)
     send_tlb_shootdown(vaddr);
 }
-```text
+```
 
 ## 5. Context Switch와 TLB: 프로세스 전환의 비용
 
@@ -516,10 +516,10 @@ void update_page_mapping(uint64_t vaddr, uint64_t new_paddr) {
 void context_switch_no_asid(struct task_struct* prev,
                             struct task_struct* next) {
     printf("[구식 Context Switch] %s → %s, ", prev->comm, next->comm);
-    
+
     // CR3 변경 = TLB 전체 삭제 (재앙!)
     write_cr3(next->mm->pgd);
-    
+
     printf("  TLB 전체 플러시: 200 cycles 소모, ");
     printf("  앞으로 100번의 TLB miss 예상..., ");
     printf("  총 비용: ~10,000 cycles (성능 저하!), ");
@@ -532,23 +532,23 @@ void measure_context_switch_cost() {
     for (int i = 0; i < 256; i++) {
         memory[i * 4096] = i;  // TLB 엔트리 생성
     }
-    
+
     // Context switch 시뮬레이션
     clock_t before = clock();
     flush_tlb_all();  // TLB 플러시
     clock_t after_flush = clock();
-    
+
     // Working set 재접근 (TLB miss 발생)
     volatile int sum = 0;
     for (int i = 0; i < 256; i++) {
         sum += memory[i * 4096];
     }
     clock_t after_reload = clock();
-    
+
     printf("TLB flush cost: %ld cycles, ", after_flush - before);
     printf("TLB reload cost: %ld cycles, ", after_reload - after_flush);
 }
-```text
+```
 
 ### 5.2 ASID/PCID 활용: 현대적인 해결책
 
@@ -569,43 +569,43 @@ uint16_t allocate_pcid(struct mm_struct* mm) {
         .next_pcid = 1,  // 0은 예약
         .lock = __SPIN_LOCK_UNLOCKED(allocator.lock)
     };
-    
+
     spin_lock(&allocator.lock);
-    
+
     // 사용 가능한 PCID 찾기
     uint16_t pcid = find_first_zero_bit(allocator.used_pcids, MAX_ASIDS);
-    
+
     if (pcid >= MAX_ASIDS) {
         // PCID 고갈 - 전체 플러시 후 재사용
         flush_all_pcids();
         bitmap_zero(allocator.used_pcids, MAX_ASIDS);
         pcid = 1;
     }
-    
+
     set_bit(pcid, allocator.used_pcids);
     spin_unlock(&allocator.lock);
-    
+
     return pcid;
 }
 
 void context_switch_with_pcid(struct task_struct* prev,
                               struct task_struct* next) {
     printf("[현대식 Context Switch] %s → %s, ", prev->comm, next->comm);
-    
+
     if (!next->mm->pcid) {
         next->mm->pcid = allocate_pcid(next->mm);
         printf("  새 PCID 할당: %d, ", next->mm->pcid);
     }
-    
+
     // PCID로 TLB 유지! (혁명적!)
     uint64_t new_cr3 = build_cr3_pcid(next->mm->pgd, next->mm->pcid);
     write_cr3(new_cr3);
-    
+
     printf("  TLB 유지됨! (PCID %d 사용), ", next->mm->pcid);
     printf("  절약된 시간: ~10,000 cycles, ");
     printf("  성능 향상: 10-30%%, ");
 }
-```text
+```
 
 ## 6. TLB 최적화 기법: 성능 끌어올리기
 
@@ -621,15 +621,15 @@ void optimize_with_huge_pages() {
     printf("  4KB 페이지: 262,144개 TLB 엔트리 필요, ");
     printf("  2MB 페이지: 512개만 필요!, ");
     printf("  효율: 512배 향상!, , ");
-    
+
     size_t size = 1ULL << 30;  // 1GB
-    
+
     // Huge Pages 할당
     void* huge_mem = mmap(NULL, size,
                          PROT_READ | PROT_WRITE,
                          MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
                          -1, 0);
-    
+
     if (huge_mem != MAP_FAILED) {
         printf("✓ Huge Pages 할당 성공!, ");
         printf("  필요 TLB 엔트리: %zu개, ", size / (2*1024*1024));
@@ -644,7 +644,7 @@ void optimize_with_huge_pages() {
         printf("  성능 저하 예상..., ");
     }
 }
-```text
+```
 
 ### 6.2 TLB Prefetching: 미리 준비하기
 
@@ -656,7 +656,7 @@ void tlb_prefetch_range(void* start, size_t size) {
     printf("[TLB Prefetch] %zu MB 영역 미리 로드, ", size / (1024*1024));
     char* addr = (char*)start;
     char* end = addr + size;
-    
+
     // 페이지별로 터치하여 TLB 엔트리 생성
     while (addr < end) {
         volatile char dummy = *addr;  // TLB 엔트리 로드
@@ -668,11 +668,11 @@ void tlb_prefetch_range(void* start, size_t size) {
 void process_large_data(void* data, size_t size) {
     // TLB 프리페치
     tlb_prefetch_range(data, size);
-    
+
     // 실제 처리 - TLB hit 증가
     actual_processing(data, size);
 }
-```text
+```
 
 ### 6.3 TLB-aware 데이터 구조: TLB를 고려한 설계
 
@@ -685,7 +685,7 @@ struct tlb_friendly_hash {
     struct bucket {
         struct entry entries[ENTRIES_PER_PAGE];
     } __attribute__((aligned(4096))) *buckets;
-    
+
     size_t num_buckets;
 };
 
@@ -693,17 +693,17 @@ struct tlb_friendly_hash {
 void* hash_lookup(struct tlb_friendly_hash* hash, uint64_t key) {
     size_t bucket_idx = key % hash->num_buckets;
     struct bucket* bucket = &hash->buckets[bucket_idx];
-    
+
     // 같은 페이지 내에서만 검색 - TLB 효율적
     for (int i = 0; i < ENTRIES_PER_PAGE; i++) {
         if (bucket->entries[i].key == key) {
             return bucket->entries[i].value;
         }
     }
-    
+
     return NULL;
 }
-```text
+```
 
 ## 7. 실전: TLB 성능 분석 노하우
 
@@ -718,7 +718,7 @@ $ perf stat -e dTLB-loads,dTLB-load-misses,iTLB-loads,iTLB-load-misses ./program
 #     12,345,678  dTLB-load-misses  # 0.12% miss rate
 #  5,123,456,789  iTLB-loads
 #         23,456  iTLB-load-misses  # 0.0005% miss rate
-```text
+```
 
 ### 7.2 TLB 미스 원인 분석: 왜 느려졌나?
 
@@ -729,30 +729,30 @@ $ perf stat -e dTLB-loads,dTLB-load-misses,iTLB-loads,iTLB-load-misses ./program
 void analyze_tlb_misses() {
     struct perf_event_attr attr = {
         .type = PERF_TYPE_HARDWARE,
-        .config = PERF_COUNT_HW_CACHE_DTLB | 
+        .config = PERF_COUNT_HW_CACHE_DTLB |
                  (PERF_COUNT_HW_CACHE_OP_READ << 8) |
                  (PERF_COUNT_HW_CACHE_RESULT_MISS << 16),
     };
-    
+
     int fd = perf_event_open(&attr, 0, -1, -1, 0);
-    
+
     // 측정 시작
     ioctl(fd, PERF_EVENT_IOC_RESET, 0);
     ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
-    
+
     // 작업 수행
     do_work();
-    
+
     // 측정 종료
     ioctl(fd, PERF_EVENT_IOC_DISABLE, 0);
-    
+
     long long count;
     read(fd, &count, sizeof(count));
     printf("DTLB misses: %lld, ", count);
-    
+
     close(fd);
 }
-```text
+```
 
 ## 8. 정리: TLB와 캐싱의 핵심 정리
 

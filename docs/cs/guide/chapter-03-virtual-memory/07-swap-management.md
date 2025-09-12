@@ -29,10 +29,10 @@ sequenceDiagram
     participant Kernel as 커널
     participant RAM as 물리 메모리
     participant Swap as 스왑 디바이스
-    
+
     App->>Kernel: 메모리 할당 요청
     Kernel->>RAM: 물리 메모리 확인
-    
+
     alt 메모리 충분
         RAM-->>App: 메모리 할당 성공
         Note over App,RAM: 빠른 응답 (나노초)
@@ -46,7 +46,7 @@ sequenceDiagram
         RAM-->>App: 메모리 할당 성공
         Note over App: 하지만 전체 시스템 느려짐...
     end
-```text
+```
 
 ### 스왑의 딜레마
 
@@ -57,21 +57,21 @@ graph LR
         OVERCOMMIT[메모리 오버커밋, 더 많은 프로세스]
         HIBERNATION[최대 절전 모드, 지원]
     end
-    
-    subgraph "스왑의 단점"  
+
+    subgraph "스왑의 단점"
         SLOWDOWN[성능 저하, 디스크 I/O]
         THRASHING[스레싱, 끊임없는 페이지 교체]
         LATENCY[응답 지연, 예측 불가능]
     end
-    
+
     SAFETY -.->|vs| SLOWDOWN
-    OVERCOMMIT -.->|vs| THRASHING  
+    OVERCOMMIT -.->|vs| THRASHING
     HIBERNATION -.->|vs| LATENCY
-    
+
     style SLOWDOWN fill:#ffcccb
     style THRASHING fill:#ffcccb
     style LATENCY fill:#ffcccb
-```text
+```
 
 스왑을 현명하게 사용하는 방법을 알아봅시다.
 
@@ -92,7 +92,7 @@ Swap:          4.0G          0B        4.0G
 
 # 스왑 사용량 실시간 모니터링
 $ watch -n 1 'cat /proc/meminfo | grep -E "(MemTotal|MemFree|MemAvailable|SwapTotal|SwapFree)"'
-```text
+```
 
 ### 1.2 스왑 성능 벤치마크
 
@@ -119,9 +119,9 @@ double get_time() {
 void get_memory_stats(long *total_mem, long *free_mem, long *swap_used) {
     FILE *meminfo = fopen("/proc/meminfo", "r");
     char line[256];
-    
+
     *total_mem = *free_mem = *swap_used = 0;
-    
+
     while (fgets(line, sizeof(line), meminfo)) {
         // 각 라인을 파싱하여 필요한 메모리 정보 추출
         if (sscanf(line, "MemTotal: %ld kB", total_mem) == 1) {
@@ -132,14 +132,14 @@ void get_memory_stats(long *total_mem, long *free_mem, long *swap_used) {
             long swap_total = *swap_used * 1024;
             long swap_free;
             // 다음 라인에서 SwapFree 읽기
-            if (fgets(line, sizeof(line), meminfo) && 
+            if (fgets(line, sizeof(line), meminfo) &&
                 sscanf(line, "SwapFree: %ld kB", &swap_free) == 1) {
                 *swap_used = swap_total - (swap_free * 1024);  // 사용중인 스왑 계산
             }
             break;
         }
     }
-    
+
     fclose(meminfo);
 }
 
@@ -147,25 +147,25 @@ void get_memory_stats(long *total_mem, long *free_mem, long *swap_used) {
 void test_memory_allocation(size_t total_size) {
     printf("=== 메모리 할당 성능 테스트 ===, ");
     printf("목표 할당량: %.1f GB (스왑 사용 유발 목적), ", (double)total_size / GB);
-    
+
     // 초기 시스템 상태 확인
     long total_mem, free_mem, swap_used;
     get_memory_stats(&total_mem, &free_mem, &swap_used);
-    
-    printf("시스템 메모리: %.1f GB (사용 가능: %.1f GB), ", 
+
+    printf("시스템 메모리: %.1f GB (사용 가능: %.1f GB), ",
            (double)total_mem / GB, (double)free_mem / GB);
     printf("초기 스왑 사용량: %.1f MB, ", (double)swap_used / 1024 / 1024);
-    
+
     // 청크 단위로 나누어 점진적 할당 (스왑 발생 지점 관산)
     const size_t chunk_size = 256 * 1024 * 1024;  // 256MB 청크
     const int num_chunks = total_size / chunk_size;
     void **chunks = malloc(sizeof(void*) * num_chunks);
-    
-    printf(", 점진적 메모리 할당 시작 (%d개 청크, %dMB씩)..., ", 
+
+    printf(", 점진적 메모리 할당 시작 (%d개 청크, %dMB씩)..., ",
            num_chunks, (int)(chunk_size / 1024 / 1024));
-    
+
     double start = get_time();
-    
+
     for (int i = 0; i < num_chunks; i++) {
         // 메모리 할당 (아직 가상 메모리만 사용)
         chunks[i] = malloc(chunk_size);
@@ -173,31 +173,31 @@ void test_memory_allocation(size_t total_size) {
             printf("할당 실패: 청크 %d, ", i);
             break;
         }
-        
+
         // 실제 물리 메모리 사용 유발 (페이지 폴트 발생)
         // 이 시점에서 OS가 스왑 사용을 결정할 수 있음
         memset(chunks[i], i % 256, chunk_size);
-        
+
         // 1GB마다 메모리 상태 체크로 스왑 사용 추이 관산
-        if (i % 4 == 0) {  
+        if (i % 4 == 0) {
             get_memory_stats(&total_mem, &free_mem, &swap_used);
             printf("청크 %2d 완료: 사용 가능 메모리 %.1f GB, 스왑 사용 %.1f MB, ",
                    i + 1, (double)free_mem / GB, (double)swap_used / 1024 / 1024);
         }
     }
-    
+
     double alloc_time = get_time() - start;
     printf(", 청크 할당 및 초기화 완료 시간: %.3f초, ", alloc_time);
-    
+
     // 메모리 접근 성능 테스트 (스왑 사용 시 성능 저하 측정)
     printf(", === 스왑 매벴인 접근 성능 테스트 ===, ");
     start = get_time();
-    
+
     // 여러 번의 라운드로 스왑 in/out 반복 발생 유도
     const int access_rounds = 5;
     for (int round = 0; round < access_rounds; round++) {
         printf("라운드 %d/%d 시작..., ", round + 1, access_rounds);
-        
+
         for (int i = 0; i < num_chunks; i++) {
             if (chunks[i]) {
                 // 청크 내 다양한 위치에 접근하여 스왑 활동 유발
@@ -208,19 +208,19 @@ void test_memory_allocation(size_t total_size) {
                 }
             }
         }
-        
+
         // 라운드별 성능 및 스왑 사용 현황 출력
         double round_time = get_time() - start;
         get_memory_stats(&total_mem, &free_mem, &swap_used);
-        printf("라운드 %d 완료: %.3f초 경과, 스왑 사용량: %.1f MB, ", 
+        printf("라운드 %d 완료: %.3f초 경과, 스왑 사용량: %.1f MB, ",
                round + 1, round_time, (double)swap_used / 1024 / 1024);
     }
-    
+
     double access_time = get_time() - start;
     printf(", 전체 접근 테스트 완료 시간: %.3f초, ", access_time);
-    printf("성능 비교: 할당 %.3f초 vs 접근 %.3f초 (%.1fx 느림), ", 
+    printf("성능 비교: 할당 %.3f초 vs 접근 %.3f초 (%.1fx 느림), ",
            alloc_time, access_time, access_time / alloc_time);
-    
+
     // 메모리 해제 및 정리
     printf(", 메모리 해제 중..., ");
     for (int i = 0; i < num_chunks; i++) {
@@ -229,17 +229,17 @@ void test_memory_allocation(size_t total_size) {
         }
     }
     free(chunks);
-    
+
     // 해제 후에도 스왑에 남아있는 데이터 확인
     get_memory_stats(&total_mem, &free_mem, &swap_used);
-    printf("메모리 해제 후 스왑 남은 사용량: %.1f MB, ", 
+    printf("메모리 해제 후 스왑 남은 사용량: %.1f MB, ",
            (double)swap_used / 1024 / 1024);
 }
 
 // 스왑 in/out 성능의 실질적 영향 측정
 void test_swap_in_out_performance() {
     printf(", === 스왑 In/Out 성능 비교 테스트 ===, ");
-    
+
     // 시스템 메모리보다 큰 크기로 스왑 사용 강제
     size_t size = 1.5 * GB;  // 1.5GB - 대부분의 시스템에서 스왑 사용 유발
     char *memory = malloc(size);
@@ -247,55 +247,55 @@ void test_swap_in_out_performance() {
         printf("메모리 할당 실패 - 시스템 메모리 부족, ");
         return;
     }
-    
+
     printf("%.1f GB 대용량 메모리 할당 완료, ", (double)size / GB);
     printf("스왑아웃 유발을 위한 전체 메모리 초기화 중..., ");
-    
+
     // 1단계: 모든 메모리 페이지를 터치하여 스왑아웃 유발
     double start = get_time();
     for (size_t i = 0; i < size; i += 4096) {
         memory[i] = i % 256;  // 각 페이지에 데이터 쓰기
     }
     double init_time = get_time() - start;
-    
+
     printf("메모리 초기화 시간: %.3f초, ", init_time);
-    
+
     // OS가 스왑아웃을 수행할 시간 제공
     printf("스왑아웃 대기 중 (5초)..., ");
     sleep(5);
-    
+
     // 대부분의 메모리가 스왑아웃된 상태에서 재접근 시도
     printf("메모리 재접근 시작 - 스왑인 성능 측정, ");
     start = get_time();
-    
+
     unsigned char checksum = 0;
     int progress_updates = 0;
     const int total_pages = size / 4096;
-    
+
     // 모든 페이지에 순차적으로 접근하여 스왑인 발생
     for (size_t i = 0; i < size; i += 4096) {
         checksum ^= memory[i];  // 페이지 접근 시 스왑인 발생
-        
+
         // 진행 상황 표시 (256MB마다)
         if (i % (256 * 1024 * 1024) == 0) {
             double current_time = get_time() - start;
             double progress = (double)(i / 4096) / total_pages * 100;
-            printf("\r진행률: %5.1f%%, 소요시간: %6.1f초, 속도: %5.1f MB/s", 
-                   progress, current_time, 
+            printf("\r진행률: %5.1f%%, 소요시간: %6.1f초, 속도: %5.1f MB/s",
+                   progress, current_time,
                    (i / 1024.0 / 1024.0) / (current_time > 0 ? current_time : 0.001));
             fflush(stdout);
         }
     }
-    
+
     double swapin_time = get_time() - start;
-    
+
     printf(", , === 스왑 성능 분석 결과 ===, ");
     printf("초기화 시간 (RAM): %.3f초, ", init_time);
     printf("스왑인 시간 (Disk): %.3f초, ", swapin_time);
-    printf("성능 저하 비율: %.1fx (스왑이 %.1f배 느림), ", 
+    printf("성능 저하 비율: %.1fx (스왑이 %.1f배 느림), ",
            swapin_time / init_time, swapin_time / init_time);
     printf("체크섬 값: 0x%02x (데이터 무결성 확인용), ", checksum);
-    
+
     // 스왑 사용량에 따른 성능 영향 분석
     if (swapin_time / init_time > 10) {
         printf(", ⚠️  경고: 스왑 사용으로 인한 심각한 성능 저하 감지!, ");
@@ -303,7 +303,7 @@ void test_swap_in_out_performance() {
     } else if (swapin_time / init_time > 3) {
         printf(", ℹ️  정보: 스왑 사용으로 인한 성능 영향 발생, ");
     }
-    
+
     free(memory);
 }
 
@@ -312,30 +312,30 @@ int main() {
     printf("=========================================, ");
     printf("이 프로그램은 스왑 사용 시 성능 저하를 정량적으로 측정합니다., ");
     printf("주의: 시스템 메모리보다 큰 메모리를 사용하여 스왑을 유발합니다., , ");
-    
+
     // 시스템 메모리 정보 확인 및 테스트 크기 결정
     long total_mem, free_mem, swap_used;
     get_memory_stats(&total_mem, &free_mem, &swap_used);
-    
+
     printf("현재 시스템 상태:, ");
     printf("- 총 메모리: %.1f GB, ", (double)total_mem / GB);
     printf("- 사용 가능: %.1f GB, ", (double)free_mem / GB);
     printf("- 스왑 사용: %.1f MB, , ", (double)swap_used / 1024 / 1024);
-    
+
     // 테스트 크기를 시스템 메모리보다 크게 설정하여 스왑 사용 유발
     size_t test_size = total_mem + (1 * GB);  // 시스템 메모리 + 1GB
-    
+
     test_memory_allocation(test_size);  // 단계적 메모리 할당 테스트
     test_swap_in_out_performance();     // 스왑 in/out 성능 직접 측정
-    
+
     printf(", === 최종 결론 ===, ");
     printf("스왑은 메모리 부족 상황에서 시스템 안정성을 제공하지만,, ");
     printf("디스크 I/O로 인한 심각한 성능 저하를 수반합니다., ");
     printf("적절한 swappiness 설정과 메모리 관리가 중요합니다., ");
-    
+
     return 0;
 }
-```text
+```
 
 ## 2. swappiness 파라미터 최적화
 
@@ -351,17 +351,17 @@ graph LR
         DEFAULT[60 기본값 데스크톱]
         HIGH[80-100 적극적사용 캐시우선]
     end
-    
+
     subgraph "메모리 압박 시 우선순위"
         ZERO --> ANON1[익명 페이지 유지]
         LOW --> CACHE1[페이지 캐시 해제 우선]
         DEFAULT --> BALANCE[균형잡힌 해제]
         HIGH --> ANON2[익명 페이지 스왑아웃]
     end
-    
+
     style LOW fill:#c8e6c9
     style DEFAULT fill:#fff3e0
-```text
+```
 
 ### 2.2 워크로드별 swappiness 최적화
 
@@ -408,23 +408,23 @@ recommend_swappiness() {
         echo "1"  # DB 서버는 매우 낮게
         return
     fi
-    
+
     # 웹 서버 감지
     if pgrep -x "nginx\|apache2\|httpd" > /dev/null; then
         echo "10"  # 웹 서버는 낮게
         return
     fi
-    
+
     # 캐시 비율이 높으면 swappiness를 낮게
     if [ $cache_ratio -gt 50 ]; then
         echo "5"
         return
     fi
-    
+
     # 메모리가 충분하면 낮게
     available_mem=$(grep MemAvailable /proc/meminfo | awk '{print $2}')
     available_ratio=$((available_mem * 100 / total_mem))
-    
+
     if [ $available_ratio -gt 50 ]; then
         echo "1"
     elif [ $available_ratio -gt 20 ]; then
@@ -450,31 +450,31 @@ fi
 test_swappiness() {
     local test_value=$1
     local duration=${2:-60}  # 기본 60초
-    
+
     echo "swappiness=$test_value 테스트 시작 ($duration 초)"
-    
+
     # 임시로 변경
     echo $test_value > /proc/sys/vm/swappiness
-    
+
     # 초기 상태 기록
     local start_time=$(date +%s)
     local start_swap=$(grep SwapFree /proc/meminfo | awk '{print $2}')
     local start_cached=$(grep "^Cached:" /proc/meminfo | awk '{print $2}')
-    
+
     # 테스트 기간 동안 대기
     sleep $duration
-    
+
     # 최종 상태 기록
     local end_swap=$(grep SwapFree /proc/meminfo | awk '{print $2}')
     local end_cached=$(grep "^Cached:" /proc/meminfo | awk '{print $2}')
-    
+
     # 변화량 계산
     local swap_change=$((start_swap - end_swap))
     local cache_change=$((end_cached - start_cached))
-    
+
     echo "  스왑 사용량 변화: ${swap_change}KB"
     echo "  캐시 크기 변화: ${cache_change}KB"
-    
+
     # 원복
     echo $current_swappiness > /proc/sys/vm/swappiness
 }
@@ -517,7 +517,7 @@ case $choice in
         echo "잘못된 선택입니다."
         ;;
 esac
-```text
+```
 
 ### 2.3 동적 swappiness 조정
 
@@ -536,51 +536,51 @@ class DynamicSwappiness:
         self.base_swappiness = 10  # 기본값
         self.min_swappiness = 1
         self.max_swappiness = 60
-        
+
     def get_current_swappiness(self):
         with open('/proc/sys/vm/swappiness', 'r') as f:
             return int(f.read().strip())
-    
+
     def set_swappiness(self, value):
         with open('/proc/sys/vm/swappiness', 'w') as f:
             f.write(str(value))
         self.current_swappiness = value
-    
+
     def get_system_stats(self):
         mem = psutil.virtual_memory()
         swap = psutil.swap_memory()
-        
+
         # 메모리 압박 수준 계산
         memory_pressure = (100 - mem.available / mem.total * 100) / 100
-        
+
         # 스왑 사용률
         swap_usage = swap.percent / 100 if swap.total > 0 else 0
-        
+
         # 캐시 비율
         with open('/proc/meminfo') as f:
             meminfo = f.read()
-        
+
         cached_kb = 0
         for line in meminfo.split(', '):
             if line.startswith('Cached:'):
                 cached_kb = int(line.split()[1])
                 break
-        
+
         cache_ratio = cached_kb * 1024 / mem.total
-        
+
         return {
             'memory_pressure': memory_pressure,
             'swap_usage': swap_usage,
             'cache_ratio': cache_ratio,
             'available_ratio': mem.available / mem.total
         }
-    
+
     def calculate_optimal_swappiness(self, stats):
         """시스템 상태에 기반한 최적 swappiness 계산"""
-        
+
         # 기본값에서 시작
         optimal = self.base_swappiness
-        
+
         # 메모리 압박이 높으면 swappiness 증가
         if stats['memory_pressure'] > 0.8:
             optimal += 20  # 압박 상황에서는 적극적 스왑
@@ -588,35 +588,35 @@ class DynamicSwappiness:
             optimal += 10
         elif stats['memory_pressure'] < 0.3:
             optimal -= 5   # 여유로우면 스왑 최소화
-        
+
         # 스왑이 이미 많이 사용 중이면 줄이기
         if stats['swap_usage'] > 0.5:
             optimal -= 15
         elif stats['swap_usage'] > 0.2:
             optimal -= 5
-        
+
         # 캐시 비율이 높으면 swappiness 낮추기
         if stats['cache_ratio'] > 0.6:
             optimal -= 10
         elif stats['cache_ratio'] > 0.4:
             optimal -= 5
-        
+
         # 범위 제한
         optimal = max(self.min_swappiness, min(self.max_swappiness, optimal))
-        
+
         return optimal
-    
+
     def monitor_and_adjust(self, interval=30, duration=3600):
         """지정된 기간 동안 swappiness 모니터링 및 조정"""
         print(f"Dynamic swappiness 모니터링 시작 ({duration}초)")
         print(f"조정 간격: {interval}초")
-        
+
         start_time = time.time()
-        
+
         while time.time() - start_time < duration:
             stats = self.get_system_stats()
             optimal = self.calculate_optimal_swappiness(stats)
-            
+
             # 현재 값과 차이가 5 이상이면 조정
             if abs(optimal - self.current_swappiness) >= 5:
                 print(f"[{time.strftime('%H:%M:%S')}] swappiness 조정: "
@@ -624,32 +624,32 @@ class DynamicSwappiness:
                 print(f"  메모리 압박: {stats['memory_pressure']:.2f}")
                 print(f"  스왑 사용률: {stats['swap_usage']:.2f}")
                 print(f"  캐시 비율: {stats['cache_ratio']:.2f}")
-                
+
                 self.set_swappiness(optimal)
             else:
                 print(f"[{time.strftime('%H:%M:%S')}] swappiness 유지: "
                       f"{self.current_swappiness} (최적값: {optimal})")
-            
+
             time.sleep(interval)
-        
+
         print("모니터링 완료")
 
 if __name__ == "__main__":
     import sys
-    
+
     if os.geteuid() != 0:
         print("root 권한이 필요합니다.")
         sys.exit(1)
-    
+
     monitor = DynamicSwappiness()
-    
+
     try:
         monitor.monitor_and_adjust(interval=30, duration=1800)  # 30분간
     except KeyboardInterrupt:
         print(", 모니터링 중단됨")
     except Exception as e:
         print(f"오류 발생: {e}")
-```text
+```
 
 ## 3. zram과 zswap 활용
 
@@ -663,16 +663,16 @@ graph LR
         RAM1[물리 메모리] --> DISK[디스크 스왑]
         DISK --> SLOW[느린 I/O, 수 밀리초]
     end
-    
+
     subgraph "zram 스왑"
         RAM2[물리 메모리] --> COMPRESS[압축, 알고리즘]
         COMPRESS --> ZRAM[zram 디바이스, 압축된 RAM]
         ZRAM --> FAST[빠른 접근, 수 마이크로초]
     end
-    
+
     style FAST fill:#c8e6c9
     style SLOW fill:#ffcccb
-```text
+```
 
 **zram 설정 및 사용**:
 
@@ -708,23 +708,23 @@ echo "각 zram 디바이스 크기: $((zram_size / 1024))MB"
 
 for i in $(seq 0 $((num_devices - 1))); do
     device="/dev/zram$i"
-    
+
     # 압축 알고리즘 설정 (lz4가 빠름)
     echo lz4 > /sys/block/zram$i/comp_algorithm
-    
+
     # 크기 설정
     echo ${zram_size}K > /sys/block/zram$i/disksize
-    
+
     # 스왑 디바이스로 설정
     mkswap $device
     swapon $device -p 10  # 높은 우선순위
-    
+
     echo "zram$i 활성화 완료"
 done
 
 echo "zram 설정 완료!"
 swapon -s
-```text
+```
 
 ### 3.2 zram vs 일반 스왑 성능 비교
 
@@ -747,38 +747,38 @@ double get_time() {
 // 스왑 성능 측정 함수 - 메모리 할당 및 접근 패턴으로 스왑 성능 분석
 void test_swap_performance(const char *test_name, int force_swap_usage) {
     printf("=== %s ===, ", test_name);
-    
+
     // 시스템 메모리보다 큰 크기로 스왑 사용 유발
     size_t mem_size = 2UL * 1024 * 1024 * 1024;  // 2GB - 대부분 시스템에서 스왑 유발
-    printf("%.1f GB 메모리 할당 중 (스왑 사용 유발 목적)..., ", 
+    printf("%.1f GB 메모리 할당 중 (스왑 사용 유발 목적)..., ",
            (double)mem_size / 1024 / 1024 / 1024);
-    
+
     char *memory = malloc(mem_size);
     if (!memory) {
         printf("메모리 할당 실패 - 가용 메모리 부족, ");
         return;
     }
-    
+
     double start = get_time();
-    
+
     // 1단계: 메모리 초기화 (페이지 폴트 발생으로 실제 물리 메모리 할당)
     // 시스템 메모리 부족 시 OS가 스왑아웃을 시작하게 됨
     printf("메모리 페이지 초기화 중 (스왑아웃 유발)..., ");
     for (size_t i = 0; i < mem_size; i += 4096) {  // 4KB 페이지 단위로 접근
         memory[i] = i % 256;  // 각 페이지에 고유값 쓰기
     }
-    
+
     double init_time = get_time() - start;
     printf("메모리 초기화 완료: %.3f초, ", init_time);
-    
+
     // 2단계: 스왑 사용 강제 유발 (필요 시)
     if (force_swap_usage) {
         printf("추가 메모리 할당으로 스왑 사용 강제 유발 중..., ");
-        
+
         // 더 많은 메모리 할당으로 기존 메모리의 스왑아웃 강제
         size_t extra_size = 1UL * 1024 * 1024 * 1024;  // 추가 1GB
         char *extra_memory = malloc(extra_size);
-        
+
         if (extra_memory) {
             // 추가 메모리 전체에 데이터 쓰기 (스왑 압박 증가)
             memset(extra_memory, 0xAA, extra_size);
@@ -787,52 +787,52 @@ void test_swap_performance(const char *test_name, int force_swap_usage) {
             free(extra_memory);
         }
     }
-    
+
     // 3단계: 메모리 재접근으로 스왑인 성능 측정
     // 스왑아웃된 페이지들을 다시 접근하여 스왑인 발생 유도
     printf("스왑인된 메모리 재접근 시작 (스왑인 성능 측정)..., ");
     start = get_time();
-    
+
     unsigned char checksum = 0;
     size_t access_count = 0;
     size_t page_faults = 0;  // 페이지 폴트 발생 추정치
-    
+
     // 모든 페이지에 순차 접근하여 스왑인 발생
     for (size_t i = 0; i < mem_size; i += 4096) {
         // 페이지 첫 바이트 읽기 - 스왑인된 페이지라면 디스크에서 로드
         volatile char value = memory[i];
         checksum ^= value;
         access_count++;
-        
+
         // 접근 시간이 오래 걸리면 페이지 폴트(스왑인) 발생으로 추정
         // 실제 환경에서는 더 정밀한 측정 방법 필요
-        
+
         // 256MB마다 진행 상황 출력
         if (access_count % (64 * 1024) == 0) {
             double current_time = get_time() - start;
             double progress = (double)i / mem_size * 100;
             double speed = (i / 1024.0 / 1024.0) / (current_time > 0 ? current_time : 0.001);
-            
-            printf("\r진행률: %5.1f%%, 소요시간: %6.2f초, 속도: %6.1f MB/s", 
+
+            printf("\r진행률: %5.1f%%, 소요시간: %6.2f초, 속도: %6.1f MB/s",
                    progress, current_time, speed);
             fflush(stdout);
         }
     }
-    
+
     double access_time = get_time() - start;
-    
+
     printf(", , === 성능 측정 결과 ===, ");
     printf("메모리 초기화 시간: %.3f초, ", init_time);
     printf("메모리 재접근 시간: %.3f초, ", access_time);
-    printf("전체 처리 속도: %.1f MB/s, ", 
+    printf("전체 처리 속도: %.1f MB/s, ",
            (mem_size / 1024.0 / 1024.0) / access_time);
-    printf("성능 비교: 재접근이 초기화보다 %.1fx %s, ", 
-           access_time / init_time, 
+    printf("성능 비교: 재접근이 초기화보다 %.1fx %s, ",
+           access_time / init_time,
            access_time > init_time ? "느림 (스왑인 영향)" : "빠름");
     printf("데이터 무결성 체크섬: 0x%02x, ", checksum);
-    
+
     free(memory);
-    
+
     // 테스트 후 스왑 상태 확인
     printf(", === 테스트 후 스왑 상태 ===, ");
     system("grep -E 'SwapTotal|SwapFree' /proc/meminfo");
@@ -842,31 +842,31 @@ void test_swap_performance(const char *test_name, int force_swap_usage) {
 // zram 디바이스별 상세 통계 정보 출력
 void show_zram_stats() {
     printf("=== zram 압축 및 사용량 통계 ===, ");
-    
+
     int active_devices = 0;
-    
+
     // 최대 8개 zram 디바이스 순회 검사
     for (int i = 0; i < 8; i++) {
         char path[256];
-        
+
         // 1단계: zram 디바이스 크기 확인
         snprintf(path, sizeof(path), "/sys/block/zram%d/disksize", i);
         FILE *f = fopen(path, "r");
         if (!f) continue;  // 디바이스가 존재하지 않음
-        
+
         long disksize;
         if (fscanf(f, "%ld", &disksize) != 1) {
             fclose(f);
             continue;
         }
         fclose(f);
-        
+
         if (disksize == 0) continue;  // 비활성화된 디바이스
-        
+
         active_devices++;
-        printf(", zram%d: (할당된 크기: %.1f MB), ", 
+        printf(", zram%d: (할당된 크기: %.1f MB), ",
                i, disksize / 1024.0 / 1024.0);
-        
+
         // 2단계: 압축 알고리즘 확인
         snprintf(path, sizeof(path), "/sys/block/zram%d/comp_algorithm", i);
         f = fopen(path, "r");
@@ -878,7 +878,7 @@ void show_zram_stats() {
             }
             fclose(f);
         }
-        
+
         // 3단계: 메모리 사용량 및 압축 통계 (mm_stat)
         snprintf(path, sizeof(path), "/sys/block/zram%d/mm_stat", i);
         f = fopen(path, "r");
@@ -886,12 +886,12 @@ void show_zram_stats() {
             // mm_stat 형식: orig_data_size compr_data_size mem_used_total ...
             long orig_data_size, compr_data_size, mem_used_total;
             if (fscanf(f, "%ld %ld %ld", &orig_data_size, &compr_data_size, &mem_used_total) == 3) {
-                
+
                 if (orig_data_size > 0) {
                     double compression_ratio = (double)orig_data_size / compr_data_size;
                     double space_saved = orig_data_size - mem_used_total;
                     double efficiency = (space_saved / (double)orig_data_size) * 100;
-                    
+
                     printf("  원본 데이터 크기: %8.1f MB, ", orig_data_size / 1024.0 / 1024.0);
                     printf("  압축 데이터 크기: %8.1f MB, ", compr_data_size / 1024.0 / 1024.0);
                     printf("  실제 메모리 사용: %8.1f MB, ", mem_used_total / 1024.0 / 1024.0);
@@ -903,20 +903,20 @@ void show_zram_stats() {
             }
             fclose(f);
         }
-        
+
         // 4단계: I/O 통계 확인
         snprintf(path, sizeof(path), "/sys/block/zram%d/io_stat", i);
         f = fopen(path, "r");
         if (f) {
             long read_ios, read_merges, write_ios, write_merges;
-            if (fscanf(f, "%ld %ld %*ld %*ld %ld %ld", 
+            if (fscanf(f, "%ld %ld %*ld %*ld %ld %ld",
                       &read_ios, &read_merges, &write_ios, &write_merges) >= 4) {
                 printf("  I/O 통계: 읽기 %ld회, 쓰기 %ld회, ", read_ios, write_ios);
             }
             fclose(f);
         }
     }
-    
+
     if (active_devices == 0) {
         printf("활성화된 zram 디바이스가 없습니다., ");
         printf("zram 설정을 위해 다음 명령을 실행하세요:, ");
@@ -934,32 +934,32 @@ int main() {
     printf("========================================, ");
     printf("이 프로그램은 zram과 일반 디스크 스왑의 성능 차이를 측정합니다., ");
     printf("주의: 대용량 메모리 할당으로 시스템 메모리 부족을 유발합니다., , ");
-    
+
     // 1단계: 현재 스왑 설정 및 상태 확인
     printf("=== 현재 시스템 스왑 설정 ===, ");
     system("swapon -s");  // 활성화된 모든 스왑 디바이스 표시
     printf(", ");
-    
+
     // 2단계: zram 상세 통계 표시
     show_zram_stats();
-    
+
     // 3단계: 실제 성능 테스트 수행
     printf(", === 성능 벤치마크 시작 ===, ");
     printf("테스트는 약 1-3분 소요됩니다..., , ");
-    
+
     // zram이 있는 환경에서의 스왑 성능 측정
     test_swap_performance("zram 기반 스왑 성능 테스트", 1);
-    
+
     // 최종 결과 요약
     printf("=== 벤치마크 완료 ===, ");
     printf("zram 사용 시 성능 이점:, ");
     printf("- 디스크 스왑 대비 10-100배 빠른 액세스, ");
     printf("- CPU 압축 오버헤드는 있으나 I/O 대기시간 크게 단축, ");
     printf("- 메모리 절약을 통한 실제 스왑 사용량 감소, , ");
-    
+
     return 0;
 }
-```text
+```
 
 ### 3.3 zswap 설정 (하이브리드 접근)
 
@@ -1054,7 +1054,7 @@ echo "   vm.zswap.enabled=1"
 echo "   vm.zswap.compressor=lz4"
 echo "   vm.zswap.zpool=z3fold"
 echo "   vm.zswap.max_pool_percent=20"
-```text
+```
 
 ## 4. 스왑 사용 패턴 분석
 
@@ -1070,14 +1070,14 @@ from collections import deque
 
 class SwapMonitor:
     """스왑 사용량 실시간 모니터링 클래스
-    
+
     이 클래스는 시스템의 스왑 사용량을 지속적으로 모니터링하고,
     프로세스별 스왑 사용량, I/O 패턴, 사용 추세를 분석합니다.
     """
-    
+
     def __init__(self, history_minutes=5):
         """모니터링 클래스 초기화
-        
+
         Args:
             history_minutes (int): 히스토리 데이터를 저장할 분 수 (기본: 5분)
         """
@@ -1085,21 +1085,21 @@ class SwapMonitor:
         max_history = history_minutes * 2  # 30초 간격으로 5분 = 10개
         self.history = deque(maxlen=max_history)
         self.start_time = time.time()
-        
+
     def get_swap_stats(self):
         """시스템 스왑 사용량 및 프로세스별 정보 수집
-        
+
         Returns:
             dict: 스왑 통계 정보
                 - percent: 스왑 사용률 (0-100%)
                 - used_mb: 사용중인 스왑 크기 (MB)
-                - total_mb: 전체 스왑 크기 (MB) 
+                - total_mb: 전체 스왑 크기 (MB)
                 - top_processes: 상위 스왑 사용 프로세스 목록
                 - io: 스왑 I/O 통계 (페이지 in/out)
         """
         # 1. 전체 시스템 스왑 정보 수집
         swap = psutil.swap_memory()
-        
+
         # 2. 프로세스별 스왑 사용량 분석 (VmSwap 값 확인)
         # /proc/PID/status 파일에서 VmSwap 라인을 파싱하여 각 프로세스의 스왑 사용량 추출
         top_processes = []
@@ -1114,15 +1114,15 @@ class SwapMonitor:
                             swap_kb = int(line.split()[1])
                             if swap_kb > 1024:  # 1MB 이상 사용하는 프로세스만 추적
                                 top_processes.append((
-                                    pid, 
-                                    proc.info['name'], 
+                                    pid,
+                                    proc.info['name'],
                                     swap_kb
                                 ))
                             break
             except (FileNotFoundError, ProcessLookupError, PermissionError, ValueError):
                 # 프로세스가 종료되었거나 접근 권한이 없는 경우 무시
                 continue
-        
+
         # 3. 시스템 전체 스왑 I/O 활동 수집 (/proc/vmstat에서)
         # pswpin: 스왑에서 메모리로 읽어온 페이지 수 (swap-in)
         # pswpout: 메모리에서 스왑으로 쓴 페이지 수 (swap-out)
@@ -1140,7 +1140,7 @@ class SwapMonitor:
         except (FileNotFoundError, PermissionError):
             # /proc/vmstat 접근 실패 시 기본값 유지
             pass
-        
+
         return {
             'percent': swap.percent,
             'used_mb': swap.used // 1024 // 1024,
@@ -1151,12 +1151,12 @@ class SwapMonitor:
             'io': swap_io,
             'timestamp': time.time()
         }
-    
+
     def analyze_trend(self):
         """스왑 사용량 추세 분석
-        
+
         최근 5개 데이터 포인트를 분석하여 사용량 증가/감소/안정 추세를 판단
-        
+
         Returns:
             str: 추세 분석 결과
                 - "increasing": 10% 이상 증가 (경고 필요)
@@ -1166,11 +1166,11 @@ class SwapMonitor:
         """
         if len(self.history) < 5:
             return "insufficient_data"
-            
+
         # 최근 5개 데이터 포인트에서 사용률 추출
         recent = [entry['percent'] for entry in list(self.history)[-5:]]
         trend_change = recent[-1] - recent[0]  # 첫 번째와 마지막 값 비교
-        
+
         # 변화량에 따른 추세 판단 (임계값: 10%)
         if trend_change > 10:
             return "increasing"
@@ -1178,28 +1178,28 @@ class SwapMonitor:
             return "decreasing"
         else:
             return "stable"
-    
+
     def get_performance_impact(self, current_stats, prev_io):
         """스왑 I/O 기반 성능 영향도 평가
-        
+
         Args:
             current_stats (dict): 현재 스왑 통계
             prev_io (dict): 이전 I/O 통계
-            
+
         Returns:
             dict: 성능 영향 분석 결과
         """
         if not prev_io:
             return {'impact_level': 'unknown', 'io_rate': {'in': 0, 'out': 0}}
-        
+
         # I/O 비율 계산 (초당 페이지 수)
         io_rate = {
             'in': max(0, current_stats['io']['in'] - prev_io['in']),
             'out': max(0, current_stats['io']['out'] - prev_io['out'])
         }
-        
+
         total_io = io_rate['in'] + io_rate['out']
-        
+
         # I/O 활동량에 따른 성능 영향도 분류
         if total_io > 1000:  # 초당 1000페이지(~4MB) 이상
             impact_level = 'severe'  # 심각한 성능 영향
@@ -1209,17 +1209,17 @@ class SwapMonitor:
             impact_level = 'low'  # 낮은 영향
         else:
             impact_level = 'minimal'  # 최소 영향
-        
+
         return {
             'impact_level': impact_level,
             'io_rate': io_rate,
             'total_io_pages': total_io,
             'estimated_mb_per_sec': total_io * 4 / 1024  # 4KB 페이지 가정
         }
-    
+
     def monitor(self, duration=300, interval=3):
         """지정된 기간 동안 스왑 모니터링 수행
-        
+
         Args:
             duration (int): 모니터링 지속 시간 (초, 기본: 5분)
             interval (int): 모니터링 간격 (초, 기본: 3초)
@@ -1228,20 +1228,20 @@ class SwapMonitor:
         print(f"모니터링 기간: {duration}초 ({duration//60}분 {duration%60}초)")
         print(f"수집 간격: {interval}초")
         print(f"예상 데이터 포인트: {duration//interval}개, ")
-        
+
         start_time = time.time()
         prev_io = None
         sample_count = 0
-        
+
         try:
             while time.time() - start_time < duration:
                 # 현재 스왑 통계 수집
                 stats = self.get_swap_stats()
                 sample_count += 1
-                
+
                 # 성능 영향도 분석
                 performance = self.get_performance_impact(stats, prev_io)
-                
+
                 # 히스토리에 데이터 추가
                 self.history.append({
                     'time': time.time(),
@@ -1249,85 +1249,85 @@ class SwapMonitor:
                     'used_mb': stats['used_mb'],
                     'io_activity': performance['total_io_pages']
                 })
-                
+
                 # 실시간 상태 출력
                 elapsed = time.time() - start_time
                 print(f"[{time.strftime('%H:%M:%S')}] ({sample_count:3d}) "
                       f"스왑: {stats['percent']:5.1f}% "
                       f"({stats['used_mb']:4d}/{stats['total_mb']:4d}MB) "
                       f"여유: {stats['free_mb']:4d}MB")
-                
+
                 # I/O 활동이 있는 경우 상세 정보 출력
                 if performance['io_rate']['in'] > 0 or performance['io_rate']['out'] > 0:
                     print(f"    I/O: {performance['io_rate']['in']:4d} in/s, "
                           f"{performance['io_rate']['out']:4d} out/s "
                           f"({performance['estimated_mb_per_sec']:.1f} MB/s) "
                           f"[{performance['impact_level'].upper()}]")
-                
+
                 # 추세 분석 및 경고
                 trend = self.analyze_trend()
                 if trend == "increasing":
                     print("    ⚠️  경고: 스왑 사용량이 지속적으로 증가하고 있습니다!")
                 elif trend == "decreasing":
                     print("    ✅ 정보: 스왑 사용량이 감소하고 있습니다.")
-                
+
                 # 상위 스왑 사용 프로세스 정보 (사용량이 많은 경우만)
                 if stats['top_processes'] and stats['percent'] > 5:
                     print("    상위 스왑 사용 프로세스:")
                     for pid, name, swap_kb in stats['top_processes']:
                         swap_mb = swap_kb // 1024
                         print(f"      {name:20s} (PID {pid:5d}): {swap_mb:4d} MB")
-                
+
                 prev_io = stats['io']
                 time.sleep(interval)
-                
+
         except KeyboardInterrupt:
             print(", 사용자에 의해 모니터링이 중단되었습니다.")
-        
+
         # 최종 분석 리포트 출력
         self.print_comprehensive_summary()
-    
+
     def print_comprehensive_summary(self):
         """포괄적인 모니터링 결과 요약 리포트 생성"""
         if not self.history:
             print("분석할 데이터가 없습니다.")
             return
-            
+
         usage_data = [entry['percent'] for entry in self.history]
         io_data = [entry['io_activity'] for entry in self.history]
-        
+
         # 기본 통계 계산
         avg_usage = sum(usage_data) / len(usage_data)
         max_usage = max(usage_data)
         min_usage = min(usage_data)
         volatility = max_usage - min_usage
-        
+
         total_runtime = time.time() - self.start_time
-        
+
         print(f", {'='*60}")
         print(f"스왑 모니터링 최종 분석 리포트")
         print(f"{'='*60}")
-        
+
         print(f", 📊 모니터링 개요:")
         print(f"  • 총 수집 시간:     {total_runtime/60:.1f}분")
         print(f"  • 데이터 포인트:    {len(self.history)}개")
         print(f"  • 평균 수집 간격:   {total_runtime/len(self.history):.1f}초")
-        
+
         print(f", 📈 스왑 사용량 통계:")
         print(f"  • 평균 사용률:      {avg_usage:5.1f}%")
         print(f"  • 최대 사용률:      {max_usage:5.1f}%")
         print(f"  • 최소 사용률:      {min_usage:5.1f}%")
         print(f"  • 변동성 (범위):    {volatility:5.1f}%")
-        
+
         print(f", ⚡ I/O 활동 분석:")
         total_io_activity = sum(io_data)
         avg_io_activity = total_io_activity / len(io_data) if io_data else 0
         max_io_activity = max(io_data) if io_data else 0
-        
+
         print(f"  • 평균 I/O 활동:    {avg_io_activity:5.0f} 페이지/초")
         print(f"  • 최대 I/O 활동:    {max_io_activity:5.0f} 페이지/초")
         print(f"  • 총 I/O 활동:      {total_io_activity:8.0f} 페이지")
-        
+
         # 성능 영향 평가 및 권장사항
         print(f", 💡 성능 영향 평가:")
         if max_usage > 80:
@@ -1342,7 +1342,7 @@ class SwapMonitor:
         else:
             print(f"  🟢 양호: 스왑 사용률이 안정적입니다.")
             print(f"     현재 상태를 유지하세요.")
-        
+
         # 추가 최적화 제안
         if avg_io_activity > 100:
             print(f", 🔧 최적화 제안:")
@@ -1357,24 +1357,24 @@ if __name__ == "__main__":
         print("❌ 오류: 시스템에 스왑이 설정되지 않았습니다.")
         print("스왑을 설정한 후 다시 실행해주세요.")
         exit(1)
-    
+
     # 모니터링 클래스 인스턴스 생성
     monitor = SwapMonitor(history_minutes=5)
-    
+
     print("🔍 스왑 모니터링 도구 v2.0")
     print(f"현재 시스템 스왑 정보:")
     initial_stats = monitor.get_swap_stats()
     print(f"  총 스왑 크기: {initial_stats['total_mb']:,} MB")
     print(f"  현재 사용량: {initial_stats['used_mb']:,} MB ({initial_stats['percent']:.1f}%)")
     print()
-    
+
     try:
         # 5분간 3초 간격으로 모니터링 (사용자 설정 가능)
         monitor.monitor(duration=300, interval=3)
     except KeyboardInterrupt:
         print(", 🛑 사용자에 의해 모니터링이 중단되었습니다.")
         monitor.print_comprehensive_summary()
-```text
+```
 
 ## 5. 컨테이너 환경 스왑 관리
 
@@ -1389,7 +1389,7 @@ docker run -m 512m --memory-swap 512m myapp  # 스왑 = 메모리 (실질적 비
 
 # 무제한 스왑 (권장하지 않음)
 docker run -m 512m --memory-swap -1 myapp
-```text
+```
 
 ### 5.2 Kubernetes 스왑 관리
 
@@ -1412,7 +1412,7 @@ spec:
         memory: 512Mi
   nodeSelector:
     swap.enabled: "true"
-```text
+```
 
 ## 6. 정리와 실무 가이드
 
@@ -1442,13 +1442,15 @@ graph TD
     WORKLOAD --> WEB[웹 서버]
     WORKLOAD --> BATCH[배치 처리]
     WORKLOAD --> DESKTOP[데스크톱]
-    
+
     DB --> DB_STRATEGY[swappiness=1, 최소 스왑 크기, zram 고려]
     WEB --> WEB_STRATEGY[swappiness=10, 적당한 스왑, 프로세스별 모니터링]
     BATCH --> BATCH_STRATEGY[swappiness=30, 큰 스왑 크기, 배치별 조정]
     DESKTOP --> DESKTOP_STRATEGY[swappiness=60, 편의성 우선, 하이버네이션 지원]
-```text
+```
 
 다음 섹션에서는 OOM 디버깅과 메모리 부족 상황 대응을 다뤄보겠습니다.
 
-현명한 스왑 관리로 시스템 안정성과 성능을 모두 잡아봅시다! 💪
+---
+
+**다음**: [스왑 성능 영향 분석](07a-swap-performance-analysis.md)에서 스왑 사용이 시스템 성능에 미치는 구체적 영향을 정량적으로 분석해봅시다.
