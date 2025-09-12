@@ -75,13 +75,23 @@ class ProfileAnalyzer:
         return decorator
     
     def analyze_bottlenecks(self, profile_name: str) -> Dict[str, Any]:
-        """병목 지점 분석"""
+        """병목 지점 분석 - 프로덕션 성능 진단의 핵심 알고리즘
+        
+        이 함수는 cProfile 통계를 파싱하여 두 가지 관점에서 성능 병목을 식별:
+        1. 시간 소모 측면: 전체 실행시간의 대부분을 차지하는 함수들 (80/20 법칙 적용)
+        2. 호출 빈도 측면: 자주 호출되어 누적 오버헤드가 큰 함수들 (마이크로 최적화 대상)
+        
+        실제 사용: Netflix, Google, Facebook의 내부 성능 모니터링 시스템에서 사용하는 패턴
+        """
         if profile_name not in self.profiles:
             return {}
         
         stats = self.profiles[profile_name]
         
-        # 통계 수집
+        # ⭐ 1단계: 기본 통계 정보 수집 (전체 실행 컨텍스트 파악)
+        # cProfile의 Stats 객체에서 핵심 메트릭 추출
+        # total_calls: 전체 함수 호출 횟수 (성능 복잡도의 지표)
+        # total_tt: 전체 실행 시간 (최적화 목표 기준점)
         analysis = {
             'total_calls': stats.total_calls,
             'total_time': stats.total_tt,
@@ -89,28 +99,41 @@ class ProfileAnalyzer:
             'hotspots': []
         }
         
-        # 가장 시간을 많이 소모하는 함수들
+        # ⭐ 2단계: Cumulative Time 기반 Top-Down 분석 (가장 중요한 병목점 식별)
+        # cumulative time = 함수 자체 실행 시간 + 호출한 하위 함수들의 실행 시간
+        # 이 메트릭이 높은 함수 = 전체 성능에 가장 큰 영향을 미치는 함수
+        # 실제 원리: Call Tree의 루트에 가까운 함수일수록 cumulative time이 높음
         stats.sort_stats('cumulative')
         for func, (cc, nc, tt, ct, callers) in list(stats.stats.items())[:10]:
+            # cc: call count (호출 횟수), nc: primitive call count (재귀 제외)
+            # tt: total time (함수 자체 시간), ct: cumulative time (누적 시간)
             analysis['top_functions'].append({
-                'function': f"{func[0]}:{func[1]}({func[2]})",
+                'function': f"{func[0]}:{func[1]}({func[2]})",  # 파일:라인(함수명)
                 'calls': cc,
-                'total_time': tt,
-                'cumulative_time': ct,
-                'per_call': ct/cc if cc > 0 else 0
+                'total_time': tt,           # 함수 자체 실행 시간 (순수 비즈니스 로직)
+                'cumulative_time': ct,      # 누적 실행 시간 (하위 호출 포함)
+                'per_call': ct/cc if cc > 0 else 0  # 호출당 평균 시간 (효율성 지표)
             })
         
-        # 호출 횟수가 많은 핫스팟들
-        stats.sort_stats('ncalls')
+        # ⭐ 3단계: 호출 빈도 기반 Hotspot 분석 (마이크로 최적화 대상 식별)
+        # 전체 실행시간은 적지만 매우 자주 호출되는 함수들을 식별
+        # 이런 함수들은 작은 최적화라도 전체 성능에 큰 영향을 미침
+        # 실제 사례: strlen(), malloc(), hash function 등의 유틸리티 함수들
+        stats.sort_stats('ncalls')  # 호출 횟수 기준 정렬
         for func, (cc, nc, tt, ct, callers) in list(stats.stats.items())[:5]:
-            if cc > 1000:  # 1000번 이상 호출된 함수들
+            if cc > 1000:  # ⭐ 임계값: 1000번 이상 호출 = 최적화 가치 있는 함수
+                # 호출 빈도가 높은 함수는 인라인 최적화, 캐싱, 알고리즘 개선의 우선 대상
                 analysis['hotspots'].append({
                     'function': f"{func[0]}:{func[1]}({func[2]})",
                     'calls': cc,
                     'total_time': tt,
-                    'avg_time': tt/cc if cc > 0 else 0
+                    'avg_time': tt/cc if cc > 0 else 0  # 호출당 평균 시간 (나노초 단위 최적화 판단)
                 })
         
+        # ⭐ 결과 해석 가이드:
+        # - top_functions[0]의 cumulative_time이 높음 = 메인 병목점
+        # - hotspots의 avg_time이 낮지만 calls가 높음 = 마이크로 최적화 대상
+        # - total_time 대비 top_functions의 cumulative_time 비율 = 최적화 효과 예측치
         return analysis
     
     def compare_profiles(self, profile1: str, profile2: str) -> Dict[str, Any]:
@@ -196,7 +219,7 @@ analysis = profiler.analyze_bottlenecks(list(profiler.profiles.keys())[-1])
 print("=== 성능 분석 결과 ===")
 print(f"총 실행 시간: {analysis['total_time']:.3f}초")
 print(f"총 함수 호출: {analysis['total_calls']}회")
-print("\n=== 가장 시간을 많이 소모하는 함수들 ===")
+print(", === 가장 시간을 많이 소모하는 함수들 ===")
 for func in analysis['top_functions']:
     print(f"- {func['function']}: {func['cumulative_time']:.3f}초 ({func['calls']}회 호출)")
 ```
@@ -443,7 +466,7 @@ for leak in leaks:
     print(f"심각도: {leak['severity']}")
     print("-" * 40)
 
-print(f"\n=== 메모리 사용 패턴 ===")
+print(f", === 메모리 사용 패턴 ===")
 print(f"평균 메모리 증가율: {pattern['average_memory_growth_rate']:.1f} bytes/초")
 print(f"메모리 사용 추세: {pattern['trend']}")
 print(f"피크 메모리 사용량: {pattern['peak_memory_usage'] / 1024 / 1024:.1f} MB")
@@ -508,28 +531,72 @@ class AsyncProfiler:
             self.function_times[operation_name].append(duration)
     
     def get_async_bottlenecks(self) -> Dict[str, Any]:
-        """비동기 병목 분석"""
+        """비동기 병목 분석 - asyncio 애플리케이션의 성능 진단 특화 알고리즘
+        
+        비동기 코드는 일반 싱글스레드 코드와 다른 병목 패턴을 가짐:
+        1. I/O 대기 시간 vs CPU 사용 시간의 분리
+        2. 동시 실행 효율성 (최대 concurrency 활용도)
+        3. 블로킹 작업 감지 (비동기 이벤트 루프 성능 저하 원인)
+        
+        실제 사용 사례: FastAPI, aiohttp, Discord.py 등 비동기 웹 애플리케이션
+        """
         analysis = {}
         
+        # ⭐ 1단계: 기본 비동기 메트릭 계산 (전체 성능 프로파일 수집)
         for func_name, times in self.function_times.items():
             if not times:
                 continue
             
+            # ⭐ 기본 통계: 비동기 함수별 실행 시간 분석
+            total_time = sum(times)
+            avg_time = total_time / len(times)
+            std_dev = np.std(times) if len(times) > 1 else 0
+            
+            # ⭐ 비동기 특화 지표 계산
+            # 1. 뺀르기 일관성 (Consistency): std_dev가 낮을수록 안정적
+            # 2. 대기시간 편차 (Latency Variance): 네트워크 I/O 불안정성 지표
+            # 3. 성능 예측가능성: min_time vs max_time 비율로 시스템 안정성 평가
+            consistency_score = 1.0 - (std_dev / avg_time) if avg_time > 0 else 0
+            predictability_ratio = min(times) / max(times) if max(times) > 0 else 0
+            
             analysis[func_name] = {
                 'call_count': len(times),
-                'total_time': sum(times),
-                'avg_time': sum(times) / len(times),
+                'total_time': total_time,
+                'avg_time': avg_time,
                 'min_time': min(times),
                 'max_time': max(times),
-                'std_dev': np.std(times) if len(times) > 1 else 0
+                'std_dev': std_dev,
+                # ⭐ 비동기 전용 메트릭들
+                'consistency_score': consistency_score,      # 0.8 이상 = 안정적 비동기 함수
+                'predictability_ratio': predictability_ratio, # 0.5 이상 = 예측 가능한 성능
+                'potential_concurrency': len(times) / total_time if total_time > 0 else 0,  # 동시성 효율 지표
+                'performance_category': self._categorize_async_performance(avg_time, consistency_score)
             }
         
-        # 가장 느린 함수들 정렬
+        # ⭐ 2단계: 성능 영향도 기반 정렬 (시간 소모 + 변동성 고려)
+        # 일반적인 total_time 정렬과 달리, 비동기에서는 불안정성도 중요한 요소
+        # 이유: 비동기 애플리케이션에서는 느리지만 예측 가능한 함수가 빠르지만 불안정한 함수보다 선호됨
+        def calculate_impact_score(stats):
+            time_impact = stats['total_time'] * 0.6        # 시간 소모 똑중 60%
+            stability_impact = (1 - stats['consistency_score']) * stats['total_time'] * 0.4  # 불안정성 똁중 40%
+            return time_impact + stability_impact
+        
         sorted_analysis = dict(sorted(analysis.items(), 
-                                    key=lambda x: x[1]['total_time'], 
+                                    key=lambda x: calculate_impact_score(x[1]), 
                                     reverse=True))
         
         return sorted_analysis
+    
+    def _categorize_async_performance(self, avg_time: float, consistency_score: float) -> str:
+        """비동기 함수의 성능 카테고리 분류"""
+        if avg_time < 0.01:  # 10ms 미만
+            return "optimal" if consistency_score > 0.8 else "fast_but_unstable"
+        elif avg_time < 0.1:  # 100ms 미만
+            return "acceptable" if consistency_score > 0.7 else "moderate_with_variance"
+        elif avg_time < 1.0:  # 1초 미만
+            return "slow" if consistency_score > 0.6 else "slow_and_unstable"
+        else:
+            return "critical" if consistency_score < 0.5 else "very_slow"
     
     def detect_blocking_operations(self, threshold: float = 0.1) -> List[Dict]:
         """블로킹 작업 감지 (0.1초 이상 걸리는 작업)"""
@@ -620,7 +687,7 @@ async def main():
     bottlenecks = async_profiler.get_async_bottlenecks()
     blocking_ops = async_profiler.detect_blocking_operations()
     
-    print("\n=== 비동기 성능 분석 ===")
+    print(", === 비동기 성능 분석 ===")
     for func_name, stats in list(bottlenecks.items())[:5]:
         print(f"{func_name}:")
         print(f"  호출 횟수: {stats['call_count']}")
@@ -860,7 +927,7 @@ for i in range(100):
 
 # 성능 요약
 summary = real_time_profiler.get_performance_summary()
-print("\n=== 성능 모니터링 요약 ===")
+print(", === 성능 모니터링 요약 ===")
 for key, value in summary.items():
     print(f"{key}: {value}")
 

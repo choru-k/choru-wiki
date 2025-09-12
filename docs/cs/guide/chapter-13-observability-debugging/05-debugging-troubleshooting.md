@@ -537,13 +537,13 @@ async def debug_missing_orders():
     print(f"실패 서비스: {debug_result['failed_service']}")
     print(f"영향 범위: {debug_result['cascade_analysis']['blast_radius']}개 서비스")
     
-    print("\n=== 근본 원인 후보 ===")
+    print(", === 근본 원인 후보 ===")
     for candidate in debug_result['root_cause_candidates']:
         print(f"- {candidate['service']} (영향도: {candidate['impact_score']:.1f})")
         for issue in candidate['issues']:
             print(f"  • {issue}")
     
-    print("\n=== 권장 조치사항 ===")
+    print(", === 권장 조치사항 ===")
     for i, rec in enumerate(debug_result['recommendations'], 1):
         print(f"{i}. {rec}")
 
@@ -608,7 +608,7 @@ class SmartDebugger:
                     
                     # 스택 트레이스 분석
                     import traceback
-                    print("\n스택 트레이스:")
+                    print(", 스택 트레이스:")
                     traceback.print_exc()
                     
                     # 예외 발생 지점의 변수 상태 출력
@@ -623,7 +623,7 @@ class SmartDebugger:
     
     def _print_frame_variables(self, frame):
         """프레임의 변수들 출력"""
-        print("\n현재 프레임 변수들:")
+        print(", 현재 프레임 변수들:")
         local_vars = frame.f_locals
         for name, value in local_vars.items():
             if not name.startswith('_') and name != 'self':
@@ -921,45 +921,45 @@ class LogAnalyzer:
         
         for level, count in level_counts.most_common():
             percentage = (count / total_entries) * 100
-            report += f"  • {level}: {count:,}개 ({percentage:.1f}%)\n"
+            report += f"  • {level}: {count:,}개 ({percentage:.1f}%), "
         
-        report += f"\n🏢 서비스별 로그 분포:\n"
+        report += f", 🏢 서비스별 로그 분포:, "
         for service, count in service_counts.most_common(10):
             percentage = (count / total_entries) * 100
-            report += f"  • {service}: {count:,}개 ({percentage:.1f}%)\n"
+            report += f"  • {service}: {count:,}개 ({percentage:.1f}%), "
         
-        report += f"\n🚨 감지된 이상 징후:\n"
+        report += f", 🚨 감지된 이상 징후:, "
         if not anomalies:
-            report += "  • 특별한 이상 징후 없음\n"
+            report += "  • 특별한 이상 징후 없음, "
         else:
             for anomaly_type, incidents in anomalies.items():
-                report += f"  • {anomaly_type}: {len(incidents)}건\n"
+                report += f"  • {anomaly_type}: {len(incidents)}건, "
                 for incident in incidents[:3]:  # 최대 3개만 표시
-                    report += f"    - {incident}\n"
+                    report += f"    - {incident}, "
         
-        report += f"\n🔗 에러 상관관계 분석:\n"
+        report += f", 🔗 에러 상관관계 분석:, "
         error_sequences = correlations.get('error_sequences', [])
         if not error_sequences:
-            report += "  • 명확한 에러 연쇄 패턴 없음\n"
+            report += "  • 명확한 에러 연쇄 패턴 없음, "
         else:
-            report += f"  • {len(error_sequences)}개의 에러 연쇄 패턴 발견\n"
+            report += f"  • {len(error_sequences)}개의 에러 연쇄 패턴 발견, "
             for seq in error_sequences[:3]:
                 trigger = seq['trigger_error']
-                report += f"    - {trigger['service']}: {trigger['message'][:50]}...\n"
-                report += f"      → {len(seq['related_errors'])}개의 후속 에러 발생\n"
+                report += f"    - {trigger['service']}: {trigger['message'][:50]}..., "
+                report += f"      → {len(seq['related_errors'])}개의 후속 에러 발생, "
         
         # 권장 조치사항
-        report += f"\n💡 권장 조치사항:\n"
+        report += f", 💡 권장 조치사항:, "
         
         error_rate = level_counts.get('ERROR', 0) / total_entries
         if error_rate > 0.05:
-            report += f"  • 높은 에러율({error_rate:.1%}) - 에러 로그 상세 분석 필요\n"
+            report += f"  • 높은 에러율({error_rate:.1%}) - 에러 로그 상세 분석 필요, "
         
         if anomalies.get('high_error_rate'):
-            report += f"  • 특정 시간대 에러 급증 - 해당 시간 배포/변경사항 확인\n"
+            report += f"  • 특정 시간대 에러 급증 - 해당 시간 배포/변경사항 확인, "
         
         if error_sequences:
-            report += f"  • 에러 연쇄 패턴 발견 - 서비스 간 의존성 및 타임아웃 설정 검토\n"
+            report += f"  • 에러 연쇄 패턴 발견 - 서비스 간 의존성 및 타임아웃 설정 검토, "
         
         return report
 

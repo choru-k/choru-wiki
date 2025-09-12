@@ -689,7 +689,7 @@ class TraceAnalyzer:
     
     def analyze_trace(self, trace_data: Dict[str, Any]):
         """추적 데이터 분석"""
-        print(f"\n🔍 Trace Analysis Report")
+        print(f", 🔍 Trace Analysis Report")
         print("=" * 50)
         
         # 전체 요청 시간
@@ -698,7 +698,7 @@ class TraceAnalyzer:
         
         # 서비스별 시간 분석
         service_durations = trace_data.get("service_durations", {})
-        print(f"\n⏱️  Service Performance:")
+        print(f", ⏱️  Service Performance:")
         for service, duration in service_durations.items():
             percentage = (duration / total_duration) * 100 if total_duration > 0 else 0
             print(f"  • {service}: {duration:.2f}s ({percentage:.1f}%)")
@@ -706,14 +706,14 @@ class TraceAnalyzer:
         # 에러 분석
         errors = trace_data.get("errors", [])
         if errors:
-            print(f"\n❌ Errors Detected:")
+            print(f", ❌ Errors Detected:")
             for error in errors:
                 print(f"  • {error['service']}: {error['error_type']} - {error['message']}")
         
         # 병목 지점 식별
         bottleneck = self._identify_bottleneck(service_durations)
         if bottleneck:
-            print(f"\n🚫 Bottleneck Identified:")
+            print(f", 🚫 Bottleneck Identified:")
             print(f"  • Service: {bottleneck['service']}")
             print(f"  • Duration: {bottleneck['duration']:.2f}s")
             print(f"  • Impact: {bottleneck['percentage']:.1f}% of total time")
@@ -721,7 +721,7 @@ class TraceAnalyzer:
         # 추천 사항
         recommendations = self._generate_recommendations(trace_data)
         if recommendations:
-            print(f"\n💡 Recommendations:")
+            print(f", 💡 Recommendations:")
             for i, rec in enumerate(recommendations, 1):
                 print(f"  {i}. {rec}")
     
@@ -801,11 +801,11 @@ def test_distributed_tracing():
         }
     ]
     
-    print(f"\n--- 주문 처리 시뮬레이션 ---")
+    print(f", --- 주문 처리 시뮬레이션 ---")
     
     results = []
     for i, order in enumerate(test_orders, 1):
-        print(f"\n🛒 주문 {i} 처리 중...")
+        print(f", 🛒 주문 {i} 처리 중...")
         print(f"   사용자: {order['user_id']}")
         print(f"   상품 수: {len(order['items'])}")
         print(f"   결제 방법: {order['payment_method']}")
@@ -869,15 +869,15 @@ def test_distributed_tracing():
             print(f"   ❌ 실패: {e}")
             print(f"   ⏱️  소요시간: {total_duration:.2f}초")
     
-    print(f"\n--- 추적 데이터 분석 ---")
+    print(f", --- 추적 데이터 분석 ---")
     
     # 각 주문의 추적 데이터 분석
     for i, trace_data in enumerate(results, 1):
-        print(f"\n📊 주문 {i} 분석:")
+        print(f", 📊 주문 {i} 분석:")
         analyzer.analyze_trace(trace_data)
     
     # 전체 통계
-    print(f"\n📈 전체 통계:")
+    print(f", 📈 전체 통계:")
     successful_orders = len([r for r in results if not r.get("errors")])
     failed_orders = len(results) - successful_orders
     avg_duration = sum(r["total_duration"] for r in results) / len(results)
@@ -887,7 +887,7 @@ def test_distributed_tracing():
     print(f"  • 평균 처리 시간: {avg_duration:.2f}초")
     
     # Jaeger UI 정보
-    print(f"\n🎯 Jaeger UI 접속 정보:")
+    print(f", 🎯 Jaeger UI 접속 정보:")
     print(f"  • URL: http://localhost:16686")
     print(f"  • 서비스별 추적 데이터 확인 가능")
     print(f"  • 에러 발생 지점과 병목 구간 시각화")

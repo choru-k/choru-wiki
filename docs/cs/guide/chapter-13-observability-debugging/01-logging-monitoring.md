@@ -76,19 +76,19 @@ $ tail -f /var/log/payment-service/db.log
 ```mermaid
 graph TD
     subgraph "관찰 가능성의 세 기둥"
-        L[Logs<br/>로그<br/>"무엇이 일어났나?"]
-        M[Metrics<br/>메트릭<br/>"시스템은 얼마나 건강한가?"]
-        T[Traces<br/>추적<br/>"요청이 어디를 거쳐갔나?"]
+        L[Logs 로그 - 무엇이 일어났나?]
+        M[Metrics 메트릭 - 시스템은 얼마나 건강한가?]
+        T[Traces 추적 - 요청이 어디를 거쳐갔나?]
     end
     
     subgraph "각각의 역할"
-        L --> L1["이벤트 기록<br/>디버깅 정보<br/>에러 상세"]
-        M --> M1["시스템 상태<br/>성능 지표<br/>비즈니스 메트릭"]
-        T --> T1["요청 흐름<br/>서비스 의존성<br/>병목 지점"]
+        L --> L1[이벤트 기록, 디버깅 정보, 에러 상세]
+        M --> M1[시스템 상태, 성능 지표, 비즈니스 메트릭]
+        T --> T1[요청 흐름, 서비스 의존성, 병목 지점]
     end
     
     subgraph "통합된 관찰"
-        O[Observable System<br/>관찰 가능한 시스템<br/>문제의 근본 원인을<br/>빠르게 파악]
+        O[Observable System - 관찰 가능한 시스템, 문제의 근본 원인을 빠르게 파악]
     end
     
     L1 --> O
@@ -411,14 +411,14 @@ def test_structured_logging():
     
     payment_service = PaymentService()
     
-    print("\n--- 정상 결제 처리 ---")
+    print(", --- 정상 결제 처리 ---")
     try:
         result = payment_service.process_payment("order_12345", "user_789", 99.99)
         print(f"결제 성공: {result}")
     except Exception as e:
         print(f"결제 실패: {e}")
     
-    print("\n--- 에러 상황 시뮬레이션 ---")
+    print(", --- 에러 상황 시뮬레이션 ---")
     # 커넥션 풀 고갈 시뮬레이션
     payment_service.db_pool.active = 20
     try:
@@ -750,16 +750,16 @@ class MetricsDashboard:
     
     @staticmethod
     def print_dashboard_info():
-        print("\n📊 Grafana 대시보드 설정 가이드")
+        print(", 📊 Grafana 대시보드 설정 가이드")
         print("=" * 50)
         
         queries = MetricsDashboard.get_sample_queries()
         
         for title, query in queries.items():
-            print(f"\n📈 {title.replace('_', ' ').title()}:")
+            print(f", 📈 {title.replace('_', ' ').title()}:")
             print(f"Query: {query.strip()}")
         
-        print(f"\n🎯 알림 규칙 예시:")
+        print(f", 🎯 알림 규칙 예시:")
         alerts = {
             "High Error Rate": "rate(errors_total{severity='high'}[5m]) > 0.1",
             "Payment Success Rate Low": "payment_success_rate < 95",
@@ -782,7 +782,7 @@ def test_metrics_system():
     # 메트릭이 포함된 결제 서비스
     payment_service = InstrumentedPaymentService(metrics)
     
-    print("\n--- 결제 요청 시뮬레이션 ---")
+    print(", --- 결제 요청 시뮬레이션 ---")
     
     # 다양한 결제 시나리오 시뮬레이션
     test_scenarios = [
@@ -804,7 +804,7 @@ def test_metrics_system():
         
         time.sleep(0.2)  # 약간의 지연
     
-    print(f"\n📊 메트릭 서버 실행 중: http://localhost:8000/metrics")
+    print(f", 📊 메트릭 서버 실행 중: http://localhost:8000/metrics")
     print("   Grafana에서 이 엔드포인트를 데이터 소스로 추가하세요")
     
     # 대시보드 정보 출력
@@ -815,7 +815,7 @@ if __name__ == "__main__":
     import uuid
     test_metrics_system()
     
-    print("\n⏰ 메트릭 수집을 위해 30초 대기...")
+    print(", ⏰ 메트릭 수집을 위해 30초 대기...")
     time.sleep(30)
 ```
 
@@ -938,7 +938,7 @@ class SlackNotification(NotificationChannel):
         
         emoji = emoji_map.get(alert.severity, "⚠️")
         
-        return f"{emoji} *{alert.title}* ({alert.severity.value})\n{alert.description}"
+        return f"{emoji} *{alert.title}* ({alert.severity.value}), {alert.description}"
 
 class PagerDutyNotification(NotificationChannel):
     """PagerDuty 알림 채널"""
@@ -1279,7 +1279,7 @@ def test_alert_system():
     for rule in rules:
         alert_manager.add_alert_rule(rule)
     
-    print("\n--- 알림 규칙 트리거 테스트 ---")
+    print(", --- 알림 규칙 트리거 테스트 ---")
     
     # 알림 발생 시뮬레이션
     test_scenarios = [
@@ -1293,7 +1293,7 @@ def test_alert_system():
         alert_manager.trigger_alert(rule_id, value, context)
         time.sleep(1)
     
-    print(f"\n--- 알림 상태 관리 테스트 ---")
+    print(f", --- 알림 상태 관리 테스트 ---")
     
     # 활성 알림 확인
     active_alerts = alert_manager.get_active_alerts()
@@ -1311,11 +1311,11 @@ def test_alert_system():
     
     # 통계 출력
     stats = alert_manager.get_statistics()
-    print(f"\n📊 Alert Manager 통계:")
+    print(f", 📊 Alert Manager 통계:")
     for key, value in stats.items():
         print(f"  {key}: {value}")
     
-    print(f"\n👀 메트릭 감시기 시작...")
+    print(f", 👀 메트릭 감시기 시작...")
     
     # 메트릭 감시기 테스트
     metrics_collector = MetricsCollector()  # 이전에 만든 클래스 사용
