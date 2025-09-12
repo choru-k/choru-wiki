@@ -27,7 +27,7 @@ tags:
 graph TB
     subgraph "사용자 공간 (User Space)"
         APP[애플리케이션 프로그램]
-        LIB[표준 라이브러리<br/>glibc, musl]
+        LIB[표준 라이브러리, glibc, musl]
     end
     
     subgraph "커널 공간 (Kernel Space)"
@@ -101,7 +101,7 @@ graph TB
 void malicious_program() {
     // 다른 프로세스의 메모리 읽기
     char* secret = (char*)0x12345678;
-    printf("Secret: %s\n", secret);
+    printf("Secret: %s, ", secret);
     
     // 시스템을 멈추기
     asm volatile("cli; hlt");  // 인터럽트 비활성화 후 정지
@@ -126,11 +126,11 @@ void malicious_program() {
 
 int main() {
     // 각 함수 호출이 어떤 시스템 호출을 사용하는지 관찰
-    printf("=== 시스템 호출 데모 ===\n");
+    printf("=== 시스템 호출 데모 ===, ");
     
     // 1. 파일 열기 (open 시스템 호출)
     int fd = open("/etc/passwd", O_RDONLY);
-    printf("파일 디스크립터: %d\n", fd);
+    printf("파일 디스크립터: %d, ", fd);
     
     // 2. 파일 읽기 (read 시스템 호출)
     char buffer[100];
@@ -145,7 +145,7 @@ int main() {
     
     // 5. 프로세스 ID 가져오기 (getpid 시스템 호출)
     pid_t pid = getpid();
-    printf("\n현재 프로세스 ID: %d\n", pid);
+    printf(", 현재 프로세스 ID: %d, ", pid);
     
     return 0;  // 프로그램 종료 (exit_group 시스템 호출)
 }
@@ -164,25 +164,25 @@ int main() {
 #include <unistd.h>
 
 int main() {
-    printf("=== 주요 시스템 호출 번호 (x86-64) ===\n");
-    printf("SYS_read:     %3ld\n", SYS_read);      // 0
-    printf("SYS_write:    %3ld\n", SYS_write);     // 1  
-    printf("SYS_open:     %3ld\n", SYS_open);      // 2
-    printf("SYS_close:    %3ld\n", SYS_close);     // 3
-    printf("SYS_stat:     %3ld\n", SYS_stat);      // 4
-    printf("SYS_fstat:    %3ld\n", SYS_fstat);     // 5
-    printf("SYS_mmap:     %3ld\n", SYS_mmap);      // 9
-    printf("SYS_brk:      %3ld\n", SYS_brk);       // 12
-    printf("SYS_clone:    %3ld\n", SYS_clone);     // 56
-    printf("SYS_fork:     %3ld\n", SYS_fork);      // 57
-    printf("SYS_execve:   %3ld\n", SYS_execve);    // 59
-    printf("SYS_exit:     %3ld\n", SYS_exit);      // 60
-    printf("SYS_getpid:   %3ld\n", SYS_getpid);    // 39
+    printf("=== 주요 시스템 호출 번호 (x86-64) ===, ");
+    printf("SYS_read:     %3ld, ", SYS_read);      // 0
+    printf("SYS_write:    %3ld, ", SYS_write);     // 1  
+    printf("SYS_open:     %3ld, ", SYS_open);      // 2
+    printf("SYS_close:    %3ld, ", SYS_close);     // 3
+    printf("SYS_stat:     %3ld, ", SYS_stat);      // 4
+    printf("SYS_fstat:    %3ld, ", SYS_fstat);     // 5
+    printf("SYS_mmap:     %3ld, ", SYS_mmap);      // 9
+    printf("SYS_brk:      %3ld, ", SYS_brk);       // 12
+    printf("SYS_clone:    %3ld, ", SYS_clone);     // 56
+    printf("SYS_fork:     %3ld, ", SYS_fork);      // 57
+    printf("SYS_execve:   %3ld, ", SYS_execve);    // 59
+    printf("SYS_exit:     %3ld, ", SYS_exit);      // 60
+    printf("SYS_getpid:   %3ld, ", SYS_getpid);    // 39
     
     // 직접 시스템 호출 사용해보기
     long pid = syscall(SYS_getpid);
-    printf("\n직접 시스템 호출로 얻은 PID: %ld\n", pid);
-    printf("getpid()로 얻은 PID: %d\n", getpid());
+    printf(", 직접 시스템 호출로 얻은 PID: %ld, ", pid);
+    printf("getpid()로 얻은 PID: %d, ", getpid());
     
     return 0;
 }
@@ -233,11 +233,11 @@ long direct_write(int fd, const void *buf, size_t count) {
     long result;
     
     asm volatile (
-        "movl %1, %%edi\n\t"        // fd → rdi
-        "movq %2, %%rsi\n\t"        // buf → rsi  
-        "movq %3, %%rdx\n\t"        // count → rdx
-        "movl $1, %%eax\n\t"        // SYS_write (1) → rax
-        "syscall\n\t"               // 시스템 호출 실행
+        "movl %1, %%edi, \t"        // fd → rdi
+        "movq %2, %%rsi, \t"        // buf → rsi  
+        "movq %3, %%rdx, \t"        // count → rdx
+        "movl $1, %%eax, \t"        // SYS_write (1) → rax
+        "syscall, \t"               // 시스템 호출 실행
         "movq %%rax, %0"            // 결과 → result
         : "=r" (result)
         : "r" (fd), "r" (buf), "r" (count)
@@ -248,13 +248,13 @@ long direct_write(int fd, const void *buf, size_t count) {
 }
 
 int main() {
-    const char *msg = "직접 시스템 호출로 출력\n";
+    const char *msg = "직접 시스템 호출로 출력, ";
     
     // 직접 구현한 시스템 호출 사용
     direct_write(1, msg, 26);
     
     // 비교: 표준 라이브러리 사용
-    printf("표준 라이브러리로 출력\n");
+    printf("표준 라이브러리로 출력, ");
     
     return 0;
 }
@@ -286,14 +286,14 @@ int empty_function() {
     clock_gettime(CLOCK_MONOTONIC, &end); \
     long nanos = (end.tv_sec - start.tv_sec) * 1000000000L + \
                  (end.tv_nsec - start.tv_nsec); \
-    printf("%s: %ld iterations in %ld ns (%.2f ns per call)\n", \
+    printf("%s: %ld iterations in %ld ns (%.2f ns per call), ", \
            label, (long)iterations, nanos, (double)nanos / iterations); \
 } while(0)
 
 int main() {
     const int iterations = 1000000;
     
-    printf("=== 함수 호출 vs 시스템 호출 성능 비교 ===\n");
+    printf("=== 함수 호출 vs 시스템 호출 성능 비교 ===, ");
     
     // 1. 일반 함수 호출
     MEASURE_TIME("일반 함수 호출", iterations, 
@@ -307,12 +307,12 @@ int main() {
     MEASURE_TIME("직접 syscall", iterations/1000,
                  syscall(SYS_getpid));
     
-    printf("\n=== 시스템 호출이 느린 이유 ===\n");
-    printf("1. 커널 모드로 전환하는 오버헤드\n");
-    printf("2. 레지스터 상태 저장/복원\n"); 
-    printf("3. 매개변수 검증 및 복사\n");
-    printf("4. 커널 내부 함수 호출\n");
-    printf("5. 사용자 모드로 복귀\n");
+    printf(", === 시스템 호출이 느린 이유 ===, ");
+    printf("1. 커널 모드로 전환하는 오버헤드, ");
+    printf("2. 레지스터 상태 저장/복원, "); 
+    printf("3. 매개변수 검증 및 복사, ");
+    printf("4. 커널 내부 함수 호출, ");
+    printf("5. 사용자 모드로 복귀, ");
     
     return 0;
 }
@@ -337,7 +337,7 @@ int main() {
 #include <sys/stat.h>
 
 void demonstrate_file_syscalls() {
-    printf("=== 파일 관련 시스템 호출 ===\n");
+    printf("=== 파일 관련 시스템 호출 ===, ");
     
     // 1. open - 파일 열기
     int fd = open("test.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
@@ -345,12 +345,12 @@ void demonstrate_file_syscalls() {
         perror("open");
         return;
     }
-    printf("파일 열기 성공: fd=%d\n", fd);
+    printf("파일 열기 성공: fd=%d, ", fd);
     
     // 2. write - 파일 쓰기
-    const char *data = "Hello, System Call!\n";
+    const char *data = "Hello, System Call!, ";
     ssize_t written = write(fd, data, 20);
-    printf("쓰기 완료: %zd bytes\n", written);
+    printf("쓰기 완료: %zd bytes, ", written);
     
     // 3. close - 파일 닫기
     close(fd);
@@ -358,13 +358,13 @@ void demonstrate_file_syscalls() {
     // 4. stat - 파일 정보 확인
     struct stat file_stat;
     if (stat("test.txt", &file_stat) == 0) {
-        printf("파일 크기: %ld bytes\n", file_stat.st_size);
-        printf("수정 시간: %ld\n", file_stat.st_mtime);
+        printf("파일 크기: %ld bytes, ", file_stat.st_size);
+        printf("수정 시간: %ld, ", file_stat.st_mtime);
     }
     
     // 5. unlink - 파일 삭제
     unlink("test.txt");
-    printf("파일 삭제 완료\n");
+    printf("파일 삭제 완료, ");
 }
 ```
 
@@ -378,33 +378,33 @@ void demonstrate_file_syscalls() {
 #include <sys/types.h>
 
 void demonstrate_process_syscalls() {
-    printf("=== 프로세스 관련 시스템 호출 ===\n");
+    printf("=== 프로세스 관련 시스템 호출 ===, ");
     
     // 1. getpid - 현재 프로세스 ID
     pid_t current_pid = getpid();
-    printf("현재 프로세스 ID: %d\n", current_pid);
+    printf("현재 프로세스 ID: %d, ", current_pid);
     
     // 2. getppid - 부모 프로세스 ID  
     pid_t parent_pid = getppid();
-    printf("부모 프로세스 ID: %d\n", parent_pid);
+    printf("부모 프로세스 ID: %d, ", parent_pid);
     
     // 3. fork - 새 프로세스 생성
     pid_t child_pid = fork();
     
     if (child_pid == 0) {
         // 자식 프로세스
-        printf("자식 프로세스: PID=%d, PPID=%d\n", getpid(), getppid());
+        printf("자식 프로세스: PID=%d, PPID=%d, ", getpid(), getppid());
         
         // 4. execve - 다른 프로그램 실행
         // execl("/bin/echo", "echo", "Hello from child!", NULL);
     } else if (child_pid > 0) {
         // 부모 프로세스
-        printf("부모 프로세스: 자식 PID=%d\n", child_pid);
+        printf("부모 프로세스: 자식 PID=%d, ", child_pid);
         
         // 5. wait - 자식 프로세스 대기
         int status;
         wait(&status);
-        printf("자식 프로세스 종료됨\n");
+        printf("자식 프로세스 종료됨, ");
     } else {
         perror("fork 실패");
     }
@@ -421,29 +421,29 @@ void demonstrate_process_syscalls() {
 #include <string.h>
 
 void demonstrate_memory_syscalls() {
-    printf("=== 메모리 관련 시스템 호출 ===\n");
+    printf("=== 메모리 관련 시스템 호출 ===, ");
     
     // 1. brk/sbrk - 힙 크기 조정
     void *current_brk = sbrk(0);
-    printf("현재 brk 위치: %p\n", current_brk);
+    printf("현재 brk 위치: %p, ", current_brk);
     
     // 힙 확장
     void *new_brk = sbrk(4096);  // 4KB 확장
-    printf("확장 후 brk: %p\n", sbrk(0));
+    printf("확장 후 brk: %p, ", sbrk(0));
     
     // 2. mmap - 메모리 매핑
     void *mapped = mmap(NULL, 4096, PROT_READ | PROT_WRITE,
                        MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (mapped != MAP_FAILED) {
-        printf("mmap 성공: %p\n", mapped);
+        printf("mmap 성공: %p, ", mapped);
         
         // 매핑된 메모리 사용
         strcpy(mapped, "Hello, mmap!");
-        printf("매핑된 메모리 내용: %s\n", (char*)mapped);
+        printf("매핑된 메모리 내용: %s, ", (char*)mapped);
         
         // 3. munmap - 메모리 매핑 해제
         munmap(mapped, 4096);
-        printf("메모리 매핑 해제됨\n");
+        printf("메모리 매핑 해제됨, ");
     }
     
     // 원래 힙 크기로 복원
@@ -462,7 +462,7 @@ void demonstrate_memory_syscalls() {
 #include <unistd.h>
 
 void demonstrate_network_syscalls() {
-    printf("=== 네트워크 관련 시스템 호출 ===\n");
+    printf("=== 네트워크 관련 시스템 호출 ===, ");
     
     // 1. socket - 소켓 생성
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -470,7 +470,7 @@ void demonstrate_network_syscalls() {
         perror("socket");
         return;
     }
-    printf("소켓 생성 성공: fd=%d\n", sockfd);
+    printf("소켓 생성 성공: fd=%d, ", sockfd);
     
     // 2. bind - 주소 바인딩 (서버의 경우)
     struct sockaddr_in addr;
@@ -479,21 +479,21 @@ void demonstrate_network_syscalls() {
     addr.sin_addr.s_addr = INADDR_ANY;
     
     if (bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-        printf("bind 실패 (포트가 사용 중일 수 있음)\n");
+        printf("bind 실패 (포트가 사용 중일 수 있음), ");
     } else {
-        printf("포트 8080에 바인딩 성공\n");
+        printf("포트 8080에 바인딩 성공, ");
     }
     
     // 3. listen - 연결 대기 (서버의 경우)
     if (listen(sockfd, 5) == -1) {
-        printf("listen 설정 실패\n");
+        printf("listen 설정 실패, ");
     } else {
-        printf("연결 대기 상태로 전환\n");
+        printf("연결 대기 상태로 전환, ");
     }
     
     // 4. close - 소켓 닫기
     close(sockfd);
-    printf("소켓 닫기 완료\n");
+    printf("소켓 닫기 완료, ");
 }
 ```
 
@@ -505,20 +505,20 @@ void demonstrate_network_syscalls() {
 
 ```mermaid
 graph TD
-    subgraph "사용자 프로그램"
-        CALL[printf("Hello")]
+    subgraph USER_PROG["사용자 프로그램"]
+        CALL[printf함수호출]
     end
     
-    subgraph "glibc 라이브러리"
-        PRINTF[printf()]
-        WRITE[write()]
-        SYSCALL[syscall stub]
+    subgraph GLIBC["glibc 라이브러리"]
+        PRINTF[printf함수]
+        WRITE[write함수]
+        SYSCALL["syscall stub"]
     end
     
-    subgraph "커널"
-        HANDLER[sys_write()]
-        VFS[VFS 레이어]
-        TTY[TTY 드라이버]
+    subgraph KERNEL["커널"]
+        HANDLER[sys_write함수]
+        VFS["VFS 레이어"]
+        TTY["TTY 드라이버"]
     end
     
     CALL --> PRINTF
@@ -545,29 +545,29 @@ graph TD
 #include <unistd.h>
 
 int main() {
-    printf("=== glibc 래퍼 vs 직접 시스템 호출 ===\n");
+    printf("=== glibc 래퍼 vs 직접 시스템 호출 ===, ");
     
     // 1. glibc 래퍼 사용
-    printf("== glibc 래퍼 사용 ==\n");
+    printf("== glibc 래퍼 사용 ==, ");
     int fd1 = open("/nonexistent/file", O_RDONLY);
     if (fd1 == -1) {
-        printf("오류 발생: %s\n", strerror(errno));
+        printf("오류 발생: %s, ", strerror(errno));
     }
     
     // 2. 직접 시스템 호출 사용
-    printf("\n== 직접 시스템 호출 사용 ==\n");
+    printf(", == 직접 시스템 호출 사용 ==, ");
     long fd2 = syscall(SYS_open, "/nonexistent/file", O_RDONLY);
     if (fd2 == -1) {
-        printf("오류 코드: %ld\n", fd2);
-        printf("errno: %d (%s)\n", errno, strerror(errno));
+        printf("오류 코드: %ld, ", fd2);
+        printf("errno: %d (%s), ", errno, strerror(errno));
     }
     
-    printf("\n== 래퍼 함수의 장점 ==\n");
-    printf("1. 에러 처리 자동화 (errno 설정)\n");
-    printf("2. 타입 안전성 (int vs long)\n");
-    printf("3. 포팅 가능성 (아키텍처 독립적)\n");
-    printf("4. 추가 기능 (버퍼링, 포맷팅 등)\n");
-    printf("5. 디버깅 편의성\n");
+    printf(", == 래퍼 함수의 장점 ==, ");
+    printf("1. 에러 처리 자동화 (errno 설정), ");
+    printf("2. 타입 안전성 (int vs long), ");
+    printf("3. 포팅 가능성 (아키텍처 독립적), ");
+    printf("4. 추가 기능 (버퍼링, 포맷팅 등), ");
+    printf("5. 디버깅 편의성, ");
     
     return 0;
 }
@@ -585,22 +585,22 @@ int main() {
 #include <linux/perf_event.h>
 
 void case1_new_syscalls() {
-    printf("=== 케이스 1: 새로운 시스템 호출 ===\n");
+    printf("=== 케이스 1: 새로운 시스템 호출 ===, ");
     
     // gettid() - glibc 2.30 이전에는 래퍼가 없었음
     pid_t tid = syscall(SYS_gettid);
-    printf("스레드 ID: %d\n", tid);
+    printf("스레드 ID: %d, ", tid);
     
     // getrandom() - 비교적 최근 추가된 시스템 호출
     char random_bytes[16];
     long ret = syscall(SYS_getrandom, random_bytes, sizeof(random_bytes), 0);
     if (ret > 0) {
-        printf("랜덤 바이트 생성 성공: %ld bytes\n", ret);
+        printf("랜덤 바이트 생성 성공: %ld bytes, ", ret);
     }
 }
 
 void case2_performance_critical() {
-    printf("\n=== 케이스 2: 성능이 중요한 경우 ===\n");
+    printf(", === 케이스 2: 성능이 중요한 경우 ===, ");
     
     // 고성능이 필요할 때 래퍼 함수의 오버헤드 제거
     struct timespec start, end;
@@ -613,15 +613,15 @@ void case2_performance_critical() {
     clock_gettime(CLOCK_MONOTONIC, &end);
     long nanos = (end.tv_sec - start.tv_sec) * 1000000000L + 
                  (end.tv_nsec - start.tv_nsec);
-    printf("100000번 직접 시스템 호출: %ld ns\n", nanos);
+    printf("100000번 직접 시스템 호출: %ld ns, ", nanos);
 }
 
 void case3_special_parameters() {
-    printf("\n=== 케이스 3: 특수한 매개변수 ===\n");
+    printf(", === 케이스 3: 특수한 매개변수 ===, ");
     
     // clone() 시스템 호출 - 복잡한 플래그 조합
     // glibc의 fork()보다 더 세밀한 제어 가능
-    printf("clone() 시스템 호출로 세밀한 프로세스 제어 가능\n");
+    printf("clone() 시스템 호출로 세밀한 프로세스 제어 가능, ");
 }
 ```
 
@@ -669,7 +669,7 @@ const sys_call_ptr_t sys_call_table[__NR_syscall_max+1] = {
 #include <errno.h>
 
 void explore_syscalls() {
-    printf("=== 시스템 호출 탐색 ===\n");
+    printf("=== 시스템 호출 탐색 ===, ");
     
     struct syscall_info {
         int number;
@@ -690,14 +690,14 @@ void explore_syscalls() {
     };
     
     for (int i = 0; syscalls[i].name; i++) {
-        printf("%3d: %-10s - %s\n", 
+        printf("%3d: %-10s - %s, ", 
                syscalls[i].number, 
                syscalls[i].name, 
                syscalls[i].description);
     }
     
     // 현재 시스템의 최대 시스템 호출 번호 추정
-    printf("\n=== 시스템 호출 범위 탐색 ===\n");
+    printf(", === 시스템 호출 범위 탐색 ===, ");
     int max_valid = 0;
     
     for (int i = 0; i < 1000; i++) {  // 0-999 범위 탐색
@@ -708,7 +708,7 @@ void explore_syscalls() {
         errno = 0;  // errno 리셋
     }
     
-    printf("탐지된 최대 시스템 호출 번호: %d\n", max_valid);
+    printf("탐지된 최대 시스템 호출 번호: %d, ", max_valid);
 }
 
 int main() {
@@ -728,35 +728,35 @@ int main() {
 #include <stdio.h>
 
 void show_architecture_differences() {
-    printf("=== 아키텍처별 시스템 호출 차이점 ===\n\n");
+    printf("=== 아키텍처별 시스템 호출 차이점 ===, , ");
     
-    printf("** x86-64 (Intel/AMD) **\n");
-    printf("- 시스템 호출 명령어: syscall\n");
-    printf("- 매개변수 레지스터: rdi, rsi, rdx, r10, r8, r9\n");
-    printf("- 반환값 레지스터: rax\n");
-    printf("- 최대 매개변수: 6개\n\n");
+    printf("** x86-64 (Intel/AMD) **, ");
+    printf("- 시스템 호출 명령어: syscall, ");
+    printf("- 매개변수 레지스터: rdi, rsi, rdx, r10, r8, r9, ");
+    printf("- 반환값 레지스터: rax, ");
+    printf("- 최대 매개변수: 6개, , ");
     
-    printf("** ARM64 (AArch64) **\n");
-    printf("- 시스템 호출 명령어: svc #0\n");
-    printf("- 매개변수 레지스터: x0, x1, x2, x3, x4, x5\n");
-    printf("- 반환값 레지스터: x0\n");
-    printf("- 최대 매개변수: 6개\n\n");
+    printf("** ARM64 (AArch64) **, ");
+    printf("- 시스템 호출 명령어: svc #0, ");
+    printf("- 매개변수 레지스터: x0, x1, x2, x3, x4, x5, ");
+    printf("- 반환값 레지스터: x0, ");
+    printf("- 최대 매개변수: 6개, , ");
     
-    printf("** 32비트 x86 (i386) **\n");
-    printf("- 시스템 호출 명령어: int 0x80 또는 sysenter\n");
-    printf("- 매개변수 레지스터: ebx, ecx, edx, esi, edi, ebp\n");
-    printf("- 반환값 레지스터: eax\n");
-    printf("- 최대 매개변수: 6개\n\n");
+    printf("** 32비트 x86 (i386) **, ");
+    printf("- 시스템 호출 명령어: int 0x80 또는 sysenter, ");
+    printf("- 매개변수 레지스터: ebx, ecx, edx, esi, edi, ebp, ");
+    printf("- 반환값 레지스터: eax, ");
+    printf("- 최대 매개변수: 6개, , ");
     
     // 현재 아키텍처 확인
     #ifdef __x86_64__
-        printf("현재 컴파일된 아키텍처: x86-64\n");
+        printf("현재 컴파일된 아키텍처: x86-64, ");
     #elif __aarch64__
-        printf("현재 컴파일된 아키텍처: ARM64\n");
+        printf("현재 컴파일된 아키텍처: ARM64, ");
     #elif __i386__
-        printf("현재 컴파일된 아키텍처: x86 (32-bit)\n");
+        printf("현재 컴파일된 아키텍처: x86 (32-bit), ");
     #else
-        printf("현재 컴파일된 아키텍처: 알 수 없음\n");
+        printf("현재 컴파일된 아키텍처: 알 수 없음, ");
     #endif
 }
 
@@ -778,7 +778,7 @@ VDSO(Virtual Dynamic Shared Object)는 자주 사용되는 시스템 호출을 �
 #include <unistd.h>
 
 void demonstrate_vdso() {
-    printf("=== VDSO (Virtual Dynamic Shared Object) ===\n");
+    printf("=== VDSO (Virtual Dynamic Shared Object) ===, ");
     
     struct timespec start, end;
     const int iterations = 1000000;
@@ -804,14 +804,14 @@ void demonstrate_vdso() {
     long syscall_time = (end.tv_sec - start.tv_sec) * 1000000000L + 
                         (end.tv_nsec - start.tv_nsec);
     
-    printf("VDSO 최적화된 gettimeofday(): %.2f ns/call\n", 
+    printf("VDSO 최적화된 gettimeofday(): %.2f ns/call, ", 
            (double)vdso_time / iterations);
-    printf("일반 시스템 호출 getpid(): %.2f ns/call\n", 
+    printf("일반 시스템 호출 getpid(): %.2f ns/call, ", 
            (double)syscall_time / iterations);
-    printf("성능 차이: %.1fx\n", (double)syscall_time / vdso_time);
+    printf("성능 차이: %.1fx, ", (double)syscall_time / vdso_time);
     
     // VDSO 매핑 확인
-    printf("\n=== 현재 프로세스의 VDSO 매핑 ===\n");
+    printf(", === 현재 프로세스의 VDSO 매핑 ===, ");
     char command[100];
     sprintf(command, "cat /proc/%d/maps | grep vdso", getpid());
     system(command);
@@ -844,45 +844,63 @@ $ strace -T ./syscall_demo
 ### 7.2 간단한 시스템 호출 추적기 구현
 
 ```c
-// simple_tracer.c - ptrace를 이용한 간단한 추적기
+// simple_tracer.c - ptrace 시스템 호출을 활용한 프로세스 추적기
+// 실제 응용: strace, gdb, perf, valgrind 등의 핵심 메커니즘
+// 동작 원리: 부모 프로세스가 자식의 모든 시스템 호출을 중간에 가로채서 모니터링
 #include <stdio.h>
 #include <sys/ptrace.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <sys/user.h>
 
+// ptrace 기반 시스템 호출 추적기의 핵심 구현
+// 실제 사용: strace, gdb, perf, SystemTap 등에서 유사한 메커니즘 활용
 void trace_child(pid_t child_pid) {
-    int status;
-    struct user_regs_struct regs;
+    int status;                        // 자식 프로세스 상태 저장
+    struct user_regs_struct regs;      // CPU 레지스터 상태 저장 구조체
     
-    // 자식 프로세스가 시작되길 대기
-    waitpid(child_pid, &status, 0);
+    // ⭐ 1단계: 자식 프로세스 초기 정지 상태 대기
+    // PTRACE_TRACEME로 인해 자식이 execvp() 직후 자동으로 SIGSTOP 상태가 됨
+    // 이는 프로세스 시작 전에 추적 준비를 완료하기 위한 동기화 메커니즘
+    waitpid(child_pid, &status, 0);   // 첫 번째 SIGSTOP 신호 대기
     
+    // ⭐ 2단계: 시스템 호출 추적 루프 - 프로세스가 정지 상태인 동안 계속 실행
     while (WIFSTOPPED(status)) {
-        // 시스템 호출 진입점에서 레지스터 읽기
+        // ⭐ 3단계: 시스템 호출 진입점에서 CPU 레지스터 상태 읽기
+        // orig_rax: 시스템 호출 번호 (syscall 명령어 실행 전 rax 값 보존)
+        // rdi, rsi, rdx, r10, r8, r9: 시스템 호출 매개변수 1-6번째
         ptrace(PTRACE_GETREGS, child_pid, NULL, &regs);
         
-        printf("시스템 호출 %lld 호출됨\n", regs.orig_rax);
+        // 시스템 호출 번호 출력 (예: 1=write, 2=open, 3=close, 9=mmap 등)
+        printf("시스템 호출 %lld 호출됨, ", regs.orig_rax);
         
-        // 시스템 호출 완료까지 실행
+        // ⭐ 4단계: 시스템 호출 완료까지 자식 프로세스 실행 허용
+        // PTRACE_SYSCALL: 다음 시스템 호출 진입/종료 지점에서 자동 정지
+        // 이는 커널 모드 진입과 사용자 모드 복귀를 모두 추적하는 핵심 메커니즘
         ptrace(PTRACE_SYSCALL, child_pid, NULL, NULL);
-        waitpid(child_pid, &status, 0);
+        waitpid(child_pid, &status, 0);   // 시스템 호출 종료 시점까지 대기
         
+        // ⭐ 5단계: 시스템 호출 완료 후 상태 확인 및 결과 추출
         if (WIFSTOPPED(status)) {
-            // 시스템 호출 반환값 확인
+            // 시스템 호출 완료 후 레지스터 상태 다시 읽기
+            // rax: 시스템 호출 반환값 (성공시 양수/0, 실패시 -errno)
             ptrace(PTRACE_GETREGS, child_pid, NULL, &regs);
-            printf("  -> 반환값: %lld\n", regs.rax);
+            printf("  -> 반환값: %lld, ", regs.rax);
             
-            // 다음 시스템 호출까지 실행
+            // ⭐ 6단계: 다음 시스템 호출까지 프로세스 계속 실행
+            // 이 패턴이 프로세스 종료까지 반복되어 모든 시스템 호출을 추적
             ptrace(PTRACE_SYSCALL, child_pid, NULL, NULL);
-            waitpid(child_pid, &status, 0);
+            waitpid(child_pid, &status, 0);   // 다음 시스템 호출 진입 대기
         }
     }
+    
+    // 루프 종료 = 자식 프로세스가 정상 종료되었음 (WIFEXITED(status) == true)
+    // 이때 모든 시스템 호출 추적이 완료됨
 }
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        printf("사용법: %s <명령어>\n", argv[0]);
+        printf("사용법: %s <명령어>, ", argv[0]);
         return 1;
     }
     
@@ -894,7 +912,7 @@ int main(int argc, char *argv[]) {
         execvp(argv[1], &argv[1]);
     } else {
         // 부모 프로세스: 추적자
-        printf("프로세스 %d의 시스템 호출 추적 시작\n", child_pid);
+        printf("프로세스 %d의 시스템 호출 추적 시작, ", child_pid);
         trace_child(child_pid);
     }
     

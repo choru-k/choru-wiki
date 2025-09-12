@@ -117,7 +117,7 @@ class KernelDebugger:
             'PERF': '/proc/sys/kernel/perf_event_paranoid'
         }
         
-        print("\n디버깅 기능 상태:")
+        print(", 디버깅 기능 상태:")
         for feature, path in debug_features.items():
             if os.path.exists(path):
                 print(f"  {feature}: 사용 가능")
@@ -126,13 +126,13 @@ class KernelDebugger:
     
     def analyze_kernel_messages(self):
         """커널 메시지 분석"""
-        print("\n=== 커널 메시지 분석 ===")
+        print(", === 커널 메시지 분석 ===")
         
         try:
             # dmesg 출력 분석
             result = subprocess.run(['dmesg', '-T'], capture_output=True, text=True)
             if result.returncode == 0:
-                messages = result.stdout.split('\n')
+                messages = result.stdout.split(', ')
                 
                 # 오류 패턴 분석
                 error_patterns = {
@@ -164,7 +164,7 @@ class KernelDebugger:
                     for error_type, count in error_counts.items():
                         print(f"  {error_type}: {count}회")
                     
-                    print("\n최근 오류 메시지:")
+                    print(", 최근 오류 메시지:")
                     for error_type, message in recent_errors[-10:]:
                         print(f"  [{error_type}] {message}")
                 else:
@@ -175,7 +175,7 @@ class KernelDebugger:
     
     def check_memory_issues(self):
         """메모리 관련 문제 검사"""
-        print("\n=== 메모리 문제 분석 ===")
+        print(", === 메모리 문제 분석 ===")
         
         # 메모리 정보
         try:
@@ -184,7 +184,7 @@ class KernelDebugger:
                 
             # 주요 메모리 정보 추출
             memory_stats = {}
-            for line in meminfo.split('\n'):
+            for line in meminfo.split(', '):
                 if ':' in line:
                     key, value = line.split(':', 1)
                     memory_stats[key.strip()] = value.strip()
@@ -214,7 +214,7 @@ class KernelDebugger:
         # SLUB 디버깅 정보 (가능한 경우)
         slub_debug_path = '/sys/kernel/slab'
         if os.path.exists(slub_debug_path):
-            print("\nSLUB 캐시 정보:")
+            print(", SLUB 캐시 정보:")
             try:
                 slub_dirs = os.listdir(slub_debug_path)
                 large_caches = []
@@ -242,7 +242,7 @@ class KernelDebugger:
     
     def analyze_performance_counters(self):
         """성능 카운터 분석"""
-        print("\n=== 성능 카운터 분석 ===")
+        print(", === 성능 카운터 분석 ===")
         
         # CPU 통계
         try:
@@ -295,7 +295,7 @@ class KernelDebugger:
     
     def check_lock_issues(self):
         """락 관련 문제 검사"""
-        print("\n=== 락 문제 분석 ===")
+        print(", === 락 문제 분석 ===")
         
         # lockdep 정보 (가능한 경우)
         lockdep_path = '/proc/lockdep'
@@ -304,7 +304,7 @@ class KernelDebugger:
                 with open(lockdep_path, 'r') as f:
                     lockdep_info = f.read()
                     
-                lines = lockdep_info.split('\n')
+                lines = lockdep_info.split(', ')
                 print(f"등록된 락 클래스: {len([l for l in lines if 'class' in l])}")
                 
                 # 락 통계 추출
@@ -332,7 +332,7 @@ class KernelDebugger:
             result = subprocess.run(['ps', 'axo', 'pid,stat,comm'], 
                                   capture_output=True, text=True)
             if result.returncode == 0:
-                lines = result.stdout.split('\n')
+                lines = result.stdout.split(', ')
                 waiting_tasks = []
                 
                 for line in lines[1:]:  # 헤더 스킵
@@ -344,7 +344,7 @@ class KernelDebugger:
                                 waiting_tasks.append((pid, stat, comm))
                 
                 if waiting_tasks:
-                    print(f"\n언인터럽터블 슬립 상태 프로세스: {len(waiting_tasks)}개")
+                    print(f", 언인터럽터블 슬립 상태 프로세스: {len(waiting_tasks)}개")
                     for pid, stat, comm in waiting_tasks[:10]:
                         print(f"  PID {pid}: {comm} ({stat})")
                     
@@ -355,7 +355,7 @@ class KernelDebugger:
     
     def trace_kernel_functions(self, function_name=None, duration=10):
         """커널 함수 추적"""
-        print(f"\n=== 커널 함수 추적 ({duration}초) ===")
+        print(f", === 커널 함수 추적 ({duration}초) ===")
         
         ftrace_path = '/sys/kernel/debug/tracing'
         if not os.path.exists(ftrace_path):
@@ -387,7 +387,7 @@ class KernelDebugger:
                 trace_data = f.read()
             
             # 결과 분석
-            lines = trace_data.split('\n')
+            lines = trace_data.split(', ')
             function_counts = defaultdict(int)
             
             for line in lines:
@@ -415,7 +415,7 @@ class KernelDebugger:
     
     def analyze_with_perf(self, duration=10):
         """perf를 사용한 성능 분석"""
-        print(f"\n=== perf 성능 분석 ({duration}초) ===")
+        print(f", === perf 성능 분석 ({duration}초) ===")
         
         try:
             # CPU 사용률이 높은 함수들 프로파일링
@@ -431,7 +431,7 @@ class KernelDebugger:
                 ], capture_output=True, text=True)
                 
                 if report_result.returncode == 0:
-                    lines = report_result.stdout.split('\n')
+                    lines = report_result.stdout.split(', ')
                     print("CPU 사용률이 높은 함수들:")
                     
                     for line in lines[:30]:
@@ -450,7 +450,7 @@ class KernelDebugger:
     
     def check_hardware_errors(self):
         """하드웨어 오류 검사"""
-        print("\n=== 하드웨어 오류 검사 ===")
+        print(", === 하드웨어 오류 검사 ===")
         
         # MCE (Machine Check Exception) 확인
         mce_path = '/sys/devices/system/machinecheck'
@@ -509,12 +509,12 @@ class KernelDebugger:
     
     def generate_debug_report(self):
         """종합 디버그 리포트 생성"""
-        print("\n" + "="*60)
+        print(", " + "="*60)
         print("종합 커널 디버그 리포트")
         print("="*60)
         
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(f"생성 시간: {timestamp}\n")
+        print(f"생성 시간: {timestamp}, ")
         
         # 모든 분석 실행
         self.check_kernel_version()
@@ -524,7 +524,7 @@ class KernelDebugger:
         self.check_lock_issues()
         self.check_hardware_errors()
         
-        print("\n" + "="*60)
+        print(", " + "="*60)
         print("권장사항:")
         
         # 간단한 권장사항 로직
@@ -547,7 +547,7 @@ class KernelDebugger:
             with open('/proc/meminfo', 'r') as f:
                 meminfo = f.read()
                 if 'MemAvailable' in meminfo:
-                    for line in meminfo.split('\n'):
+                    for line in meminfo.split(', '):
                         if 'MemTotal:' in line:
                             total_kb = int(line.split()[1])
                         elif 'MemAvailable:' in line:
@@ -565,7 +565,7 @@ class KernelDebugger:
         else:
             print("현재 심각한 문제는 발견되지 않았습니다.")
         
-        print("\n추가 디버깅 도구:")
+        print(", 추가 디버깅 도구:")
         print("- crash 도구로 크래시 덤프 분석")
         print("- eBPF/bpftrace로 상세 추적")
         print("- SystemTap으로 동적 추적")
@@ -681,7 +681,7 @@ int alloc_exit(struct pt_regs *ctx) {
         u64 *size = sizes.lookup(&pid_tgid);
         if (size != 0) {
             // 할당 기록
-            bpf_trace_printk("ALLOC pid=%d addr=%llx size=%lld\\n", 
+            bpf_trace_printk("ALLOC pid=%d addr=%llx size=%lld\, ", 
                            pid_tgid >> 32, address, *size);
         }
     }
@@ -695,7 +695,7 @@ int free_enter(struct pt_regs *ctx, void *ptr) {
     u32 pid = bpf_get_current_pid_tgid() >> 32;
     
     if (address != 0) {
-        bpf_trace_printk("FREE pid=%d addr=%llx\\n", pid, address);
+        bpf_trace_printk("FREE pid=%d addr=%llx\, ", pid, address);
     }
     
     return 0;
@@ -737,7 +737,7 @@ int lock_acquire_exit(struct pt_regs *ctx, void *lock) {
             lock_stats.update(&lock_addr, count);
         }
         
-        bpf_trace_printk("LOCK_CONTENTION addr=%llx time=%lld\\n", 
+        bpf_trace_printk("LOCK_CONTENTION addr=%llx time=%lld\, ", 
                         lock_addr, delta);
     }
     
@@ -763,11 +763,11 @@ class EBPFKernelTracer:
             print("추적 중... Ctrl+C로 중단")
             time.sleep(duration)
             
-            print("\n시스템 호출 지연시간 분포 (마이크로초):")
+            print(", 시스템 호출 지연시간 분포 (마이크로초):")
             self.bpf["dist"].print_log2_hist("latency")
             
         except KeyboardInterrupt:
-            print("\n추적 중단됨")
+            print(", 추적 중단됨")
         except Exception as e:
             print(f"eBPF 추적 실패: {e}")
         finally:
@@ -807,7 +807,7 @@ class EBPFKernelTracer:
                 except KeyboardInterrupt:
                     break
             
-            print("\n메모리 할당/해제 통계:")
+            print(", 메모리 할당/해제 통계:")
             print("PID\t할당\t해제\t누수 의심")
             print("-" * 40)
             
@@ -863,7 +863,7 @@ class EBPFKernelTracer:
                 except KeyboardInterrupt:
                     break
             
-            print("\n락 경합 통계:")
+            print(", 락 경합 통계:")
             print("락 주소\t\t경합 횟수")
             print("-" * 30)
             
@@ -874,7 +874,7 @@ class EBPFKernelTracer:
                 print(f"{addr}\t{count}")
             
             if sorted_locks:
-                print(f"\n가장 경합이 심한 락: {sorted_locks[0][0]} ({sorted_locks[0][1]}회)")
+                print(f", 가장 경합이 심한 락: {sorted_locks[0][0]} ({sorted_locks[0][1]}회)")
             else:
                 print("심각한 락 경합이 감지되지 않았습니다")
                 
@@ -908,7 +908,7 @@ class EBPFKernelTracer:
             }
             
             u64 delta = bpf_ktime_get_ns() - *tsp;
-            bpf_trace_printk("IO_LATENCY %lld\\n", delta);
+            bpf_trace_printk("IO_LATENCY %lld\, ", delta);
             start.delete(&rq);
             return 0;
         }
@@ -944,7 +944,7 @@ class EBPFKernelTracer:
                 p95_latency = latencies[int(len(latencies) * 0.95)]
                 p99_latency = latencies[int(len(latencies) * 0.99)]
                 
-                print(f"\nI/O 지연시간 통계 ({len(latencies)}개 요청):")
+                print(f", I/O 지연시간 통계 ({len(latencies)}개 요청):")
                 print(f"평균: {avg_latency:.2f} ms")
                 print(f"95th percentile: {p95_latency:.2f} ms")
                 print(f"99th percentile: {p99_latency:.2f} ms")
@@ -1000,7 +1000,7 @@ def main():
         elif args.io_latency:
             tracer.trace_io_latency(args.duration)
     except KeyboardInterrupt:
-        print("\n추적이 중단되었습니다")
+        print(", 추적이 중단되었습니다")
     except Exception as e:
         print(f"오류: {e}")
 

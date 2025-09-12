@@ -25,26 +25,26 @@ tags:
 
 ```mermaid
 graph TD
-    subgraph "사용자 공간"
-        A[write(fd, buf, size)]
+    subgraph USER_SPACE["사용자 공간"]
+        A[write함수호출]
         B[glibc 래퍼 함수]
         C[시스템 호출 준비]
     end
     
-    subgraph "시스템 호출 인터페이스"
+    subgraph SYSCALL_IF["시스템 호출 인터페이스"]
         D[syscall 명령어]
         E[커널 모드 진입]
         F[시스템 호출 디스패처]
     end
     
-    subgraph "커널 내부 처리"
+    subgraph KERNEL_PROCESS["커널 내부 처리"]
         G[매개변수 검증]
         H[보안 검사]
         I[실제 처리 함수 호출]
         J[결과 처리]
     end
     
-    subgraph "하드웨어 접근"
+    subgraph HARDWARE["하드웨어 접근"]
         K[VFS 레이어]
         L[파일시스템 드라이버]
         M[블록 디바이스 드라이버]
@@ -767,7 +767,7 @@ void benchmark_syscall(const char* name, long (*func)(void)) {
                  (end.tv_nsec - start.tv_nsec);
     avg_time = total_time / ITERATIONS;
     
-    printf("%s: %ld ns per call\n", name, avg_time);
+    printf("%s: %ld ns per call, ", name, avg_time);
 }
 
 // 테스트할 시스템 호출들
@@ -777,8 +777,8 @@ long test_getuid(void) { return getuid(); }
 long test_time(void) { return time(NULL); }
 
 int main() {
-    printf("시스템 호출 성능 벤치마크 (%d iterations)\n", ITERATIONS);
-    printf("==========================================\n");
+    printf("시스템 호출 성능 벤치마크 (%d iterations), ", ITERATIONS);
+    printf("==========================================, ");
     
     benchmark_syscall("getpid()", test_getpid);
     benchmark_syscall("gettid()", test_gettid);
@@ -826,7 +826,7 @@ void trace_syscalls(pid_t child_pid) {
             in_syscall = 1;
         } else {
             // 시스템 호출 종료
-            printf("%lld\n", regs.rax);
+            printf("%lld, ", regs.rax);
             in_syscall = 0;
         }
         
@@ -836,7 +836,7 @@ void trace_syscalls(pid_t child_pid) {
 
 int main(int argc, char** argv) {
     if (argc < 2) {
-        printf("Usage: %s <command>\n", argv[0]);
+        printf("Usage: %s <command>, ", argv[0]);
         return 1;
     }
     

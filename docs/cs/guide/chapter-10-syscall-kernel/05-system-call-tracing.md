@@ -508,11 +508,11 @@ void trace_syscalls(pid_t pid, int detailed, int summary) {
     int in_syscall = 0;
     int total_syscalls = 0;
     
-    printf("시스템 호출 추적 시작 (PID: %d)\n", pid);
+    printf("시스템 호출 추적 시작 (PID: %d), ", pid);
     if (detailed) {
-        printf("%-15s %-6s %-50s %-12s %-8s\n", 
+        printf("%-15s %-6s %-50s %-12s %-8s, ", 
                "시간", "PID", "시스템호출(인수)", "반환값", "시간(μs)");
-        printf("%-15s %-6s %-50s %-12s %-8s\n", 
+        printf("%-15s %-6s %-50s %-12s %-8s, ", 
                "----", "---", "----------", "------", "------");
     }
     
@@ -541,7 +541,7 @@ void trace_syscalls(pid_t pid, int detailed, int summary) {
         }
         
         if (WIFEXITED(status)) {
-            printf("프로세스가 종료되었습니다 (코드: %d)\n", WEXITSTATUS(status));
+            printf("프로세스가 종료되었습니다 (코드: %d), ", WEXITSTATUS(status));
             break;
         }
         
@@ -603,14 +603,14 @@ void trace_syscalls(pid_t pid, int detailed, int summary) {
                 }
                 
                 if (detailed) {
-                    printf(") = %-12ld %-8.1f\n", 
+                    printf(") = %-12ld %-8.1f, ", 
                            current_record.retval, current_record.duration_us);
                 }
                 
                 // 느린 시스템 호출 감지
                 if (current_record.duration_us > 1000) {  // 1ms 이상
                     if (!detailed) {
-                        printf("⚠️ 느린 시스템 호출: %s (%.1f μs)\n", 
+                        printf("⚠️ 느린 시스템 호출: %s (%.1f μs), ", 
                                current_record.name, current_record.duration_us);
                     }
                 }
@@ -620,12 +620,12 @@ void trace_syscalls(pid_t pid, int detailed, int summary) {
     
     // 요약 통계 출력
     if (summary) {
-        printf("\n=== 시스템 호출 요약 통계 ===\n");
-        printf("총 시스템 호출: %d개\n\n", total_syscalls);
+        printf(", === 시스템 호출 요약 통계 ===, ");
+        printf("총 시스템 호출: %d개, , ", total_syscalls);
         
-        printf("%-20s %-8s %-12s %-12s %-12s %-12s %-8s\n",
+        printf("%-20s %-8s %-12s %-12s %-12s %-12s %-8s, ",
                "시스템호출", "횟수", "총시간(μs)", "평균(μs)", "최소(μs)", "최대(μs)", "오류");
-        printf("%-20s %-8s %-12s %-12s %-12s %-12s %-8s\n",
+        printf("%-20s %-8s %-12s %-12s %-12s %-12s %-8s, ",
                "----------", "----", "----------", "--------", "--------", "--------", "----");
         
         // 가장 많이 호출된 시스템 호출들 정렬
@@ -652,7 +652,7 @@ void trace_syscalls(pid_t pid, int detailed, int summary) {
         
         for (int i = 0; i < stats_count && i < 20; i++) {
             syscall_stats_t* stat = sorted_stats[i];
-            printf("%-20s %-8lu %-12.1f %-12.1f %-12.1f %-12.1f %-8lu\n",
+            printf("%-20s %-8lu %-12.1f %-12.1f %-12.1f %-12.1f %-8lu, ",
                    stat->name, stat->count, stat->total_time_us, stat->avg_time_us,
                    stat->min_time_us, stat->max_time_us, stat->errors);
         }
@@ -666,7 +666,7 @@ cleanup:
 
 // 특정 시스템 호출 필터링
 void filter_syscalls(pid_t pid, const char* syscall_filter) {
-    printf("특정 시스템 호출 필터링: %s (PID: %d)\n", syscall_filter, pid);
+    printf("특정 시스템 호출 필터링: %s (PID: %d), ", syscall_filter, pid);
     
     // 필터할 시스템 호출 번호 찾기
     long filter_nr = -1;
@@ -678,7 +678,7 @@ void filter_syscalls(pid_t pid, const char* syscall_filter) {
     }
     
     if (filter_nr == -1) {
-        printf("알 수 없는 시스템 호출: %s\n", syscall_filter);
+        printf("알 수 없는 시스템 호출: %s, ", syscall_filter);
         return;
     }
     
@@ -694,9 +694,9 @@ void filter_syscalls(pid_t pid, const char* syscall_filter) {
     int in_syscall = 0;
     int match_count = 0;
     
-    printf("%-15s %-50s %-12s %-10s\n", 
+    printf("%-15s %-50s %-12s %-10s, ", 
            "시간", "호출", "반환값", "시간(μs)");
-    printf("%-15s %-50s %-12s %-10s\n", 
+    printf("%-15s %-50s %-12s %-10s, ", 
            "----", "----", "------", "--------");
     
     while (1) {
@@ -729,29 +729,29 @@ void filter_syscalls(pid_t pid, const char* syscall_filter) {
                     char args_str[256];
                     format_syscall_args(&record, args_str, sizeof(args_str));
                     
-                    printf("%-15s %-50s %-12ld %-10.1f\n",
+                    printf("%-15s %-50s %-12ld %-10.1f, ",
                            time_str, args_str, record.retval, record.duration_us);
                 }
             }
         }
     }
     
-    printf("\n총 %s 호출: %d회\n", syscall_filter, match_count);
+    printf(", 총 %s 호출: %d회, ", syscall_filter, match_count);
     ptrace(PTRACE_DETACH, pid, NULL, NULL);
 }
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        printf("사용법: %s <options> <PID>\n", argv[0]);
-        printf("Options:\n");
-        printf("  -d, --detailed     상세한 시스템 호출 로그\n");
-        printf("  -s, --summary      요약 통계만 표시\n");
-        printf("  -f, --filter NAME  특정 시스템 호출만 추적\n");
-        printf("  -h, --help         도움말\n");
-        printf("\n예시:\n");
-        printf("  %s -d 1234              # PID 1234의 상세 추적\n", argv[0]);
-        printf("  %s -s 1234              # PID 1234의 요약 통계\n", argv[0]);
-        printf("  %s -f read 1234         # read 시스템 호출만 추적\n", argv[0]);
+        printf("사용법: %s <options> <PID>, ", argv[0]);
+        printf("Options:, ");
+        printf("  -d, --detailed     상세한 시스템 호출 로그, ");
+        printf("  -s, --summary      요약 통계만 표시, ");
+        printf("  -f, --filter NAME  특정 시스템 호출만 추적, ");
+        printf("  -h, --help         도움말, ");
+        printf(", 예시:, ");
+        printf("  %s -d 1234              # PID 1234의 상세 추적, ", argv[0]);
+        printf("  %s -s 1234              # PID 1234의 요약 통계, ", argv[0]);
+        printf("  %s -f read 1234         # read 시스템 호출만 추적, ", argv[0]);
         return 1;
     }
     
@@ -779,7 +779,7 @@ int main(int argc, char* argv[]) {
     }
     
     if (target_pid <= 0) {
-        printf("올바른 PID를 입력해주세요.\n");
+        printf("올바른 PID를 입력해주세요., ");
         return 1;
     }
     
@@ -789,8 +789,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    printf("=== 시스템 호출 추적기 ===\n");
-    printf("대상 PID: %d\n", target_pid);
+    printf("=== 시스템 호출 추적기 ===, ");
+    printf("대상 PID: %d, ", target_pid);
     
     if (filter) {
         filter_syscalls(target_pid, filter);

@@ -91,7 +91,7 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "모놀리식 커널 (리눅스)"
+    subgraph MONO_KERNEL["모놀리식 커널 (리눅스)"]
         MONO[하나의 큰 커널]
         MONO --> FS1[파일시스템]
         MONO --> NET1[네트워크 스택]
@@ -100,11 +100,11 @@ graph TB
         MONO --> SCHED1[스케줄러]
     end
     
-    subgraph "마이크로커널 (Minix, QNX)"
+    subgraph MICRO_KERNEL["마이크로커널 (Minix, QNX)"]
         MICRO[작은 핵심 커널]
-        MICRO -.-> FS2[파일 서버<br/>(사용자 프로세스)]
-        MICRO -.-> NET2[네트워크 서버<br/>(사용자 프로세스)]  
-        MICRO -.-> DRV2[드라이버<br/>(사용자 프로세스)]
+        MICRO -.-> FS2["파일 서버 사용자프로세스"]
+        MICRO -.-> NET2["네트워크 서버 사용자프로세스"]  
+        MICRO -.-> DRV2["드라이버 사용자프로세스"]
     end
     
     style MONO fill:#FFCDD2
@@ -195,16 +195,16 @@ description:    Fourth Extended Filesystem
 
 ```mermaid
 graph TB
-    subgraph "가상 메모리 공간 (x86-64)"
-        subgraph "사용자 공간 (0x0000000000000000 - 0x00007FFFFFFFFFFF)"
+    subgraph VMEM["가상 메모리 공간 (x86-64)"]
+        subgraph USER_SPACE["사용자 공간 (0x0000000000000000 - 0x00007FFFFFFFFFFF)"]
             USER[사용자 프로그램들]
         end
         
-        subgraph "커널 공간 (0xFFFF800000000000 - 0xFFFFFFFFFFFFFFFF)"
-            KCODE[커널 코드<br/>(.text 섹션)]
-            KDATA[커널 데이터<br/>(.data, .bss)]
-            VMALLOC[vmalloc 영역<br/>(커널 동적 할당)]
-            DIRECTMAP[직접 매핑 영역<br/>(물리 메모리 전체)]
+        subgraph KERNEL_SPACE["커널 공간 (0xFFFF800000000000 - 0xFFFFFFFFFFFFFFFF)"]
+            KCODE["커널 코드 text섹션"]
+            KDATA["커널 데이터 data,bss"]
+            VMALLOC["vmalloc 영역 커널동적할당"]
+            DIRECTMAP["직접매핑영역 물리메모리전체"]
             FIXMAP[고정 매핑]
             VSYSCALL[vsyscall 페이지]
         end
@@ -576,12 +576,12 @@ static void net_rx_action(struct softirq_action *h) {
 #include <linux/kernel.h>
 
 static int __init hello_init(void) {
-    printk(KERN_INFO "Hello, Kernel World!\n");
+    printk(KERN_INFO "Hello, Kernel World!, ");
     return 0;  // 0 = 성공
 }
 
 static void __exit hello_exit(void) {
-    printk(KERN_INFO "Goodbye, Kernel World!\n");
+    printk(KERN_INFO "Goodbye, Kernel World!, ");
 }
 
 module_init(hello_init);
@@ -638,8 +638,8 @@ EXPORT_SYMBOL(my_function);
 
 ```mermaid
 graph TD
-    A[모듈 파일 (.ko)] --> B[insmod/modprobe]
-    B --> C[sys_init_module()]
+    A[모듈파일ko] --> B[insmod/modprobe]
+    B --> C[sys_init_module함수]
     C --> D[모듈 무결성 검사]
     D --> E[심볼 해결]
     E --> F[재배치 수행]
@@ -813,7 +813,7 @@ void interrupt_handler(void) {
     
     if (!buffer) {
         // 할당 실패 처리
-        printk(KERN_WARNING "Memory allocation failed in interrupt\n");
+        printk(KERN_WARNING "Memory allocation failed in interrupt, ");
         return;
     }
     
@@ -839,14 +839,14 @@ void interrupt_handler(void) {
 
 // 사용 예제
 void my_function(void) {
-    printk(KERN_INFO "Function called successfully\n");
+    printk(KERN_INFO "Function called successfully, ");
     
     if (error_condition) {
-        printk(KERN_ERR "Error: something went wrong (%d)\n", error_code);
+        printk(KERN_ERR "Error: something went wrong (%d), ", error_code);
         return -EINVAL;
     }
     
-    printk(KERN_DEBUG "Debug: variable value = %d\n", debug_var);
+    printk(KERN_DEBUG "Debug: variable value = %d, ", debug_var);
 }
 ```
 
@@ -898,7 +898,7 @@ static struct proc_dir_entry *proc_entry;
 // proc 파일 읽기 함수
 static ssize_t hello_read(struct file *file, char __user *buffer, 
                          size_t count, loff_t *pos) {
-    static const char message[] = "Hello from kernel module!\n";
+    static const char message[] = "Hello from kernel module!, ";
     size_t message_len = sizeof(message) - 1;
     
     if (*pos >= message_len) {
@@ -920,7 +920,7 @@ static ssize_t hello_read(struct file *file, char __user *buffer,
 // proc 파일 쓰기 함수
 static ssize_t hello_write(struct file *file, const char __user *buffer,
                           size_t count, loff_t *pos) {
-    printk(KERN_INFO "Hello module: received %zu bytes\n", count);
+    printk(KERN_INFO "Hello module: received %zu bytes, ", count);
     return count;
 }
 
@@ -932,16 +932,16 @@ static const struct proc_ops hello_proc_ops = {
 
 // 모듈 초기화
 static int __init hello_init(void) {
-    printk(KERN_INFO "Hello module: initializing\n");
+    printk(KERN_INFO "Hello module: initializing, ");
     
     // /proc/hello_proc 파일 생성
     proc_entry = proc_create(PROC_FILENAME, 0666, NULL, &hello_proc_ops);
     if (!proc_entry) {
-        printk(KERN_ERR "Hello module: failed to create proc entry\n");
+        printk(KERN_ERR "Hello module: failed to create proc entry, ");
         return -ENOMEM;
     }
     
-    printk(KERN_INFO "Hello module: loaded successfully\n");
+    printk(KERN_INFO "Hello module: loaded successfully, ");
     return 0;
 }
 
@@ -950,7 +950,7 @@ static void __exit hello_exit(void) {
     if (proc_entry) {
         proc_remove(proc_entry);
     }
-    printk(KERN_INFO "Hello module: unloaded\n");
+    printk(KERN_INFO "Hello module: unloaded, ");
 }
 
 module_init(hello_init);

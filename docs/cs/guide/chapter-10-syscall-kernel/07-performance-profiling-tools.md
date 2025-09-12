@@ -517,8 +517,8 @@ class AdvancedDebugger:
                     'ps', 'aux', '--sort=-%cpu'
                 ], capture_output=True, text=True)
                 
-                lines = result.stdout.split('\n')[:11]  # 헤더 + 상위 10개
-                diagnostics_results['top_cpu_processes'] = '\n'.join(lines)
+                lines = result.stdout.split(', ')[:11]  # 헤더 + 상위 10개
+                diagnostics_results['top_cpu_processes'] = ', '.join(lines)
             except:
                 diagnostics_results['top_cpu_processes'] = '프로세스 정보 수집 실패'
         
@@ -529,8 +529,8 @@ class AdvancedDebugger:
                     'ps', 'aux', '--sort=-%mem'
                 ], capture_output=True, text=True)
                 
-                lines = result.stdout.split('\n')[:11]
-                diagnostics_results['top_memory_processes'] = '\n'.join(lines)
+                lines = result.stdout.split(', ')[:11]
+                diagnostics_results['top_memory_processes'] = ', '.join(lines)
             except:
                 diagnostics_results['top_memory_processes'] = '메모리 정보 수집 실패'
             
@@ -642,7 +642,7 @@ class AdvancedDebugger:
         
         events_summary = cursor.fetchall()
         
-        print(f"\n최근 {hours_back}시간 이벤트 요약:")
+        print(f", 최근 {hours_back}시간 이벤트 요약:")
         print("타입\t\t심각도\t\t횟수")
         print("-" * 40)
         for event_type, severity, count in events_summary:
@@ -658,7 +658,7 @@ class AdvancedDebugger:
         
         metrics_summary = cursor.fetchall()
         
-        print(f"\n성능 메트릭 요약:")
+        print(f", 성능 메트릭 요약:")
         print("메트릭\t\t평균\t\t최대\t\t최소")
         print("-" * 50)
         for metric, avg_val, max_val, min_val in metrics_summary:
@@ -675,7 +675,7 @@ class AdvancedDebugger:
         
         recent_anomalies = cursor.fetchall()
         
-        print(f"\n최근 이상 상황:")
+        print(f", 최근 이상 상황:")
         for timestamp, message, metadata in recent_anomalies:
             print(f"- {timestamp}: {message}")
             
@@ -688,7 +688,7 @@ class AdvancedDebugger:
             except:
                 pass
         
-        print("\n" + "="*60)
+        print(", " + "="*60)
         print("권장사항:")
         
         # 자동 권장사항 생성
@@ -726,7 +726,7 @@ def main():
             debugger.generate_debug_report(args.report)
             
     except KeyboardInterrupt:
-        print("\n프로그램이 중단되었습니다")
+        print(", 프로그램이 중단되었습니다")
     except Exception as e:
         print(f"오류: {e}")
 
