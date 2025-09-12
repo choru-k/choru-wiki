@@ -338,25 +338,40 @@ nav:
           - cs/system/index.md
           - File Descriptors: cs/system/file-descriptor.md
       - AWS Internals (Storytelling):
+          - cs/aws-internals/index.md
           - S3 Deep Dive:
+              - cs/aws-internals/s3/index.md
               - "Data Durability: 99.999999999% Magic": cs/aws-internals/s3/01-architecture.md
               - "Consistency: From Eventual to Strong": cs/aws-internals/s3/02-storage-classes.md
               - "Performance: Netflix's Christmas Story": cs/aws-internals/s3/03-performance.md
               - "Security: Capital One Breach Timeline": cs/aws-internals/s3/04-security.md
           - Load Balancing:
+              - cs/aws-internals/load-balancing/index.md
               - "ELB/ALB: Black Friday Crisis Management": cs/aws-internals/load-balancing/01-elb-alb.md
               - "NLB/GWLB: Fortnite's 100M Concurrent Users": cs/aws-internals/load-balancing/02-nlb-gwlb.md
               - "Algorithms: Instagram's 10B User Distribution": cs/aws-internals/load-balancing/03-algorithms.md
           - Networking:
+              - cs/aws-internals/networking/index.md
               - "VPC: Netflix's 200Gbps Virtual Network": cs/aws-internals/networking/01-vpc.md
               - "Route 53: Spotify's 0.001s DNS Magic": cs/aws-internals/networking/02-route53.md
-              - "CloudFront: Disney+'s 1000M Stream CDN": cs/aws-internals/networking/03-cloudfront.md
-              - "Direct Connect: JP Morgan's 0.001s Trading": cs/aws-internals/networking/04-direct-connect.md
+              - "CloudFront: Disney+'s Global Edge Network": cs/aws-internals/networking/03-cloudfront.md
+              - "Direct Connect: JP Morgan's 0.001s Trading": cs/aws-internals/networking/04-directconnect.md
           - Compute:
+              - cs/aws-internals/compute/index.md
               - "EC2 Nitro: Netflix's 400Gbps Streaming": cs/aws-internals/compute/01-ec2-nitro.md
               - "Lambda: Duolingo's 100M Users Secret": cs/aws-internals/compute/02-lambda.md
               - "ECS: Pinterest's 10B Images Serving": cs/aws-internals/compute/03-ecs.md
               - "EKS: Airbnb's 5000 Microservices": cs/aws-internals/compute/04-eks.md
+          - Database:
+              - cs/aws-internals/database/index.md
+              - "RDS: Shopify's Black Friday Survival": cs/aws-internals/database/01-rds.md
+              - "DynamoDB: Lyft's 10B Rides Challenge": cs/aws-internals/database/02-dynamodb.md
+              - "Aurora: Netflix's Cloud-Native Revolution": cs/aws-internals/database/03-aurora.md
+              - "ElastiCache: Twitter's Microsecond World": cs/aws-internals/database/04-elasticache.md
+          - CloudFront CDN:
+              - cs/aws-internals/cloudfront/index.md
+              - "Architecture: Disney+'s 450 Edge Locations": cs/aws-internals/cloudfront/01-architecture.md
+              - "Optimization: TikTok's Viral Challenge": cs/aws-internals/cloudfront/02-optimization.md
       - Kubernetes Deep Dive (Storytelling):
           - Architecture:
               - "Overview: Google's 2B Containers Secret": cs/kubernetes/architecture/01-overview.md
