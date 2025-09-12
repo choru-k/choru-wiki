@@ -24,7 +24,7 @@ File descriptor(FD)는 **열린 파일이나 I/O 리소스를 식별하는 음�
 
 ### 커널 내부 구조
 
-```
+```text
 프로세스 A
 ┌─────────────────────────┐
 │   File Descriptor       │
@@ -138,10 +138,10 @@ int main() {
         return 1;
     }
     
-    printf("Opened file with FD: %d\n", fd);
+    printf("Opened file with FD: %d, ", fd);
     
     // 파일에 데이터 쓰기
-    const char *data = "Hello, File Descriptor!\n";
+    const char *data = "Hello, File Descriptor!, ";
     ssize_t bytes_written = write(fd, data, strlen(data));
     
     if (bytes_written == -1) {
@@ -174,7 +174,7 @@ int main() {
     // 모든 FD가 같은 파일을 가리킴
     write(fd1, "Hello ", 6);
     write(fd2, "from ", 5);
-    write(fd3, "FD!\n", 4);
+    write(fd3, "FD!, ", 4);
     
     close(fd1);
     close(fd2);
@@ -231,12 +231,12 @@ int main() {
     
     if (pid == 0) {
         // 자식 프로세스 - 부모의 FD 상속
-        write(fd, "Child process\n", 14);
+        write(fd, "Child process, ", 14);
         close(fd);
         exit(0);
     } else {
         // 부모 프로세스
-        write(fd, "Parent process\n", 15);
+        write(fd, "Parent process, ", 15);
         wait(NULL);  // 자식 프로세스 종료 대기
         close(fd);
     }
@@ -288,7 +288,7 @@ void demonstrate_nonblocking_io() {
             printf("Read %zd bytes: %.*s", bytes_read, (int)bytes_read, buffer);
         } else if (bytes_read == -1) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                printf("No data available, continuing...\n");
+                printf("No data available, continuing..., ");
                 usleep(100000);  // 100ms 대기
                 continue;
             } else {
@@ -296,7 +296,7 @@ void demonstrate_nonblocking_io() {
                 break;
             }
         } else {
-            printf("EOF reached\n");
+            printf("EOF reached, ");
             break;
         }
     }
@@ -345,7 +345,7 @@ void handle_connections(int server_fd) {
         }
         
         // 클라이언트 처리
-        printf("New client connected: FD %d\n", client_fd);
+        printf("New client connected: FD %d, ", client_fd);
         // ... 처리 로직
         close(client_fd);
     }
@@ -433,7 +433,7 @@ void safe_file_operation() {
     FileDescriptor fd("/tmp/safe.txt", O_RDWR | O_CREAT, 0644);
     
     // 자동으로 파일이 닫힘 (소멸자에서)
-    write(fd.get(), "Safe operation\n", 15);
+    write(fd.get(), "Safe operation, ", 15);
 }
 ```
 
@@ -443,10 +443,10 @@ void safe_file_operation() {
 
 ```bash
 # 특정 프로세스의 열린 FD 목록
-$ ls -la /proc/&lt;pid&gt;/fd/
+$ ls -la /proc/[pid]/fd/
 
 # 프로세스별 FD 사용량
-$ lsof -p &lt;pid&gt;
+$ lsof -p [pid]
 
 # 시스템 전체에서 특정 파일을 열고 있는 프로세스 찾기
 $ lsof /path/to/file
@@ -488,7 +488,7 @@ void monitor_fd_usage(const char* operation) {
     static int last_count = 0;
     int current_count = count_open_fds();
     
-    printf("[FD Monitor] %s: %d FDs (변화: %+d)\n", 
+    printf("[FD Monitor] %s: %d FDs (변화: %+d), ", 
            operation, current_count, current_count - last_count);
     
     last_count = current_count;
@@ -563,7 +563,7 @@ void event_loop(int epoll_fd) {
             if (events[i].events & (EPOLLHUP | EPOLLERR)) {
                 // 연결 종료 또는 에러
                 close(fd);
-                printf("Connection closed: FD %d\n", fd);
+                printf("Connection closed: FD %d, ", fd);
             }
         }
     }
@@ -583,7 +583,7 @@ void pipe_communication_example() {
         return;
     }
     
-    printf("Created pipe: read_fd=%d, write_fd=%d\n", 
+    printf("Created pipe: read_fd=%d, write_fd=%d, ", 
            pipefd[0], pipefd[1]);
     
     pid_t pid = fork();
@@ -603,7 +603,7 @@ void pipe_communication_example() {
         // 부모 프로세스 - 파이프에 쓰기
         close(pipefd[0]);  // 읽기 끝 닫기
         
-        const char *message = "Hello from parent!\n";
+        const char *message = "Hello from parent!, ";
         write(pipefd[1], message, strlen(message));
         
         close(pipefd[1]);
@@ -654,19 +654,19 @@ void pipe_communication_example() {
 - [ ] 현재 FD 사용량 확인
 
   ```bash
-  lsof -p &lt;pid&gt; | wc -l
+  lsof -p [pid] | wc -l
   ```
 
 - [ ] FD 제한 확인
 
   ```bash
-  cat /proc/&lt;pid&gt;/limits | grep "open files"
+  cat /proc/[pid]/limits | grep "open files"
   ```
 
 - [ ] 시간별 FD 사용량 모니터링
 
   ```bash
-  while true; do echo "$(date): $(ls /proc/&lt;pid&gt;/fd | wc -l)"; sleep 1; done
+  while true; do echo "$(date): $(ls /proc/[pid]/fd | wc -l)"; sleep 1; done
   ```
 
 - [ ] 코드에서 close() 누락 지점 검토
@@ -694,7 +694,7 @@ void optimize_fd_allocation() {
     
     // 새로 열면 500번대 FD가 재사용됨
     int new_fd = open("/dev/null", O_RDONLY);
-    printf("New FD: %d (재사용된 번호)\n", new_fd);
+    printf("New FD: %d (재사용된 번호), ", new_fd);
     
     // 정리
     for (int i = 0; i < 1000; i++) {
@@ -774,7 +774,7 @@ File descriptor는 Unix/Linux 시스템에서 I/O 작업의 핵심입니다:
 
 **디버깅:**
 
-- `/proc/&lt;pid&gt;/fd/` 디렉토리 활용
+- `/proc/[pid]/fd/` 디렉토리 활용
 - `lsof` 명령어 사용
 - FD 누수 탐지 및 방지
 
