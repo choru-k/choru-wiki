@@ -256,6 +256,7 @@ nav:
               - "9-2: GC Algorithms": cs/guide/chapter-09-memory-gc/02-gc-algorithms.md
               - "9-3: Language-specific GC": cs/guide/chapter-09-memory-gc/03-language-gc.md
               - "9-4: Memory Optimization": cs/guide/chapter-09-memory-gc/04-memory-optimization.md
+              - "9-5: Memory Leak Detection": cs/guide/chapter-09-memory-gc/05-memory-leak-detection.md
           - "Chapter 10: Performance Optimization": cs/guide/chapter-10-performance-optimization.md
           - "Chapter 11: Container & Isolation": cs/guide/chapter-11-container-isolation.md
           - "Chapter 12: Observability & Debugging": cs/guide/chapter-12-observability-debugging.md
