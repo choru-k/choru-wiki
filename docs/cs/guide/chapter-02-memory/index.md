@@ -38,7 +38,7 @@ graph TB
     subgraph "물리 메모리"
         PM[Physical Memory, 실제 RAM]
     end
-    
+
     subgraph "가상 메모리"
         subgraph "프로세스 A"
             A1[Stack ↓]
@@ -48,7 +48,7 @@ graph TB
             A5[Data]
             A6[Text]
         end
-        
+
         subgraph "프로세스 B"
             B1[Stack ↓]
             B2[Memory Mapped]
@@ -58,17 +58,17 @@ graph TB
             B6[Text]
         end
     end
-    
+
     A1 -.페이지 테이블.-> PM
     A3 -.페이지 테이블.-> PM
     B1 -.페이지 테이블.-> PM
     B6 -.공유.-> A6
-    
+
     style PM fill:#FFE082
     style A1 fill:#FFCDD2
     style A3 fill:#C8E6C9
     style A6 fill:#BBDEFB
-```text
+```
 
 ## 이 장의 구성
 
@@ -164,15 +164,15 @@ $ strace ./program       # 시스템 콜 추적
 $ gcc -g -fsanitize=address  # AddressSanitizer
 $ gcc -fstack-protector       # 스택 보호
 $ gcc -fPIC                   # Position Independent Code
-```text
+```
 
 ## 이 장을 읽고 나면
 
-✅ **메모리 구조 이해**: 프로그램 메모리가 어떻게 구성되는지 완벽히 이해  
-✅ **메모리 버그 해결**: Segfault, 메모리 누수 등을 디버깅할 수 있음  
-✅ **성능 최적화**: 캐시 친화적인 코드를 작성할 수 있음  
-✅ **보안 강화**: 버퍼 오버플로우 등 메모리 취약점을 방어할 수 있음  
-✅ **시스템 프로그래밍**: mmap, 공유 메모리 등 고급 기법을 활용할 수 있음  
+✅ **메모리 구조 이해**: 프로그램 메모리가 어떻게 구성되는지 완벽히 이해
+✅ **메모리 버그 해결**: Segfault, 메모리 누수 등을 디버깅할 수 있음
+✅ **성능 최적화**: 캐시 친화적인 코드를 작성할 수 있음
+✅ **보안 강화**: 버퍼 오버플로우 등 메모리 취약점을 방어할 수 있음
+✅ **시스템 프로그래밍**: mmap, 공유 메모리 등 고급 기법을 활용할 수 있음
 
 ## 핵심 개념 미리보기
 
@@ -215,30 +215,30 @@ mindmap
       IPC
         공유 메모리
         메시지 큐
-```text
+```
 
 ## 메모리 문제 진단 플로우차트
 
 ```mermaid
 graph TD
     Start[메모리 문제 발생] --> Type{문제 유형?}
-    
+
     Type -->|Segfault| Seg[세그멘테이션 폴트]
     Seg --> GDB[GDB로 코어 덤프 분석]
     GDB --> Stack[스택 트레이스 확인]
-    
+
     Type -->|메모리 누수| Leak[메모리 사용량 증가]
     Leak --> Valgrind[Valgrind 실행]
     Valgrind --> LeakReport[누수 위치 확인]
-    
+
     Type -->|성능 저하| Perf[느린 메모리 접근]
     Perf --> Cache[캐시 미스 분석]
     Cache --> Optimize[메모리 레이아웃 최적화]
-    
+
     Type -->|OOM| OOM[Out of Memory]
     OOM --> Usage[메모리 사용 패턴 분석]
     Usage --> Limit[리소스 제한 확인]
-```text
+```
 
 ## 다음 단계
 

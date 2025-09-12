@@ -133,7 +133,7 @@ $ wc -l hello_O0.s
      35 hello_O0.s
 
 # 최적화 레벨 2 (-O2)
-$ gcc -O2 -S hello.c -o hello_O2.s  
+$ gcc -O2 -S hello.c -o hello_O2.s
 $ wc -l hello_O2.s
      28 hello_O2.s
 
@@ -235,7 +235,7 @@ int x = 42 + y;
 
 ```text
 INT     -> "int"
-ID      -> "x"  
+ID      -> "x"
 ASSIGN  -> "="
 NUMBER  -> "42"
 PLUS    -> "+"
@@ -338,12 +338,12 @@ int calculate() {
     int y = 20;
     int unused = 30;    // Dead code
     int result = x + y; // Constant folding → result = 30
-    
+
     // Loop unrolling 대상
     for (int i = 0; i < 4; i++) {
         printf("%d, ", i);
     }
-    
+
     return result;
 }
 ```
@@ -512,8 +512,8 @@ int main() {
     clock_t start = clock();
     double pi = calculate_pi(100000000);
     clock_t end = clock();
-    
-    printf("Pi: %f, Time: %f seconds, ", 
+
+    printf("Pi: %f, Time: %f seconds, ",
            pi, (double)(end - start) / CLOCKS_PER_SEC);
     return 0;
 }
@@ -524,7 +524,7 @@ int main() {
 ```bash
 # 각 최적화 레벨로 컴파일
 $ gcc -O0 benchmark.c -o bench_O0
-$ gcc -O1 benchmark.c -o bench_O1  
+$ gcc -O1 benchmark.c -o bench_O1
 $ gcc -O2 benchmark.c -o bench_O2
 $ gcc -O3 benchmark.c -o bench_O3
 
@@ -533,7 +533,7 @@ $ time ./bench_O0
 Pi: 3.141593, Time: 2.450000 seconds
 real    0m2.453s
 
-$ time ./bench_O2  
+$ time ./bench_O2
 Pi: 3.141593, Time: 0.245000 seconds
 real    0m0.248s
 
@@ -551,7 +551,7 @@ $ gcc -O2 -s benchmark.c -o bench_stripped
 
 $ ls -la bench_*
 -rwxr-xr-x 1 user user  8768 bench_O0
--rwxr-xr-x 1 user user  8704 bench_O2  
+-rwxr-xr-x 1 user user  8704 bench_O2
 -rwxr-xr-x 1 user user  8536 bench_Os
 -rwxr-xr-x 1 user user  6336 bench_stripped
 
@@ -673,7 +673,7 @@ all: debug
 debug: CFLAGS += $(DEBUG_FLAGS)
 debug: $(TARGET)_debug
 
-# Release 빌드  
+# Release 빌드
 release: CFLAGS += $(RELEASE_FLAGS)
 release: $(TARGET)_release
 
@@ -716,7 +716,7 @@ make debug
 strip --strip-unneeded myprogram_debug
 
 # Release 빌드
-echo "Building release version..." 
+echo "Building release version..."
 make clean
 make release
 
@@ -771,7 +771,7 @@ $ ls -la program_static
 -rwxr-xr-x 1 user user 2097152 program_static  # 2MB
 
 # 동적 링킹 (기본값)
-$ gcc program.c -o program_dynamic  
+$ gcc program.c -o program_dynamic
 $ ls -la program_dynamic
 -rwxr-xr-x 1 user user    8760 program_dynamic  # 8KB
 
@@ -873,7 +873,7 @@ $ gcc -O2 -fprofile-use program.c -o program_optimized
 $ time ./program < test_input.txt
 real    0m1.234s
 
-$ time ./program_optimized < test_input.txt  
+$ time ./program_optimized < test_input.txt
 real    0m0.987s  # 약 20% 성능 향상
 ```
 
@@ -906,7 +906,7 @@ void frequently_called_function() {
     // ...
 }
 
-__attribute__((cold))   // 드물게 호출되는 함수  
+__attribute__((cold))   // 드물게 호출되는 함수
 void error_handler() {
     // ...
 }

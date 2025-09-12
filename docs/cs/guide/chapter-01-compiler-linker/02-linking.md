@@ -24,7 +24,7 @@ tags:
 undefined reference to `calculate_sum'
 multiple definition of `global_counter'
 cannot find -lmath
-```text
+```
 
 이것들은 모두 '링커(Linker)' 오류입니다. 컴파일은 성공했지만, 링킹 단계에서 실패한 것이죠.
 
@@ -45,7 +45,7 @@ program.c (100,000줄)
 ├── UI 코드
 ├── 비즈니스 로직
 └── 유틸리티 함수들
-```text
+```
 
 문제점:
 
@@ -75,7 +75,7 @@ graph TD
 
     style L fill:#4CAF50
     style E fill:#2196F3
-```text
+```
 
 각 파일을 독립적으로 컴파일하고, 나중에 합치는 방식입니다.
 
@@ -84,19 +84,51 @@ graph TD
 컴파일러가 생성한 오브젝트 파일을 자세히 봅시다:
 
 ```c
-// math.c
-int add(int a, int b) {
-    return a + b;
-}
+// ⭐ 기본적인 다중 파일 프로젝트 - 링킹의 근본 원리 이해를 위한 최소 예제
+// 실제 동작: 컴파일러가 생성한 불완전한 오브젝트 파일들을 링커가 연결하는 과정
+// 교육 목적: "왜 헤더 파일과 소스 파일을 분리하는가?"에 대한 실질적 답변
 
+// ⭐ 1단계: 함수 정의 (Definition) - 실제 구현을 포함한 심볼 생성
+// math.c
+int add(int a, int b) {     // 전역 함수 = Strong Symbol로 심볼 테이블에 등록
+    return a + b;           // 컴파일러가 이를 어셈블리로 변환:
+}                           // mov eax, edi; add eax, esi; ret
+                           // math.o 파일의 .text 섹션에 기계어로 저장
+
+// ⭐ 2단계: 함수 선언 (Declaration) - "다른 곳에 있다"는 링커 약속
 // main.c
-extern int add(int a, int b);
+extern int add(int a, int b); // 컴파일러에게: "add 함수가 존재하지만 여기엔 없음"
+                              // 링커가 나중에 실제 위치를 찾아서 연결해줄 것
+                              // main.o의 심볼 테이블에 UNDEFINED로 표시
 
 int main() {
-    int result = add(3, 4);
-    return result;
+    int result = add(3, 4);   // call 명령어 생성, 하지만 타겟 주소는 0x00000000
+                              // 재배치 테이블에 "이 위치에 add 함수 주소 삽입" 기록
+    return result;            // 링커가 math.o에서 add를 찾아 실제 주소로 패치
 }
-```text
+
+// ⭐ 링커의 심볼 해결 과정:
+// 1) main.o 분석: "add 함수를 사용하지만 여기엔 정의 없음" (UNDEFINED)
+// 2) math.o 분석: "add 함수 정의 발견" (DEFINED in .text section)
+// 3) 심볼 매칭: main.o의 add 참조 → math.o의 add 정의 연결
+// 4) 재배치 수행: call 명령어의 타겟을 실제 add 함수 주소로 패치
+//
+// ⭐ 실제 어셈블리 변환 과정:
+// main.c 컴파일 후 (링킹 전):
+//   call 0x00000000    ; placeholder address
+// 링킹 후:
+//   call 0x401020      ; actual address of add function
+//
+// ⭐ 실무에서의 확장:
+// - 헤더 파일(.h): 여러 .c 파일에서 동일한 선언을 공유
+// - 라이브러리(.a/.so): 자주 사용하는 함수들을 미리 컴파일해서 재사용
+// - 네임스페이스/모듈: 이름 충돌 방지를 위한 심볼 구분
+//
+// ⭐ 성능 고려사항:
+// - 함수 호출 오버헤드: call/ret 명령어 + 스택 프레임 설정
+// - 인라이닝 제한: 다른 파일의 함수는 인라인하기 어려움
+// - LTO 필요성: Link Time Optimization으로 파일 경계 넘어 최적화
+```
 
 `main.c`를 컴파일할 때, 컴파일러는 `add` 함수가 어디 있는지 모릅니다:
 
@@ -107,7 +139,7 @@ main:
     push 3
     call ????    ; add 함수의 주소를 모름!
     ret
-```text
+```
 
 이 `????` 부분을 채우는 것이 링커의 역할입니다.
 
@@ -141,7 +173,7 @@ main:
 │ main        │ FUNCTION │ 0x0000 │ .text   │
 │ add         │ UNDEFINED│ 0x0000 │ -       │
 └─────────────┴──────────┴────────┴─────────┘
-```text
+```
 
 `main.o`에서 `add`는 **UNDEFINED**로 표시됩니다. "이 함수를 사용하지만 여기엔 없어요"라는 의미입니다.
 
@@ -165,7 +197,7 @@ Undefined"]
     style G fill:#81C784
     style L fill:#90CAF9
     style W fill:#CE93D8
-```text
+```
 
 #### 전역 심볼 (Global Symbol)
 
@@ -177,7 +209,7 @@ int calculate(int x) { return x * 2; }
 
 // 전역 변수
 int global_data = 100;
-```text
+```
 
 #### 지역 심볼 (Local Symbol)
 
@@ -189,7 +221,7 @@ static int helper(int x) { return x + 1; }
 
 // static 변수
 static int file_counter = 0;
-```text
+```
 
 #### 약한 심볼 (Weak Symbol)
 
@@ -203,7 +235,7 @@ int buffer_size;  // weak
 int buffer_size = 1024;  // strong
 
 // 약한 심볼은 강한 심볼에 의해 덮어써짐
-```text
+```
 
 ## 3. 링킹 과정 상세
 
@@ -231,34 +263,57 @@ sequenceDiagram
     L->>B: printf() 찾기
     B->>L: printf() @ 0x2000
     L->>M: printf() = 0x2000으로 해결
-```text
+```
 
 실제 예제로 봅시다:
 
 ```c
+// ⭐ 멀티모듈 심볼 해결의 전형적 예제 - 링커의 핵심 동작 원리 시연
+// 실제 동작: 링커가 여러 오브젝트 파일에 흩어진 심볼들을 하나로 연결하는 과정
+// 실무 중요성: 대규모 C/C++ 프로젝트에서 모듈 간 의존성 관리의 기초
+
+// ⭐ 1단계: 전역 심볼 정의 (Strong Symbol)
 // file1.c
-int shared_var = 10;
+int shared_var = 10;    // 초기화된 전역 변수 → .data 섹션에 배치
 void func1() {
-    shared_var++;
+    shared_var++;       // 전역 변수 수정 → 링커가 주소 해결 필요
 }
 
+// ⭐ 2단계: 외부 심볼 참조 선언
 // file2.c
-extern int shared_var;
+extern int shared_var;  // 다른 파일의 심볼을 참조한다고 컴파일러에 알림
 void func2() {
-    shared_var *= 2;
+    shared_var *= 2;    // 링커가 file1.c의 shared_var와 연결해야 함
 }
 
+// ⭐ 3단계: 통합 실행 코드
 // main.c
-extern void func1();
-extern void func2();
-extern int shared_var;
+extern void func1();    // 함수 전방 선언 - 링킹 시점에 해결
+extern void func2();    // 컴파일러: "이 함수들이 어디 있는지 모르지만 링커가 찾아줄 것"
+extern int shared_var;  // 변수도 마찬가지로 링킹 시점 해결
 
 int main() {
-    func1();
-    func2();
-    return shared_var;
+    func1();           // call 명령어의 타겟 주소는 링커가 채움
+    func2();           // 각 함수 호출은 재배치(relocation) 대상
+    return shared_var; // 전역 변수 접근도 재배치 필요
 }
-```text
+
+// ⭐ 실제 사용 사례:
+// - Linux 커널: 모듈별로 분리된 subsystem들의 심볼 해결
+// - LLVM/GCC: 컴파일러 자체도 수백 개 오브젝트 파일로 구성
+// - Chrome: Blink 렌더링 엔진의 거대한 모듈 간 연결
+//
+// ⭐ 링커 동작 순서:
+// 1) file1.o, file2.o, main.o에서 심볼 테이블 수집
+// 2) shared_var의 정의(file1.o)와 참조들(file2.o, main.o) 매칭
+// 3) func1, func2 정의와 호출 위치 매칭
+// 4) 최종 주소 할당 후 모든 참조를 실제 주소로 패치
+//
+// ⭐ 성능 최적화 포인트:
+// - LTO(Link Time Optimization)로 모듈 경계를 넘는 인라이닝 가능
+// - 사용되지 않는 함수 제거 (Dead Code Elimination)
+// - Position Independent Code(PIC)로 ASLR 지원하면서도 성능 유지
+```
 
 링커의 심볼 해결 과정:
 
@@ -279,7 +334,7 @@ math.o:
 main.o:
 0x0000: main 함수 시작
 0x0030: call ????  (add 호출)
-```text
+```
 
 링커가 최종 실행 파일을 만들 때:
 
@@ -290,7 +345,7 @@ main.o:
 ...
 0x2000: add 함수 (math.o에서)
 0x2020: multiply 함수
-```text
+```
 
 이 과정을 시각화하면:
 
@@ -315,7 +370,7 @@ call 0x2000"]
 
     style M2 fill:#4CAF50
     style A2 fill:#4CAF50
-```text
+```
 
 ### 3.4 재배치 정보
 
@@ -329,7 +384,7 @@ call 0x2000"]
 │ 0x0030   │ add       │ R_CALL       │
 │ 0x0040   │ global_var│ R_ABS32      │
 └──────────┴───────────┴──────────────┘
-```text
+```
 
 이 정보는 "0x0030 위치의 명령어는 add 함수를 호출하니까, add의 실제 주소로 수정해주세요"라는 의미입니다.
 
@@ -351,7 +406,7 @@ graph TD
     end
 
     style E fill:#FF9800
-```text
+```
 
 장점:
 
@@ -385,7 +440,7 @@ graph TD
 
     style E fill:#4CAF50
     style DL fill:#2196F3
-```text
+```
 
 장점:
 
@@ -418,7 +473,7 @@ sequenceDiagram
     D->>D: 재배치 수행
     D->>P: 제어권 전달
     P->>P: main() 실행
-```text
+```
 
 ## 5. 실행 파일 형식
 
@@ -466,7 +521,7 @@ ELF 파일 구조
 ├─────────────────────┤
 │  섹션 헤더 테이블    │ ← 링킹 시 사용 (섹션 정보)
 └─────────────────────┘
-```text
+```
 
 ### 5.3 실행 파일 분석 도구
 
@@ -488,7 +543,7 @@ $ nm program
 
 # T: 정의된 텍스트(코드) 심볼
 # U: 미정의 심볼 (외부 라이브러리)
-```text
+```
 
 ## 6. 링커 스크립트
 
@@ -497,26 +552,53 @@ $ nm program
 링커 스크립트는 링커에게 메모리 레이아웃을 지시하는 파일입니다:
 
 ```ld
+// ⭐ 링커 스크립트 기초 - 메모리 레이아웃을 직접 제어하는 핵심 도구
+// 실제 동작: 링커에게 각 섹션을 메모리 어디에 배치할지 명시적 지시
+// 사용 시기: 임베디드, 커널 개발, 부트로더에서 필수적
+
 /* simple.ld - 간단한 링커 스크립트 */
 SECTIONS
 {
-    . = 0x10000;        /* 시작 주소 */
+    // ⭐ 1단계: 코드 섹션 배치 - 실행 권한이 필요한 영역
+    . = 0x10000;        /* Location Counter 설정 - 현재 배치 위치 */
+                        /* 0x10000 = 64KB, 일반적으로 NULL 포인터 보호 영역 이후 */
 
-    .text : {           /* 코드 섹션 */
-        *(.text)
+    .text : {           /* 실행 코드가 들어갈 섹션 정의 */
+        *(.text)        /* 모든 오브젝트 파일의 .text 섹션을 여기에 수집 */
+                        /* CPU가 실행할 기계어 명령어들이 연속적으로 배치됨 */
     }
+    // → 결과: 0x10000부터 모든 실행 코드가 순서대로 배치
 
-    . = 0x20000;        /* 데이터 시작 주소 */
+    // ⭐ 2단계: 데이터 섹션 분리 배치 - NX(Non-eXecute) 보안 강화
+    . = 0x20000;        /* 데이터 시작 주소 - 코드와 64KB 떨어뜨려 분리 */
+                        /* 이유: 코드 인젝션 공격 방지, MMU 권한 설정 분리 */
 
-    .data : {           /* 데이터 섹션 */
-        *(.data)
+    .data : {           /* 초기화된 전역/정적 변수 섹션 */
+        *(.data)        /* 모든 .data 섹션 통합 */
+                        /* 컴파일 시점에 값이 정해진 전역 변수들 */
     }
+    // → 결과: 0x20000부터 초기화된 데이터가 배치
 
-    .bss : {            /* BSS 섹션 */
-        *(.bss)
+    // ⭐ 3단계: BSS 섹션 - 0으로 초기화되는 변수들의 최적화된 배치
+    .bss : {            /* Block Started by Symbol - 역사적 명칭 */
+        *(.bss)         /* 초기화되지 않은 전역/정적 변수들 */
+                        /* 실행 파일에는 크기 정보만, 실제 데이터는 없음 */
     }
+    // → 결과: 프로그램 로드 시 OS가 이 영역을 0으로 초기화
 }
-```text
+
+// ⭐ 실제 사용 사례:
+// - Linux 커널: arch/x86/kernel/vmlinux.lds.S에서 복잡한 메모리 레이아웃 정의
+// - U-Boot 부트로더: 플래시/RAM 분리 배치로 임베디드 시스템 부팅
+// - UEFI 펌웨어: DXE 단계에서 모듈별 메모리 영역 격리
+// - PlayStation/Xbox: 게임 엔진의 메모리 풀 최적화
+//
+// ⭐ 고급 기능들:
+// - MEMORY 블록으로 하드웨어 제약 정의 (ROM/RAM 크기 제한)
+// - ALIGN()으로 캐시 라인 경계 정렬 (성능 최적화)
+// - PROVIDE()로 조건부 심볼 정의 (라이브러리 호환성)
+// - OVERLAY로 메모리 재사용 (임베디드 메모리 절약)
+```
 
 ### 6.2 왜 링커 스크립트가 필요한가?
 
@@ -525,30 +607,73 @@ SECTIONS
 #### 임베디드 시스템
 
 ```ld
+// ⭐ 임베디드 시스템 링커 스크립트 - 하드웨어 제약을 반영한 실전 메모리 관리
+// 실제 동작: 플래시 ROM의 코드를 RAM으로 복사하면서 실행하는 임베디드 패턴
+// 적용 분야: STM32, Arduino, IoT 디바이스 등 모든 마이크로컨트롤러
+
+// ⭐ 1단계: 하드웨어 메모리 맵핑 정의 - MCU 데이터시트 기반
 MEMORY
 {
+    // 플래시 메모리: 읽기/실행 가능, 쓰기 불가 (비휘발성)
     FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 256K
+                  // STM32F4 계열의 전형적인 플래시 시작 주소
+                  // rx = read, execute 권한만 허용
+
+    // SRAM: 읽기/쓰기/실행 가능 (휘발성, 빠른 접근)
     RAM (rwx)   : ORIGIN = 0x20000000, LENGTH = 64K
+                  // 0x20000000 = ARM Cortex-M의 표준 SRAM 시작 주소
+                  // rwx = read, write, execute 모두 허용
 }
 
+// ⭐ 2단계: 섹션별 메모리 할당 전략
 SECTIONS
 {
-    /* 코드는 플래시에 */
+    // ⭐ 코드 + 상수 데이터 → 플래시에 영구 저장
     .text : {
-        *(.text)
-        *(.rodata)
+        *(.text)     // 실행 코드: 플래시에서 직접 실행 (XIP - eXecute In Place)
+        *(.rodata)   // 읽기 전용 데이터: 문자열 상수, const 변수들
+                     // 플래시에 두면 RAM 절약 + 전원 꺼져도 유지
     } > FLASH
 
-    /* 데이터는 RAM에 */
+    // ⭐ 3단계: 초기화된 변수의 이중 배치 전략
     .data : {
-        *(.data)
-    } > RAM AT> FLASH  /* 초기값은 플래시에 저장 */
+        *(.data)     // 초기화된 전역 변수들
+                     // 문제: 값이 있어야 하는데 RAM은 휘발성
+                     // 해결: 플래시에 초기값 저장 → 부팅 시 RAM으로 복사
+    } > RAM AT> FLASH
+    //    ↑       ↑
+    //   실행 위치  저장 위치
+    // 스타트업 코드가 FLASH의 .data 초기값을 RAM으로 memcpy
 
+    // ⭐ 4단계: BSS 최적화 - 0 초기화 변수들
     .bss : {
-        *(.bss)
+        *(.bss)      // 초기화되지 않은/0으로 초기화된 전역 변수
+                     // 플래시에 저장할 필요 없음 (어차피 0)
+                     // 스타트업 코드가 이 영역을 memset(0)
     } > RAM
 }
-```text
+
+// ⭐ 실제 부팅 시퀀스 (스타트업 코드에서):
+// 1) Reset_Handler에서 시작
+// 2) 스택 포인터 설정 (SP = __stack)
+// 3) .data 섹션을 FLASH에서 RAM으로 복사
+//    memcpy(&__data_start__, &__data_load__, &__data_size__);
+// 4) .bss 섹션을 0으로 초기화
+//    memset(&__bss_start__, 0, &__bss_size__);
+// 5) main() 함수 호출
+//
+// ⭐ 실제 사용 사례:
+// - STM32CubeIDE: HAL 라이브러리가 이 패턴 사용
+// - FreeRTOS: 태스크별 스택을 RAM에, 코드는 플래시에 분리
+// - Arduino: bootloader가 이 방식으로 스케치를 로드
+// - Zephyr RTOS: 디바이스 트리와 연동된 메모리 관리
+//
+// ⭐ 메모리 사용량 최적화 기법:
+// - 큰 배열/버퍼는 .bss로 선언 (플래시 용량 절약)
+// - 상수 테이블은 PROGMEM/.rodata 활용 (RAM 절약)
+// - 스택 크기는 worst-case 분석으로 최소화
+// - 힙은 남은 RAM 영역을 동적 할당에 활용
+```
 
 #### 부트로더
 
@@ -568,7 +693,7 @@ SECTIONS
         SHORT(0xAA55)  /* 부트 시그니처 */
     }
 }
-```text
+```
 
 ## 7. 링킹 최적화 기법
 
@@ -598,7 +723,7 @@ graph LR
     end
 
     style D2 fill:#4CAF50
-```text
+```
 
 LTO의 장점:
 
@@ -625,7 +750,7 @@ graph TD
     end
 
     style L2 fill:#4CAF50
-```text
+```
 
 ## 8. 실전 예제: 링킹 문제 해결
 
@@ -645,13 +770,13 @@ int Add(int a, int b);  // 대소문자 오타!
 int main() {
     return Add(3, 4);
 }
-```text
+```
 
 ```bash
 $ gcc -c math.c main.c
 $ gcc math.o main.o
 main.o: undefined reference to `Add'
-```text
+```
 
 해결 방법:
 
@@ -672,12 +797,12 @@ int global_var = 10;  // 문제! 헤더에 정의
 
 // file2.c
 #include "header.h"
-```text
+```
 
 ```bash
 $ gcc file1.c file2.c
 multiple definition of `global_var'
-```text
+```
 
 해결 방법:
 
@@ -687,7 +812,7 @@ extern int global_var;  // 선언만
 
 // file1.c
 int global_var = 10;    // 한 곳에서만 정의
-```text
+```
 
 ### 8.3 라이브러리 순서 문제
 
@@ -702,7 +827,7 @@ $ gcc main.o -lmath -lbase
 $ gcc main.o -lbase -lmath
 # 또는 순환 의존성 해결
 $ gcc main.o -lmath -lbase -lmath
-```text
+```
 
 의존성 그래프:
 
@@ -714,7 +839,7 @@ graph LR
     style main.o fill:#FFE082
     style libmath.a fill:#81C784
     style libbase.a fill:#90CAF9
-```text
+```
 
 ## 9. 정리: 링킹의 핵심 개념
 

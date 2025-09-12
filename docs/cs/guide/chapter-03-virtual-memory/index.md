@@ -43,31 +43,31 @@ graph TB
         VA --> VP
         VA --> VO
     end
-    
+
     subgraph "Address Translation"
         MMU[MMU, Memory Management Unit]
         PT[페이지 테이블, 4-level]
         TLB[TLB, Translation Cache]
-        
+
         VP --> TLB
         TLB -->|Hit| PA
         TLB -->|Miss| PT
         PT --> PA
     end
-    
+
     subgraph "Physical Memory"
         PA[물리 주소]
         RAM[Physical RAM]
         SWAP[Swap Space]
-        
+
         PA --> RAM
         PA -.->|Page Fault| SWAP
     end
-    
+
     style VA fill:#FFE082
     style TLB fill:#81C784
     style PA fill:#64B5F6
-```text
+```
 
 ## 이 장의 구성
 
@@ -166,15 +166,15 @@ $ sar -B 1                   # 페이징 통계
 # 메모리 설정
 $ sysctl vm.swappiness      # 스왑 성향 조정
 $ echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
-```text
+```
 
 ## 이 장을 읽고 나면
 
-✅ **가상 메모리 이해**: 주소 변환 과정을 완벽히 이해  
-✅ **성능 최적화**: TLB 미스와 페이지 폴트 최소화  
-✅ **메모리 효율성**: Huge Pages, KSM 등 고급 기법 활용  
-✅ **문제 해결**: 스래싱, OOM 등 메모리 문제 진단  
-✅ **시스템 튜닝**: 워크로드에 맞는 메모리 설정 최적화  
+✅ **가상 메모리 이해**: 주소 변환 과정을 완벽히 이해
+✅ **성능 최적화**: TLB 미스와 페이지 폴트 최소화
+✅ **메모리 효율성**: Huge Pages, KSM 등 고급 기법 활용
+✅ **문제 해결**: 스래싱, OOM 등 메모리 문제 진단
+✅ **시스템 튜닝**: 워크로드에 맞는 메모리 설정 최적화
 
 ## 핵심 개념 미리보기
 
@@ -233,30 +233,30 @@ mindmap
         Static Huge Pages
         THP
         성능 영향
-```text
+```
 
 ## 가상 메모리 문제 진단 플로우차트
 
 ```mermaid
 graph TD
     Start[성능 문제 발생] --> Type{문제 유형?}
-    
+
     Type -->|느린 메모리 접근| TLB[TLB 미스 확인]
     TLB --> TLBHigh[TLB 미스율 높음]
     TLBHigh --> HugePage[Huge Pages 적용]
-    
+
     Type -->|시스템 전체 느림| PF[페이지 폴트 확인]
     PF --> Major[Major Fault 많음]
     Major --> Swap[스왑 사용량 확인]
-    
+
     Type -->|OOM 발생| Memory[메모리 사용량 분석]
     Memory --> Leak[메모리 누수 확인]
     Memory --> Overcommit[Overcommit 설정 확인]
-    
+
     Type -->|랜덤 크래시| Protection[메모리 보호 위반]
     Protection --> SegFault[세그폴트 분석]
     Protection --> Permission[권한 설정 확인]
-```text
+```
 
 ## 관련 문서
 

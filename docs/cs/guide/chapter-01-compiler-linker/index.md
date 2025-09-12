@@ -36,23 +36,23 @@ graph LR
         SC[소스 코드, .c, .cpp]
         HC[헤더 파일, .h, .hpp]
     end
-    
+
     subgraph "컴파일 과정"
         PP[전처리, Preprocessing]
         CC[컴파일, Compilation]
         AS[어셈블, Assembly]
     end
-    
+
     subgraph "링킹 과정"
         OBJ[오브젝트 파일, .o, .obj]
         LINK[링커, Linker]
         LIB[라이브러리, .a, .so, .lib, .dll]
     end
-    
+
     subgraph "최종 결과"
         EXE[실행 파일, a.out, .exe]
     end
-    
+
     SC --> PP
     HC --> PP
     PP --> CC
@@ -61,12 +61,12 @@ graph LR
     OBJ --> LINK
     LIB --> LINK
     LINK --> EXE
-    
+
     style PP fill:#FFE082
     style CC fill:#81C784
     style LINK fill:#64B5F6
     style EXE fill:#FF8A65
-```text
+```
 
 ## 이 장의 구성
 
@@ -140,14 +140,14 @@ $ gcc -save-temps  # 중간 파일들 저장 (.i, .s, .o)
 $ gcc -S          # 어셈블리 코드만 생성
 $ gcc -E          # 전처리만 수행
 $ gcc -v          # 상세한 컴파일 과정 출력
-```text
+```
 
 ## 이 장을 읽고 나면
 
-✅ **에러 메시지 해독 능력**: "undefined reference"가 무엇을 의미하는지 정확히 알게 됩니다  
-✅ **빌드 시간 최적화**: 불필요한 재컴파일을 줄이는 방법을 배웁니다  
-✅ **디버깅 능력 향상**: 실행 파일 내부를 들여다보고 문제를 찾을 수 있습니다  
-✅ **성능 튜닝**: 컴파일러 최적화 옵션을 적절히 활용할 수 있습니다  
+✅ **에러 메시지 해독 능력**: "undefined reference"가 무엇을 의미하는지 정확히 알게 됩니다
+✅ **빌드 시간 최적화**: 불필요한 재컴파일을 줄이는 방법을 배웁니다
+✅ **디버깅 능력 향상**: 실행 파일 내부를 들여다보고 문제를 찾을 수 있습니다
+✅ **성능 튜닝**: 컴파일러 최적화 옵션을 적절히 활용할 수 있습니다
 
 ## 핵심 개념 미리보기
 
@@ -189,7 +189,7 @@ mindmap
         PLT
         GOT
         지연 바인딩
-```text
+```
 
 ## 다음 단계
 
