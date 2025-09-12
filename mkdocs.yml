@@ -233,13 +233,15 @@ nav:
               - "6-5: I/O Performance Analysis": cs/guide/chapter-06-file-io/05-io-performance-analysis.md
               - "6-6: Filesystem Debugging": cs/guide/chapter-06-file-io/06-filesystem-debugging.md
               - "6-7: Network Filesystem Optimization": cs/guide/chapter-06-file-io/07-network-filesystem-optimization.md
-              - "6-8: Advanced Storage Troubleshooting": cs/guide/chapter-06-file-io/08-advanced-storage-troubleshooting.md
           - "Chapter 7: Network Programming":
               - "Overview": cs/guide/chapter-07-network-programming/index.md
               - "7-1: Socket Programming Basics": cs/guide/chapter-07-network-programming/01-socket-basics.md
               - "7-2: TCP/IP Stack Internals": cs/guide/chapter-07-network-programming/02-tcp-ip-stack.md
               - "7-3: High Performance Network Server": cs/guide/chapter-07-network-programming/03-high-performance.md
               - "7-4: Secure Networking and TLS": cs/guide/chapter-07-network-programming/04-secure-networking.md
+              - "7-5: TCP Connection Debugging": cs/guide/chapter-07-network-programming/05-tcp-connection-debugging.md
+              - "7-6: Network Latency Optimization": cs/guide/chapter-07-network-programming/06-network-latency-optimization.md
+              - "7-7: High Performance Networking": cs/guide/chapter-07-network-programming/07-high-performance-networking.md
           - "Chapter 8: Async & Event Programming":
               - "Overview": cs/guide/chapter-08-async-programming/index.md
               - "8-1: Promise and Future Patterns": cs/guide/chapter-08-async-programming/01-promise-future.md
