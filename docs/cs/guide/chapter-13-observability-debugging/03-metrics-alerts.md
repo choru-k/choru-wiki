@@ -34,7 +34,7 @@ import time
 import threading
 from collections import defaultdict
 from typing import Dict, List
-import numpy as np
+import numpy as np  # pip install numpy
 
 class LatencyTracker:
     def __init__(self, name: str):

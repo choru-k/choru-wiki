@@ -77,23 +77,34 @@ tags:
 ```mermaid
 graph TD
     subgraph "하나의 Trace (요청 전체 흐름)"
-        T[Trace ID: abc123<br/>전체 요청 여정]
+        T["Trace ID: abc123
+        전체 요청 여정"]
         
         subgraph "Frontend Service"
-            S1[Span: order_request<br/>Start: 10:23:45<br/>Duration: 1.2s]
+            S1["Span: order_request
+            Start: 10:23:45
+            Duration: 1.2s"]
         end
         
         subgraph "Payment Service"
-            S2[Span: process_payment<br/>Start: 10:23:45.1<br/>Duration: 0.8s]
-            S3[Span: call_gateway<br/>Start: 10:23:45.2<br/>Duration: 0.6s]
+            S2["Span: process_payment
+            Start: 10:23:45.1
+            Duration: 0.8s"]
+            S3["Span: call_gateway
+            Start: 10:23:45.2
+            Duration: 0.6s"]
         end
         
         subgraph "Inventory Service"
-            S4[Span: update_inventory<br/>Start: 10:23:46<br/>Duration: 0.3s]
+            S4["Span: update_inventory
+            Start: 10:23:46
+            Duration: 0.3s"]
         end
         
         subgraph "Order Service"
-            S5[Span: save_order<br/>Start: 10:23:47<br/>Duration: 3.0s ❌]
+            S5["Span: save_order
+            Start: 10:23:47
+            Duration: 3.0s ❌"]
         end
     end
     

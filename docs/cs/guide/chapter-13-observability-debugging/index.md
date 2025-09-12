@@ -8,7 +8,7 @@ tags:
   - DevOps
 ---
 
-# Chapter 12: Observability & Debugging - 시스템의 눈과 귀 만들기
+# Chapter 13: Observability & Debugging - 시스템의 눈과 귀 만들기
 
 ## 이 장에서 다루는 내용
 
@@ -123,9 +123,12 @@ data:
 ```mermaid
 graph TD
     subgraph "Three Pillars of Observability"
-        M[📊 Metrics<br/>"무엇이 일어나고 있는가?"]
-        L[📝 Logs<br/>"왜 일어났는가?"]
-        T[🔍 Traces<br/>"어디서 일어났는가?"]
+        M["📊 Metrics
+        무엇이 일어나고 있는가?"]
+        L["📝 Logs
+        왜 일어났는가?"]
+        T["🔍 Traces
+        어디서 일어났는가?"]
     end
     
     subgraph "질문 해결"
@@ -136,9 +139,12 @@ graph TD
     end
     
     subgraph "도구 스택"
-        MT[Prometheus<br/>Grafana]
-        LT[ELK Stack<br/>Loki]
-        TT[Jaeger<br/>Zipkin]
+        MT["Prometheus
+        Grafana"]
+        LT["ELK Stack
+        Loki"]
+        TT["Jaeger
+        Zipkin"]
     end
     
     M --> Q1
@@ -213,7 +219,7 @@ Request ID: abc123def456
 
 ## 이 장의 구성
 
-### [12.1 Metrics 수집과 분석](01-metrics-monitoring.md)
+### [13.1 로깅 및 모니터링 시스템](01-logging-monitoring.md)
 
 **"시스템이 건강한가?"**
 
@@ -234,7 +240,7 @@ histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
 sum(rate(http_requests_total[1m])) by (service)
 ```
 
-### [12.2 로그 관리와 분석](02-log-management.md)
+### [13.2 분산 추적 시스템](02-distributed-tracing.md)
 
 **"무슨 일이 벌어졌나?"**
 
@@ -245,7 +251,7 @@ sum(rate(http_requests_total[1m])) by (service)
 
 **실제 운영 사례**: 초당 10만 건 로그 처리 시스템 구축
 
-### [12.3 분산 추적 (Distributed Tracing)](03-distributed-tracing.md)
+### [13.3 메트릭 수집 및 알림](03-metrics-alerts.md)
 
 **"요청이 어디서 느려졌나?"**
 
@@ -279,7 +285,7 @@ func handleOrder(ctx context.Context, order Order) error {
 }
 ```
 
-### [12.4 실전 디버깅 기법](04-debugging-techniques.md)
+### [13.4 성능 프로파일링](04-performance-profiling.md)
 
 **"Production에서 어떻게 디버깅하나?"**
 
@@ -288,7 +294,7 @@ func handleOrder(ctx context.Context, order Order) error {
 - 🔄 **Chaos Engineering**: 장애 상황 시뮬레이션
 - 📋 **Runbook 작성**: 장애 대응 플레이북
 
-### [12.5 사고 대응과 포스트모템](05-incident-response.md)
+### [13.5 디버깅 기법 및 문제 해결](05-debugging-troubleshooting.md)
 
 **"장애가 발생하면 어떻게 대응하나?"**
 
@@ -519,6 +525,19 @@ http_requests_total{method="POST", endpoint="/api/orders", status="201"}
 
 ## 다음 단계
 
-준비되셨나요? [12.1 Metrics 수집과 분석](01-metrics-monitoring.md)에서 Prometheus와 Grafana를 활용한 메트릭 모니터링 시스템을 구축해보겠습니다.
+준비되셨나요? [13.1 로깅 및 모니터링 시스템](01-logging-monitoring.md)에서 구조화된 로깅부터 지능적인 알림 시스템까지 체계적인 관찰 가능성을 구축해보겠습니다.
 
 "보이지 않으면 관리할 수 없습니다." 시스템에 눈과 귀를 달아 완벽한 관찰 가능성을 확보해봅시다! 👀🔍
+
+## 관련 문서
+
+**기반 지식:**
+
+- [Chapter 04: Process & Thread](../chapter-04-process-thread/index.md) - 프로세스 상태 분석
+- [Chapter 06: File I/O](../chapter-06-file-io/index.md) - I/O 성능 분석  
+- [Chapter 07: Network Programming](../chapter-07-network-programming/index.md) - 네트워크 디버깅
+
+**심화 주제:**
+
+- [Chapter 12: Container & Kubernetes](../chapter-12-container-kubernetes/index.md) - 컨테이너 환경 모니터링
+- [Chapter 11: Performance Optimization](../chapter-11-performance-optimization/index.md) - 성능 최적화 기법

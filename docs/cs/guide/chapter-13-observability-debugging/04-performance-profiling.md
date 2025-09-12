@@ -25,6 +25,15 @@ tags:
 
 가장 기본적이면서도 강력한 Python 프로파일링 도구들부터 살펴보자.
 
+**필요한 패키지 설치:**
+
+```bash
+pip install line-profiler
+pip install psutil
+pip install memory-profiler
+pip install numpy
+```
+
 ### cProfile로 함수별 성능 측정
 
 ```python
