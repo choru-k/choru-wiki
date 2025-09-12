@@ -41,21 +41,21 @@ graph TB
         SD[Service Discovery]
         AS[Auto Scaling]
     end
-    
+
     subgraph "Data Plane Options"
         subgraph "EC2 Launch Type"
             EC2[EC2 Instances]
             ECA[ECS Agent]
             EC2 --> ECA
         end
-        
+
         subgraph "Fargate Launch Type"
             FG[Fargate, 서버리스 컨테이너]
             FM[Fargate Manager]
             FG --> FM
         end
     end
-    
+
     subgraph "Integration"
         ALB[Application Load Balancer]
         ECR[Elastic Container Registry]
@@ -64,10 +64,10 @@ graph TB
         TM --> ECR
         AS --> CW
     end
-    
+
     CM --> EC2
     CM --> FG
-    
+
     style FG fill:#90EE90
     style EC2 fill:#FFB6C1
 ```
@@ -81,28 +81,28 @@ graph TB
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "2048",
   "memory": "4096",
-  
+
   "containerDefinitions": [
     {
       "name": "image-processor",
       "image": "pinterest/processor:v2.0",
       "cpu": 1024,
       "memory": 2048,
-      
+
       "portMappings": [
         {
           "containerPort": 8080,
           "protocol": "tcp"
         }
       ],
-      
+
       "environment": [
         {
           "name": "REDIS_ENDPOINT",
           "value": "cache.pinterest.internal"
         }
       ],
-      
+
       "healthCheck": {
         "command": ["CMD-SHELL", "curl -f http://localhost:8080/health"],
         "interval": 30,
@@ -110,7 +110,7 @@ graph TB
         "retries": 3,
         "startPeriod": 60
       },
-      
+
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -120,7 +120,7 @@ graph TB
         }
       }
     },
-    
+
     {
       "name": "sidecar-cache",
       "image": "redis:6-alpine",
@@ -159,7 +159,7 @@ class EC2LaunchType:
                 "로그 드라이버 설정"
             ]
         }
-        
+
     def calculate_overhead(self):
         # 관리 오버헤드: 주당 40시간
         return 40
@@ -180,7 +180,7 @@ class FargatelaunchType:
                 "가용성"
             ]
         }
-        
+
     def calculate_overhead(self):
         # 관리 오버헤드: 주당 2시간
         return 2
@@ -195,24 +195,24 @@ sequenceDiagram
     participant FG as Fargate
     participant ENI as Elastic Network Interface
     participant Task as Task Container
-    
+
     Dev->>ECS: RunTask API 호출
     ECS->>FG: Task 스케줄링 요청
-    
+
     Note over FG: === Fargate 프로비저닝 ===
     FG->>FG: 1. MicroVM 할당 (Firecracker)
     FG->>FG: 2. 컨테이너 런타임 준비
     FG->>ENI: 3. ENI 생성 및 연결
     FG->>FG: 4. EBS 볼륨 연결
-    
+
     Note over FG: === 컨테이너 시작 ===
     FG->>Task: 5. 이미지 Pull (ECR)
     FG->>Task: 6. 컨테이너 시작
     FG->>Task: 7. Health Check
-    
+
     Task-->>ECS: Task Running
     ECS-->>Dev: Task 상태 업데이트
-    
+
     Note over FG, Task: 총 시간: 30-90초
 ```
 
@@ -230,13 +230,13 @@ class ECSService:
             "maximum_percent": 200,      # 최대 200% (20개 태스크)
             "minimum_healthy_percent": 100  # 최소 100% (10개 유지)
         }
-        
+
     def rolling_update(self, new_task_definition):
         """
         무중단 배포 프로세스
         """
         stages = []
-        
+
         # 1단계: 새 태스크 시작 (최대 200%까지)
         for i in range(self.desired_count):
             stages.append({
@@ -245,10 +245,10 @@ class ECSService:
                 "old_tasks": self.desired_count,
                 "total": self.desired_count + i + 1
             })
-            
+
             # 헬스체크 통과 대기
             self.wait_for_healthy(new_task_definition)
-            
+
             # 구 태스크 종료
             stages.append({
                 "action": "STOP_OLD",
@@ -256,7 +256,7 @@ class ECSService:
                 "old_tasks": self.desired_count - i - 1,
                 "total": self.desired_count
             })
-        
+
         return stages
 ```
 
@@ -303,35 +303,35 @@ graph TB
     subgraph "Service Discovery"
         CM[AWS Cloud Map]
         R53[Route 53, Private Hosted Zone]
-        
+
         subgraph "Service Registry"
             S1[image-processor.local, 10.0.1.10:8080]
             S2[api-gateway.local, 10.0.1.20:80]
             S3[cache.local, 10.0.1.30:6379]
         end
     end
-    
+
     subgraph "ECS Services"
         SVC1[Image Processor Service]
         SVC2[API Gateway Service]
         SVC3[Cache Service]
     end
-    
+
     subgraph "Service Connect Mesh"
         EP[Envoy Proxy Sidecar]
         LB[Client-side Load Balancing]
         RT[Retry & Circuit Breaking]
     end
-    
+
     SVC1 --> CM
     SVC2 --> CM
     SVC3 --> CM
-    
+
     CM --> R53
     CM --> S1
     CM --> S2
     CM --> S3
-    
+
     SVC1 --> EP
     EP --> LB
     LB --> RT
@@ -372,7 +372,7 @@ class ServiceConnect:
                     }]
                 }]
             }],
-            
+
             "clusters": [{
                 "name": "api-service",
                 "type": "EDS",  # Endpoint Discovery Service
@@ -409,14 +409,14 @@ class ECSAnywhereAgent:
         # 온프레미스 서버 등록
         curl --proto "https" -o "/tmp/ecs-anywhere-install.sh" \
             "https://amazon-ecs-agent.s3.amazonaws.com/ecs-anywhere-install-latest.sh"
-        
+
         sudo bash /tmp/ecs-anywhere-install.sh \
             --region us-west-2 \
             --cluster hybrid-cluster \
             --activation-id $ACTIVATION_ID \
             --activation-code $ACTIVATION_CODE
         """
-        
+
     def configure_external_instance(self):
         return {
             "requirements": {
@@ -425,13 +425,13 @@ class ECSAnywhereAgent:
                 "Memory": "512MB minimum",
                 "Network": "Outbound HTTPS to AWS"
             },
-            
+
             "components": {
                 "ECS_Agent": "Task 관리",
                 "SSM_Agent": "시스템 관리",
                 "Docker": "컨테이너 런타임"
             },
-            
+
             "use_cases": [
                 "규정 준수 (데이터 레지던시)",
                 "레거시 시스템 통합",
@@ -454,14 +454,14 @@ class CostOptimization:
             "utilization": 0.35,  # 35% CPU 사용률
             "monthly_cost": 280000  # $280K
         }
-        
+
         self.after_fargate = {
             "infrastructure": "ECS Fargate",
             "tasks": 50000,
             "utilization": 0.95,  # 95% 효율
             "monthly_cost": 140000  # $140K
         }
-        
+
     def calculate_savings(self):
         # Fargate Spot 활용
         spot_savings = {
@@ -469,14 +469,14 @@ class CostOptimization:
             "fargate_spot": 98000,  # 30% 추가 절감
             "interruption_rate": 0.05  # 5% 중단율
         }
-        
+
         # Compute Savings Plans
         savings_plans = {
             "on_demand": 140000,
             "1_year_plan": 112000,  # 20% 할인
             "3_year_plan": 84000    # 40% 할인
         }
-        
+
         return {
             "total_savings": "70% 비용 절감",
             "management_hours": "95% 감소",
@@ -498,12 +498,12 @@ ServiceWithSpot:
       - Base: 0
         Weight: 4
         CapacityProvider: FARGATE_SPOT
-    
+
     # Spot 중단 처리
     PlacementStrategies:
       - Type: spread
         Field: attribute:ecs.availability-zone
-    
+
     # 중단 내성 설정
     DeploymentConfiguration:
       MaximumPercent: 200
@@ -528,26 +528,26 @@ def diagnose_task_failure():
             "해결": "Task Definition 리소스 요구사항 조정",
             "예시": "memory: 4096 → 2048"
         },
-        
+
         "IMAGE_PULL_ERROR": {
             "원인": "ECR 권한 또는 이미지 없음",
             "해결": "IAM 역할 및 ECR 리포지토리 확인",
             "명령": "aws ecr get-login-password | docker login"
         },
-        
+
         "PORT_ALREADY_IN_USE": {
             "원인": "호스트 포트 충돌",
             "해결": "동적 포트 매핑 사용",
             "설정": "hostPort: 0  # 동적 할당"
         },
-        
+
         "SECRETS_MANAGER_ERROR": {
             "원인": "Secrets Manager 접근 실패",
             "해결": "Task Execution Role에 권한 추가",
             "정책": "secretsmanager:GetSecretValue"
         }
     }
-    
+
     return common_issues
 ```
 
@@ -561,7 +561,7 @@ class ServiceUpdateTroubleshooting:
         """
         # 1. 이벤트 확인
         events = self.get_service_events(service_name)
-        
+
         # 2. 일반적인 원인
         if "unable to place task" in events:
             return {
@@ -572,7 +572,7 @@ class ServiceUpdateTroubleshooting:
                     "다른 AZ로 분산"
                 ]
             }
-        
+
         elif "health check failed" in events:
             return {
                 "issue": "헬스체크 실패",
@@ -582,7 +582,7 @@ class ServiceUpdateTroubleshooting:
                     "컨테이너 로그 확인"
                 ]
             }
-        
+
         elif "cannot pull container image" in events:
             return {
                 "issue": "이미지 Pull 실패",
@@ -608,7 +608,7 @@ def troubleshoot_network():
             "명령": "aws ec2 describe-security-groups",
             "팁": "같은 SG 내 통신 허용"
         },
-        
+
         "2_subnet_configuration": {
             "확인": "프라이빗/퍼블릭 서브넷",
             "요구사항": {
@@ -616,20 +616,20 @@ def troubleshoot_network():
                 "프라이빗": "NAT Gateway 필요"
             }
         },
-        
+
         "3_service_discovery": {
             "확인": "Cloud Map 네임스페이스",
             "테스트": "nslookup service.local",
             "디버깅": "dig @10.0.0.2 service.local"
         },
-        
+
         "4_eni_limits": {
             "확인": "ENI 한계 도달",
             "계산": "Tasks per instance = ENIs * IPs per ENI",
             "해결": "인스턴스 타입 변경"
         }
     }
-    
+
     return checklist
 ```
 
@@ -646,13 +646,13 @@ def choose_orchestrator():
             "관리포인트": "Task Definition만",
             "통합": "AWS 네이티브"
         },
-        
+
         "비용": {
             "컨트롤플레인": "무료",
             "Fargate": "완전 서버리스",
             "운영인력": "최소화"
         },
-        
+
         "적합한_경우": [
             "AWS 올인 전략",
             "빠른 프로토타이핑",
@@ -660,20 +660,20 @@ def choose_orchestrator():
             "단순한 워크로드"
         ]
     }
-    
+
     eks_advantages = {
         "유연성": {
             "이식성": "멀티클라우드",
             "생태계": "쿠버네티스 도구",
             "커스터마이징": "완전 제어"
         },
-        
+
         "기능": {
             "고급기능": "StatefulSet, DaemonSet",
             "오퍼레이터": "커스텀 리소스",
             "정책": "NetworkPolicy, PodSecurityPolicy"
         },
-        
+
         "적합한_경우": [
             "멀티클라우드 전략",
             "복잡한 워크로드",
@@ -681,7 +681,7 @@ def choose_orchestrator():
             "대규모 조직"
         ]
     }
-    
+
     return {
         "추천": "시작은 ECS, 성장하면 EKS"
     }

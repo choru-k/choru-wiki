@@ -42,7 +42,7 @@ graph TB
         N4["Node 4: 256-341"]
         N5["Node 5: 342-427"]
         N6["Node 6: 428-512"]
-        
+
         N1 --> N2
         N2 --> N3
         N3 --> N4
@@ -50,25 +50,25 @@ graph TB
         N5 --> N6
         N6 --> N1
     end
-    
+
     subgraph "Virtual Nodes (Tokens)"
         V1[vNode 1-1]
         V2[vNode 1-2]
         V3[vNode 2-1]
         V4[vNode 2-2]
     end
-    
+
     subgraph "Replication"
         R1["Replica 1: Leader"]
         R2["Replica 2: Follower"]
         R3["Replica 3: Follower"]
     end
-    
+
     Item["Item: ride_id=123"] --> |"Hash(ride_id)=250"| N4
     N4 --> R1
     R1 -.->|Quorum Write| R2
     R1 -.->|Quorum Write| R3
-    
+
     style R1 fill:#90EE90
     style R2 fill:#FFB6C1
     style R3 fill:#FFB6C1
@@ -81,7 +81,7 @@ class DynamoDBPartitioning:
     def __init__(self):
         self.hash_space = 2**128  # MD5 해시 공간
         self.partition_count = 1000  # 초기 파티션
-        
+
     def calculate_partition(self, partition_key):
         """
         파티션 키를 물리적 파티션으로 매핑
@@ -89,16 +89,16 @@ class DynamoDBPartitioning:
         # 1. MD5 해시 계산
         hash_value = hashlib.md5(partition_key.encode()).hexdigest()
         hash_int = int(hash_value, 16)
-        
+
         # 2. 해시 링에서 위치 결정
         position = hash_int % self.hash_space
-        
+
         # 3. 담당 파티션 찾기
         partition = self.find_partition(position)
-        
+
         # 4. 복제본 결정 (N=3)
         replicas = self.get_replicas(partition, count=3)
-        
+
         return {
             "partition": partition,
             "replicas": replicas,
@@ -119,19 +119,19 @@ sequenceDiagram
     participant PM as Partition Manager
     participant S1 as Storage Node 1
     participant S2 as Storage Node 2
-    
+
     Note over App, DDB: === 트래픽 증가 감지 ===
     App->>DDB: High Write Rate
     DDB->>AS: Metrics: WCU > 3000
     AS->>PM: Trigger Partition Split
-    
+
     Note over PM, S2: === 파티션 분할 프로세스 ===
     PM->>S1: Prepare Split
     S1->>S1: Create Checkpoint
     PM->>S2: Allocate New Partition
     S1->>S2: Transfer Half Data
     PM->>PM: Update Routing Table
-    
+
     Note over DDB: === 무중단 전환 ===
     DDB->>App: Continue Serving
     Note right of DDB: Split Time: < 1초
@@ -146,18 +146,18 @@ class AdaptiveCapacity:
             "RCU": 3000,  # Read Capacity Units
             "WCU": 1000   # Write Capacity Units
         }
-        
+
     def handle_hot_partition(self, partition_id):
         """
         핫 파티션 자동 처리
         """
         # 1. 핫 파티션 감지
         metrics = self.get_partition_metrics(partition_id)
-        
+
         if metrics["consumed_capacity"] > metrics["provisioned_capacity"]:
             # 2. Adaptive Capacity 활성화
             isolation_capacity = self.isolate_partition(partition_id)
-            
+
             # 3. 최대 5분간 버스트 허용
             burst_result = {
                 "original_capacity": 100,  # WCU
@@ -165,11 +165,11 @@ class AdaptiveCapacity:
                 "duration": "5 minutes",
                 "auto_scaling": "triggered"
             }
-            
+
             # 4. 영구적 해결: 파티션 분할
             if metrics["sustained_high_traffic"]:
                 self.split_partition(partition_id)
-            
+
             return burst_result
 ```
 
@@ -184,36 +184,36 @@ graph TB
         USWL[Local Secondary Index]
         USWG[Global Secondary Index]
     end
-    
+
     subgraph "US-East-1 (Replica)"
         USE[DynamoDB Table, rides-use]
         USEL[Local Secondary Index]
         USEG[Global Secondary Index]
     end
-    
+
     subgraph "EU-West-1 (Replica)"
         EU[DynamoDB Table, rides-eu]
         EUL[Local Secondary Index]
         EUG[Global Secondary Index]
     end
-    
+
     subgraph "Global Table Stream"
         GTS[DynamoDB Streams]
         CRDT[Conflict Resolution, Last Writer Wins]
     end
-    
+
     USW -.->|Async Replication, < 1초| USE
     USW -.->|Async Replication, < 1초| EU
     USE -.->|Async Replication| USW
     USE -.->|Async Replication| EU
     EU -.->|Async Replication| USW
     EU -.->|Async Replication| USE
-    
+
     USW --> GTS
     USE --> GTS
     EU --> GTS
     GTS --> CRDT
-    
+
     style USW fill:#90EE90
     style USE fill:#87CEEB
     style EU fill:#FFB6C1
@@ -225,7 +225,7 @@ graph TB
 class GlobalTableConflictResolution:
     def __init__(self):
         self.resolution_strategy = "Last Writer Wins"
-        
+
     def resolve_conflict(self, item_versions):
         """
         글로벌 테이블 충돌 해결
@@ -245,13 +245,13 @@ class GlobalTableConflictResolution:
                 "vector_clock": {"usw": 4, "use": 4, "eu": 2}
             }
         ]
-        
+
         # Last Writer Wins 전략
         winner = max(conflicts, key=lambda x: x["timestamp"])
-        
+
         # 모든 리전에 winner 전파
         self.propagate_to_all_regions(winner["version"])
-        
+
         return {
             "resolution": "Last Writer Wins",
             "winner": winner["region"],
@@ -271,7 +271,7 @@ class DynamoDBIndexStrategy:
             "partition_key": "ride_id",
             "sort_key": "timestamp"
         }
-    
+
     def create_indexes(self):
         """
         Lyft 라이드 테이블 인덱스 설계
@@ -286,7 +286,7 @@ class DynamoDBIndexStrategy:
                     "use_case": "특정 라이드의 드라이버 이력"
                 }
             },
-            
+
             # Global Secondary Index (다른 파티션 키)
             "GSI": {
                 "UserRidesIndex": {
@@ -300,14 +300,14 @@ class DynamoDBIndexStrategy:
                         "WCU": 500
                     }
                 },
-                
+
                 "CityStatusIndex": {
                     "partition_key": "city#status",  # Composite key
                     "sort_key": "timestamp",
                     "projection": "KEYS_ONLY",
                     "use_case": "도시별 상태별 라이드 조회"
                 },
-                
+
                 "DriverEarningsIndex": {
                     "partition_key": "driver_id",
                     "sort_key": "date",
@@ -316,7 +316,7 @@ class DynamoDBIndexStrategy:
                 }
             }
         }
-        
+
         return indexes
 ```
 
@@ -332,7 +332,7 @@ def index_overloading_pattern():
         "GSI_name": "GSI1",
         "partition_key": "GSI1PK",
         "sort_key": "GSI1SK",
-        
+
         "access_patterns": [
             {
                 "pattern": "Get rides by user",
@@ -351,7 +351,7 @@ def index_overloading_pattern():
             }
         ]
     }
-    
+
     return gsi_design
 ```
 
@@ -365,23 +365,23 @@ graph LR
         T[Table: rides]
         S[DynamoDB Streams]
     end
-    
+
     subgraph "Stream Processing"
         L[Lambda Function]
         K[Kinesis Data Firehose]
     end
-    
+
     subgraph "Analytics"
         S3[S3 Data Lake]
         ES[OpenSearch]
         RDS[Aurora Analytics]
     end
-    
+
     subgraph "Real-time"
         WS[WebSocket API]
         APP[Mobile App]
     end
-    
+
     T --> S
     S --> L
     L --> K
@@ -390,7 +390,7 @@ graph LR
     K --> ES
     L --> RDS
     WS --> APP
-    
+
     style L fill:#90EE90
     style S fill:#FFB6C1
 ```
@@ -404,22 +404,22 @@ def process_dynamodb_stream(event):
     """
     for record in event['Records']:
         event_name = record['eventName']
-        
+
         if event_name == 'INSERT':
             # 새 라이드 생성
             new_ride = record['dynamodb']['NewImage']
-            
+
             # 실시간 알림
             notify_driver(new_ride['driver_id']['S'])
-            
+
             # 분석 데이터 저장
             send_to_analytics(new_ride)
-            
+
         elif event_name == 'MODIFY':
             # 라이드 상태 변경
             old_image = record['dynamodb']['OldImage']
             new_image = record['dynamodb']['NewImage']
-            
+
             if old_image['status']['S'] != new_image['status']['S']:
                 # 상태 변경 추적
                 track_status_change(
@@ -427,11 +427,11 @@ def process_dynamodb_stream(event):
                     old_status=old_image['status']['S'],
                     new_status=new_image['status']['S']
                 )
-                
+
         elif event_name == 'REMOVE':
             # 라이드 삭제 (거의 없음)
             archive_ride(record['dynamodb']['OldImage'])
-    
+
     return {'statusCode': 200}
 ```
 
@@ -454,7 +454,7 @@ class CostOptimization:
             },
             "off_peak": 2000  # RCU
         }
-        
+
         # Provisioned Capacity 비용
         provisioned_cost = {
             "base_capacity": 5000,  # RCU
@@ -465,7 +465,7 @@ class CostOptimization:
                 "3_year": 1250      # 50% 할인
             }
         }
-        
+
         # On-Demand 비용
         on_demand_cost = {
             "price_per_million": 0.25,  # USD per million reads
@@ -477,7 +477,7 @@ class CostOptimization:
                 "관리 불필요"
             ]
         }
-        
+
         # 하이브리드 전략
         hybrid_strategy = {
             "base_tables": "Provisioned with Auto Scaling",
@@ -485,7 +485,7 @@ class CostOptimization:
             "analytics": "On-Demand",
             "cost_savings": "40%"
         }
-        
+
         return hybrid_strategy
 ```
 
@@ -518,7 +518,7 @@ def configure_ttl():
             "백그라운드 삭제 (무료)"
         ]
     }
-    
+
     return ttl_config
 ```
 
@@ -536,34 +536,34 @@ def handle_hot_partition():
         "cause": "특정 파티션에 트래픽 집중",
         "example": "도시별 라이드 - NYC에 50% 집중"
     }
-    
+
     solutions = {
         "1_add_randomness": {
             "before": "partition_key = 'CITY#NYC'",
             "after": "partition_key = f'CITY#NYC#{random.randint(0,9)}'",
             "effect": "10개 파티션으로 분산"
         },
-        
+
         "2_write_sharding": {
             "implementation": """
                 # 쓰기 분산
                 for i in range(10):
                     shard_key = f"{base_key}#{i}"
                     write_to_shard(shard_key, data/10)
-                
+
                 # 읽기 집계
-                total = sum(read_from_shard(f"{base_key}#{i}") 
+                total = sum(read_from_shard(f"{base_key}#{i}")
                            for i in range(10))
             """
         },
-        
+
         "3_adaptive_capacity": {
             "action": "자동 활성화",
             "burst": "최대 5분간 3x 용량",
             "long_term": "파티션 자동 분할"
         }
     }
-    
+
     return solutions
 ```
 
@@ -580,20 +580,20 @@ class GSIThrottling:
                 "UserErrors.ProvisionedThroughputExceeded",
                 "GSI ConsumedCapacity > Provisioned"
             ],
-            
+
             "root_causes": {
                 "uneven_distribution": "GSI 파티션 키 분포 불균형",
                 "insufficient_capacity": "GSI RCU/WCU 부족",
                 "projection_size": "불필요한 속성 프로젝션"
             },
-            
+
             "solutions": {
                 "immediate": [
                     "GSI 용량 증가",
                     "Auto Scaling 활성화",
                     "백오프 재시도 구현"
                 ],
-                
+
                 "long_term": [
                     "GSI 파티션 키 재설계",
                     "Projection 최적화 (KEYS_ONLY)",
@@ -601,7 +601,7 @@ class GSIThrottling:
                 ]
             }
         }
-        
+
         return diagnosis
 ```
 
@@ -620,7 +620,7 @@ def handle_consistency_issues():
                 "cost": "2x RCU 소비"
             }
         },
-        
+
         "eventual_consistency": {
             "use_case": "분석, 리포트",
             "implementation": {
@@ -628,14 +628,14 @@ def handle_consistency_issues():
                 "latency": "< 1초 복제 지연"
             }
         },
-        
+
         "hybrid_approach": {
             "critical_reads": "Strong Consistency",
             "normal_reads": "Eventual Consistency",
             "cost_optimization": "30% RCU 절감"
         }
     }
-    
+
     return consistency_patterns
 ```
 
@@ -648,25 +648,25 @@ graph TB
     subgraph "Application Layer"
         APP[Application]
     end
-    
+
     subgraph "DAX Cluster"
         DAX1[DAX Node 1, Primary]
         DAX2[DAX Node 2, Replica]
         DAX3[DAX Node 3, Replica]
-        
+
         CACHE[In-Memory Cache, Item Cache: 5분, Query Cache: 5분]
     end
-    
+
     subgraph "DynamoDB"
         DDB[DynamoDB Table]
     end
-    
+
     APP -->|1μs| DAX1
     DAX1 -->|Cache Hit| CACHE
     DAX1 -->|Cache Miss, 10ms| DDB
     DAX1 -.->|Replication| DAX2
     DAX1 -.->|Replication| DAX3
-    
+
     style CACHE fill:#90EE90
 ```
 
@@ -682,7 +682,7 @@ def implement_dax():
             "item_cache": 300,  # 5분
             "query_cache": 300   # 5분
         },
-        
+
         "performance": {
             "read_latency": {
                 "without_dax": "10ms",
@@ -691,7 +691,7 @@ def implement_dax():
             },
             "throughput": "10x 증가"
         },
-        
+
         "best_practices": [
             "읽기 집약적 워크로드",
             "반복적인 읽기 패턴",
@@ -699,7 +699,7 @@ def implement_dax():
             "세션 스토어"
         ]
     }
-    
+
     return dax_config
 ```
 

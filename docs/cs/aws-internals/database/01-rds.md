@@ -41,38 +41,38 @@ graph TB
         APP2[App Server 2]
         APP3[App Server 3]
     end
-    
+
     subgraph "RDS Multi-AZ Deployment"
         subgraph "Primary (AZ-1)"
             P[Primary DB, 10.0.1.10]
             PV1[EBS Volume, Primary]
         end
-        
+
         subgraph "Standby (AZ-2)"
             S[Standby DB, 10.0.2.10]
             SV1[EBS Volume, Standby]
         end
-        
+
         DNS[DNS Endpoint, shop.cluster-xyz.rds.amazonaws.com]
-        
+
         P -.->|Synchronous, Replication| S
         PV1 -.->|Block-level, Replication| SV1
     end
-    
+
     subgraph "Failover Process"
         FM[Failover Manager]
         HM[Health Monitor]
     end
-    
+
     APP1 --> DNS
     APP2 --> DNS
     APP3 --> DNS
     DNS --> P
-    
+
     HM --> P
     HM --> S
     HM --> FM
-    
+
     style P fill:#90EE90
     style S fill:#FFB6C1
 ```
@@ -84,27 +84,27 @@ class MultiAZReplication:
     def __init__(self):
         self.replication_mode = "SYNCHRONOUS"
         self.protocol = "MySQL Semi-Sync / PostgreSQL Sync"
-        
+
     def write_transaction(self, sql):
         """
         Multi-AZ 쓰기 트랜잭션 프로세스
         """
         # 1. Primary에 쓰기
         primary_lsn = self.write_to_primary(sql)
-        
+
         # 2. Standby로 동기 복제
         replication_future = self.replicate_to_standby(primary_lsn)
-        
+
         # 3. Standby ACK 대기 (동기식)
         try:
             standby_ack = replication_future.get(timeout_ms=10)
-            
+
             # 4. 두 노드 모두 커밋
             self.commit_primary()
             self.commit_standby()
-            
+
             return {"status": "SUCCESS", "latency_ms": 2}
-            
+
         except TimeoutException:
             # Standby 응답 없음 - 비동기 모드로 전환
             self.switch_to_async_mode()
@@ -121,13 +121,13 @@ sequenceDiagram
     participant Primary as Primary DB
     participant Standby as Standby DB
     participant FM as Failover Manager
-    
+
     Note over HM, Primary: === 정상 운영 ===
     loop Every 1 second
         HM->>Primary: Health Check
         Primary-->>HM: OK
     end
-    
+
     Note over HM, Primary: === 장애 감지 ===
     HM->>Primary: Health Check
     Primary--xHM: No Response
@@ -135,7 +135,7 @@ sequenceDiagram
     Primary--xHM: No Response
     HM->>Primary: Retry 2
     Primary--xHM: No Response
-    
+
     Note over FM, Standby: === 자동 페일오버 (60-120초) ===
     HM->>FM: Primary Failed!
     FM->>Standby: Promote to Primary
@@ -143,11 +143,11 @@ sequenceDiagram
     Standby->>Standby: Open for writes
     FM->>DNS: Update CNAME
     DNS->>DNS: shop.rds.com → 10.0.2.10
-    
+
     App->>DNS: Connect
     DNS-->>App: New Primary IP
     App->>Standby: Write Transaction
-    
+
     Note over FM: 새 Standby 프로비저닝
     FM->>FM: Launch new instance
     FM->>Standby: Setup replication
@@ -166,35 +166,35 @@ class RDSEncryption:
                 "key_management": "AWS KMS",
                 "scope": ["data_files", "backups", "snapshots", "replicas"]
             },
-            
+
             "in_transit": {
                 "method": "TLS 1.2/1.3",
                 "certificate": "RDS Certificate Authority",
                 "enforcement": "rds.force_ssl = 1"
             },
-            
+
             "transparent_data_encryption": {
                 "oracle": "TDE with CloudHSM",
                 "sql_server": "TDE with KMS"
             }
         }
-    
+
     def encrypt_data_block(self, data):
         """
         블록 수준 암호화 프로세스
         """
         # 1. Data Encryption Key (DEK) 가져오기
         dek = self.get_data_key_from_kms()
-        
+
         # 2. 블록 암호화
         encrypted_block = AES256.encrypt(data, dek)
-        
+
         # 3. EBS 볼륨에 쓰기
         self.write_to_ebs(encrypted_block)
-        
+
         # 4. 암호화된 상태로 복제
         self.replicate_encrypted(encrypted_block)
-        
+
         return encrypted_block
 ```
 
@@ -209,7 +209,7 @@ class IAMAuthentication:
         """
         import boto3
         import pymysql
-        
+
         # 1. 임시 토큰 생성 (15분 유효)
         client = boto3.client('rds')
         token = client.generate_db_auth_token(
@@ -218,7 +218,7 @@ class IAMAuthentication:
             DBUsername='shopify_app',
             Region='us-west-2'
         )
-        
+
         # 2. 토큰으로 연결
         connection = pymysql.connect(
             host='shop.cluster-xyz.rds.amazonaws.com',
@@ -227,7 +227,7 @@ class IAMAuthentication:
             ssl_ca='/opt/rds-ca-2019-root.pem',
             ssl_verify_identity=True
         )
-        
+
         return connection
 ```
 
@@ -241,34 +241,34 @@ graph TB
         W1[Write App 1]
         W2[Write App 2]
     end
-    
+
     subgraph "Read Traffic"
         R1[Read App 1]
         R2[Read App 2]
         R3[Read App 3]
     end
-    
+
     subgraph "RDS Cluster"
         M[Primary, r6g.4xlarge]
-        
+
         subgraph "Read Replicas"
             RR1[Replica 1, us-west-2a]
             RR2[Replica 2, us-west-2b]
             RR3[Replica 3, us-east-1a, Cross-Region]
         end
     end
-    
+
     W1 --> M
     W2 --> M
-    
+
     R1 --> RR1
     R2 --> RR2
     R3 --> RR3
-    
+
     M -.->|Async, Replication| RR1
     M -.->|Async, Replication| RR2
     M -.->|Cross-Region, Replication| RR3
-    
+
     style M fill:#90EE90
     style RR3 fill:#87CEEB
 ```
@@ -283,36 +283,36 @@ class RDSParameterOptimization:
             "max_connections": self.calculate_max_connections(),
             "wait_timeout": 300,
             "interactive_timeout": 300,
-            
+
             # InnoDB 버퍼 풀 (전체 메모리의 75%)
             "innodb_buffer_pool_size": "{DBInstanceClassMemory*3/4}",
             "innodb_buffer_pool_instances": 8,
-            
+
             # 쿼리 캐시 (8.0부터 제거됨)
             "query_cache_type": 0,
             "query_cache_size": 0,
-            
+
             # 로그 설정
             "slow_query_log": 1,
             "long_query_time": 2,
             "log_bin_trust_function_creators": 1,
-            
+
             # 복제 최적화
             "binlog_format": "ROW",
             "sync_binlog": 1,
             "innodb_flush_log_at_trx_commit": 1,
-            
+
             # 성능 스키마
             "performance_schema": 1,
             "performance_schema_consumer_events_statements_history": 1
         }
-    
+
     def calculate_max_connections(self):
         """
         인스턴스 클래스별 최적 연결 수
         """
         instance_memory_gb = 64  # r6g.2xlarge
-        
+
         # 공식: LEAST({DBInstanceClassMemory/9531392}, 5000)
         return min(int(instance_memory_gb * 1024 * 1024 * 1024 / 9531392), 5000)
 ```
@@ -331,7 +331,7 @@ class PerformanceInsights:
             "db.SQL.Com_select": "SELECT 쿼리 수",
             "db.SQL.Com_insert": "INSERT 쿼리 수"
         }
-    
+
     def analyze_top_sql(self):
         """
         상위 SQL 분석
@@ -345,7 +345,7 @@ class PerformanceInsights:
                     "avg_latency_ms": 5
                 }
             ],
-            
+
             "top_by_io": [
                 {
                     "query": "UPDATE inventory SET quantity = ?",
@@ -353,7 +353,7 @@ class PerformanceInsights:
                     "rows_examined": 1000000
                 }
             ],
-            
+
             "wait_events": {
                 "io/table/sql/handler": 40,  # 테이블 I/O
                 "synch/mutex/innodb": 20,     # InnoDB 뮤텍스
@@ -375,7 +375,7 @@ DatabaseAlarms:
     Actions:
       - Scale up instance
       - Page on-call engineer
-  
+
   StorageFull:
     MetricName: FreeStorageSpace
     Threshold: 10737418240  # 10GB
@@ -383,7 +383,7 @@ DatabaseAlarms:
     Actions:
       - Enable storage autoscaling
       - Delete old logs
-  
+
   ReplicationLag:
     MetricName: ReplicaLag
     Threshold: 30  # 30초
@@ -391,7 +391,7 @@ DatabaseAlarms:
     Actions:
       - Check network
       - Reduce write load
-  
+
   ConnectionExhaustion:
     MetricName: DatabaseConnections
     Threshold: 900  # 90% of max_connections
@@ -412,7 +412,7 @@ class RDSBackupStrategy:
             "backup_window": "03:00-04:00 UTC",
             "copy_tags": True
         }
-    
+
     def backup_process(self):
         """
         RDS 백업 프로세스
@@ -420,42 +420,42 @@ class RDSBackupStrategy:
         steps = [
             # 1. 스냅샷 시작
             "CREATE SNAPSHOT FROM EBS VOLUMES",
-            
+
             # 2. I/O 일시 중단 (Single-AZ만)
             "SUSPEND I/O (few seconds)",
-            
+
             # 3. 스냅샷 메타데이터 기록
             "RECORD BINLOG POSITION",
-            
+
             # 4. I/O 재개
             "RESUME I/O",
-            
+
             # 5. 증분 백업 (이후)
             "INCREMENTAL BACKUP EVERY 5 MINUTES"
         ]
-        
+
         return {
             "snapshot_time": "초기 몇 초",
             "performance_impact": "Multi-AZ: 없음, Single-AZ: 몇 초 중단",
             "restore_options": ["Point-in-Time", "Snapshot"]
         }
-    
+
     def point_in_time_recovery(self, target_time):
         """
         특정 시점으로 복구
         """
         # 1. 가장 가까운 자동 백업 찾기
         base_snapshot = self.find_nearest_snapshot(target_time)
-        
+
         # 2. 새 인스턴스 생성
         new_instance = self.restore_from_snapshot(base_snapshot)
-        
+
         # 3. 트랜잭션 로그 재생
         self.replay_binlogs(new_instance, base_snapshot.time, target_time)
-        
+
         # 4. 일관성 검증
         self.verify_consistency(new_instance)
-        
+
         return new_instance
 ```
 
@@ -475,7 +475,7 @@ class CostOptimization:
             "monthly_cost": 50000,
             "ops_hours": 400  # 월간 운영 시간
         }
-        
+
         self.after_rds = {
             "setup": "RDS Multi-AZ + Aurora Read Replicas",
             "instances": {
@@ -485,7 +485,7 @@ class CostOptimization:
             "monthly_cost": 25000,
             "ops_hours": 40
         }
-    
+
     def reserved_instance_savings(self):
         """
         예약 인스턴스 절감액
@@ -513,7 +513,7 @@ class StorageAutoScaling:
             },
             "scaling_increment": "10% or 10GB (whichever is greater)",
             "cooldown_period": "6 hours",
-            
+
             "benefits": [
                 "다운타임 없는 확장",
                 "자동화된 용량 관리",
@@ -538,9 +538,9 @@ def diagnose_performance_issue():
             "DatabaseConnections 포화?",
             "SwapUsage > 0?"
         ],
-        
+
         "2_check_slow_queries": """
-            SELECT 
+            SELECT
                 query,
                 exec_count,
                 avg_latency_ms,
@@ -549,12 +549,12 @@ def diagnose_performance_issue():
             WHERE avg_latency_ms > 1000
             ORDER BY total_latency_ms DESC;
         """,
-        
+
         "3_check_locks": """
             SELECT * FROM information_schema.innodb_locks;
             SELECT * FROM information_schema.innodb_lock_waits;
         """,
-        
+
         "4_immediate_actions": [
             "Kill long-running queries",
             "Increase instance size",
@@ -562,7 +562,7 @@ def diagnose_performance_issue():
             "Enable query cache"
         ]
     }
-    
+
     return checklist
 ```
 
@@ -576,23 +576,23 @@ class ReplicationLagTroubleshooting:
                 "증상": "Primary 쓰기 부하 과다",
                 "해결": "쓰기 분산, 배치 처리"
             },
-            
+
             "long_transactions": {
                 "증상": "대량 UPDATE/DELETE",
                 "해결": "작은 배치로 분할"
             },
-            
+
             "network_issues": {
                 "증상": "Cross-region 복제 지연",
                 "해결": "같은 리전 replica 추가"
             },
-            
+
             "replica_capacity": {
                 "증상": "Replica CPU 100%",
                 "해결": "더 큰 인스턴스로 스케일업"
             }
         }
-        
+
         return common_causes
 ```
 
@@ -608,17 +608,17 @@ def troubleshoot_connection():
             "확인": "인바운드 규칙에 포트 3306/5432 허용?",
             "해결": "애플리케이션 서버 IP/SG 추가"
         },
-        
+
         "max_connections": {
             "확인": "SHOW VARIABLES LIKE 'max_connections'",
             "해결": "Parameter Group에서 증가"
         },
-        
+
         "dns_resolution": {
             "확인": "nslookup shop.rds.amazonaws.com",
             "해결": "VPC DNS 설정 확인"
         },
-        
+
         "ssl_certificate": {
             "확인": "인증서 만료일",
             "해결": "새 RDS CA 인증서 다운로드"
@@ -638,28 +638,28 @@ graph TB
         L3[Lambda 3]
         L4[Lambda 1000]
     end
-    
+
     subgraph "RDS Proxy"
         PM[Proxy Manager]
         CP[Connection Pool, Max: 100]
         AUTH[IAM Auth]
         SSL[TLS Termination]
     end
-    
+
     subgraph "RDS Instance"
         DB[Primary DB, max_connections: 1000]
     end
-    
+
     L1 --> PM
     L2 --> PM
     L3 --> PM
     L4 --> PM
-    
+
     PM --> AUTH
     AUTH --> SSL
     SSL --> CP
     CP --> DB
-    
+
     Note1[Lambda: 1000개 동시 실행]
     Note2[Proxy: 100개 연결로 멀티플렉싱]
 ```
@@ -673,7 +673,7 @@ class RDSProxy:
             "iam_authentication": "자동 토큰 관리",
             "performance": "7x 처리량 증가"
         }
-    
+
     def connection_multiplexing(self):
         """
         연결 멀티플렉싱

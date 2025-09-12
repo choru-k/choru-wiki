@@ -43,7 +43,7 @@ graph TB
         C2 --> K
         C3 --> K
     end
-    
+
     subgraph "Firecracker MicroVM"
         M1[MicroVM 1, 125ms 부팅]
         M2[MicroVM 2, 125ms 부팅]
@@ -53,7 +53,7 @@ graph TB
         M2 --> KVM
         M3 --> KVM
     end
-    
+
     subgraph "성능 비교"
         P1[메모리: 5MB per VM]
         P2[부팅: 125ms]
@@ -68,10 +68,10 @@ AWS Lambda의 핵심 기술인 Firecracker는 어떻게 탄생했을까요?
 pub struct Firecracker {
     // 최소한의 디바이스 에뮬레이션
     devices: Vec<VirtioDevice>,
-    
+
     // KVM 기반 가상화
     vm: KvmVm,
-    
+
     // 메모리 풋프린트: 5MB
     memory_size_mb: usize,
 }
@@ -80,19 +80,19 @@ impl Firecracker {
     pub fn boot_microvm(&mut self) -> Result<(), Error> {
         // 1. 메모리 할당 (Copy-on-Write)
         self.setup_memory()?;
-        
+
         // 2. vCPU 초기화 (1개만)
         self.setup_vcpu()?;
-        
+
         // 3. 최소 디바이스만 로드
         // - virtio-net (네트워크)
         // - virtio-block (스토리지)
         // - serial console
         self.load_minimal_devices()?;
-        
+
         // 4. 커널 부팅 (압축된 커널)
         self.boot_kernel()?;
-        
+
         // 총 소요시간: 125ms
         Ok(())
     }
@@ -120,7 +120,7 @@ sequenceDiagram
     participant FC as Firecracker
     participant Runtime as Runtime Container
     participant Code as 사용자 코드
-    
+
     Note over User, Code: === Cold Start (첫 실행) ===
     User->>ALB: 함수 호출
     ALB->>Worker: 라우팅
@@ -132,7 +132,7 @@ sequenceDiagram
     Code->>Code: 초기화 코드 실행
     Code-->>User: 응답
     Note over FC, Code: 총 시간: 100-900ms
-    
+
     Note over User, Code: === Warm Start (재사용) ===
     User->>ALB: 함수 호출
     ALB->>Worker: 라우팅
@@ -150,11 +150,11 @@ def lambda_handler(event, context):
     import boto3
     import pandas as pd
     import numpy as np
-    
+
     # 매번 초기화 (300ms 추가)
     s3 = boto3.client('s3')
     dynamodb = boto3.resource('dynamodb')
-    
+
     # 무거운 작업
     df = pd.DataFrame(...)
     return process_data(df)
@@ -186,13 +186,13 @@ graph TB
         API[API Gateway]
         ALB[Application Load Balancer]
     end
-    
+
     subgraph "Control Plane"
         WM[Worker Manager]
         PM[Placement Manager]
         CM[Capacity Manager]
     end
-    
+
     subgraph "Data Plane - Worker Fleet"
         subgraph "Worker Node 1"
             W1[Worker Process]
@@ -200,7 +200,7 @@ graph TB
             F2[Firecracker 2]
             F3[Firecracker 3]
         end
-        
+
         subgraph "Worker Node 2"
             W2[Worker Process]
             F4[Firecracker 4]
@@ -208,14 +208,14 @@ graph TB
             F6[Firecracker 6]
         end
     end
-    
+
     API --> WM
     ALB --> WM
     WM --> PM
     PM --> CM
     CM --> W1
     CM --> W2
-    
+
     style F1 fill:#90EE90
     style F2 fill:#FFB6C1
     style F3 fill:#87CEEB
@@ -229,17 +229,17 @@ class LambdaWorker:
     def __init__(self):
         self.warm_pool = []  # Warm 컨테이너 풀
         self.active = {}      # 실행 중인 컨테이너
-        
+
     def handle_invocation(self, event):
         # 1. Warm 컨테이너 확인
         if self.warm_pool:
             container = self.warm_pool.pop()
             return self.execute_warm(container, event)
-        
+
         # 2. Cold Start 필요
         container = self.create_new_container()
         return self.execute_cold(container, event)
-    
+
     def create_new_container(self):
         # Firecracker MicroVM 생성
         vm = Firecracker.create_microvm(
@@ -247,16 +247,16 @@ class LambdaWorker:
             vcpus=1,
             kernel="vmlinux-lambda"
         )
-        
+
         # 런타임 레이어 마운트
         vm.mount_layer("/opt/runtime/python3.9")
-        
+
         # 사용자 코드 마운트
         vm.mount_layer("/var/task/user-code")
-        
+
         # 125ms 만에 부팅 완료
         vm.boot()
-        
+
         return vm
 ```
 
@@ -269,7 +269,7 @@ graph TB
     subgraph "Lambda Function Package"
         UC[사용자 코드, 최대 50MB]
     end
-    
+
     subgraph "Lambda Layers (최대 5개)"
         L1[Layer 1: AWS SDK, 30MB]
         L2[Layer 2: NumPy/Pandas, 45MB]
@@ -277,20 +277,20 @@ graph TB
         L4[Layer 4: ML Models, 150MB]
         L5[Layer 5: Shared Config, 5MB]
     end
-    
+
     subgraph "Runtime Environment"
         RT[Runtime, /var/runtime]
         OPT[Layers, /opt]
         TASK[User Code, /var/task]
     end
-    
+
     UC --> TASK
     L1 --> OPT
     L2 --> OPT
     L3 --> OPT
     L4 --> OPT
     L5 --> OPT
-    
+
     Note1[총 용량 제한: 250MB 압축 해제 후]
 ```
 
@@ -301,24 +301,24 @@ graph TB
 class MonitoringExtension:
     def __init__(self):
         self.metrics = []
-        
+
     async def start(self):
         # Extension 등록
         await self.register_extension()
-        
+
         # 이벤트 루프 시작
         while True:
             event = await self.next_event()
-            
+
             if event.type == "INVOKE":
                 # 함수 실행 전
                 start_time = time.time()
-                
+
             elif event.type == "SHUTDOWN":
                 # 함수 종료 시
                 self.flush_metrics()
                 break
-                
+
     def collect_metrics(self):
         return {
             "memory_used": get_memory_usage(),
@@ -354,7 +354,7 @@ LambdaExecutionRole:
                 - logs:CreateLogStream
                 - logs:PutLogEvents
               Resource: !Sub 'arn:aws:logs:${AWS::Region}:*'
-            
+
             # VPC 접근 권한 (선택적)
             - Effect: Allow
               Action:
@@ -372,14 +372,14 @@ impl SecurityIsolation {
     fn setup_sandbox(&self) -> Result<()> {
         // 1. Seccomp 필터 (시스템 콜 제한)
         self.apply_seccomp_filter()?;
-        
+
         // 2. cgroups (리소스 제한)
         self.setup_cgroups(CgroupConfig {
             memory_limit_mb: 3008,  // Lambda 최대 메모리
             cpu_shares: 1024,
             pids_limit: 1024,
         })?;
-        
+
         // 3. 네임스페이스 격리
         self.create_namespaces(&[
             Namespace::Mount,
@@ -387,10 +387,10 @@ impl SecurityIsolation {
             Namespace::PID,
             Namespace::IPC,
         ])?;
-        
+
         // 4. 읽기 전용 루트 파일시스템
         self.mount_readonly_rootfs()?;
-        
+
         Ok(())
     }
 }
@@ -407,7 +407,7 @@ class TraditionalArchitecture:
         # 24/7 실행되는 EC2 인스턴스
         self.ec2_instances = 100  # m5.xlarge
         self.monthly_cost = 100 * 140  # $14,000/월
-        
+
     def handle_request(self, user_id):
         # 평균 CPU 사용률: 10%
         # 90%는 유휴 상태
@@ -419,21 +419,21 @@ class ServerlessArchitecture:
         # 사용한 만큼만 과금
         self.price_per_gb_second = 0.0000166667
         self.price_per_request = 0.0000002
-        
+
     def calculate_cost(self):
         daily_requests = 100_000_000  # 1억 요청
         avg_duration_ms = 50
         memory_mb = 256
-        
+
         # GB-seconds = (메모리 / 1024) * (시간 / 1000) * 요청수
         gb_seconds = (256/1024) * (50/1000) * daily_requests
-        
+
         # 월 비용 계산
         compute_cost = gb_seconds * 30 * self.price_per_gb_second
         request_cost = daily_requests * 30 * self.price_per_request
-        
+
         total_monthly = compute_cost + request_cost  # $3,750/월
-        
+
         # 73% 비용 절감!
         return total_monthly
 ```
@@ -454,7 +454,7 @@ def optimize_memory():
         {"memory": 1024, "duration": 400, "cost": 0.000667},  # 살짝 비쌈
         {"memory": 2048, "duration": 200, "cost": 0.000667},
     ]
-    
+
     # 512MB가 최적점 (비용 동일, 속도 2배)
     return 512
 
@@ -466,11 +466,11 @@ def calculate_provisioned_cost(concurrent_executions):
     # On-Demand 비용
     on_demand_cold_starts = concurrent_executions * 0.3  # 30% cold start
     on_demand_latency_cost = on_demand_cold_starts * 500  # 500ms 추가
-    
+
     # Provisioned 비용
     provisioned_cost_per_hour = concurrent_executions * 0.000004167
     provisioned_monthly = provisioned_cost_per_hour * 24 * 30
-    
+
     # 손익분기점: 시간당 100회 이상 실행 시 Provisioned가 유리
     return provisioned_monthly
 ```
@@ -486,28 +486,28 @@ def diagnose_cold_start():
     Cold Start 분석 도구
     """
     import time
-    
+
     timings = {
         "init_start": time.time(),
     }
-    
+
     # 1. Import 시간 측정
     import_start = time.time()
     import tensorflow as tf  # 2.5초
     import cv2              # 0.8초
     import numpy as np      # 0.3초
     timings["import_time"] = time.time() - import_start
-    
+
     # 2. 모델 로딩 시간
     model_start = time.time()
     model = tf.keras.models.load_model('/tmp/model.h5')  # 1.2초
     timings["model_load"] = time.time() - model_start
-    
+
     # 해결책: Lambda Layer + EFS
     # - TensorFlow를 Layer로 분리
     # - 모델을 EFS에 저장하여 여러 Lambda가 공유
     # - Provisioned Concurrency 활용
-    
+
     return timings
 ```
 
@@ -519,7 +519,7 @@ class ConcurrencyManager:
     def __init__(self):
         self.account_limit = 1000  # 계정 전체 동시성
         self.reserved = {}          # 함수별 예약 동시성
-        
+
     def handle_throttling(self, function_name):
         """
         429 TooManyRequestsException 처리
@@ -530,18 +530,18 @@ class ConcurrencyManager:
             "3_sqs_buffering": self.setup_sqs_buffer,
             "4_step_functions": self.use_step_functions,
         }
-        
+
         return strategies
-    
+
     def exponential_retry(self, attempt):
         # 지수 백오프 with jitter
         import random
         base_delay = 100  # ms
         max_delay = 20000  # 20초
-        
+
         delay = min(base_delay * (2 ** attempt), max_delay)
         jitter = random.uniform(0, delay * 0.1)
-        
+
         time.sleep((delay + jitter) / 1000)
 ```
 
@@ -559,17 +559,17 @@ def optimize_large_file_processing():
         response = s3.get_object(Bucket='bucket', Key=s3_key)
         content = response['Body'].read()  # 전체 로드
         return process(content)
-    
+
     # ✅ 좋은 예: 스트리밍 처리
     def good_approach(s3_key):
         s3 = boto3.client('s3')
         response = s3.get_object(Bucket='bucket', Key=s3_key)
-        
+
         # 청크 단위로 처리
         chunk_size = 64 * 1024 * 1024  # 64MB chunks
         for chunk in iter(lambda: response['Body'].read(chunk_size), b''):
             process_chunk(chunk)
-            
+
         return "Processed"
 ```
 
@@ -584,19 +584,19 @@ perfect_use_cases = {
         "특징": "간헐적, 이벤트 기반",
         "비용_절감": "95%"
     },
-    
+
     "API_백엔드": {
         "예": "REST API, GraphQL",
         "특징": "가변적 트래픽",
         "비용_절감": "70%"
     },
-    
+
     "데이터_처리": {
         "예": "로그 분석, ETL",
         "특징": "배치 처리",
         "비용_절감": "80%"
     },
-    
+
     "실시간_파일_처리": {
         "예": "이미지 리사이징",
         "특징": "CPU 집약적, 단기 실행",
@@ -613,17 +613,17 @@ avoid_lambda_when = {
         "제한": "15분 최대 실행 시간",
         "대안": "ECS Fargate, Batch"
     },
-    
+
     "웹소켓_서버": {
         "제한": "상태 유지 불가",
         "대안": "API Gateway WebSocket + DynamoDB"
     },
-    
+
     "대용량_메모리": {
         "제한": "10GB 메모리 한계",
         "대안": "ECS, EC2"
     },
-    
+
     "지속적_고부하": {
         "제한": "24/7 실행 시 비용 증가",
         "대안": "ECS, EKS"

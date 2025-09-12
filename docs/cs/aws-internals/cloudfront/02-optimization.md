@@ -37,7 +37,7 @@ TikTok의 인프라 팀은 예상치 못한 트래픽 폭증에 직면했습니�
 class CacheBehaviorOptimization:
     def __init__(self):
         self.behaviors = []
-    
+
     def create_optimized_behaviors(self):
         """
         콘텐츠 타입별 최적화된 Cache Behavior
@@ -57,7 +57,7 @@ class CacheBehaviorOptimization:
                 "compress": True,
                 "viewer_protocol": "https-only"
             },
-            
+
             {
                 "path_pattern": "/static/*",
                 "target_origin": "s3-origin",
@@ -72,7 +72,7 @@ class CacheBehaviorOptimization:
                 "compress": True,
                 "viewer_protocol": "redirect-to-https"
             },
-            
+
             {
                 "path_pattern": "/media/videos/*",
                 "target_origin": "media-origin",
@@ -88,7 +88,7 @@ class CacheBehaviorOptimization:
                 "smooth_streaming": True,
                 "trusted_signers": ["self"]
             },
-            
+
             {
                 "path_pattern": "/live/*",
                 "target_origin": "live-origin",
@@ -115,7 +115,7 @@ class CacheKeyOptimization:
             "before": {"unique_keys": 1000000, "hit_rate": 0.45},
             "after": {"unique_keys": 10000, "hit_rate": 0.95}
         }
-    
+
     def optimize_cache_key(self, request):
         """
         Cache Key 최소화로 히트율 극대화
@@ -136,7 +136,7 @@ class CacheKeyOptimization:
                 "Cookie": "session=xyz"          # 불필요
             }
         }
-        
+
         # 좋은 예: 필수 파라미터만
         good_cache_key = {
             "url": "/video.mp4",
@@ -146,7 +146,7 @@ class CacheKeyOptimization:
             },
             "headers": {}  # 헤더 제외
         }
-        
+
         return {
             "bad_key_variations": 1000000,  # 사용자 × 타임스탬프 × 세션
             "good_key_variations": 10,      # 품질(5) × 포맷(2)
@@ -191,7 +191,7 @@ class ProtocolOptimization:
                 ]
             }
         }
-    
+
     def connection_optimization(self):
         """
         프로토콜별 연결 최적화
@@ -203,14 +203,14 @@ class ProtocolOptimization:
                 "max_frame_size": 16384,
                 "header_table_size": 4096
             },
-            
+
             "http3_settings": {
                 "max_idle_timeout": 30000,  # 30초
                 "max_udp_payload_size": 1200,
                 "initial_max_data": 10485760,  # 10MB
                 "initial_max_stream_data": 1048576  # 1MB
             },
-            
+
             "performance_gains": {
                 "http1_to_http2": "15-30% 개선",
                 "http2_to_http3": "10-20% 추가 개선",
@@ -225,7 +225,7 @@ class ProtocolOptimization:
 class CompressionOptimization:
     def __init__(self):
         self.compression_types = ["gzip", "br"]  # Brotli
-        
+
     def configure_compression(self):
         """
         콘텐츠별 압축 설정
@@ -243,14 +243,14 @@ class CompressionOptimization:
                 "level": 11,  # 최대 압축
                 "avg_reduction": "70-80%"
             },
-            
+
             "javascript": {
                 "mime_types": ["application/javascript"],
                 "algorithm": "br",
                 "level": 11,
                 "avg_reduction": "60-70%"
             },
-            
+
             "images": {
                 "mime_types": ["image/svg+xml"],
                 "algorithm": "gzip",
@@ -258,22 +258,22 @@ class CompressionOptimization:
                 "avg_reduction": "50-60%",
                 "note": "JPEG/PNG는 이미 압축됨"
             },
-            
+
             "fonts": {
                 "mime_types": ["font/woff", "font/woff2"],
                 "algorithm": "none",
                 "reason": "WOFF2는 이미 Brotli 압축"
             },
-            
+
             "video_audio": {
                 "mime_types": ["video/*", "audio/*"],
                 "algorithm": "none",
                 "reason": "미디어 코덱이 이미 압축"
             }
         }
-        
+
         return compression_rules
-    
+
     def measure_compression_benefit(self, content_type, size_bytes):
         """
         압축 효과 측정
@@ -285,11 +285,11 @@ class CompressionOptimization:
             "json": 0.15,      # 85% 감소
             "xml": 0.20        # 80% 감소
         }
-        
+
         if content_type in compression_ratios:
             compressed_size = size_bytes * compression_ratios[content_type]
             savings = size_bytes - compressed_size
-            
+
             return {
                 "original_size": size_bytes,
                 "compressed_size": compressed_size,
@@ -307,52 +307,52 @@ class LambdaEdgeOptimization:
     def __init__(self):
         self.edge_locations = 450
         self.execution_limit = "5 seconds (viewer), 30 seconds (origin)"
-        
+
     def viewer_request_handler(self, event):
         """
         Viewer Request에서 실행되는 Lambda@Edge
         """
         request = event['Records'][0]['cf']['request']
-        
+
         # 1. 디바이스 감지 및 리다이렉트
         headers = request['headers']
         user_agent = headers.get('user-agent', [{}])[0].get('value', '')
-        
+
         if self.is_mobile(user_agent):
             request['uri'] = '/mobile' + request['uri']
-        
+
         # 2. A/B 테스트
         cookie = headers.get('cookie', [{}])[0].get('value', '')
         if 'experiment=B' in cookie:
             request['headers']['x-experiment'] = [{'key': 'X-Experiment', 'value': 'B'}]
-        
+
         # 3. 지역별 콘텐츠
         country = headers.get('cloudfront-viewer-country', [{}])[0].get('value', '')
         if country == 'KR':
             request['uri'] = '/kr' + request['uri']
-        
+
         # 4. 보안 헤더 추가
         request['headers']['x-frame-options'] = [{'key': 'X-Frame-Options', 'value': 'DENY'}]
-        
+
         return request
-    
+
     def origin_response_handler(self, event):
         """
         Origin Response에서 실행되는 Lambda@Edge
         """
         response = event['Records'][0]['cf']['response']
-        
+
         # 1. 보안 헤더 추가
         response['headers']['strict-transport-security'] = [{
             'key': 'Strict-Transport-Security',
             'value': 'max-age=31536000; includeSubDomains'
         }]
-        
+
         response['headers']['content-security-policy'] = [{
             'key': 'Content-Security-Policy',
             'value': "default-src 'self'"
         }]
-        
+
         # 2. 이미지 최적화
         request = event['Records'][0]['cf']['request']
         if request['uri'].endswith(('.jpg', '.jpeg', '.png')):
@@ -361,7 +361,7 @@ class LambdaEdgeOptimization:
             if 'image/webp' in accept:
                 response['headers']['vary'] = [{'key': 'Vary', 'value': 'Accept'}]
                 # Origin에서 WebP 버전 제공하도록 수정
-        
+
         # 3. 동적 캐싱 TTL
         if response['status'] == '200':
             content_type = response['headers'].get('content-type', [{}])[0].get('value', '')
@@ -370,7 +370,7 @@ class LambdaEdgeOptimization:
                     'key': 'Cache-Control',
                     'value': 'max-age=60, stale-while-revalidate=3600'
                 }]
-        
+
         return response
 ```
 
@@ -385,7 +385,7 @@ class EdgeComputingPatterns:
             "personalization": self.content_personalization,
             "optimization": self.resource_optimization
         }
-    
+
     def api_gateway_at_edge(self, event):
         """
         엣지에서 API Gateway 구현
@@ -393,14 +393,14 @@ class EdgeComputingPatterns:
         request = event['Records'][0]['cf']['request']
         uri = request['uri']
         method = request['method']
-        
+
         # API 라우팅
         routes = {
             ('GET', '/api/users'): 'user-service.example.com',
             ('POST', '/api/orders'): 'order-service.example.com',
             ('GET', '/api/products'): 'product-service.example.com'
         }
-        
+
         route_key = (method, uri.split('?')[0])
         if route_key in routes:
             # Origin 변경
@@ -411,7 +411,7 @@ class EdgeComputingPatterns:
                     'protocol': 'https'
                 }
             }
-            
+
             # Rate Limiting
             client_ip = request['clientIp']
             if self.check_rate_limit(client_ip):
@@ -420,31 +420,31 @@ class EdgeComputingPatterns:
                     'statusDescription': 'Too Many Requests',
                     'body': 'Rate limit exceeded'
                 }
-        
+
         return request
-    
+
     def authentication_at_edge(self, event):
         """
         엣지에서 인증 처리
         """
         import jwt
         import time
-        
+
         request = event['Records'][0]['cf']['request']
         headers = request['headers']
-        
+
         # JWT 토큰 확인
         auth_header = headers.get('authorization', [{}])[0].get('value', '')
-        
+
         if not auth_header.startswith('Bearer '):
             return {
                 'status': '401',
                 'statusDescription': 'Unauthorized',
                 'body': 'Missing authentication token'
             }
-        
+
         token = auth_header[7:]  # Remove 'Bearer '
-        
+
         try:
             # JWT 검증
             payload = jwt.decode(
@@ -452,7 +452,7 @@ class EdgeComputingPatterns:
                 self.jwt_secret,
                 algorithms=['HS256']
             )
-            
+
             # 만료 시간 확인
             if payload['exp'] < time.time():
                 return {
@@ -460,18 +460,18 @@ class EdgeComputingPatterns:
                     'statusDescription': 'Unauthorized',
                     'body': 'Token expired'
                 }
-            
+
             # 사용자 정보를 헤더에 추가
             request['headers']['x-user-id'] = [{'key': 'X-User-Id', 'value': str(payload['user_id'])}]
             request['headers']['x-user-role'] = [{'key': 'X-User-Role', 'value': payload['role']}]
-            
+
         except jwt.InvalidTokenError:
             return {
                 'status': '401',
                 'statusDescription': 'Unauthorized',
                 'body': 'Invalid token'
             }
-        
+
         return request
 ```
 
@@ -488,7 +488,7 @@ class CacheAnalytics:
             "origin_bandwidth": 0,
             "edge_requests": 0
         }
-    
+
     def analyze_cache_performance(self, logs):
         """
         캐시 성능 분석
@@ -498,28 +498,28 @@ class CacheAnalytics:
         cache_misses = 0
         bytes_from_cache = 0
         bytes_from_origin = 0
-        
+
         for log in logs:
             result_type = log['x-edge-result-type']
             bytes_sent = int(log['sc-bytes'])
-            
+
             if result_type in ['Hit', 'RefreshHit', 'OriginShieldHit']:
                 cache_hits += 1
                 bytes_from_cache += bytes_sent
             else:
                 cache_misses += 1
                 bytes_from_origin += bytes_sent
-        
+
         # 캐시 히트율 계산
         hit_rate = (cache_hits / total_requests) * 100
         byte_hit_rate = (bytes_from_cache / (bytes_from_cache + bytes_from_origin)) * 100
-        
+
         # Popular Objects 분석
         popular_objects = self.find_popular_objects(logs)
-        
+
         # 캐시 미스 원인 분석
         miss_reasons = self.analyze_cache_misses(logs)
-        
+
         return {
             "hit_rate": f"{hit_rate:.2f}%",
             "byte_hit_rate": f"{byte_hit_rate:.2f}%",
@@ -528,25 +528,25 @@ class CacheAnalytics:
             "miss_reasons": miss_reasons,
             "recommendations": self.generate_recommendations(hit_rate, miss_reasons)
         }
-    
+
     def generate_recommendations(self, hit_rate, miss_reasons):
         """
         최적화 권장사항 생성
         """
         recommendations = []
-        
+
         if hit_rate < 80:
             recommendations.append("캐시 TTL 증가 검토")
-            
+
         if miss_reasons.get('expired', 0) > 30:
             recommendations.append("Stale-while-revalidate 헤더 사용")
-            
+
         if miss_reasons.get('no_cache', 0) > 20:
             recommendations.append("Cache-Control 헤더 재검토")
-            
+
         if miss_reasons.get('vary_header', 0) > 10:
             recommendations.append("Vary 헤더 최소화")
-            
+
         return recommendations
 ```
 
@@ -577,7 +577,7 @@ class PriceClassOptimization:
                 "performance": "Best for US/EU audience"
             }
         }
-    
+
     def recommend_price_class(self, user_distribution):
         """
         사용자 분포에 따른 Price Class 추천
@@ -588,7 +588,7 @@ class PriceClassOptimization:
             user_distribution.get('CA', 0) +
             user_distribution.get('EU', 0)
         )
-        
+
         if us_eu_percentage > 90:
             return {
                 "recommendation": "PriceClass_100",
@@ -627,14 +627,14 @@ class OriginRequestOptimization:
                     "after": "max-age=31536000, immutable",  # 1년
                     "impact": "99% Origin 요청 감소"
                 },
-                
+
                 "api_responses": {
                     "before": "no-cache",
                     "after": "max-age=60, stale-while-revalidate=300",
                     "impact": "80% Origin 요청 감소"
                 }
             },
-            
+
             "origin_shield": {
                 "enabled": True,
                 "location": "us-east-1",
@@ -642,7 +642,7 @@ class OriginRequestOptimization:
                 "cost": "$0.01 per 10,000 requests",
                 "savings": "95% Origin 대역폭 절감"
             },
-            
+
             "error_caching": {
                 "4xx_errors": {
                     "ttl": 300,  # 5분
@@ -654,7 +654,7 @@ class OriginRequestOptimization:
                 }
             }
         }
-        
+
         return strategies
 ```
 
@@ -673,26 +673,26 @@ def troubleshoot_video_buffering():
             "forward_headers": ["Range", "If-Range"],
             "benefit": "부분 콘텐츠 요청 지원"
         },
-        
+
         "segment_size": {
             "hls": "10 seconds per segment",
             "dash": "4 seconds per segment",
             "optimization": "작은 세그먼트로 빠른 시작"
         },
-        
+
         "adaptive_bitrate": {
             "qualities": ["360p", "480p", "720p", "1080p", "4K"],
             "manifest": "Dynamic based on bandwidth",
             "cdn_behavior": "Cache each quality separately"
         },
-        
+
         "prefetching": {
             "next_segments": 3,
             "implementation": "Client-side prefetch",
             "cache_warming": "Popular content pre-load"
         }
     }
-    
+
     return solutions
 ```
 
@@ -712,7 +712,7 @@ class MobileOptimization:
                     "lazy_loading": "Intersection Observer"
                 }
             },
-            
+
             "connection_optimization": {
                 "http3_quic": {
                     "benefit": "Better on cellular",
@@ -720,7 +720,7 @@ class MobileOptimization:
                     "packet_loss_resilience": "No head-of-line blocking"
                 }
             },
-            
+
             "bandwidth_detection": {
                 "network_information_api": True,
                 "adaptive_quality": {
@@ -729,7 +729,7 @@ class MobileOptimization:
                     "2g": "Low quality"
                 }
             },
-            
+
             "service_worker_cache": {
                 "strategy": "Cache first, network fallback",
                 "offline_support": True,
@@ -750,31 +750,31 @@ def handle_cors_issues():
             "https://example.com",
             "https://app.example.com"
         ],
-        
+
         "allowed_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        
+
         "allowed_headers": [
             "Content-Type",
             "Authorization",
             "X-Requested-With"
         ],
-        
+
         "exposed_headers": [
             "Content-Length",
             "X-Request-Id"
         ],
-        
+
         "max_age": 86400,  # 24시간
-        
+
         "cloudfront_config": {
             "forward_headers": [
                 "Origin",
                 "Access-Control-Request-Method",
                 "Access-Control-Request-Headers"
             ],
-            
+
             "cache_based_on_headers": True,
-            
+
             "response_headers_policy": {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -782,7 +782,7 @@ def handle_cors_issues():
             }
         }
     }
-    
+
     return cors_configuration
 ```
 
@@ -794,7 +794,7 @@ def handle_cors_issues():
 class LiveStreamingOptimization:
     def __init__(self):
         self.protocols = ["HLS", "DASH", "CMAF"]
-        
+
     def optimize_live_streaming(self):
         """
         라이브 스트리밍 최적화
@@ -808,20 +808,20 @@ class LiveStreamingOptimization:
                     "segments": 3600     # 1시간
                 }
             },
-            
+
             "low_latency_hls": {
                 "part_duration": 0.33,   # 초
                 "part_hold_back": 3,     # 파트 수
                 "can_skip_until": 6,     # 초
                 "latency": "2-5 seconds"
             },
-            
+
             "origin_shield": {
                 "benefit": "Single origin request per segment",
                 "location": "Closest to encoder",
                 "failover": "Multi-origin configuration"
             },
-            
+
             "edge_optimization": {
                 "request_collapsing": True,
                 "negative_caching": {
@@ -844,19 +844,19 @@ class ABTesting:
         """
         import hashlib
         import json
-        
+
         request = event['Records'][0]['cf']['request']
-        
+
         # 사용자 식별
         client_ip = request['clientIp']
         user_id = hashlib.md5(client_ip.encode()).hexdigest()
-        
+
         # 버킷 할당 (50/50 split)
         bucket = 'A' if int(user_id, 16) % 2 == 0 else 'B'
-        
+
         # 쿠키 설정
         cookie_header = request['headers'].get('cookie', [{}])[0].get('value', '')
-        
+
         if 'experiment=' not in cookie_header:
             # 새 사용자 - 버킷 할당
             request['headers']['cookie'] = [{
@@ -869,7 +869,7 @@ class ABTesting:
             match = re.search(r'experiment=([AB])', cookie_header)
             if match:
                 bucket = match.group(1)
-        
+
         # 버킷에 따른 Origin 선택
         if bucket == 'B':
             request['origin'] = {
@@ -879,13 +879,13 @@ class ABTesting:
                     'path': '/variant-b'
                 }
             }
-        
+
         # 메트릭 수집
         request['headers']['x-experiment-bucket'] = [{
             'key': 'X-Experiment-Bucket',
             'value': bucket
         }]
-        
+
         return request
 ```
 

@@ -44,37 +44,37 @@ graph TB
         R4[Read Replica 4]
         R5[Read Replica 5]
     end
-    
+
     subgraph "Aurora Storage Layer"
         subgraph "AZ-1"
             S11[Segment 1-1]
             S12[Segment 1-2]
         end
-        
+
         subgraph "AZ-2"
             S21[Segment 2-1]
             S22[Segment 2-2]
         end
-        
+
         subgraph "AZ-3"
             S31[Segment 3-1]
             S32[Segment 3-2]
         end
-        
+
         LOG[Distributed Log, 6-way Replication]
     end
-    
+
     P -->|Write: Log Records Only| LOG
     R1 -->|Read: Page Cache| LOG
     R2 -->|Read: Page Cache| LOG
-    
+
     LOG --> S11
     LOG --> S12
     LOG --> S21
     LOG --> S22
     LOG --> S31
     LOG --> S32
-    
+
     style P fill:#90EE90
     style LOG fill:#FFB6C1
 ```
@@ -87,20 +87,20 @@ class AuroraStorageQuorum:
         self.replicas = 6  # 6개 복제본
         self.write_quorum = 4  # 4/6 쓰기
         self.read_quorum = 3   # 3/6 읽기
-        
+
     def write_operation(self, log_record):
         """
         Aurora의 쿼럼 기반 쓰기
         """
         # 1. Log record만 전송 (페이지 전체 X)
         log_lsn = self.generate_lsn()
-        
+
         # 2. 6개 스토리지 노드에 병렬 전송
         write_futures = []
         for node in self.storage_nodes[:6]:
             future = self.async_write(node, log_record, log_lsn)
             write_futures.append(future)
-        
+
         # 3. 4개 노드 ACK 대기 (Quorum)
         acks = 0
         for future in write_futures:
@@ -112,7 +112,7 @@ class AuroraStorageQuorum:
                         return {"status": "COMMITTED", "lsn": log_lsn}
             except TimeoutError:
                 continue
-        
+
         # 쿼럼 실패
         if acks < self.write_quorum:
             raise QuorumNotMetException()
@@ -126,18 +126,18 @@ sequenceDiagram
     participant SN as Storage Node
     participant BG as Background Process
     participant S3 as S3 Backup
-    
+
     Note over DB, SN: === Write Path (Foreground) ===
     DB->>SN: Send Log Record (100 bytes)
     SN->>SN: Persist to SSD
     SN-->>DB: ACK (< 1ms)
-    
+
     Note over SN, S3: === Background Processing ===
     BG->>SN: Coalesce Log Records
     BG->>BG: Apply to Page
     BG->>BG: Generate New Page Version
     BG->>S3: Backup to S3
-    
+
     Note over DB, SN: === Read Path ===
     DB->>SN: Request Page
     alt Page in Cache
@@ -157,7 +157,7 @@ class AuroraFastClone:
     def __init__(self):
         self.clone_time = "초 단위"
         self.storage_overhead = "0% (초기)"
-        
+
     def create_clone(self, source_cluster):
         """
         Aurora Fast Clone 생성
@@ -168,17 +168,17 @@ class AuroraFastClone:
             "clone_time": datetime.now(),
             "storage_pointers": self.copy_storage_pointers(source_cluster)
         }
-        
+
         # 2. Copy-on-Write 설정
         cow_config = {
             "shared_pages": True,  # 초기에는 모든 페이지 공유
             "divergence_tracking": True,
             "space_efficiency": "변경된 페이지만 새로 저장"
         }
-        
+
         # 3. 클론 활성화
         clone_cluster = self.activate_clone(clone_metadata, cow_config)
-        
+
         return {
             "clone_id": clone_cluster.id,
             "creation_time": "5초",
@@ -198,7 +198,7 @@ class AuroraFastClone:
 class AuroraBacktrack:
     def __init__(self):
         self.backtrack_window = 72  # 최대 72시간
-        
+
     def backtrack_database(self, target_time):
         """
         데이터베이스를 과거 시점으로 되돌리기
@@ -206,10 +206,10 @@ class AuroraBacktrack:
         # 1. 되돌릴 시점 검증
         if not self.is_within_window(target_time):
             raise BacktrackWindowExceededException()
-        
+
         # 2. 타겟 LSN 찾기
         target_lsn = self.find_lsn_at_time(target_time)
-        
+
         # 3. 되돌리기 실행 (데이터 복사 없음!)
         backtrack_process = {
             "current_lsn": self.current_lsn,
@@ -218,10 +218,10 @@ class AuroraBacktrack:
             "downtime": "수 초",
             "data_movement": "없음"
         }
-        
+
         # 4. 인스턴스 재시작
         self.restart_instances()
-        
+
         return {
             "backtrack_time": "10초",
             "vs_pitr": "PITR은 새 클러스터 생성 필요 (30분)",
@@ -243,29 +243,29 @@ graph TB
         subgraph "Morning Peak"
             M[0.5 ACU → 4 ACU, in 30 seconds]
         end
-        
+
         subgraph "Afternoon"
             A[4 ACU → 1 ACU, Scale down]
         end
-        
+
         subgraph "Evening Peak"
             E[1 ACU → 8 ACU, Auto scale]
         end
-        
+
         subgraph "Night"
             N[8 ACU → 0.5 ACU, Minimum]
         end
     end
-    
+
     subgraph "Cost"
         C[Pay per ACU-hour, $0.12 per ACU-hour]
     end
-    
+
     M --> A
     A --> E
     E --> N
     N --> M
-    
+
     style M fill:#FFB6C1
     style E fill:#FFB6C1
 ```
@@ -282,13 +282,13 @@ class AuroraServerlessV2:
                 "network": "~4.5 Gbps"
             }
         }
-    
+
     def auto_scaling_logic(self, metrics):
         """
         Serverless v2 자동 스케일링 로직
         """
         current_acu = self.current_capacity
-        
+
         # CPU, 메모리, 네트워크 기반 스케일링
         scale_factors = {
             "cpu_utilization": metrics["cpu"] / 70,  # 70% 타겟
@@ -296,19 +296,19 @@ class AuroraServerlessV2:
             "connection_count": metrics["connections"] / 100,
             "query_latency": metrics["p99_latency"] / 100  # 100ms 타겟
         }
-        
+
         # 가장 높은 factor 기준 스케일링
         required_acu = current_acu * max(scale_factors.values())
-        
+
         # 0.5 ACU 단위로 조정
         new_acu = round(required_acu * 2) / 2
-        new_acu = max(self.acu_config["min_capacity"], 
+        new_acu = max(self.acu_config["min_capacity"],
                      min(new_acu, self.acu_config["max_capacity"]))
-        
+
         # 스케일링 실행
         if new_acu != current_acu:
             self.scale_to(new_acu)
-            
+
         return {
             "previous": current_acu,
             "new": new_acu,
@@ -329,29 +329,29 @@ graph TB
         PR2[Read Replica 2]
         PS[Primary Storage]
     end
-    
+
     subgraph "Secondary Region (us-east-1)"
         SC[Secondary Cluster, Read-Only]
         SR1[Read Replica 1]
         SR2[Read Replica 2]
         SS[Secondary Storage]
     end
-    
+
     subgraph "Secondary Region (eu-west-1)"
         EC[Secondary Cluster, Read-Only]
         ER1[Read Replica 1]
         ES[Secondary Storage]
     end
-    
+
     PC -.->|Physical Replication, < 1초| SC
     PC -.->|Physical Replication, < 1초| EC
-    
+
     PS -.->|Storage-level, Replication| SS
     PS -.->|Storage-level, Replication| ES
-    
+
     Note1[RPO: 1초]
     Note2[RTO: 1분]
-    
+
     style PC fill:#90EE90
     style SC fill:#87CEEB
     style EC fill:#FFB6C1
@@ -366,7 +366,7 @@ class AuroraGlobalDatabase:
             "primary": "us-west-2",
             "secondaries": ["us-east-1", "eu-west-1"]
         }
-        
+
     def planned_failover(self, new_primary_region):
         """
         계획된 페일오버 (0 데이터 손실)
@@ -374,26 +374,26 @@ class AuroraGlobalDatabase:
         steps = [
             # 1. 쓰기 중지
             self.stop_writes(),
-            
+
             # 2. 복제 동기화 대기
             self.wait_for_replication_sync(),
-            
+
             # 3. 새 Primary 승격
             self.promote_secondary(new_primary_region),
-            
+
             # 4. DNS 업데이트
             self.update_dns_cname(new_primary_region),
-            
+
             # 5. 이전 Primary를 Secondary로
             self.demote_to_secondary(self.regions["primary"])
         ]
-        
+
         return {
             "data_loss": "0 bytes",
             "downtime": "< 1분",
             "automatic_backtrack": True
         }
-    
+
     def unplanned_failover(self):
         """
         비계획 페일오버 (재해 상황)
@@ -428,7 +428,7 @@ class AuroraCostOptimization:
                 "monthly_cost": 75000
             }
         }
-    
+
     def optimization_strategies(self):
         return {
             "1_serverless_for_dev": {
@@ -436,18 +436,18 @@ class AuroraCostOptimization:
                 "config": "Serverless v2 (0.5-2 ACU)",
                 "savings": "90% vs always-on"
             },
-            
+
             "2_reserved_instances": {
                 "production": "3-year reserved",
                 "savings": "50% discount"
             },
-            
+
             "3_io_optimized": {
                 "high_io_workloads": "Aurora I/O-Optimized",
                 "benefit": "No I/O charges",
                 "break_even": "> 25% I/O cost"
             },
-            
+
             "4_cross_region_replicas": {
                 "strategy": "Read locally, write globally",
                 "latency_reduction": "100ms → 10ms",
@@ -467,7 +467,7 @@ def aurora_ml_integration():
     """
     ml_queries = {
         "sentiment_analysis": """
-            SELECT 
+            SELECT
                 review_id,
                 review_text,
                 aws_comprehend_detect_sentiment(
@@ -476,9 +476,9 @@ def aurora_ml_integration():
             FROM product_reviews
             WHERE created_date = CURDATE();
         """,
-        
+
         "fraud_detection": """
-            SELECT 
+            SELECT
                 transaction_id,
                 amount,
                 aws_sagemaker_invoke_endpoint(
@@ -488,10 +488,10 @@ def aurora_ml_integration():
             FROM transactions
             WHERE fraud_score > 0.8;
         """,
-        
+
         "batch_inference": """
             CREATE TABLE product_recommendations AS
-            SELECT 
+            SELECT
                 user_id,
                 aws_sagemaker_invoke_endpoint(
                     'recommendation-model',
@@ -500,7 +500,7 @@ def aurora_ml_integration():
             FROM user_profiles;
         """
     }
-    
+
     return {
         "benefits": [
             "SQL에서 직접 ML 호출",
@@ -530,7 +530,7 @@ def troubleshoot_reader_imbalance():
         "symptom": "특정 읽기 복제본만 높은 CPU",
         "cause": "DNS 캐싱으로 인한 고정 연결"
     }
-    
+
     solutions = {
         "1_custom_endpoints": {
             "config": """
@@ -540,20 +540,20 @@ def troubleshoot_reader_imbalance():
             """,
             "benefit": "워크로드별 분리"
         },
-        
+
         "2_connection_pool": {
             "ttl": "60초",
             "max_idle": "30초",
             "effect": "주기적 재연결로 부하 분산"
         },
-        
+
         "3_smart_driver": {
             "driver": "AWS JDBC Driver",
             "feature": "Reader endpoint load balancing",
             "config": "aurora-load-balanced=true"
         }
     }
-    
+
     return solutions
 ```
 
@@ -567,7 +567,7 @@ class StorageTroubleshooting:
         """
         queries = {
             "check_table_sizes": """
-                SELECT 
+                SELECT
                     table_schema,
                     table_name,
                     ROUND(data_length/1024/1024/1024, 2) as data_gb,
@@ -576,26 +576,26 @@ class StorageTroubleshooting:
                 ORDER BY data_length DESC
                 LIMIT 10;
             """,
-            
+
             "check_history_list": """
                 -- Long-running transactions
                 SHOW ENGINE INNODB STATUS;
                 -- History list length 확인
             """,
-            
+
             "check_binlog": """
                 SHOW BINARY LOGS;
                 -- Binlog 크기 확인
             """
         }
-        
+
         solutions = {
             "large_tables": "파티셔닝 또는 아카이빙",
             "history_list": "장기 실행 트랜잭션 종료",
             "binlog": "binlog_expire_logs_seconds 조정",
             "temp_tables": "임시 테이블 정리"
         }
-        
+
         return solutions
 ```
 
@@ -611,26 +611,26 @@ def optimize_query_performance():
             "retention": "7 days (free)",
             "metrics": ["top SQL", "wait events", "DB load"]
         },
-        
+
         "2_parallel_query": {
             "enable": "aurora_parallel_query = ON",
             "benefit": "대용량 스캔 16x 빠름",
             "use_case": "분석 쿼리"
         },
-        
+
         "3_hash_joins": {
             "version": "Aurora MySQL 8.0+",
             "config": "optimizer_switch='hash_join=on'",
             "improvement": "조인 성능 10x"
         },
-        
+
         "4_fast_ddl": {
             "operation": "ALTER TABLE ADD COLUMN",
             "time": "즉시 (메타데이터만 변경)",
             "vs_standard": "표준 MySQL은 전체 테이블 재작성"
         }
     }
-    
+
     return optimization_steps
 ```
 
@@ -653,7 +653,7 @@ def choose_database():
             "replicas": "15개",
             "failover": "30초"
         },
-        
+
         "RDS": {
             "best_for": [
                 "예측 가능한 워크로드",
@@ -665,7 +665,7 @@ def choose_database():
             "replicas": "5개",
             "failover": "60-120초"
         },
-        
+
         "DynamoDB": {
             "best_for": [
                 "Key-Value 액세스 패턴",
@@ -678,7 +678,7 @@ def choose_database():
             "failover": "자동"
         }
     }
-    
+
     return decision_matrix
 ```
 

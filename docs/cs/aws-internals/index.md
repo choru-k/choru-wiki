@@ -37,9 +37,9 @@ tags:
 
 대부분의 AWS 가이드는 "어떻게 사용하는지"만 알려줍니다. 하지만 이 가이드는 다릅니다:
 
-**📖 What**: AWS 서비스들이 정확히 어떻게 만들어졌는가  
-**🧠 Why**: 왜 그렇게 설계되었는가  
-**💰 How**: 어떻게 하면 비용을 절약하면서 성능을 극대화할 수 있는가  
+**📖 What**: AWS 서비스들이 정확히 어떻게 만들어졌는가
+**🧠 Why**: 왜 그렇게 설계되었는가
+**💰 How**: 어떻게 하면 비용을 절약하면서 성능을 극대화할 수 있는가
 
 ### 읽고 나면 이런 변화가 생깁니다
 
@@ -55,28 +55,28 @@ graph TB
     subgraph "🏪 인터넷 상점가"
         USER["😊 당신<br/>(웹사이트/앱 사용자)"]
     end
-    
+
     subgraph "🌐 AWS 글로벌 네트워크"
         subgraph "💨 콘텐츠 배송 (CDN)"
             CF["📡 CloudFront<br/>450개 엣지 로케이션<br/>전 세계 10ms 이내"]
         end
-        
+
         subgraph "⚖️ 트래픽 분산"
             ELB["🎯 Load Balancer<br/>초당 1억 요청 처리<br/>Instagram이 믿는 기술"]
         end
-        
+
         subgraph "💻 실제 컴퓨팅"
             EC2["⚡ EC2 Nitro<br/>400Gbps 네트워킹<br/>Netflix 4K 스트리밍"]
             LAMBDA["🚀 Lambda<br/>0ms 서버리스<br/>Duolingo 1억 사용자"]
         end
-        
+
         subgraph "🗄️ 데이터 저장소"
             S3["📦 S3 Storage<br/>99.999999999% 내구성<br/>핵폭탄보다 안전한 데이터"]
             RDS["🏦 RDS Database<br/>Shopify 80만 TPS<br/>Black Friday도 끄떡없어"]
             DDB["⚡ DynamoDB<br/>Lyft 실시간 위치추적<br/>마이크로초 응답"]
         end
     end
-    
+
     USER --> CF
     CF --> ELB
     ELB --> EC2
@@ -85,14 +85,14 @@ graph TB
     EC2 --> DDB
     LAMBDA --> S3
     LAMBDA --> DDB
-    
+
     style USER fill:#E8F5E8
     style CF fill:#FF9900
     style ELB fill:#EC7211
     style S3 fill:#146EB4
     style RDS fill:#8C4FFF
     style DDB fill:#FF6B6B
-```
+```text
 
 **🎭 이게 바로 당신이 Netflix를 보고, Uber를 부르고, Instagram에 사진을 올릴 때 뒤에서 일어나는 일입니다.**
 
@@ -110,7 +110,7 @@ graph TB
 • Dropbox는 어떻게 S3로 비용을 75% 절약했을까?
 • 11개의 9 (99.999999999%) 내구성이 정확히 뭘까?
 • Erasure Coding이 뭐고 왜 RAID보다 강력할까?
-```
+```text
 
 **📖 [지금 S3의 비밀 파헤치기 →](s3/index.md)**
 
@@ -126,7 +126,7 @@ graph TB
 • "특정 서버만 과부하가 걸려요" → 알고리즘 선택 문제
 • "Black Friday 같은 트래픽 급증 대비법은?" → Netflix/Amazon 사례
 • Round Robin vs Consistent Hashing, 뭘 써야 할까?
-```
+```text
 
 **⚖️ [트래픽 분산의 예술 배우기 →](load-balancing/index.md)**
 
@@ -142,7 +142,7 @@ graph TB
 • Route 53은 정말 1ms 만에 DNS를 응답할 수 있을까?
 • Spotify가 전 세계 음악 스트리밍에 쓰는 네트워크 비법은?
 • CloudFront 450개 엣지 로케이션의 진짜 위력은?
-```
+```text
 
 **🌐 [글로벌 네트워킹의 비밀 알아보기 →](networking/index.md)**
 
@@ -158,7 +158,7 @@ graph TB
 • "Cold Start가 너무 느려요" → Firecracker MicroVM 이해
 • "EC2 성능이 예측과 달라요" → Nitro System 내부 구조
 • Pinterest는 어떻게 5만 개 컨테이너를 관리할까?
-```
+```text
 
 **💻 [컴퓨팅의 진화 과정 따라가기 →](compute/index.md)**
 
@@ -174,7 +174,7 @@ graph TB
 • "캐시 히트율이 너무 낮아요" → ElastiCache 최적화
 • "Multi-AZ가 정말 장애를 막아줄까?" → RDS 내부 동작
 • Twitter가 실시간 타임라인에 쓰는 데이터베이스 전략은?
-```
+```text
 
 **🗄️ [데이터베이스 혁명의 현장 가보기 →](database/index.md)**
 
@@ -190,7 +190,7 @@ graph TB
 • "갑작스런 바이럴 콘텐츠 대응법은?" → TikTok 사례
 • "CDN 캐시 히트율을 어떻게 올릴까?" → 3-tier 캐싱 전략
 • Lambda@Edge로 엣지에서 할 수 있는 마법은?
-```
+```text
 
 **📡 [글로벌 콘텐츠 전송의 마법 경험하기 →](cloudfront/index.md)**
 
@@ -201,28 +201,28 @@ graph TB
 ```mermaid
 flowchart TD
     START(["🚨 지금 당장 해결해야 할 문제가 있다면?"])
-    
+
     COST(["💸 비용이 너무 많이 나와!"])
     SLOW(["🐌 서비스가 너무 느려!"])
     DOWN(["💀 서버가 자꾸 죽어!"])
     GLOBAL(["🌍 해외 사용자 불만!"])
-    
+
     START --> COST
-    START --> SLOW  
+    START --> SLOW
     START --> DOWN
     START --> GLOBAL
-    
+
     COST --> S3["📦 S3: Storage Classes<br/>비용 90% 절감법"]
     COST --> RDS["🗄️ Database: 캐싱 전략<br/>DB 비용 절반 줄이기"]
-    
+
     SLOW --> LB["⚖️ Load Balancing<br/>트래픽 분산으로 속도 향상"]
     SLOW --> COMPUTE["💻 Compute: Nitro/Lambda<br/>성능 최적화"]
-    
+
     DOWN --> NET["🌐 Networking: Multi-AZ<br/>무중단 서비스 구축"]
     DOWN --> DB["🗄️ Database: 장애 대응<br/>RDS/Aurora 고가용성"]
-    
+
     GLOBAL --> CDN["📡 CloudFront<br/>전 세계 10ms 응답"]
-    
+
     style COST fill:#FFE6E6
     style SLOW fill:#E6F3FF
     style DOWN fill:#FFE6CC
@@ -231,13 +231,13 @@ flowchart TD
 
 **📚 체계적으로 배우고 싶다면:**
 
-**1단계 - 기반 이해**: [🗄️ S3](s3/index.md) → [🌐 Networking](networking/index.md)  
+**1단계 - 기반 이해**: [🗄️ S3](s3/index.md) → [🌐 Networking](networking/index.md)
 *"데이터는 어떻게 저장되고, 어떻게 전송될까?"*
 
-**2단계 - 처리 능력**: [💻 Compute](compute/index.md) → [⚖️ Load Balancing](load-balancing/index.md)  
+**2단계 - 처리 능력**: [💻 Compute](compute/index.md) → [⚖️ Load Balancing](load-balancing/index.md)
 *"요청은 어떻게 처리되고, 어떻게 분산될까?"*
 
-**3단계 - 최적화**: [🗄️ Database](database/index.md) → [📡 CloudFront](cloudfront/index.md)  
+**3단계 - 최적화**: [🗄️ Database](database/index.md) → [📡 CloudFront](cloudfront/index.md)
 *"어떻게 더 빠르고, 더 안정적으로 만들까?"*
 
 ## 🎁 이 가이드가 당신에게 줄 선물
@@ -253,7 +253,7 @@ mindmap
       병목지점 10초 진단
       로드밸런싱 알고리즘 선택
       CDN 캐시 히트율 95%+
-    장애 대응 히어로  
+    장애 대응 히어로
       Multi-AZ 무중단 설계
       Circuit Breaker 패턴
       실시간 모니터링 구축
@@ -269,14 +269,14 @@ mindmap
 
 **"이론만으로는 부족합니다. 실제 Netflix, Instagram, Shopify의 위기 순간을 함께 경험해보세요."**
 
-💬 *"AWS 비용이 매달 늘어나는 이유를 드디어 알았습니다. S3 Storage Classes 하나만 바꿨는데 월 비용이 절반으로 줄었어요!"*  
+💬 *"AWS 비용이 매달 늘어나는 이유를 드디어 알았습니다. S3 Storage Classes 하나만 바꿨는데 월 비용이 절반으로 줄었어요!"*
 **- 스타트업 CTO, 김○○님**
 
-💬 *"Load Balancing 문서 읽고 Instagram 알고리즘 적용했더니, 트래픽 3배 늘어도 서버가 안정적이에요!"*  
+💬 *"Load Balancing 문서 읽고 Instagram 알고리즘 적용했더니, 트래픽 3배 늘어도 서버가 안정적이에요!"*
 **- 시리즈 A 개발팀장, 이○○님**
 
-**📊 이 가이드의 규모:**  
+**📊 이 가이드의 규모:**
 ✨ **28개 실전 문서** | 🎬 **6개 기업 스토리 섹션** | 🐍 **300+ Python 코드 예제** | 📊 **80+ 인터랙티브 다이어그램**
 
-**🎯 첫 번째 챕터부터 바로 비용 절약 팁을 경험하세요:**  
+**🎯 첫 번째 챕터부터 바로 비용 절약 팁을 경험하세요:**
 👉 **[🗄️ S3: 데이터가 사라지지 않는 마법 시작하기 →](s3/index.md)**

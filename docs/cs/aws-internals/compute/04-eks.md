@@ -40,37 +40,37 @@ graph TB
             API1[API Server, AZ-1]
             API2[API Server, AZ-2]
             API3[API Server, AZ-3]
-            
+
             ETCD1[etcd, AZ-1]
             ETCD2[etcd, AZ-2]
             ETCD3[etcd, AZ-3]
-            
+
             ETCD1 -.->|Raft Consensus| ETCD2
             ETCD2 -.->|Raft Consensus| ETCD3
             ETCD3 -.->|Raft Consensus| ETCD1
         end
-        
+
         NLB[Network Load Balancer, Control Plane Endpoint]
-        
+
         CM[Controller Manager]
         SCHED[Scheduler]
         CCM[Cloud Controller Manager]
     end
-    
+
     subgraph "Data Plane Options"
         subgraph "Managed Node Groups"
             MNG[Auto Scaling Groups, + Launch Templates]
         end
-        
+
         subgraph "Self-Managed Nodes"
             SMN[EC2 Instances, 수동 관리]
         end
-        
+
         subgraph "Fargate Profile"
             FP[Serverless Pods, 노드 관리 불필요]
         end
     end
-    
+
     subgraph "AWS Integrations"
         IAM[IAM Authenticator]
         VPC[VPC CNI]
@@ -78,18 +78,18 @@ graph TB
         EFS[EFS CSI Driver]
         ALB[AWS Load Balancer Controller]
     end
-    
+
     NLB --> API1
     NLB --> API2
     NLB --> API3
-    
+
     API1 --> CM
     API1 --> SCHED
     API1 --> CCM
-    
+
     MNG --> VPC
     FP --> VPC
-    
+
     style FP fill:#90EE90
     style MNG fill:#87CEEB
 ```
@@ -106,19 +106,19 @@ class EKSInnovations:
                 "다운타임": "0초",
                 "롤백": "자동"
             },
-            
+
             "multi_tenancy": {
                 "특징": "VPC 격리",
                 "구현": "Cross-ENI 연결",
                 "보안": "네트워크 수준 격리"
             },
-            
+
             "iam_integration": {
                 "특징": "IRSA (IAM Roles for Service Accounts)",
                 "이점": "Pod 수준 AWS 권한",
                 "구현": "OIDC Provider + STS"
             },
-            
+
             "fargate_pods": {
                 "특징": "서버리스 Pod 실행",
                 "이점": "노드 관리 불필요",
@@ -207,7 +207,7 @@ class IRSAMechanism:
         5. 임시 자격 증명 획득 (1시간)
         6. 자동 갱신
         """
-    
+
     def token_projection(self):
         # 프로젝트된 서비스 계정 토큰
         return {
@@ -230,36 +230,36 @@ graph TB
             IP2[10.0.1.11]
             IP3[10.0.1.12]
         end
-        
+
         subgraph "Secondary ENI"
             IP4[10.0.1.20]
             IP5[10.0.1.21]
             IP6[10.0.1.22]
         end
-        
+
         subgraph "Pods"
             P1[Pod1, 10.0.1.11]
             P2[Pod2, 10.0.1.12]
             P3[Pod3, 10.0.1.21]
             P4[Pod4, 10.0.1.22]
         end
-        
+
         IPAMD[IP Address Manager, Daemon]
     end
-    
+
     subgraph "VPC"
         RT[Route Table]
         SG[Security Groups]
         NACL[Network ACLs]
     end
-    
+
     P1 --> IP2
     P2 --> IP3
     P3 --> IP5
     P4 --> IP6
-    
+
     IPAMD --> RT
-    
+
     style P1 fill:#90EE90
     style P2 fill:#90EE90
     style P3 fill:#FFB6C1
@@ -278,7 +278,7 @@ class VPCCNIOptimization:
             "m5.2xlarge": {"enis": 4, "ips_per_eni": 15, "max_pods": 58},
             "c5n.18xlarge": {"enis": 15, "ips_per_eni": 50, "max_pods": 737}
         }
-    
+
     def calculate_pod_density(self, instance_type):
         """
         최대 Pod 수 = (ENI 수 × ENI당 IP 수) - 1
@@ -286,7 +286,7 @@ class VPCCNIOptimization:
         """
         limits = self.instance_limits[instance_type]
         return (limits["enis"] * limits["ips_per_eni"]) - 1
-    
+
     def enable_prefix_delegation(self):
         """
         Prefix Delegation으로 Pod 밀도 16배 증가
@@ -320,7 +320,7 @@ spec:
     - namespace: staging
       labels:
         workload: batch
-  
+
   subnets:
     - subnet-12345  # Private Subnet AZ-1
     - subnet-67890  # Private Subnet AZ-2
@@ -334,24 +334,24 @@ sequenceDiagram
     participant FC as Fargate Controller
     participant VM as MicroVM
     participant Pod as Pod Container
-    
+
     User->>API: Pod 생성 (compute: fargate)
     API->>FPS: Pod 스케줄링 요청
     FPS->>FPS: Fargate Profile 매칭
     FPS->>FC: Fargate Pod 생성 요청
-    
+
     Note over FC: === Fargate 프로비저닝 ===
     FC->>VM: 1. MicroVM 할당 (vCPU, Memory)
     FC->>VM: 2. ENI 연결 (Pod IP)
     FC->>VM: 3. EBS 볼륨 연결
     FC->>VM: 4. 컨테이너 런타임 준비
-    
+
     FC->>Pod: 5. 이미지 Pull
     FC->>Pod: 6. 컨테이너 시작
-    
+
     Pod-->>API: Pod Running
     API-->>User: Pod 상태 업데이트
-    
+
     Note over FC, Pod: 총 시간: 30-60초
 ```
 
@@ -383,7 +383,7 @@ def compare_compute_options():
                 "보안 민감 워크로드"
             ]
         },
-        
+
         "Managed_Node_Groups": {
             "장점": [
                 "완전한 K8s 기능",
@@ -404,7 +404,7 @@ def compare_compute_options():
             ]
         }
     }
-    
+
     return comparison
 ```
 
@@ -421,32 +421,32 @@ class EKSAddons:
                 "역할": "Pod 네트워킹",
                 "특징": "Native VPC IP"
             },
-            
+
             "coredns": {
                 "버전": "v1.10.1",
                 "역할": "클러스터 DNS",
                 "특징": "서비스 디스커버리"
             },
-            
+
             "kube-proxy": {
                 "버전": "v1.28.0",
                 "역할": "서비스 프록시",
                 "특징": "iptables/IPVS 모드"
             },
-            
+
             "aws-ebs-csi-driver": {
                 "버전": "v1.24.0",
                 "역할": "EBS 볼륨",
                 "특징": "동적 프로비저닝"
             },
-            
+
             "aws-efs-csi-driver": {
                 "버전": "v1.7.0",
                 "역할": "EFS 파일시스템",
                 "특징": "다중 Pod 공유"
             }
         }
-    
+
     def install_addon(self, addon_name):
         """
         Add-on 설치 및 업그레이드
@@ -460,7 +460,7 @@ class EKSAddons:
             --service-account-role-arn {role_arn} \\
             --resolve-conflicts OVERWRITE
         """
-        
+
         return command
 ```
 
@@ -507,7 +507,7 @@ class CostOptimizationStrategy:
             "monthly_cost": 350000,  # $350K
             "ops_cost": 200000  # 인건비 $200K
         }
-        
+
         self.after = {
             "setup": "EKS with mixed compute",
             "strategy": {
@@ -519,7 +519,7 @@ class CostOptimizationStrategy:
             "monthly_cost": 180000,  # $180K
             "ops_cost": 50000  # 인건비 $50K
         }
-    
+
     def implement_karpenter(self):
         """
         Karpenter: 지능형 노드 프로비저닝
@@ -531,7 +531,7 @@ class CostOptimizationStrategy:
                 "spot_handling": "자동 교체",
                 "right_sizing": "워크로드 맞춤"
             },
-            
+
             "configuration": """
             apiVersion: karpenter.sh/v1alpha5
             kind: Provisioner
@@ -544,18 +544,18 @@ class CostOptimizationStrategy:
                   values: ["spot", "on-demand"]
                 - key: node.kubernetes.io/instance-type
                   operator: In
-                  values: 
+                  values:
                     - m5.large
                     - m5.xlarge
                     - m5.2xlarge
-              
+
               limits:
                 resources:
                   cpu: 1000
                   memory: 1000Gi
-              
+
               ttlSecondsAfterEmpty: 30
-              
+
               providerRef:
                 name: default
             """
@@ -577,7 +577,7 @@ class SpotStrategy:
                     "spot_percentage": 100
                 }
             ],
-            
+
             "interruption_handling": {
                 "aws_node_termination_handler": True,
                 "cordon_and_drain": True,
@@ -586,14 +586,14 @@ class SpotStrategy:
                 }
             }
         }
-    
+
     def calculate_savings(self):
         on_demand_cost = 0.096  # $/hour for m5.large
         spot_cost = 0.035  # Average spot price
-        
+
         monthly_hours = 730
         nodes = 200
-        
+
         savings = (on_demand_cost - spot_cost) * monthly_hours * nodes
         return f"Monthly savings: ${savings:,.0f}"
 ```
@@ -613,26 +613,26 @@ def troubleshoot_node_not_ready():
             "확인": "kubelet 서비스 상태",
             "해결": "systemctl restart kubelet"
         },
-        
+
         "2_check_cni": {
             "명령": "kubectl logs -n kube-system aws-node-xxxxx",
             "확인": "VPC CNI 로그",
             "해결": "ENI/IP 한계 확인"
         },
-        
+
         "3_check_disk": {
             "명령": "df -h",
             "확인": "디스크 공간",
             "해결": "이미지 정리 또는 볼륨 확장"
         },
-        
+
         "4_check_memory": {
             "명령": "free -h",
             "확인": "메모리 압박",
             "해결": "Pod eviction 또는 노드 추가"
         }
     }
-    
+
     return diagnostic_steps
 ```
 
@@ -650,7 +650,7 @@ class IRSATroubleshooting:
                 """,
                 "해결": "OIDC Provider 생성"
             },
-            
+
             "2_trust_relationship": {
                 "확인": "IAM Role Trust Policy",
                 "필요": {
@@ -664,20 +664,20 @@ class IRSATroubleshooting:
                     }
                 }
             },
-            
+
             "3_service_account": {
                 "확인": "ServiceAccount 어노테이션",
                 "명령": "kubectl describe sa service-account-name",
                 "필요": "eks.amazonaws.com/role-arn annotation"
             },
-            
+
             "4_token_volume": {
                 "확인": "Token 볼륨 마운트",
                 "경로": "/var/run/secrets/eks.amazonaws.com/serviceaccount/token",
                 "명령": "kubectl exec pod-name -- ls -la /var/run/secrets/"
             }
         }
-        
+
         return checklist
 ```
 
@@ -694,21 +694,21 @@ def handle_upgrade_failure():
             "kubectl get pods --all-namespaces | grep -v Running  # 문제 Pod 확인",
             "aws eks list-addons --cluster-name cluster  # Add-on 버전 확인"
         ],
-        
+
         "upgrade_order": [
             "1. Control Plane 업그레이드 (AWS 자동)",
             "2. Add-ons 업그레이드",
             "3. Node Groups 업그레이드",
             "4. 애플리케이션 테스트"
         ],
-        
+
         "rollback_plan": {
             "control_plane": "자동 롤백 (AWS 관리)",
             "nodes": "이전 AMI로 새 Node Group 생성",
             "apps": "Helm rollback 또는 이전 manifest 적용"
         }
     }
-    
+
     return upgrade_strategy
 ```
 
@@ -724,7 +724,7 @@ def eks_best_practices():
             "Private endpoint 사용",
             "Secrets Manager/Parameter Store 통합"
         ],
-        
+
         "reliability": [
             "Multi-AZ 노드 분산",
             "Pod Disruption Budgets 설정",
@@ -732,7 +732,7 @@ def eks_best_practices():
             "Horizontal Pod Autoscaler",
             "Cluster Autoscaler 또는 Karpenter"
         ],
-        
+
         "performance": [
             "VPC CNI Prefix Delegation",
             "GP3 EBS 볼륨 사용",
@@ -740,7 +740,7 @@ def eks_best_practices():
             "Pod 리소스 requests/limits 설정",
             "노드 affinity/anti-affinity"
         ],
-        
+
         "cost": [
             "Spot 인스턴스 활용",
             "Fargate Spot 사용",
@@ -748,7 +748,7 @@ def eks_best_practices():
             "Karpenter로 right-sizing",
             "미사용 리소스 정리"
         ],
-        
+
         "operations": [
             "GitOps (Flux/ArgoCD)",
             "Prometheus/Grafana 모니터링",
@@ -786,7 +786,7 @@ def choose_compute_service():
             "< 1시간": "Fargate (ECS/EKS)",
             "> 1시간": "EC2/ECS/EKS"
         },
-        
+
         "아키텍처": {
             "함수": "Lambda",
             "컨테이너": {
@@ -795,19 +795,19 @@ def choose_compute_service():
             },
             "VM": "EC2"
         },
-        
+
         "스케일링": {
             "이벤트_기반": "Lambda",
             "예측_가능": "ECS/EKS",
             "복잡한_규칙": "EKS + Karpenter"
         },
-        
+
         "비용_민감도": {
             "매우_민감": "Lambda + Spot",
             "보통": "Fargate",
             "낮음": "On-Demand EC2"
         },
-        
+
         "운영_복잡도": {
             "최소": "Lambda",
             "낮음": "Fargate",
@@ -815,7 +815,7 @@ def choose_compute_service():
             "높음": "EKS"
         }
     }
-    
+
     return decision_tree
 ```
 

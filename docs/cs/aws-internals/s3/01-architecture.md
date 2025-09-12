@@ -77,7 +77,7 @@ S3를 처음 본다면 이렇게 생각할 수 있습니다:
 graph LR
     User[사용자] -->|PUT/GET| S3[S3 ☁️]
     S3 --> Storage[(저장소)]
-    
+
     style S3 fill:#FF9900
 ```
 
@@ -90,34 +90,34 @@ graph TB
         SDK[AWS SDK]
         CLI[AWS CLI]
     end
-    
+
     subgraph "엣지 레이어 (전 세계 450+ 위치)"
         CF1[CloudFront POP 🌍]
         CF2[CloudFront POP 🌎]
         CF3[CloudFront POP 🌏]
     end
-    
+
     subgraph "API 게이트웨이 레이어"
         ALB1[Load Balancer 1]
         ALB2[Load Balancer 2]
         ALB3[Load Balancer N...]
-        
+
         API1[API Server 1]
         API2[API Server 2]
         API3[API Server N...]
     end
-    
+
     subgraph "인덱스 레이어"
         IDX1[Index Service 1]
         IDX2[Index Service 2]
         IDXDB[(Index DB)]
     end
-    
+
     subgraph "배치 레이어"
         PM[Placement Manager]
         RING[Consistent Hash Ring]
     end
-    
+
     subgraph "스토리지 레이어"
         subgraph "Zone A"
             SA1[Storage Node]
@@ -135,19 +135,19 @@ graph TB
             SC3[Storage Node]
         end
     end
-    
+
     subgraph "메타데이터 레이어"
         META[(Metadata Store)]
         CACHE[(Metadata Cache)]
     end
-    
+
     User --> SDK --> CF1
     CF1 --> ALB1 --> API1
     API1 --> IDX1 --> IDXDB
     API1 --> PM --> RING
     RING --> SA1 & SB1 & SC1
     SA1 & SB1 & SC1 --> META
-    
+
     style CF1 fill:#4CAF50
     style API1 fill:#2196F3
     style PM fill:#FF9900
@@ -175,7 +175,7 @@ sequenceDiagram
     participant DNS as DNS
     participant CF as CloudFront, (가장 가까운 엣지)
     participant S3API as S3 API Gateway
-    
+
     U->>DNS: s3.amazonaws.com 주소 좀?
     DNS-->>U: 52.216.164.171 (가장 가까운 엣지)
     U->>CF: PUT /cute-cats/cat-2024.jpg
@@ -196,15 +196,15 @@ class S3PlacementManager:
         # 1. 해시 계산: 파일 이름으로 운명 결정!
         hash_value = self.calculate_hash(file_key)
         # "cute-cats/cat-2024.jpg" → 0xA3B2C1D4
-        
+
         # 2. Consistent Hashing으로 노드 선택
         primary_nodes = self.hash_ring.get_nodes(hash_value, count=3)
         # [Node_2847, Node_5912, Node_8103]
-        
+
         # 3. 각 노드는 다른 가용 영역에!
         zones = ['us-east-1a', 'us-east-1b', 'us-east-1c']
         placement = []
-        
+
         for node, zone in zip(primary_nodes, zones):
             placement.append({
                 'node': node,
@@ -212,12 +212,12 @@ class S3PlacementManager:
                 'rack': self.select_rack(node, zone),
                 'disk': self.select_disk(node)
             })
-        
+
         print(f"🎯 파일 배치 결정:")
         print(f"  Zone A: {placement[0]['node']} (Rack {placement[0]['rack']})")
         print(f"  Zone B: {placement[1]['node']} (Rack {placement[1]['rack']})")
         print(f"  Zone C: {placement[2]['node']} (Rack {placement[2]['rack']})")
-        
+
         return placement
 ```
 
@@ -234,17 +234,17 @@ class S3ErasureCoding:
     """
     def encode_file(self, file_data):
         print("🔮 Erasure Coding 마법 시전!")
-        
+
         # 1. 파일을 14개 데이터 조각으로 분할
         data_shards = self.split_into_shards(file_data, n=14)
         # 각 조각: 5MB / 14 = 약 366KB
-        
+
         # 2. 3개의 패리티 조각 생성 (마법의 핵심!)
         parity_shards = self.generate_parity(data_shards, m=3)
-        
+
         # 3. 총 17개 조각 = 14 데이터 + 3 패리티
         all_shards = data_shards + parity_shards
-        
+
         print(f"""
         📊 Erasure Coding 결과:
         ├─ 원본 파일: 5MB
@@ -253,26 +253,26 @@ class S3ErasureCoding:
         ├─ 총 저장 용량: 6.07MB (오버헤드 21%)
         └─ 복구 가능: 최대 3개 조각 손실까지!
         """)
-        
+
         return all_shards
-    
+
     def demonstrate_recovery(self):
         """
         실제로 복구가 되는지 보여드리죠!
         """
         original = "Hello, S3!"
-        
+
         # 인코딩
         shards = self.encode_simple(original)
         print(f"원본: {original}")
         print(f"조각들: {shards}")
-        
+
         # 3개 조각을 잃어버림! 😱
         shards[0] = None  # 손실!
         shards[5] = None  # 손실!
         shards[9] = None  # 손실!
         print(f"손실 후: {shards}")
-        
+
         # 그래도 복구 가능! 🎉
         recovered = self.recover(shards)
         print(f"복구됨: {recovered}")
@@ -293,7 +293,7 @@ graph TB
             P2[조각 2] --> AZ2[Zone B, Rack 8, Server 891, Disk 3]
             P3[조각 3] --> AZ3[Zone C, Rack 22, Server 156, Disk 11]
         end
-        
+
         subgraph "Secondary Set (다음 14개 조각)"
             S1[조각 4-17] -.-> CROSS[교차 배치 알고리즘]
             CROSS --> M1[다른 빌딩]
@@ -302,7 +302,7 @@ graph TB
             CROSS --> M4[다른 디스크 제조사]
         end
     end
-    
+
     style AZ1 fill:#FFE0B2
     style AZ2 fill:#C5E1A5
     style AZ3 fill:#B3E5FC
@@ -327,17 +327,17 @@ class S3ConsistencyManager:
     def write_with_strong_consistency(self, key, data):
         # 1. 글로벌 순서 번호 획득
         sequence_number = self.get_global_sequence_number()
-        
+
         # 2. 모든 복제본에 동시 쓰기 시작
         write_futures = []
         for replica in self.get_replicas(key):
             future = self.async_write(replica, key, data, sequence_number)
             write_futures.append(future)
-        
+
         # 3. Quorum 달성 대기 (과반수 이상)
         success_count = 0
         quorum = len(write_futures) // 2 + 1  # 17개 중 9개
-        
+
         for future in write_futures:
             if future.wait(timeout=100):  # 100ms 타임아웃
                 success_count += 1
@@ -345,11 +345,11 @@ class S3ConsistencyManager:
                     # 4. 쿼럼 달성! 클라이언트에게 성공 응답
                     self.mark_write_committed(key, sequence_number)
                     return "SUCCESS"
-        
+
         # 쿼럼 실패 시 롤백
         self.rollback(key, sequence_number)
         return "FAILURE"
-    
+
     def demonstrate_consistency(self):
         """
         강한 일관성 실험: Write 후 즉시 Read
@@ -358,7 +358,7 @@ class S3ConsistencyManager:
         self.old_s3_write("file.txt", "version 1")
         result = self.old_s3_read("file.txt")
         # result = None 또는 "version 1" (운에 따라!)
-        
+
         # After (강한 일관성)
         self.new_s3_write("file.txt", "version 2")
         result = self.new_s3_read("file.txt")
@@ -376,16 +376,16 @@ def calculate_data_loss_probability():
     """
     11 nines 내구성을 일상적인 확률과 비교
     """
-    
+
     # S3에 1조 개 객체를 저장했을 때
     objects = 1_000_000_000_000  # 1조
     durability = 0.99999999999  # 11 nines
-    
+
     # 1년 동안 잃을 것으로 예상되는 객체 수
     expected_loss = objects * (1 - durability)
     print(f"1조 개 중 1년 예상 손실: {expected_loss:.2f}개")
     # 결과: 0.01개 (100년에 1개!)
-    
+
     # 다른 확률들과 비교
     probabilities = {
         "비행기 추락": 1 / 11_000_000,
@@ -393,7 +393,7 @@ def calculate_data_loss_probability():
         "로또 1등": 1 / 8_145_060,
         "S3 데이터 손실": 1 / 100_000_000_000,  # 1000억 분의 1
     }
-    
+
     # S3 데이터 손실보다 일어날 확률이 높은 것들
     print(", 🎲 S3에서 데이터를 잃는 것보다 확률이 높은 일들:")
     for event, prob in probabilities.items():
@@ -408,7 +408,7 @@ def calculate_data_loss_probability():
 1조 개 중 1년 예상 손실: 0.01개
 🎲 S3에서 데이터를 잃는 것보다 확률이 높은 일들:
   • 비행기 추락: 9,091배 더 높음
-  • 벼락 맞기: 200,000배 더 높음  
+  • 벼락 맞기: 200,000배 더 높음
   • 로또 1등: 12,270배 더 높음
 ```
 
@@ -426,7 +426,7 @@ graph LR
         T5[지진/홍수]
         T6[휴먼 에러]
     end
-    
+
     subgraph "S3의 다층 방어 시스템 🛡️"
         subgraph "Layer 1: Erasure Coding"
             EC[17개 중 3개 손실 허용]
@@ -444,14 +444,14 @@ graph LR
             VER[실수 삭제 방지]
         end
     end
-    
+
     T1 --> EC --> SAFE[데이터 안전! ✅]
     T2 --> EC --> SAFE
     T3 --> GEO --> SAFE
     T4 --> GEO --> SAFE
     T5 --> GEO --> SAFE
     T6 --> VER --> SAFE
-    
+
     style SAFE fill:#4CAF50
 ```
 
@@ -464,7 +464,7 @@ class S3DisasterSimulation:
     """
     S3 재해 복구 시뮬레이션: 최악의 시나리오에서도 살아남기
     """
-    
+
     def __init__(self):
         self.regions = ['us-east-1', 'us-west-2', 'eu-west-1']
         self.availability_zones = {
@@ -472,11 +472,11 @@ class S3DisasterSimulation:
             'us-west-2': ['2a', '2b', '2c', '2d'],
             'eu-west-1': ['1a', '1b', '1c']
         }
-        
+
     def simulate_disaster(self, disaster_type):
         print(f", 🚨 재해 시뮬레이션: {disaster_type}")
         print("=" * 50)
-        
+
         if disaster_type == "단일 디스크 고장":
             self.single_disk_failure()
         elif disaster_type == "전체 서버 랙 화재":
@@ -485,11 +485,11 @@ class S3DisasterSimulation:
             self.datacenter_power_outage()
         elif disaster_type == "지진 (AZ 전체 손실)":
             self.earthquake_az_loss()
-    
+
     def single_disk_failure(self):
         print("""
         시나리오: HDD 1개가 갑자기 고장
-        
+
         1초: 디스크 I/O 에러 감지 🔴
         2초: 해당 디스크를 '불건전' 마킹
         3초: 영향받는 조각들 목록 작성
@@ -499,15 +499,15 @@ class S3DisasterSimulation:
               → 다른 16개 조각에서 재생성
         5분: 50% 복구 완료
         10분: 100% 복구 완료 ✅
-        
+
         사용자 영향: 전혀 없음 (읽기/쓰기 정상)
         데이터 손실: 0
         """)
-    
+
     def rack_fire(self):
         print("""
         시나리오: 서버 랙 하나에 화재 발생 (서버 42대 손실)
-        
+
         0초: 화재 감지, 스프링클러 작동 🔥
         1초: 해당 랙의 모든 서버 연결 끊김
         2초: 영향 분석 시작
@@ -517,17 +517,17 @@ class S3DisasterSimulation:
              → 우선순위: 최근 접근 객체
         1시간: 30% 복구
         6시간: 100% 복구 완료 ✅
-        
-        사용자 영향: 
+
+        사용자 영향:
           - 99.9% 사용자: 영향 없음
           - 0.1% 사용자: 1-2초 지연
         데이터 손실: 0
         """)
-    
+
     def datacenter_power_outage(self):
         print("""
         시나리오: AZ 하나 전체 정전 (UPS 고장)
-        
+
         0초: 주 전원 차단 ⚡
         0.001초: UPS 전환 실패 감지
         0.1초: 디젤 발전기 시동... 실패!
@@ -537,39 +537,39 @@ class S3DisasterSimulation:
              → 다른 AZ의 복제본으로
         5초: 읽기 요청 100% 정상화
         10초: 쓰기 요청을 다른 AZ로 리디렉션
-        
+
         영향:
           - 읽기: 2-5초 지연 후 정상
           - 쓰기: 10초 지연 후 정상
           - 해당 AZ 복구까지 2/3 내구성으로 운영
         데이터 손실: 0
-        
+
         4시간 후: 전원 복구
         24시간 후: 모든 복제본 재동기화 완료 ✅
         """)
-    
+
     def earthquake_az_loss(self):
         print("""
         시나리오: 대지진으로 AZ 하나 완전 파괴
-        
+
         0초: 규모 7.0 지진 발생 🌍
         10초: AZ-1a 모든 연결 두절
         30초: AZ-1a 영구 손실로 판단
               → 3천만 서버, 10억 객체 조각 손실
-        
+
         1분: 재해 복구 모드 발동
              → 모든 쓰기를 남은 AZ로만
              → Erasure coding 파라미터 조정
-        
+
         1시간: 긴급 복제 시작
               → 손실된 조각들을 재생성
               → 다른 리전의 리소스도 동원
-        
+
         1일: 20% 복구
-        1주: 60% 복구  
+        1주: 60% 복구
         1개월: 100% 복구 완료 ✅
-        
-        놀라운 사실: 
+
+        놀라운 사실:
           - 서비스 중단 시간: 0
           - 데이터 손실: 0
           - 이유: 나머지 14개 조각으로 완벽 복구 가능!
@@ -587,34 +587,34 @@ class S3RequestRouter:
     """
     S3 요청 라우터: 초당 1억 요청을 우아하게 처리하기
     """
-    
+
     def route_request(self, request):
         # Step 1: DNS 기반 지리적 라우팅
         nearest_edge = self.find_nearest_edge(request.client_ip)
         print(f"🌍 가장 가까운 엣지: {nearest_edge.location}")
-        
+
         # Step 2: 로드 밸런싱 (여러 알고리즘 조합)
         target_server = self.select_server(nearest_edge, request)
-        
+
         # Step 3: 핫 파티션 감지 및 분산
         if self.is_hot_partition(request.key):
             print(f"🔥 핫 파티션 감지! 자동 샤딩 적용")
             return self.handle_hot_partition(request)
-        
+
         return target_server
-    
+
     def demonstrate_auto_scaling(self):
         """
         실시간 오토스케일링 시연
         """
         print(", 📈 Black Friday 트래픽 시뮬레이션")
-        
+
         for hour in range(24):
             traffic = self.get_traffic_pattern(hour)
             capacity = self.calculate_required_capacity(traffic)
-            
+
             print(f"{hour:02d}:00 - 트래픽: {traffic:,} req/s")
-            
+
             if traffic > self.current_capacity * 0.8:
                 print(f"  ⚡ 오토스케일링 트리거!")
                 print(f"  ➕ 서버 {capacity - self.current_capacity}대 추가")
@@ -634,30 +634,30 @@ graph TB
         subgraph "L1: CloudFront Edge Cache"
             CF[450+ 엣지 로케이션, 인기 콘텐츠 캐싱, Hit Rate: 92%]
         end
-        
-        subgraph "L2: Regional Cache" 
+
+        subgraph "L2: Regional Cache"
             RC[13개 리전 캐시, 자주 접근하는 메타데이터, Hit Rate: 85%]
         end
-        
+
         subgraph "L3: Hot Partition Cache"
             HC[인기 파티션 메모리 캐싱, 최근 1시간 데이터, Hit Rate: 70%]
         end
-        
+
         subgraph "L4: SSD Cache"
             SC[NVMe SSD 캐시, 최근 24시간 데이터, Hit Rate: 60%]
         end
-        
+
         subgraph "L5: Main Storage"
             MS[HDD 메인 스토리지, 모든 데이터, Hit Rate: 100%]
         end
     end
-    
+
     Request[사용자 요청] --> CF
     CF -->|Cache Miss| RC
     RC -->|Cache Miss| HC
     HC -->|Cache Miss| SC
     SC -->|Cache Miss| MS
-    
+
     style CF fill:#4CAF50
     style RC fill:#8BC34A
     style HC fill:#CDDC39
@@ -676,7 +676,7 @@ class S3BestPractices:
     """
     S3 베스트 프랙티스: 실수에서 배우기
     """
-    
+
     def antipattern_sequential_names(self):
         """
         안티패턴 1: 순차적인 이름 사용
@@ -688,7 +688,7 @@ class S3BestPractices:
             "logs/2024/01/01/00/00/02.log",
         ]
         print("문제: 같은 파티션에 몰려서 핫스팟 발생!")
-        
+
         print(", ✅ 좋은 예: 랜덤 prefix 추가")
         import hashlib
         good_keys = []
@@ -698,7 +698,7 @@ class S3BestPractices:
             good_keys.append(good_key)
             print(f"  {good_key}")
         print("효과: 요청이 여러 파티션에 고르게 분산!")
-    
+
     def antipattern_large_listings(self):
         """
         안티패턴 2: 한 prefix에 수백만 객체
@@ -708,20 +708,20 @@ class S3BestPractices:
         print("  s3://bucket/data/file2.json")
         print("  ... (1000만 개)")
         print("문제: LIST 작업이 극도로 느림!")
-        
+
         print(", ✅ 좋은 예: 계층적 구조")
         print("  s3://bucket/data/2024/01/01/chunk1/")
         print("  s3://bucket/data/2024/01/01/chunk2/")
         print("효과: LIST 작업 1000배 빨라짐!")
-    
+
     def pattern_multipart_upload(self):
         """
         베스트 프랙티스: 대용량 파일 업로드
         """
         print(", 🚀 멀티파트 업로드 최적화")
-        
+
         file_size_gb = 10
-        
+
         # 청크 크기 계산
         if file_size_gb < 1:
             chunk_size = "5MB"
@@ -732,7 +732,7 @@ class S3BestPractices:
         else:
             chunk_size = "100MB"
             parallel = 10
-            
+
         print(f"""
         파일 크기: {file_size_gb}GB
         권장 설정:
@@ -752,10 +752,10 @@ def cost_optimization_case_study():
     """
     실제 사례: 스타트업 A사의 S3 비용 90% 절감기
     """
-    
+
     print("💰 S3 비용 최적화 여정")
     print("=" * 50)
-    
+
     # Before
     before = {
         "storage_class": "STANDARD",
@@ -768,7 +768,7 @@ def cost_optimization_case_study():
             "거의 안 봄": "84TB (84%)"
         }
     }
-    
+
     # 최적화 전략
     optimization = {
         "step1": {
@@ -792,7 +792,7 @@ def cost_optimization_case_study():
             "saving": "추가 5%"
         }
     }
-    
+
     # After
     after = {
         "storage_distribution": {
@@ -804,7 +804,7 @@ def cost_optimization_case_study():
         "monthly_cost": "$230",
         "총_절감액": "$2,070 (90%)"
     }
-    
+
     print(f"""
     📊 최적화 결과:
     ├─ 이전 비용: ${before['monthly_cost']}/월
@@ -825,7 +825,7 @@ def s3_recent_innovations():
     """
     S3의 최근 혁신과 미래
     """
-    
+
     innovations = {
         "2020": {
             "Strong Consistency": "드디어 강한 일관성!",
@@ -848,7 +848,7 @@ def s3_recent_innovations():
             "효과": "데이터 파이프라인 50% 단순화"
         }
     }
-    
+
     print("🔮 S3의 미래 예측:")
     print("├─ 양자 내성 암호화 도입 (2025?)")
     print("├─ 제타바이트 스케일 지원 (2026?)")
