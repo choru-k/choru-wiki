@@ -12,13 +12,13 @@ tags:
 
 GAE 는 gamma 을 undiscounted MDP에서 variance reduction parameter 로 다룹니다.
 
-$g^{\gamma} = E[\sum^{\infty}_{t=0}A^{\pi, \gamma}(s_t,a_t)\nabla_{\theta}log{\pi_{\theta}(a_t|s_t)}]$
+$g^{\gamma} = E[\sum^{\infty}_{t=0}A^{\pi, \gamma}(s_t,a_t), abla_{\theta}log{\pi_{\theta}(a_t|s_t)}]$
 
-[![](https://www.dropbox.com/s/ra7hxksveg2hz45/figure4.jpg?dl=1)](https://www.dropbox.com/s/ra7hxksveg2hz45/figure4.jpg?dl=1)
+[![GAE bias variance tradeoff diagram](https://www.dropbox.com/s/ra7hxksveg2hz45/figure4.jpg?dl=1)](https://www.dropbox.com/s/ra7hxksveg2hz45/figure4.jpg?dl=1)
 
 k 가 커질수록 bias 는 줄어듭니다. (간단하게 생각해서 더 많은 sample 을 사용하고 sample 이 많다는건 variance 는 커지고 bias 는 줄어듭니다.)
 
-[![](https://www.dropbox.com/s/yg1ybmfkep3towu/figure5.jpg?dl=1)](https://www.dropbox.com/s/yg1ybmfkep3towu/figure5.jpg?dl=1)
+[![GAE bias variance analysis chart](https://www.dropbox.com/s/yg1ybmfkep3towu/figure5.jpg?dl=1)](https://www.dropbox.com/s/yg1ybmfkep3towu/figure5.jpg?dl=1)
 
 TD( lambda ) 와 같은 문제가 생기고 결국 이걸 다시 일반화 하기위해서 GAE 가 나오게 됩니다.
 
