@@ -27,7 +27,7 @@ tags:
 with open('huge_log.txt', 'r') as f:
     for line in f:
         process_line(line)  # 6시간 걸림...
-```text
+```
 
 회사 컴퓨터는 RAM이 16GB뿐인데, 100GB 파일을 어떻게 처리할까요? 답답한 마음에 선배 개발자에게 물어봤더니, 그는 웃으며 이렇게 말했습니다:
 
@@ -56,7 +56,7 @@ void* mmap(void* addr,    // 희망 주소 (보통 NULL)
           int flags,       // 매핑 타입
           int fd,          // 파일 디스크립터
           off_t offset);   // 파일 오프셋
-```text
+```
 
 매핑 타입:
 
@@ -65,21 +65,21 @@ graph TD
     MMAP["mmap()]
     MMAP --> FILE[파일 매핑"]
     MMAP --> ANON["익명 매핑]
-    
+
     FILE --> PRIV[MAP_PRIVATE
 Copy-on-Write"]
     FILE --> SHAR["MAP_SHARED
 공유"]
-    
+
     ANON --> APRIV["MAP_PRIVATE
 힙 대체"]
     ANON --> ASHAR["MAP_SHARED
 프로세스 간 공유"]
-    
+
     style FILE fill:#E3F2FD
     style ANON fill:#FFF3E0
     style SHAR fill:#4CAF50
-```text
+```
 
 ### 1.2 파일 매핑 예제: 실제로 해보기
 
@@ -96,12 +96,12 @@ char* map_file(const char* filename) {
     // 1. 파일 열기
     int fd = open(filename, O_RDONLY);
     if (fd < 0) return NULL;
-    
+
     // 2. 파일 크기 확인
     struct stat st;
     fstat(fd, &st);
     size_t filesize = st.st_size;
-    
+
     // 3. 메모리 매핑
     char* data = mmap(NULL,           // 커널이 주소 선택
                      filesize,         // 전체 파일
@@ -109,7 +109,7 @@ char* map_file(const char* filename) {
                      MAP_PRIVATE,      // 수정 시 복사
                      fd,               // 파일
                      0);               // 처음부터
-    
+
     close(fd);  // 매핑 후 fd는 필요 없음
     return data;
 }
@@ -118,20 +118,20 @@ char* map_file(const char* filename) {
 int main() {
     // 10GB 파일을 "메모리에" 올림 (실제론 가상 주소만 할당)
     char* content = map_file("server_log_10gb.txt");
-    
+
     printf("10GB 파일이 메모리에 올라갔습니다!, ");
     printf("(사실은 가상 주소만 할당된 상태), , ");
-    
+
     // 파일을 배열처럼 접근 - 이 순간 실제 읽기 발생
     printf("첫 100자: ");
     for (int i = 0; i < 100; i++) {
         printf("%c", content[i]);  // Page Fault → 디스크에서 로드
     }
-    
+
     // 랜덤 접근도 순식간에! (인덱스로 바로 점프)
     printf(", , 파일 중간 지점: %c, ", content[5000000000]);  // 5GB 지점
     printf("파일 끝: %c, ", content[10737418239]);  // 10GB - 1
-    
+
     // 특정 패턴 검색 (grep보다 빠를 수 있음!)
     int error_count = 0;
     for (size_t i = 0; i < 10737418240 - 5; i++) {
@@ -140,21 +140,21 @@ int main() {
         }
     }
     printf(", ERROR 발생 횟수: %d, ", error_count);
-    
+
     munmap(content, 10737418240);
-    
+
     // 실행 결과:
     // 10GB 파일이 메모리에 올라갔습니다!
     // (사실은 가상 주소만 할당된 상태)
-    // 
+    //
     // 첫 100자: 2024-01-15 09:00:01 INFO Server started successfully...
-    // 
+    //
     // 파일 중간 지점: E
-    // 파일 끝: , 
-    // 
+    // 파일 끝: ,
+    //
     // ERROR 발생 횟수: 42
 }
-```text
+```
 
 ### 1.3 메모리 매핑의 동작 원리: 무대 뒤에서 일어나는 일
 
@@ -189,7 +189,7 @@ CPU: "어? 이 주소에 메모리가 없네? Page Fault!"
 ├──────────────┤      ├──────────────┤     ├──────────────┤
 │ 0x7000-0x8000│ ←──→ │  [데이터]    │ ←── │ 0-4096       │ ✓ 읽음!
 ├──────────────┤      ├──────────────┤     ├──────────────┤
-│ 0x8000-0x9000│ ?──? │     ...      │     │ 4096-8192    │ 
+│ 0x8000-0x9000│ ?──? │     ...      │     │ 4096-8192    │
 ├──────────────┤      ├──────────────┤     ├──────────────┤
 │ 0x9000-0xA000│ ?──? │     ...      │     │ 8192-12288   │
 └──────────────┘      └──────────────┘     └──────────────┘
@@ -202,7 +202,7 @@ CPU: "오, 이번엔 메모리에 있네! 바로 드릴게요" (나노초 단위
 프로그램: "5GB 지점 문자 주세요"
 CPU: "Page Fault!"
 커널: "5GB 지점만 읽어올게요" (나머지 9.99GB는 여전히 디스크에!)
-```text
+```
 
 이것이 바로 **Demand Paging(요구 페이징)**입니다. 필요한 순간에만 필요한 만큼만 메모리에 올립니다. 마치 넷플릭스가 2시간짜리 영화를 한 번에 다운로드하지 않고 스트리밍하는 것처럼요!
 
@@ -231,32 +231,32 @@ int chat_server() {
     // 1. 비밀 회의실 열쇠 만들기
     key_t key = ftok("/tmp/chatroom", 65);
     printf("회의실 키 생성: %d, ", key);
-    
+
     // 2. 회의실(공유 메모리) 만들기 - 1KB 크기
     int shmid = shmget(key, 1024, IPC_CREAT | 0666);
     printf("회의실 ID: %d, ", shmid);
-    
+
     // 3. 회의실 입장 (프로세스 주소 공간에 연결)
     char* chatroom = shmat(shmid, NULL, 0);
     printf("회의실 주소: %p, ", chatroom);
-    
+
     // 4. 메시지 남기기
     while (1) {
         printf("메시지 입력: ");
         fgets(chatroom, 1024, stdin);
-        
+
         if (strcmp(chatroom, "exit, ") == 0) break;
-        
+
         printf("[서버] 메시지 전송됨: %s", chatroom);
         sleep(1);  // 클라이언트가 읽을 시간 주기
     }
-    
+
     // 5. 회의실 나가기 (연결만 끊음, 회의실은 유지)
     shmdt(chatroom);
-    
+
     // 6. 회의실 폐쇄 (선택사항)
     shmctl(shmid, IPC_RMID, NULL);
-    
+
     return 0;
 }
 
@@ -265,30 +265,30 @@ void chat_client() {
     // 1. 같은 열쇠로 회의실 찾기
     key_t key = ftok("/tmp/chatroom", 65);
     printf("회의실 키로 입장 시도: %d, ", key);
-    
+
     // 2. 이미 만들어진 회의실 찾기
     int shmid = shmget(key, 1024, 0666);
     if (shmid < 0) {
         printf("회의실이 없습니다! 서버를 먼저 실행하세요., ");
         return;
     }
-    
+
     // 3. 회의실 입장 (같은 메모리를 봄!)
     char* chatroom = shmat(shmid, NULL, 0);
     printf("회의실 입장 성공! 주소: %p, ", chatroom);
-    
+
     // 4. 메시지 읽기
     char last_msg[1024] = "";
     while (1) {
         if (strcmp(chatroom, last_msg) != 0 && strlen(chatroom) > 0) {
             printf("[클라이언트] 새 메시지: %s", chatroom);
             strcpy(last_msg, chatroom);
-            
+
             if (strcmp(chatroom, "exit, ") == 0) break;
         }
         usleep(100000);  // 0.1초마다 확인
     }
-    
+
     // 5. 회의실 나가기
     shmdt(chatroom);
     printf("채팅 종료, ");
@@ -302,13 +302,13 @@ void chat_client() {
 // 회의실 주소: 0x7f8a12345000
 // 메시지 입력: 안녕하세요!
 // [서버] 메시지 전송됨: 안녕하세요!
-// 
+//
 // [터미널 2 - 클라이언트]
 // $ ./client
 // 회의실 키로 입장 시도: 1090519041
 // 회의실 입장 성공! 주소: 0x7f9b23456000  // 주소는 다르지만 같은 물리 메모리!
 // [클라이언트] 새 메시지: 안녕하세요!
-```text
+```
 
 ### 2.2 POSIX 공유 메모리: 현대적인 접근
 
@@ -323,20 +323,20 @@ System V가 1970년대 방식이라면, POSIX는 1990년대에 등장한 개선�
 void producer() {
     // 1. 공유 메모리 객체 생성
     int fd = shm_open("/myshm", O_CREAT | O_RDWR, 0666);
-    
+
     // 2. 크기 설정
     ftruncate(fd, 4096);
-    
+
     // 3. 메모리 매핑
-    int* shared = mmap(NULL, 4096, 
+    int* shared = mmap(NULL, 4096,
                       PROT_READ | PROT_WRITE,
                       MAP_SHARED, fd, 0);
-    
+
     // 4. 데이터 쓰기
     for (int i = 0; i < 100; i++) {
         shared[i] = i * i;
     }
-    
+
     munmap(shared, 4096);
     close(fd);
 }
@@ -345,22 +345,22 @@ void producer() {
 void consumer() {
     // 1. 기존 공유 메모리 열기
     int fd = shm_open("/myshm", O_RDONLY, 0666);
-    
+
     // 2. 읽기 전용 매핑
     int* shared = mmap(NULL, 4096,
                       PROT_READ,
                       MAP_SHARED, fd, 0);
-    
+
     // 3. 데이터 읽기
     for (int i = 0; i < 100; i++) {
         printf("%d ", shared[i]);
     }
-    
+
     munmap(shared, 4096);
     close(fd);
     shm_unlink("/myshm");  // 정리
 }
-```text
+```
 
 ### 2.3 공유 메모리 동기화: 충돌 방지하기
 
@@ -388,7 +388,7 @@ void init_shared_data(shared_data_t* data) {
     pthread_mutexattr_init(&mutex_attr);
     pthread_mutexattr_setpshared(&mutex_attr, PTHREAD_PROCESS_SHARED);
     pthread_mutex_init(&data->mutex, &mutex_attr);
-    
+
     sem_init(&data->sem_full, 1, 0);    // 프로세스 간 공유
     sem_init(&data->sem_empty, 1, 100);
     data->index = 0;
@@ -397,26 +397,26 @@ void init_shared_data(shared_data_t* data) {
 // 생산자
 void produce(shared_data_t* data, int value) {
     sem_wait(&data->sem_empty);         // 빈 슬롯 대기
-    
+
     pthread_mutex_lock(&data->mutex);
     data->buffer[data->index++] = value;
     pthread_mutex_unlock(&data->mutex);
-    
+
     sem_post(&data->sem_full);          // 데이터 있음 신호
 }
 
 // 소비자
 int consume(shared_data_t* data) {
     sem_wait(&data->sem_full);          // 데이터 대기
-    
+
     pthread_mutex_lock(&data->mutex);
     int value = data->buffer[--data->index];
     pthread_mutex_unlock(&data->mutex);
-    
+
     sem_post(&data->sem_empty);         // 빈 슬롯 신호
     return value;
 }
-```text
+```
 
 ## 3. 메모리 매핑 I/O의 장점: 왜 빠른가?
 
@@ -441,17 +441,17 @@ graph TD
         K1 --> U1[사용자 버퍼"]
         U1 --> P1[처리]
     end
-    
+
     subgraph "메모리 매핑 I/O"
         F2["파일] --> PC[페이지 캐시]
         PC --> VM[가상 메모리"]
         VM --> P2[직접 처리]
     end
-    
+
     style K1 fill:#FFE082
     style U1 fill:#FFE082
     style PC fill:#4CAF50
-```text
+```
 
 실제 성능 차이를 측정해봅시다:
 
@@ -463,14 +463,14 @@ void process_file_traditional(const char* filename) {
     FILE* f = fopen(filename, "r");
     char buffer[4096];
     clock_t start = clock();
-    
+
     while (fread(buffer, 1, sizeof(buffer), f) > 0) {
         // 처리: 시스템 콜 + 복사
         process_data(buffer);
     }
-    
+
     clock_t end = clock();
-    printf("Traditional: %.3f seconds, ", 
+    printf("Traditional: %.3f seconds, ",
            (double)(end - start) / CLOCKS_PER_SEC);
     fclose(f);
 }
@@ -480,18 +480,18 @@ void process_file_mmap(const char* filename) {
     int fd = open(filename, O_RDONLY);
     struct stat st;
     fstat(fd, &st);
-    
+
     clock_t start = clock();
-    char* data = mmap(NULL, st.st_size, PROT_READ, 
+    char* data = mmap(NULL, st.st_size, PROT_READ,
                      MAP_PRIVATE, fd, 0);
-    
+
     // 직접 접근: 복사 없음
     process_data_direct(data, st.st_size);
-    
+
     clock_t end = clock();
     printf("Memory mapped: %.3f seconds, ",
            (double)(end - start) / CLOCKS_PER_SEC);
-    
+
     munmap(data, st.st_size);
     close(fd);
 }
@@ -499,11 +499,11 @@ void process_file_mmap(const char* filename) {
 // 실제 측정 결과 (1GB 파일, SSD 기준):
 // Traditional: 2.341 seconds (시스템 콜 10만 번 + 메모리 복사)
 // Memory mapped: 0.823 seconds (페이지 폴트만 발생)
-// 
+//
 // 10GB 파일에서는 차이가 더 극명:
 // Traditional: 31.2 seconds + 10GB RAM 사용
 // Memory mapped: 8.7 seconds + 실제 접근한 부분만 RAM 사용
-```text
+```
 
 ### 3.2 페이지 캐시 활용: 커널의 똑똑한 캐싱
 
@@ -525,7 +525,7 @@ Linux 페이지 캐시:
 1. 여러 프로세스가 같은 캐시 공유
 2. 자동 캐싱과 해제
 3. 메모리 압박 시 자동 스왑
-```text
+```
 
 ### 3.3 대용량 파일 처리: RAM보다 큰 파일 다루기
 
@@ -537,14 +537,14 @@ void analyze_huge_weblog(const char* filename) {
     int fd = open(filename, O_RDONLY);
     struct stat st;
     fstat(fd, &st);
-    
+
     // 전체 파일을 매핑 (가상 주소만 할당)
     char* data = mmap(NULL, st.st_size, PROT_READ,
                      MAP_PRIVATE, fd, 0);
-    
+
     // 스마트한 분석: 필요한 부분만 메모리에
     printf("100GB 파일 분석 시작 (실제 RAM: 16GB), ");
-    
+
     // 1. 에러 로그만 찾기 (전체의 0.1%)
     size_t error_count = 0;
     for (off_t i = 0; i < st.st_size - 5; i++) {
@@ -556,17 +556,17 @@ void analyze_huge_weblog(const char* filename) {
             printf("에러 발견: %.*s, ", (int)(j-i), &data[i]);
             i = j;  // 다음 라인으로 점프
         }
-        
+
         // 진행률 표시
         if (i % (1024*1024*1024) == 0) {
             printf("진행: %ldGB / 100GB\r", i / (1024*1024*1024));
             fflush(stdout);
         }
     }
-    
+
     printf(", 분석 완료: 총 %zu개 에러 발견, ", error_count);
     printf("실제 사용 메모리: 약 2GB (페이지 캐시), ");
-    
+
     // 실행 결과:
     // 100GB 파일 분석 시작 (실제 RAM: 16GB)
     // 진행: 10GB / 100GB
@@ -575,11 +575,11 @@ void analyze_huge_weblog(const char* filename) {
     // ...
     // 분석 완료: 총 4,231개 에러 발견
     // 실제 사용 메모리: 약 2GB (페이지 캐시)
-    
+
     munmap(data, st.st_size);
     close(fd);
 }
-```text
+```
 
 ## 4. 공유 라이브러리의 메모리 공유: 한 번만 로드하기
 
@@ -596,15 +596,15 @@ graph TD
 가상 주소"]
         P3["Process 3] --> L3[libc.so
 가상 주소"]
-        
+
         L1 --> PM["물리 메모리
 단일 복사본"]
         L2 --> PM
         L3 --> PM
     end
-    
+
     style PM fill:#4CAF50
-```text
+```
 
 ### 4.2 실제 메모리 절약 확인: 직접 확인해보기
 
@@ -627,10 +627,10 @@ done
 # PID 1234: 7f8a12345000-7f8a12500000 r-xp /lib/libc.so.6
 # PID 5678: 7f9b23456000-7f9b23611000 r-xp /lib/libc.so.6
 # PID 9012: 7fac34567000-7fac34722000 r-xp /lib/libc.so.6
-# 
+#
 # 가상 주소는 다르지만 (7f8a..., 7f9b..., 7fac...)
 # 모두 같은 물리 메모리 페이지를 가리킴!
-```text
+```
 
 ### 4.3 Position Independent Code (PIC): 어디든 로드 가능한 코드
 
@@ -655,7 +655,7 @@ void call_function() {
     // call printf@PLT
     printf("Hello, ");
 }
-```text
+```
 
 ## 5. 고급 메모리 매핑 기법: 실전 응용
 
@@ -690,24 +690,24 @@ typedef struct {
 
 mmdb_t* mmdb_open(const char* filename) {
     mmdb_t* db = malloc(sizeof(mmdb_t));
-    
+
     db->fd = open(filename, O_RDWR | O_CREAT, 0666);
     struct stat st;
     fstat(db->fd, &st);
-    
+
     if (st.st_size == 0) {
         // 새 DB 초기화
         st.st_size = sizeof(db_header_t) + 1000 * sizeof(record_t);
         ftruncate(db->fd, st.st_size);
     }
-    
+
     db->size = st.st_size;
     db->data = mmap(NULL, db->size, PROT_READ | PROT_WRITE,
                    MAP_SHARED, db->fd, 0);
-    
+
     db->header = (db_header_t*)db->data;
     db->records = (record_t*)((char*)db->data + sizeof(db_header_t));
-    
+
     if (db->header->magic == 0) {
         // 초기화
         db->header->magic = 0xDEADBEEF;
@@ -715,7 +715,7 @@ mmdb_t* mmdb_open(const char* filename) {
         db->header->record_count = 0;
         db->header->record_size = sizeof(record_t);
     }
-    
+
     return db;
 }
 
@@ -724,11 +724,11 @@ void mmdb_insert(mmdb_t* db, const char* name, int age, float salary) {
     strncpy(db->records[idx].name, name, 63);
     db->records[idx].age = age;
     db->records[idx].salary = salary;
-    
+
     // 자동으로 파일에 반영됨!
     msync(&db->records[idx], sizeof(record_t), MS_SYNC);
 }
-```text
+```
 
 ### 5.2 Ring Buffer를 이용한 IPC: 초고속 프로세스 통신
 
@@ -748,40 +748,40 @@ typedef struct {
 ring_buffer_t* create_ring_buffer(size_t size) {
     // 2의 제곱 크기로 조정
     size = 1 << (32 - __builtin_clz(size - 1));
-    
+
     int fd = shm_open("/ring", O_CREAT | O_RDWR, 0666);
     ftruncate(fd, sizeof(ring_buffer_t) + size);
-    
-    ring_buffer_t* ring = mmap(NULL, 
+
+    ring_buffer_t* ring = mmap(NULL,
                               sizeof(ring_buffer_t) + size,
                               PROT_READ | PROT_WRITE,
                               MAP_SHARED, fd, 0);
-    
+
     ring->head = 0;
     ring->tail = 0;
     ring->size = size;
     ring->mask = size - 1;
-    
+
     return ring;
 }
 
 bool ring_write(ring_buffer_t* ring, const void* data, size_t len) {
     uint32_t head = ring->head;
     uint32_t tail = __atomic_load_n(&ring->tail, __ATOMIC_ACQUIRE);
-    
+
     if ((head - tail) + len > ring->size) {
         return false;  // 가득 참
     }
-    
+
     // 데이터 복사
     for (size_t i = 0; i < len; i++) {
         ring->data[(head + i) & ring->mask] = ((char*)data)[i];
     }
-    
+
     __atomic_store_n(&ring->head, head + len, __ATOMIC_RELEASE);
     return true;
 }
-```text
+```
 
 ### 5.3 Copy-on-Write 최적화: 똑똑한 복사
 
@@ -795,10 +795,10 @@ void* create_snapshot(void* original, size_t size) {
                          PROT_READ | PROT_WRITE,
                          MAP_PRIVATE | MAP_ANONYMOUS,
                          -1, 0);
-    
+
     // 원본 복사 (아직 물리 메모리 공유)
     memcpy(snapshot, original, size);
-    
+
     // 수정 시에만 실제 복사 발생
     return snapshot;
 }
@@ -808,7 +808,7 @@ void redis_background_save() {
     size_t size = 1024 * 1024 * 100;  // 100MB
     char* original = malloc(size);
     memset(original, 'A', size);
-    
+
     // Redis처럼 fork()로 스냅샷 생성
     pid_t pid = fork();
     if (pid == 0) {
@@ -816,15 +816,15 @@ void redis_background_save() {
         save_to_disk(original, size);
         exit(0);
     }
-    
+
     // 부모: 계속 서비스 (수정된 페이지만 복사)
     printf("백그라운드 저장 시작 (PID: %d), ", pid);
     printf("메모리 사용량: 변경된 페이지만 추가, ");
-    
+
     // 100MB 데이터 중 1MB만 수정해도
     // 추가 메모리는 1MB만 필요! (나머지는 공유)
 }
-```text
+```
 
 ## 6. 실전: 성능 최적화 비법
 
@@ -839,28 +839,28 @@ void optimize_video_streaming(void* video_data, size_t video_size) {
     // 순차 접근: 동영상은 처음부터 끝까지 순서대로
     madvise(video_data, video_size, MADV_SEQUENTIAL);
     printf("→ 커널이 미리 다음 부분을 읽어옴 (read-ahead), ");
-    
+
     // 시청자가 특정 구간으로 점프했을 때
     void* jump_position = video_data + (video_size / 2);  // 중간 지점
     madvise(jump_position, 1024*1024*10, MADV_WILLNEED);  // 10MB 미리 로드
     printf("→ 점프한 위치 미리 로딩, ");
-    
+
     // 이미 본 부분은 메모리에서 해제
     madvise(video_data, video_size / 2, MADV_DONTNEED);
     printf("→ 이미 본 부분 메모리 해제 (다른 프로세스가 사용 가능), ");
-    
+
     // 썸네일 생성용 랜덤 접근
     void* thumbnail_data = video_data;
     madvise(thumbnail_data, video_size, MADV_RANDOM);
     printf("→ 썸네일 생성 모드: 캐시 최적화 비활성화, ");
-    
+
     // 4K 영상은 Huge Pages 사용 (2MB 페이지)
     if (video_size > 1024*1024*1024) {  // 1GB 이상
         madvise(video_data, video_size, MADV_HUGEPAGE);
         printf("→ 대용량 영상: Huge Pages 활성화 (TLB 미스 감소), ");
     }
 }
-```text
+```
 
 ### 6.2 벤치마크와 프로파일링: 측정하지 않으면 개선할 수 없다
 
@@ -872,40 +872,40 @@ void optimize_video_streaming(void* video_data, size_t video_size) {
 
 void benchmark_memory_access() {
     size_t size = 1024 * 1024 * 100;  // 100MB
-    
+
     // 익명 매핑 (힙 대체)
     void* anon = mmap(NULL, size, PROT_READ | PROT_WRITE,
                      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    
+
     // 파일 매핑
     int fd = open("testfile", O_RDWR);
     void* file = mmap(NULL, size, PROT_READ | PROT_WRITE,
                      MAP_SHARED, fd, 0);
-    
+
     // 공유 메모리
     int shm_fd = shm_open("/bench", O_CREAT | O_RDWR, 0666);
     ftruncate(shm_fd, size);
     void* shared = mmap(NULL, size, PROT_READ | PROT_WRITE,
                        MAP_SHARED, shm_fd, 0);
-    
+
     // 성능 측정
     struct timespec start, end;
-    
+
     // 쓰기 테스트
     clock_gettime(CLOCK_MONOTONIC, &start);
     memset(anon, 'A', size);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    printf("Anonymous write: %.3f ms, ", 
+    printf("Anonymous write: %.3f ms, ",
            (end.tv_sec - start.tv_sec) * 1000.0 +
            (end.tv_nsec - start.tv_nsec) / 1000000.0);
-    
+
     // 페이지 폴트 확인
     struct rusage usage;
     getrusage(RUSAGE_SELF, &usage);
     printf("Page faults: %ld minor, %ld major, ",
            usage.ru_minflt, usage.ru_majflt);
 }
-```text
+```
 
 ## 7. 문제 해결과 디버깅: 실수에서 배우기
 
@@ -940,7 +940,7 @@ void* ptr = mmap(NULL, size, PROT_READ, ...);
 
 // 해결: 적절한 권한 설정
 PROT_READ | PROT_WRITE
-```text
+```
 
 ### 7.2 디버깅 도구: 문제를 찾는 현미경
 
@@ -961,7 +961,7 @@ mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, 3, 0) = 0x7f8a00000000
 
 # 페이지 폴트 모니터링
 $ perf stat -e page-faults,major-faults ./program
-```text
+```
 
 ## 8. 정리: 메모리 매핑의 핵심 정리
 
