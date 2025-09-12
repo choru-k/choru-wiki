@@ -1340,26 +1340,27 @@ void check_memory_fragmentation() {
 
 ### 실전 팁: 바로 적용 가능한 것들
 
-1. **AWS/GCP 인스턴스 메모리 부족?**
+**AWS/GCP 인스턴스 메모리 부족?**
 
-   ```bash
-   # 즉시 20% 메모리 확보
-   sudo modprobe zram
-   sudo zramctl -f -s 2G -a lz4
-   sudo mkswap /dev/zram0
-   sudo swapon -p 100 /dev/zram0
-   ```
+```bash
+# 즉시 20% 메모리 확보
+sudo modprobe zram
+sudo zramctl -f -s 2G -a lz4
+sudo mkswap /dev/zram0
+sudo swapon -p 100 /dev/zram0
+```
 
-2. **Docker 메모리 최적화**
+**Docker 메모리 최적화**
 
-   ```bash
-   # KSM으로 컨테이너 메모리 공유
-   echo 1 | sudo tee /sys/kernel/mm/ksm/run
-   ```
+```bash
+# KSM으로 컨테이너 메모리 공유
+echo 1 | sudo tee /sys/kernel/mm/ksm/run
+```
 
-3. **Redis/Memcached 메모리 부족**
-   - zswap 활성화로 스파이크 대응
-   - 압축 친화적 데이터 구조 사용
+**Redis/Memcached 메모리 부족**
+
+- zswap 활성화로 스파이크 대응
+- 압축 친화적 데이터 구조 사용
 
 ## 관련 문서
 
