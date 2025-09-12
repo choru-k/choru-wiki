@@ -230,6 +230,10 @@ nav:
               - "6-2: VFS and Filesystem Abstraction": cs/guide/chapter-06-file-io/02-vfs-filesystem.md
               - "6-3: Block I/O and Disk Scheduling": cs/guide/chapter-06-file-io/03-block-io.md
               - "6-4: Async I/O and Event Programming": cs/guide/chapter-06-file-io/04-async-io.md
+              - "6-5: I/O Performance Analysis": cs/guide/chapter-06-file-io/05-io-performance-analysis.md
+              - "6-6: Filesystem Debugging": cs/guide/chapter-06-file-io/06-filesystem-debugging.md
+              - "6-7: Network Filesystem Optimization": cs/guide/chapter-06-file-io/07-network-filesystem-optimization.md
+              - "6-8: Advanced Storage Troubleshooting": cs/guide/chapter-06-file-io/08-advanced-storage-troubleshooting.md
           - "Chapter 7: Network Programming":
               - "Overview": cs/guide/chapter-07-network-programming/index.md
               - "7-1: Socket Programming Basics": cs/guide/chapter-07-network-programming/01-socket-basics.md
@@ -318,6 +322,11 @@ nav:
               - "ELB/ALB: Black Friday Crisis Management": cs/aws-internals/load-balancing/01-elb-alb.md
               - "NLB/GWLB: Fortnite's 100M Concurrent Users": cs/aws-internals/load-balancing/02-nlb-gwlb.md
               - "Algorithms: Instagram's 10B User Distribution": cs/aws-internals/load-balancing/03-algorithms.md
+          - Networking:
+              - "VPC: Netflix's 200Gbps Virtual Network": cs/aws-internals/networking/01-vpc.md
+              - "Route 53: Spotify's 0.001s DNS Magic": cs/aws-internals/networking/02-route53.md
+              - "CloudFront: Disney+'s 1000M Stream CDN": cs/aws-internals/networking/03-cloudfront.md
+              - "Direct Connect: JP Morgan's 0.001s Trading": cs/aws-internals/networking/04-direct-connect.md
       - Kubernetes Deep Dive (Storytelling):
           - Architecture:
               - "Overview: Google's 2B Containers Secret": cs/kubernetes/architecture/01-overview.md
