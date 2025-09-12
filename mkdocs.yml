@@ -248,6 +248,8 @@ nav:
               - "8-2: Event Loop and Concurrency": cs/guide/chapter-08-async-programming/02-event-loop.md
               - "8-3: Coroutine and Green Thread": cs/guide/chapter-08-async-programming/03-coroutine.md
               - "8-4: Distributed Async Patterns": cs/guide/chapter-08-async-programming/04-distributed-async.md
+              - "8-5: Event Loop Debugging": cs/guide/chapter-08-async-programming/05-event-loop-debugging.md
+              - "8-6: Promise Performance Optimization": cs/guide/chapter-08-async-programming/06-promise-performance-optimization.md
           - "Chapter 9: Memory & GC":
               - "Overview": cs/guide/chapter-09-memory-gc/index.md
               - "9-1: Memory Allocator Internals": cs/guide/chapter-09-memory-gc/01-memory-allocator.md
@@ -329,6 +331,11 @@ nav:
               - "Route 53: Spotify's 0.001s DNS Magic": cs/aws-internals/networking/02-route53.md
               - "CloudFront: Disney+'s 1000M Stream CDN": cs/aws-internals/networking/03-cloudfront.md
               - "Direct Connect: JP Morgan's 0.001s Trading": cs/aws-internals/networking/04-direct-connect.md
+          - Compute:
+              - "EC2 Nitro: Netflix's 400Gbps Streaming": cs/aws-internals/compute/01-ec2-nitro.md
+              - "Lambda: Duolingo's 100M Users Secret": cs/aws-internals/compute/02-lambda.md
+              - "ECS: Pinterest's 10B Images Serving": cs/aws-internals/compute/03-ecs.md
+              - "EKS: Airbnb's 5000 Microservices": cs/aws-internals/compute/04-eks.md
       - Kubernetes Deep Dive (Storytelling):
           - Architecture:
               - "Overview: Google's 2B Containers Secret": cs/kubernetes/architecture/01-overview.md
