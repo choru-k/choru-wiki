@@ -36,12 +36,12 @@ Lyft의 엔지니어링 팀은 급격한 성장에 직면했습니다. 기존 �
 ```mermaid
 graph TB
     subgraph "Consistent Hash Ring"
-        N1[Node 1, 0-85]
-        N2[Node 2, 86-170]
-        N3[Node 3, 171-255]
-        N4[Node 4, 256-341]
-        N5[Node 5, 342-427]
-        N6[Node 6, 428-512]
+        N1["Node 1: 0-85"]
+        N2["Node 2: 86-170"]
+        N3["Node 3: 171-255"]
+        N4["Node 4: 256-341"]
+        N5["Node 5: 342-427"]
+        N6["Node 6: 428-512"]
         
         N1 --> N2
         N2 --> N3
@@ -59,12 +59,12 @@ graph TB
     end
     
     subgraph "Replication"
-        R1[Replica 1, Leader]
-        R2[Replica 2, Follower]
-        R3[Replica 3, Follower]
+        R1["Replica 1: Leader"]
+        R2["Replica 2: Follower"]
+        R3["Replica 3: Follower"]
     end
     
-    Item[Item: ride_id=123] --> |Hash(ride_id)=250| N4
+    Item["Item: ride_id=123"] --> |"Hash(ride_id)=250"| N4
     N4 --> R1
     R1 -.->|Quorum Write| R2
     R1 -.->|Quorum Write| R3

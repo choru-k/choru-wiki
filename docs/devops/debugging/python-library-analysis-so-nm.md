@@ -120,9 +120,10 @@ GLIBC_2.14
 ```
 
 # 수학 라이브러리 의존성
+
 nm -D mymodule.so | grep -E "(sin|cos|exp|log)"
 
-### 3. 정의된 함수 목록 (API 분석)
+## 정의된 함수 목록 (API 분석)
 
 ```bash
 # 모듈에서 export하는 함수들

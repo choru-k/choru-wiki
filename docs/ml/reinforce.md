@@ -9,7 +9,7 @@ tags:
 
 Q값을 Montecarlo Search 을 이용해서 처리.
 
-$\Delta \theta_t = \alpha \nabla_{\theta}log\pi_{\theta}(s_t,a_t)v_t$
+$\Delta \theta_t = \alpha , abla_{\theta}log\pi_{\theta}(s_t,a_t)v_t$
 
 v 는 Q의 unbiased 한 샘플. 즉 경험적으로 구한 Q값.
 

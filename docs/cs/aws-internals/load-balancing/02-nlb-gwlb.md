@@ -329,7 +329,7 @@ sequenceDiagram
     participant Client as 클라이언트
     participant GWLB as GWLB
     participant FW as 방화벽
-    participant IDS as IDS/IPS
+    participant IDS as "IDS/IPS"
     participant Server as 서버
     
     Note over Client,Server: GWLB 투명 검사 흐름
@@ -348,11 +348,8 @@ sequenceDiagram
     Note over GWLB: GENEVE 제거
     GWLB->>Server: 원본 패킷
     
-    Note over Client,Server: 전체 추가 지연: < 1ms
+    Note over Client,Server: "전체 추가 지연: < 1ms"
     
-    style GWLB fill:#FFD700
-    style FW fill:#FF6B6B
-    style IDS fill:#4ECDC4
 ```
 
 ### 실제 구현: Netflix의 DDoS 방어 시스템

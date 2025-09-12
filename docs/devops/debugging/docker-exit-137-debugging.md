@@ -62,7 +62,6 @@ kernel: Out of memory: Killed process 12345 (myapp) total-vm:2048000kB, anon-rss
 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=docker-abc123.scope,mems_allowed=0,oom_memcg=/docker/abc123,task_memcg=/docker/abc123
 ```
 
-
 메모리 사용량 추적:
 
 ```bash
@@ -94,6 +93,7 @@ PartOf=nginx.service    # 위험! nginx가 죽으면 myapp도 죽음
 ```
 
 # nginx 서비스 상태 확인
+
 systemctl status nginx.service
 
 # Active: failed (Result: exit-code)

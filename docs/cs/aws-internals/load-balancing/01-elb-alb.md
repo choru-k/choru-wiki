@@ -362,30 +362,28 @@ sequenceDiagram
     participant TG as Target Group
     participant T as Target Server
     
-    Note over C,T: 요청 처리 흐름 (전체 50ms)
+    Note over C,T: "요청 처리 흐름 (전체 50ms)"
     
     C->>ALB: HTTPS Request (5ms)
-    Note over ALB: SSL Termination, SNI 처리
+    Note over ALB: "SSL Termination, SNI 처리"
     
-    ALB->>ALB: HTTP/2 → HTTP/1.1, 변환 (필요시)
+    ALB->>ALB: "HTTP/2 → HTTP/1.1 변환 (필요시)"
     
     ALB->>R: Rule Matching (1ms)
-    Note over R: 1. Host Header 체크, 2. Path Pattern 매칭, 3. HTTP Header 검사, 4. Query String 파싱
+    Note over R: "1. Host Header 체크<br/>2. Path Pattern 매칭<br/>3. HTTP Header 검사<br/>4. Query String 파싱"
     
-    R->>TG: Target Group 선택
+    R->>TG: "Target Group 선택"
     
-    TG->>TG: Target 선택 알고리즘, (2ms)
-    Note over TG: - Health Status 확인, - Stickiness 체크, - Load Balancing 알고리즘
+    TG->>TG: "Target 선택 알고리즘 (2ms)"
+    Note over TG: "Health Status 확인<br/>Stickiness 체크<br/>Load Balancing 알고리즘"
     
     TG->>T: Request Forward (5ms)
     T->>TG: Response (30ms)
-    TG->>ALB: Response
+    TG->>ALB: "Response"
     ALB->>C: HTTPS Response (7ms)
     
-    Note over C,T: Total: ~50ms
+    Note over C,T: "Total: ~50ms"
     
-    style ALB fill:#FFD700
-    style R fill:#FF6B6B
 ```
 
 ### Connection Multiplexing의 마법

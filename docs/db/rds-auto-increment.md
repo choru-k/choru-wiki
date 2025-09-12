@@ -74,9 +74,9 @@ graph TB
     end
     
     subgraph "Key Storage Comparison"
-        F[INT Primary Key<br/>~3900 keys per page]
-        G[UUID BINARY16<br/>~900 keys per page]
-        H[UUID VARCHAR36<br/>~400 keys per page]
+        F["INT Primary Key, ~3900 keys per page"]
+        G["UUID BINARY16, ~900 keys per page"]
+        H["UUID VARCHAR36, ~400 keys per page"]
     end
     
     D --> F
@@ -716,10 +716,10 @@ graph TB
     subgraph "Sharding 방식"
         A1[애플리케이션] 
         A2[Sharding Logic]
-        A3[DB Shard 1<br/>users_1000-1999]
-        A4[DB Shard 2<br/>users_2000-2999]  
-        A5[DB Shard 3<br/>users_3000-3999]
-        A6[DB Shard N<br/>users_N000-N999]
+        A3["DB Shard 1, users_1000-1999"]
+        A4["DB Shard 2, users_2000-2999"]  
+        A5["DB Shard 3, users_3000-3999"]
+        A6["DB Shard N, users_N000-N999"]
         
         A1 --> A2
         A2 --> A3
@@ -729,15 +729,15 @@ graph TB
     end
     
     subgraph "Multi-Database 방식"
-        B1[User Service] --> B2[User DB<br/>완전한 users 테이블]
-        B3[Order Service] --> B4[Order DB<br/>완전한 orders 테이블]
-        B5[Product Service] --> B6[Product DB<br/>완전한 products 테이블]
+        B1[User Service] --> B2["User DB, 완전한 users 테이블"]
+        B3[Order Service] --> B4["Order DB, 완전한 orders 테이블"]
+        B5[Product Service] --> B6["Product DB, 완전한 products 테이블"]
     end
     
     subgraph "복잡성 비교"
-        C1["Sharding:<br/>• Cross-shard JOIN 불가<br/>• 분산 트랜잭션 필요<br/>• 리샤딩 작업 복잡<br/>• 데이터 불균형 문제"]
+        C1["Sharding:, • Cross-shard JOIN 불가, • 분산 트랜잭션 필요, • 리샤딩 작업 복잡, • 데이터 불균형 문제"]
         
-        C2["Multi-DB:<br/>• 서비스별 독립적<br/>• 일반적인 RDBMS 기능<br/>• 단순한 백업/복구<br/>• 명확한 책임 분리"]
+        C2["Multi-DB:, • 서비스별 독립적, • 일반적인 RDBMS 기능, • 단순한 백업/복구, • 명확한 책임 분리"]
     end
 ```
 

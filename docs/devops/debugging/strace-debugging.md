@@ -129,7 +129,6 @@ $ head -20 startup.log
 
 **분석**: 데이터베이스 연결에서 2초 이상 타임아웃 발생!
 
-
 시간이 오래 걸리는 시스템 콜 분석:
 
 ```bash
@@ -142,7 +141,6 @@ connect(3, {...}, 16) = -1 ETIMEDOUT <2.108432>
 read(4, "", 4096) = 0 <0.567890>
 open("/etc/ssl/certs/ca-certificates.crt", O_RDONLY) = 5 <0.123456>
 ```
-
 
 ### 시나리오 2: 높은 CPU 사용률, 하지만 원인 불명
 
@@ -182,7 +180,6 @@ mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f1
 mmap(NULL, 16384, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f123405000
 # munmap 호출이 보이지 않음 → 메모리 누수 의심
 ```
-
 
 메모리 할당/해제 균형 확인:
 

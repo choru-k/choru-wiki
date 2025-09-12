@@ -19,11 +19,11 @@ $[n_1,n_2,n_3,...,n_l]$
 
 라는 beautiful array 가 존재한다고 하자.
 
-$n_i+n_j \neq 2 * n_k (i \leq k \leq j)$
+$n_i+n_j , eq 2 * n_k (i \leq k \leq j)$
 
 을 만족한다. 만약 모든 배열의 원소에 `a` 을 더해보자
 
-$[n_1+a, n_2+a, ..., n_l+a] \\ (n_i + a) + (n_j + a) \neq 2 * (n_k + a)$
+$[n_1+a, n_2+a, ..., n_l+a] \\ (n_i + a) + (n_j + a) , eq 2 * (n_k + a)$
 
 즉 `a` 을 더해도 그 배열은 beautiful array 가 된다는 걸 보여줄 수 있다.
 
@@ -31,7 +31,7 @@ $[n_1+a, n_2+a, ..., n_l+a] \\ (n_i + a) + (n_j + a) \neq 2 * (n_k + a)$
 
 마찬가지로 `a` 을 곱해보자
 
-$[an_1, an_2, ..., an_l] \\ (an_i) + (an_j) \neq 2 * (an_k)$
+$[an_1, an_2, ..., an_l] \\ (an_i) + (an_j) , eq 2 * (an_k)$
 
 즉 `a` 을 곱해도 그 배열은 beautiful array 가 된다는 걸 알 수 있다.
 
