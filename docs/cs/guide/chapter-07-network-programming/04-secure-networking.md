@@ -44,7 +44,7 @@ Verify return code: 21 (unable to verify the first certificate)
 $ openssl s_client -connect mysite.com:443
 Verify return code: 0 (ok)
 # Let's Encrypt 덕분에 무료 SSL! 🎉
-```
+```text
 
 ### 1.1 TLS 레이어 구조
 
@@ -81,7 +81,7 @@ graph TB
     
     style HP fill:#f9f,stroke:#333
     style RL fill:#bbf,stroke:#333
-```
+```text
 
 ### 1.2 TLS 1.3 핸드셰이크
 
@@ -102,7 +102,7 @@ TLS 1.3:
     
     재연결 시 (0-RTT):
     ClientHello + EarlyData → 즉시 데이터 전송 가능!
-```
+```text
 
 TLS 1.3는 1-RTT 핸드셰이크를 기본으로 합니다:
 
@@ -146,7 +146,7 @@ static const CipherSuite tls13_cipher_suites[] = {
     {0x1302, EVP_aes_256_gcm(), EVP_sha384(), 32, 12, 16},  // TLS_AES_256_GCM_SHA384
     {0x1303, EVP_chacha20_poly1305(), EVP_sha256(), 32, 12, 16}  // TLS_CHACHA20_POLY1305_SHA256
 };
-```
+```text
 
 ### 1.3 핸드셰이크 프로토콜 구현
 
@@ -220,7 +220,7 @@ TLSContext* tls_server_init(const char* cert_file, const char* key_file) {
     
     // 개인키 검증
     if (!SSL_CTX_check_private_key(ctx->ssl_ctx)) {
-        fprintf(stderr, "Private key does not match certificate\n");
+        fprintf(stderr, "Private key does not match certificate, ");
         free(ctx);
         return NULL;
     }
@@ -257,15 +257,15 @@ int tls_handshake(TLSContext* ctx, int client_fd) {
         
         char buf[256];
         ERR_error_string_n(ERR_get_error(), buf, sizeof(buf));
-        fprintf(stderr, "SSL_accept failed: %s\n", buf);
+        fprintf(stderr, "SSL_accept failed: %s, ", buf);
         return -1;
     }
     
     ctx->handshake_complete = 1;
     
     // 협상된 프로토콜 정보
-    printf("TLS Version: %s\n", SSL_get_version(ctx->ssl));
-    printf("Cipher: %s\n", SSL_get_cipher(ctx->ssl));
+    printf("TLS Version: %s, ", SSL_get_version(ctx->ssl));
+    printf("Cipher: %s, ", SSL_get_cipher(ctx->ssl));
     
     // 세션 정보 추출
     SSL_get_client_random(ctx->ssl, ctx->client_random, 32);
@@ -284,21 +284,21 @@ static void tls_info_callback(const SSL* ssl, int where, int ret) {
     else str = "undefined";
     
     if (where & SSL_CB_LOOP) {
-        printf("%s: %s\n", str, SSL_state_string_long(ssl));
+        printf("%s: %s, ", str, SSL_state_string_long(ssl));
     } else if (where & SSL_CB_ALERT) {
         str = (where & SSL_CB_READ) ? "read" : "write";
-        printf("SSL3 alert %s: %s:%s\n", str,
+        printf("SSL3 alert %s: %s:%s, ", str,
                SSL_alert_type_string_long(ret),
                SSL_alert_desc_string_long(ret));
     } else if (where & SSL_CB_EXIT) {
         if (ret == 0) {
-            printf("%s: failed in %s\n", str, SSL_state_string_long(ssl));
+            printf("%s: failed in %s, ", str, SSL_state_string_long(ssl));
         } else if (ret < 0) {
-            printf("%s: error in %s\n", str, SSL_state_string_long(ssl));
+            printf("%s: error in %s, ", str, SSL_state_string_long(ssl));
         }
     }
 }
-```
+```text
 
 ## 2. X.509 인증서와 PKI
 
@@ -317,7 +317,7 @@ static void tls_info_callback(const SSL* ssl, int where, int ret) {
 
 $ certbot certonly --standalone -d mysite.com
 # 짜잔! SSL 인증서 발급 완료! 🎆
-```
+```text
 
 X.509 인증서는 마치 여권과 같습니다. 신원을 증명하고, 유효기간이 있으며, 위조가 어렵습니다.
 
@@ -327,11 +327,11 @@ X.509 인증서는 마치 여권과 같습니다. 신원을 증명하고, 유효
 
 인증서 체인은 "나는 A를 믿고, A는 B를 믿고, B는 C를 믿는다"는 신뢰의 사슬입니다:
 
-```
+```text
 Root CA (DigiCert Global Root CA)
   └─> Intermediate CA (DigiCert SHA2 Secure Server CA)
       └─> End Entity Certificate (www.example.com)
-```
+```text
 
 ```c
 // X.509 인증서 구조체
@@ -350,7 +350,7 @@ typedef struct {
 int verify_certificate_chain(SSL* ssl) {
     X509* peer_cert = SSL_get_peer_certificate(ssl);
     if (!peer_cert) {
-        fprintf(stderr, "No peer certificate\n");
+        fprintf(stderr, "No peer certificate, ");
         return -1;
     }
     
@@ -372,7 +372,7 @@ int verify_certificate_chain(SSL* ssl) {
     if (result != 1) {
         int err = X509_STORE_CTX_get_error(verify_ctx);
         const char* err_string = X509_verify_cert_error_string(err);
-        fprintf(stderr, "Certificate verification failed: %s\n", err_string);
+        fprintf(stderr, "Certificate verification failed: %s, ", err_string);
         
         // 상세 오류 정보
         int depth = X509_STORE_CTX_get_error_depth(verify_ctx);
@@ -380,7 +380,7 @@ int verify_certificate_chain(SSL* ssl) {
         
         char subject[256];
         X509_NAME_oneline(X509_get_subject_name(err_cert), subject, sizeof(subject));
-        fprintf(stderr, "Error at depth %d: %s\n", depth, subject);
+        fprintf(stderr, "Error at depth %d: %s, ", depth, subject);
     }
     
     X509_STORE_CTX_free(verify_ctx);
@@ -430,15 +430,15 @@ Certificate* parse_certificate(const char* cert_file) {
     int key_type = EVP_PKEY_base_id(cert->public_key);
     int key_bits = EVP_PKEY_bits(cert->public_key);
     
-    printf("Certificate Info:\n");
-    printf("  Subject: %s\n", cert->subject);
-    printf("  Issuer: %s\n", cert->issuer);
+    printf("Certificate Info:, ");
+    printf("  Subject: %s, ", cert->subject);
+    printf("  Issuer: %s, ", cert->issuer);
     printf("  Valid from: %s", ctime(&cert->not_before));
     printf("  Valid until: %s", ctime(&cert->not_after));
-    printf("  Key Type: %s\n", 
+    printf("  Key Type: %s, ", 
            key_type == EVP_PKEY_RSA ? "RSA" :
            key_type == EVP_PKEY_EC ? "ECDSA" : "Unknown");
-    printf("  Key Size: %d bits\n", key_bits);
+    printf("  Key Size: %d bits, ", key_bits);
     
     return cert;
 }
@@ -478,7 +478,7 @@ int verify_certificate_pin(SSL* ssl, const unsigned char* expected_pin) {
     
     return result == 0 ? 0 : -1;
 }
-```
+```text
 
 ### 2.2 OCSP Stapling
 
@@ -493,7 +493,7 @@ OCSP(Online Certificate Status Protocol)는 인증서가 현재 유효한지 확
 $ curl https://example.com
 curl: (35) error:14094414:SSL routines:ssl3_read_bytes:sslv3 alert certificate revoked
 # 인증서가 취소되었는데 몰랐다니! 😱
-```
+```text
 
 ```c
 // OCSP 응답 구조체
@@ -584,7 +584,7 @@ OCSPResponse* fetch_ocsp_response(X509* cert, X509* issuer) {
     X509_email_free(urls);
     return resp;
 }
-```
+```text
 
 ## 3. 암호화 알고리즘과 성능
 
@@ -608,7 +608,7 @@ ChaCha20-Poly1305 (ARM/모바일 최적):
   CPU 사용률: 20%
   
 # 결론: 서버는 AES-GCM, 모바일은 ChaCha20!
-```
+```text
 
 ### 3.1 대칭 암호화 구현
 
@@ -765,13 +765,13 @@ void benchmark_ciphers(void) {
                         (end.tv_nsec - start.tv_nsec) / 1e9;
         double throughput = (data_size * 100) / elapsed / (1024 * 1024);
         
-        printf("%s: %.2f MB/s\n", ciphers[i].name, throughput);
+        printf("%s: %.2f MB/s, ", ciphers[i].name, throughput);
     }
     
     free(data);
     free(output);
 }
-```
+```text
 
 ### 3.2 비대칭 암호화와 키 교환
 
@@ -788,7 +788,7 @@ PFS 없이:
 PFS 사용:
     "서버 키 탈취 → 과거 통신은 여전히 안전 🎆"
     "각 세션마다 다른 키 사용!"
-```
+```text
 
 ```c
 // ECDHE 키 교환
@@ -886,7 +886,7 @@ int rsa_verify(RSASignContext* ctx,
     EVP_MD_CTX_free(ctx->md_ctx);
     return ret == 1 ? 0 : -1;
 }
-```
+```text
 
 ## 4. TLS 성능 최적화
 
@@ -907,7 +907,7 @@ int rsa_verify(RSASignContext* ctx,
 - 세션 재사용: 80%
 - CPU 사용률: 30% (AES-NI 활용)
 - 0-RTT: 10% 트래픽에서 활용
-```
+```text
 
 ### 4.1 Session Resumption
 
@@ -928,7 +928,7 @@ Session Resumption은 마치 놀이공원의 패스트트랙과 같습니다. �
     티켓 제시 (5ms)
     키 협상 (10ms)
     총: 15ms (10배 빨라짐!)
-```
+```text
 
 ```c
 // 세션 캐시
@@ -1066,7 +1066,7 @@ int receive_early_data(SSL* ssl, void* buf, size_t buf_len) {
     
     return -1;
 }
-```
+```text
 
 ### 4.2 하드웨어 가속
 
@@ -1088,7 +1088,7 @@ type             16 bytes     64 bytes    256 bytes   1024 bytes   8192 bytes
 aes-128-gcm     450.78M     1850.34M    2980.56M    3250.78M     3380.12M
 
 # 5배 성능 향상! 🚀
-```
+```text
 
 ```c
 // AES-NI 지원 확인
@@ -1184,7 +1184,7 @@ void chacha20_avx2(uint32_t* state, uint8_t* out, size_t len) {
     _mm256_storeu_si256((__m256i*)&out[64], s[2]);
     _mm256_storeu_si256((__m256i*)&out[96], s[3]);
 }
-```
+```text
 
 ## 5. 보안 프로그래밍 패턴
 
@@ -1206,7 +1206,7 @@ void chacha20_avx2(uint32_t* state, uint8_t* out, size_t len) {
    
 4. "메모리를 안전하게 지워라"
    → 키, 비밀번호는 사용 후 즉시 덮어쓰기
-```
+```text
 
 ### 5.1 보안 버퍼 관리
 
@@ -1317,7 +1317,7 @@ int timing_safe_auth(const char* input_token, const char* valid_token) {
     
     return result == 0;
 }
-```
+```text
 
 ### 5.2 보안 검증과 방어
 
@@ -1340,7 +1340,7 @@ for i in {1..1000000}; do
   curl -X POST https://api.example.com/login
 done
 # 결과: 서버 다운...
-```
+```text
 
 ```c
 // SQL Injection 방지
@@ -1475,7 +1475,7 @@ int check_rate_limit(RateLimiter* limiter, const char* client_ip) {
     pthread_mutex_unlock(&limiter->lock);
     return 0;  // 허용
 }
-```
+```text
 
 ## 6. 모니터링과 디버깅
 
@@ -1495,7 +1495,7 @@ $ sslyze --regular example.com:443
 
 # testssl.sh로 취약점 검사
 $ ./testssl.sh https://example.com
-```
+```text
 
 ### 6.1 TLS 트래픽 분석
 
@@ -1519,7 +1519,7 @@ TLS 버전 분포:
   
 세션 재사용률: 78%
 0-RTT 사용률: 12%
-```
+```text
 
 ```c
 // TLS 트래픽 모니터
@@ -1597,23 +1597,23 @@ void tls_monitor_callback(const SSL* ssl, int where, int ret) {
 
 // 통계 출력
 void print_tls_stats(TLSMonitor* monitor) {
-    printf("TLS Statistics:\n");
-    printf("  Total Handshakes: %ld\n", 
+    printf("TLS Statistics:, ");
+    printf("  Total Handshakes: %ld, ", 
            atomic_load(&monitor->handshakes_total));
-    printf("  Failed Handshakes: %ld\n", 
+    printf("  Failed Handshakes: %ld, ", 
            atomic_load(&monitor->handshakes_failed));
-    printf("  Sessions Resumed: %ld\n", 
+    printf("  Sessions Resumed: %ld, ", 
            atomic_load(&monitor->sessions_resumed));
-    printf("  Early Data Accepted: %ld\n", 
+    printf("  Early Data Accepted: %ld, ", 
            atomic_load(&monitor->early_data_accepted));
     
-    printf("\nProtocol Distribution:\n");
-    printf("  TLS 1.0: %ld\n", atomic_load(&monitor->tls10_count));
-    printf("  TLS 1.1: %ld\n", atomic_load(&monitor->tls11_count));
-    printf("  TLS 1.2: %ld\n", atomic_load(&monitor->tls12_count));
-    printf("  TLS 1.3: %ld\n", atomic_load(&monitor->tls13_count));
+    printf(", Protocol Distribution:, ");
+    printf("  TLS 1.0: %ld, ", atomic_load(&monitor->tls10_count));
+    printf("  TLS 1.1: %ld, ", atomic_load(&monitor->tls11_count));
+    printf("  TLS 1.2: %ld, ", atomic_load(&monitor->tls12_count));
+    printf("  TLS 1.3: %ld, ", atomic_load(&monitor->tls13_count));
     
-    printf("\nCipher Suite Usage:\n");
+    printf(", Cipher Suite Usage:, ");
     pthread_rwlock_rdlock(&monitor->lock);
     
     GHashTableIter iter;
@@ -1621,18 +1621,18 @@ void print_tls_stats(TLSMonitor* monitor) {
     g_hash_table_iter_init(&iter, monitor->cipher_stats);
     
     while (g_hash_table_iter_next(&iter, &key, &value)) {
-        printf("  %s: %d\n", (char*)key, GPOINTER_TO_INT(value));
+        printf("  %s: %d, ", (char*)key, GPOINTER_TO_INT(value));
     }
     
     pthread_rwlock_unlock(&monitor->lock);
     
     double bytes_enc = atomic_load(&monitor->bytes_encrypted) / (1024.0 * 1024.0);
     double bytes_dec = atomic_load(&monitor->bytes_decrypted) / (1024.0 * 1024.0);
-    printf("\nData Transfer:\n");
-    printf("  Encrypted: %.2f MB\n", bytes_enc);
-    printf("  Decrypted: %.2f MB\n", bytes_dec);
+    printf(", Data Transfer:, ");
+    printf("  Encrypted: %.2f MB, ", bytes_enc);
+    printf("  Decrypted: %.2f MB, ", bytes_dec);
 }
-```
+```text
 
 ## 요약
 
@@ -1654,7 +1654,7 @@ void print_tls_stats(TLSMonitor* monitor) {
 □ 하드웨어 가속 활용
 □ 보안 버퍼 관리
 □ 정기적인 보안 감사
-```
+```text
 
 ### 🔒 마지막 조언
 

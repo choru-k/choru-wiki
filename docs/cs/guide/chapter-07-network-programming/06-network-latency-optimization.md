@@ -48,7 +48,7 @@ graph TD
         U[경로 추적]
         V[애플리케이션 프로파일링]
     end
-```
+```text
 
 ## 1. 네트워크 지연시간 분석 도구
 
@@ -159,8 +159,8 @@ int create_icmp_socket() {
     int sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
     if (sock < 0) {
         if (errno == EPERM) {
-            printf("ICMP 소켓을 생성하려면 root 권한이 필요합니다.\n");
-            printf("sudo로 실행하거나 TCP 연결 테스트를 사용하세요.\n");
+            printf("ICMP 소켓을 생성하려면 root 권한이 필요합니다., ");
+            printf("sudo로 실행하거나 TCP 연결 테스트를 사용하세요., ");
         }
         return -1;
     }
@@ -378,24 +378,24 @@ int ping_test(const char *hostname, test_config_t *config) {
     measurement_t measurements[1000];
     target_stats_t stats;
 
-    printf("PING 테스트: %s\n", hostname);
+    printf("PING 테스트: %s, ", hostname);
 
     // 호스트명 해석
     if (resolve_hostname(hostname, &addr) < 0) {
-        printf("호스트명 해석 실패: %s\n", hostname);
+        printf("호스트명 해석 실패: %s, ", hostname);
         return -1;
     }
 
     strcpy(stats.hostname, hostname);
     stats.addr = addr;
 
-    printf("PING %s (%s): %d 바이트 데이터\n",
+    printf("PING %s (%s): %d 바이트 데이터, ",
            hostname, inet_ntoa(addr), config->packet_size);
 
     // ICMP 소켓 생성
     sock = create_icmp_socket();
     if (sock < 0) {
-        printf("TCP 연결 테스트로 대체합니다.\n");
+        printf("TCP 연결 테스트로 대체합니다., ");
 
         // TCP 연결 테스트로 대체
         for (int i = 0; i < config->count && running; i++) {
@@ -406,10 +406,10 @@ int ping_test(const char *hostname, test_config_t *config) {
 
             if (measurements[i].success) {
                 measurements[i].rtt = rtt;
-                printf("%d: %s port %d 연결 시간=%.2fms\n",
+                printf("%d: %s port %d 연결 시간=%.2fms, ",
                        i + 1, hostname, config->port, rtt);
             } else {
-                printf("%d: %s port %d 연결 실패\n", i + 1, hostname, config->port);
+                printf("%d: %s port %d 연결 실패, ", i + 1, hostname, config->port);
             }
 
             if (i < config->count - 1) {
@@ -427,14 +427,14 @@ int ping_test(const char *hostname, test_config_t *config) {
                 if (rtt >= 0) {
                     measurements[i].success = 1;
                     measurements[i].rtt = rtt;
-                    printf("%d: %s에서 응답: 시간=%.2fms\n", i + 1, hostname, rtt);
+                    printf("%d: %s에서 응답: 시간=%.2fms, ", i + 1, hostname, rtt);
                 } else {
                     measurements[i].success = 0;
-                    printf("%d: %s 요청 시간 초과\n", i + 1, hostname);
+                    printf("%d: %s 요청 시간 초과, ", i + 1, hostname);
                 }
             } else {
                 measurements[i].success = 0;
-                printf("%d: %s 패킷 전송 실패\n", i + 1, hostname);
+                printf("%d: %s 패킷 전송 실패, ", i + 1, hostname);
             }
 
             if (i < config->count - 1) {
@@ -449,29 +449,29 @@ int ping_test(const char *hostname, test_config_t *config) {
     calculate_statistics(measurements, config->count, &stats);
 
     // 결과 출력
-    printf("\n--- %s ping 통계 ---\n", hostname);
-    printf("%d 패킷 전송, %d 패킷 수신, %.1f%% 패킷 손실\n",
+    printf(", --- %s ping 통계 ---, ", hostname);
+    printf("%d 패킷 전송, %d 패킷 수신, %.1f%% 패킷 손실, ",
            stats.packets_sent, stats.packets_received, stats.packet_loss);
 
     if (stats.packets_received > 0) {
-        printf("왕복 시간 최소/평균/최대/표준편차 = %.2f/%.2f/%.2f/%.2f ms\n",
+        printf("왕복 시간 최소/평균/최대/표준편차 = %.2f/%.2f/%.2f/%.2f ms, ",
                stats.min_rtt, stats.avg_rtt, stats.max_rtt, stats.stddev_rtt);
-        printf("지터: %.2f ms\n", stats.jitter);
+        printf("지터: %.2f ms, ", stats.jitter);
     }
 
     return 0;
 }
 
 int traceroute_test(const char *hostname) {
-    printf("경로 추적: %s\n", hostname);
+    printf("경로 추적: %s, ", hostname);
 
     struct in_addr addr;
     if (resolve_hostname(hostname, &addr) < 0) {
-        printf("호스트명 해석 실패: %s\n", hostname);
+        printf("호스트명 해석 실패: %s, ", hostname);
         return -1;
     }
 
-    printf("traceroute to %s (%s), %d hops max\n",
+    printf("traceroute to %s (%s), %d hops max, ",
            hostname, inet_ntoa(addr), MAX_HOPS);
 
     // 간단한 traceroute 구현 (TCP 기반)
@@ -503,11 +503,11 @@ int traceroute_test(const char *hostname) {
 
         if (result == 0 || errno == ECONNREFUSED) {
             // 목적지 도달 또는 연결 거부 (정상)
-            printf("%s  %.2f ms\n", inet_ntoa(addr), rtt);
+            printf("%s  %.2f ms, ", inet_ntoa(addr), rtt);
             close(sock);
             break;
         } else {
-            printf("* * *\n");
+            printf("* * *, ");
         }
 
         close(sock);
@@ -517,7 +517,7 @@ int traceroute_test(const char *hostname) {
 }
 
 void bandwidth_test(const char *hostname, int port) {
-    printf("대역폭 테스트: %s:%d\n", hostname, port);
+    printf("대역폭 테스트: %s:%d, ", hostname, port);
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
@@ -527,7 +527,7 @@ void bandwidth_test(const char *hostname, int port) {
 
     struct hostent *he = gethostbyname(hostname);
     if (he == NULL) {
-        printf("호스트명 해석 실패\n");
+        printf("호스트명 해석 실패, ");
         close(sock);
         return;
     }
@@ -573,25 +573,25 @@ void bandwidth_test(const char *hostname, int port) {
 
     double bandwidth_mbps = (total_bytes * 8.0) / (duration * 1000000.0);
 
-    printf("전송 데이터: %ld 바이트\n", total_bytes);
-    printf("소요 시간: %.2f 초\n", duration);
-    printf("대역폭: %.2f Mbps\n", bandwidth_mbps);
+    printf("전송 데이터: %ld 바이트, ", total_bytes);
+    printf("소요 시간: %.2f 초, ", duration);
+    printf("대역폭: %.2f Mbps, ", bandwidth_mbps);
 
     close(sock);
 }
 
 void print_usage(const char *program_name) {
-    printf("네트워크 지연시간 분석기\n");
-    printf("사용법: %s [옵션] 호스트명\n", program_name);
-    printf("옵션:\n");
-    printf("  -c COUNT     ping 횟수 (기본값: 4)\n");
-    printf("  -i INTERVAL  ping 간격 (초, 기본값: 1)\n");
-    printf("  -s SIZE      패킷 크기 (바이트, 기본값: 64)\n");
-    printf("  -p PORT      TCP 테스트 포트 (기본값: 80)\n");
-    printf("  -t           traceroute 실행\n");
-    printf("  -b           대역폭 테스트 실행\n");
-    printf("  -w TIMEOUT   타임아웃 (초, 기본값: 5)\n");
-    printf("  --help       이 도움말 출력\n");
+    printf("네트워크 지연시간 분석기, ");
+    printf("사용법: %s [옵션] 호스트명, ", program_name);
+    printf("옵션:, ");
+    printf("  -c COUNT     ping 횟수 (기본값: 4), ");
+    printf("  -i INTERVAL  ping 간격 (초, 기본값: 1), ");
+    printf("  -s SIZE      패킷 크기 (바이트, 기본값: 64), ");
+    printf("  -p PORT      TCP 테스트 포트 (기본값: 80), ");
+    printf("  -t           traceroute 실행, ");
+    printf("  -b           대역폭 테스트 실행, ");
+    printf("  -w TIMEOUT   타임아웃 (초, 기본값: 5), ");
+    printf("  --help       이 도움말 출력, ");
 }
 
 int main(int argc, char *argv[]) {
@@ -633,7 +633,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (target_host == NULL) {
-        printf("오류: 대상 호스트를 지정해야 합니다.\n");
+        printf("오류: 대상 호스트를 지정해야 합니다., ");
         print_usage(argv[0]);
         return 1;
     }
@@ -643,26 +643,26 @@ int main(int argc, char *argv[]) {
     // 시그널 핸들러 설정
     signal(SIGINT, signal_handler);
 
-    printf("네트워크 지연시간 분석기\n");
-    printf("대상: %s\n", target_host);
-    printf("==========================\n\n");
+    printf("네트워크 지연시간 분석기, ");
+    printf("대상: %s, ", target_host);
+    printf("==========================, , ");
 
     // ping 테스트
     ping_test(target_host, &config);
 
     if (running && do_traceroute) {
-        printf("\n");
+        printf(", ");
         traceroute_test(target_host);
     }
 
     if (running && do_bandwidth) {
-        printf("\n");
+        printf(", ");
         bandwidth_test(target_host, config.port);
     }
 
     return 0;
 }
-```
+```text
 
 ## 2. 네트워크 최적화 자동화 스크립트
 
@@ -1181,6 +1181,6 @@ main() {
 
 # 스크립트 실행
 main "$@"
-```
+```text
 
 이 문서는 네트워크 지연시간 문제를 체계적으로 분석하고 최적화하는 방법을 제공합니다. C 기반 분석 도구와 Bash 최적화 스크립트를 통해 TCP 버퍼, 혼잡 제어, DNS 등을 종합적으로 최적화할 수 있습니다.

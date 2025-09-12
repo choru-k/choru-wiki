@@ -30,7 +30,7 @@ $ tcpdump -i eth0 -n port 443 -X
   Flags [P.], seq 1:1461, ack 1, win 65535, length 1460
   0x0000:  4500 05dc 3a2b 4000 3606 8c4a 8efa b92e  E...:+@.6..J....
   0x0010:  c0a8 0164 01bb d431 5e2a 1b3c 7f3d 4a21  ...d...1^*.<.=J!
-```
+```text
 
 네트워크 카드에 도착한 패킷이 애플리케이션까지 전달되는 과정은 복잡한 여정입니다. 하드웨어 인터럽트부터 시작하여 드라이버, 네트워크 스택, 소켓 버퍼를 거쳐 최종적으로 사용자 공간에 도달합니다.
 
@@ -49,7 +49,7 @@ Overhead  Command          Symbol
   18.32%  [kernel]        [k] ip_rcv
   15.67%  [kernel]        [k] tcp_v4_rcv
   12.89%  [kernel]        [k] skb_copy_datagram_iter
-```
+```text
 
 이 여정의 각 단계는 성능과 직결됩니다. 현대의 10Gbps, 100Gbps 네트워크에서는 마이크로초 단위의 최적화가 중요하며, DPDK나 XDP 같은 커널 바이패스 기술이 등장한 배경이기도 합니다.
 
@@ -107,7 +107,7 @@ graph TB
     TCP_RCV --> SOCK_Q
     UDP_RCV --> SOCK_Q
     SOCK_Q --> APP
-```
+```text
 
 ### sk_buff: 네트워크 패킷의 핵심 구조체
 
@@ -134,7 +134,7 @@ sk_buff(socket buffer)는 리눅스 네트워킹의 심장입니다. 이 구조�
  * | skb_shared_info |  <-- 프래그먼트 정보
  * +------------------+
  */
-```
+```text
 
 ```c
 // Socket Buffer: 리눅스 네트워킹의 핵심
@@ -313,7 +313,7 @@ static inline unsigned char *skb_pull(struct sk_buff *skb, unsigned int len) {
     skb->len -= len;
     return skb->data += len;
 }
-```
+```text
 
 ## NAPI와 인터럽트 처리
 
@@ -326,7 +326,7 @@ static inline unsigned char *skb_pull(struct sk_buff *skb, unsigned int len) {
 $ watch -n 1 'cat /proc/interrupts | grep eth0'
 CPU0       CPU1       CPU2       CPU3
 1234567    0          0          0         eth0-rx-0  # CPU0만 죽어나가는 중...
-```
+```text
 
 그래서 리눅스 커뮤니티는 NAPI(New API)라는 천재적인 해결책을 만들었습니다:
 
@@ -350,7 +350,7 @@ if 패킷_도착:
             인터럽트_재활성화()
     else:
         일반_인터럽트_처리()
-```
+```text
 
 ```c
 // NAPI 구조체
@@ -477,7 +477,7 @@ static int e1000_clean_rx_irq(struct e1000_adapter *adapter, int budget) {
     
     return work_done;
 }
-```
+```text
 
 ## TCP 상태 머신
 
@@ -495,7 +495,7 @@ LISTEN     0      128    0.0.0.0:22           0.0.0.0:*
 ESTAB      0      0      192.168.1.100:22     192.168.1.10:52341
 TIME-WAIT  0      0      192.168.1.100:443    142.250.185.46:443
 CLOSE-WAIT 1      0      192.168.1.100:8080   10.0.0.5:34567
-```
+```text
 
 ### TCP 연결 상태 전이
 
@@ -515,7 +515,7 @@ setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 # 방법 2: 커널 파라미터 조정 (주의 필요!)
 echo 1 > /proc/sys/net/ipv4/tcp_tw_reuse
 echo 1 > /proc/sys/net/ipv4/tcp_tw_recycle  # Deprecated!
-```
+```text
 
 ```mermaid
 stateDiagram-v2
@@ -539,7 +539,7 @@ stateDiagram-v2
     CLOSING --> TIME_WAIT: recv ACK
     LAST_ACK --> CLOSED: recv ACK
     TIME_WAIT --> CLOSED: timeout(2MSL)
-```
+```text
 
 ### TCP 상태 머신 구현
 
@@ -559,7 +559,7 @@ TCP: inuse 100000 orphan 0 tw 42857 alloc 100000 mem 97656
 # 연결당 메모리 계산
 $ echo "scale=2; 97656 * 4096 / 100000 / 1024" | bc
 390.62  # KB per connection
-```
+```text
 
 ```c
 // TCP 상태 정의
@@ -853,7 +853,7 @@ do_time_wait:
     inet_twsk_put(inet_twsk(sk));
     goto discard_it;
 }
-```
+```text
 
 ## TCP 혼잡 제어
 
@@ -872,7 +872,7 @@ else:
         전송_속도 = 전송_속도 * 2  # Slow Start: 지수 증가
     else:
         전송_속도 += 1  # Congestion Avoidance: 선형 증가
-```
+```text
 
 ### 혼잡 제어 알고리즘
 
@@ -897,7 +897,7 @@ $ iperf3 -c server_ip -t 30
 [ ID] Interval           Transfer     Bitrate
 [  5]   0.00-30.00  sec  3.45 GBytes  988 Mbits/sec  # CUBIC
 [  5]   0.00-30.00  sec  4.52 GBytes  1.29 Gbits/sec  # BBR (30% 향상!)
-```
+```text
 
 ```c
 // 혼잡 제어 연산 테이블
@@ -987,74 +987,118 @@ static void bictcp_cong_avoid(struct sock *sk, u32 ack, u32 acked) {
     tcp_cong_avoid_ai(tp, ca->cnt, acked);
 }
 
+// CUBIC 혼잡 제어 핵심 알고리즘 - 현대 인터넷의 성능을 결정하는 수학
+// 실제 사용: Linux 기본 TCP 알고리즘, Google/Facebook/Netflix의 모든 데이터 전송
+// 혁신성: 기존 AIMD 대신 3차 함수를 사용하여 고대역폭 네트워크에서 최적 성능 달성
 static void bictcp_update(struct bictcp *ca, u32 cwnd, u32 acked) {
     u32 delta, bic_target, max_cnt;
     u64 offs, t;
     
+    // ⭐ 1단계: ACK 카운트 업데이트
+    // acked: 이번에 확인된 패킷 수
+    // 누적 ACK 수를 추적하여 TCP 친화성 계산에 사용
     ca->ack_cnt += acked;
     
+    // ⭐ 2단계: 중복 계산 방지 최적화
+    // 동일한 jiffies 시점에서는 계산 건너뛰기 (성능 최적화)
+    // 실무: 고부하 서버에서 불필요한 계산 overhead 제거
     if (ca->epoch_start && tcp_jiffies32 == ca->last_time)
         goto tcp_friendliness;
         
+    // ⭐ 3단계: 상태 업데이트
+    // 현재 혼잡 창 크기와 시간을 기록하여 다음 계산의 기준점으로 사용
     ca->last_cwnd = cwnd;
     ca->last_time = tcp_jiffies32;
     
+    // ⭐ 4단계: 새로운 혼잡 회피 에포크 시작
     if (ca->epoch_start == 0) {
+        // 에포크 시작: 혼잡 회피 단계 진입 시점 기록
         ca->epoch_start = tcp_jiffies32;
         ca->ack_cnt = acked;
         ca->tcp_cwnd = cwnd;
         
+        // ⭐ 5단계: CUBIC 함수의 핵심 파라미터 계산
         if (ca->last_max_cwnd <= cwnd) {
-            ca->bic_K = 0;
-            ca->bic_origin_point = cwnd;
+            // 🚀 새로운 최대값 도달: 탐색적 증가 모드
+            // 이전 최대값보다 크면 미지의 영역 탐색
+            ca->bic_K = 0;  // 즉시 증가 시작 (K=0이면 변곡점이 현재 시점)
+            ca->bic_origin_point = cwnd;  // 현재 지점을 새로운 기준점으로 설정
         } else {
+            // 📉 이전 최대값 미달: 회복 모드
+            // 핵심 수식: K = ∛(β × (W_max - W_curr) / C)
+            // K: 이전 최대값에 도달하는 데 걸리는 시간
             ca->bic_K = cubic_root(cube_factor * (ca->last_max_cwnd - cwnd));
-            ca->bic_origin_point = ca->last_max_cwnd;
+            ca->bic_origin_point = ca->last_max_cwnd;  // 이전 최대값을 목표로 설정
         }
     }
     
-    // Cubic 함수: W(t) = C*(t-K)^3 + W_max
+    // ⭐ 6단계: CUBIC 함수 시간 계산
+    // 핵심 공식: W(t) = C × (t - K)³ + W_max
+    // t: 에포크 시작부터 현재까지의 시간 (RTT 보정 포함)
     t = (s32)(tcp_jiffies32 - ca->epoch_start);
-    t += msecs_to_jiffies(ca->delay_min >> 3);
-    t <<= BICTCP_HZ;
+    t += msecs_to_jiffies(ca->delay_min >> 3);  // RTT 기반 시간 보정 (1/8)
+    t <<= BICTCP_HZ;  // 시간 단위 정규화
     do_div(t, HZ);
     
+    // ⭐ 7단계: K를 중심으로 한 대칭적 거리 계산
+    // t < K: 아직 변곡점에 도달하지 않음 (감속 증가)
+    // t > K: 변곡점 통과 (가속 증가)
     if (t < ca->bic_K)
-        offs = ca->bic_K - t;
+        offs = ca->bic_K - t;  // 변곡점까지의 거리
     else
-        offs = t - ca->bic_K;
+        offs = t - ca->bic_K;  // 변곡점을 지난 거리
         
+    // ⭐ 8단계: CUBIC 함수의 핵심 - 3차 함수 계산
+    // delta = C × |t - K|³
+    // 변곡점(K) 근처에서는 완만하게, 멀어질수록 급격하게 증가
+    // 실제 Netflix/Google 등에서 고대역폭 링크의 최적 활용을 가능하게 하는 수식
     delta = (cube_rtt_scale * offs * offs * offs) >> (10+3*BICTCP_HZ);
     
+    // ⭐ 9단계: 목표 혼잡 창 크기 계산
     if (t < ca->bic_K)
+        // 변곡점 이전: 목표값에서 차감 (완만한 증가)
         bic_target = ca->bic_origin_point - delta;
     else
+        // 변곡점 이후: 목표값에 가산 (가속 증가)
         bic_target = ca->bic_origin_point + delta;
         
+    // ⭐ 10단계: 증가 속도 제어 (cnt 계산)
     if (bic_target > cwnd) {
+        // 목표가 현재보다 크면: 빠른 증가
+        // cnt: 몇 개의 ACK마다 cwnd를 1씩 증가시킬지 결정
+        // 작은 cnt = 빠른 증가, 큰 cnt = 느린 증가
         ca->cnt = cwnd / (bic_target - cwnd);
     } else {
-        ca->cnt = 100 * cwnd;
+        // 목표 도달 또는 초과: 매우 느린 증가 (안전 모드)
+        ca->cnt = 100 * cwnd;  // 매우 큰 값으로 설정하여 거의 증가하지 않도록
     }
     
+    // ⭐ 11단계: 초기 상태 안전장치
+    // 이전 최대값이 없고 너무 빨리 증가하려는 경우 제한
+    // 실무: 연결 초기의 급격한 증가 방지
     if (ca->last_max_cwnd == 0 && ca->cnt > 20)
         ca->cnt = 20;
         
 tcp_friendliness:
-    // TCP 친화성
+    // ⭐ 12단계: TCP 친화성 - 기존 TCP Reno와의 공정성 보장
+    // 핵심: CUBIC이 너무 공격적이지 않도록 Reno 수준으로 제한
+    // 중요성: 인터넷의 공정성 유지 (다른 TCP 연결과 대역폭 공평 분할)
     if (tcp_friendliness) {
         u32 scale = beta_scale;
-        delta = (cwnd * scale) >> 3;
+        delta = (cwnd * scale) >> 3;  // Reno 스타일 증가량 계산
+        
+        // Reno 방식 시뮬레이션: 매 RTT마다 1씩 증가
         while (ca->ack_cnt > delta) {
             ca->ack_cnt -= delta;
-            ca->tcp_cwnd++;
+            ca->tcp_cwnd++;  // 가상의 TCP Reno 창 크기
         }
         
+        // CUBIC이 Reno보다 느리면 Reno 속도로 조정
         if (ca->tcp_cwnd > cwnd) {
             delta = ca->tcp_cwnd - cwnd;
             max_cnt = cwnd / delta;
             if (ca->cnt > max_cnt)
-                ca->cnt = max_cnt;
+                ca->cnt = max_cnt;  // Reno 속도로 제한
         }
     }
 }
@@ -1113,7 +1157,7 @@ static void bbr_main(struct sock *sk, const struct rate_sample *rs) {
     bbr_set_pacing_rate(sk, bw, bbr->pacing_gain);
     bbr_set_cwnd(sk, rs, rs->acked_sacked, bw, bbr->cwnd_gain);
 }
-```
+```text
 
 ## Netfilter와 iptables
 
@@ -1138,7 +1182,7 @@ EOF
 
 $ bash /tmp/test-rules.sh &
 # 연결이 유지되면 규칙을 영구 적용
-```
+```text
 
 ### Netfilter 훅 포인트
 
@@ -1148,13 +1192,13 @@ Netfilter는 패킷 경로에 5개의 "훅 포인트"를 제공합니다. 마치
 
 ```mermaid
 graph LR
-    IN[패킷 입력] --> PRE[PREROUTING<br/>라우팅 전]
-    PRE --> ROUTE{라우팅<br/>결정}
-    ROUTE -->|로컬| LOCAL_IN[LOCAL_IN<br/>로컬 입력]
-    ROUTE -->|포워딩| FORWARD[FORWARD<br/>전달]
+    IN[패킷 입력] --> PRE[PREROUTING, 라우팅 전]
+    PRE --> ROUTE{라우팅, 결정}
+    ROUTE -->|로컬| LOCAL_IN[LOCAL_IN, 로컬 입력]
+    ROUTE -->|포워딩| FORWARD[FORWARD, 전달]
     LOCAL_IN --> APP[애플리케이션]
-    APP --> LOCAL_OUT[LOCAL_OUT<br/>로컬 출력]
-    LOCAL_OUT --> POST[POSTROUTING<br/>라우팅 후]
+    APP --> LOCAL_OUT[LOCAL_OUT, 로컬 출력]
+    LOCAL_OUT --> POST[POSTROUTING, 라우팅 후]
     FORWARD --> POST
     POST --> OUT[패킷 출력]
     
@@ -1163,7 +1207,7 @@ graph LR
     style FORWARD fill:#f9f,stroke:#333,stroke-width:2px
     style LOCAL_OUT fill:#f9f,stroke:#333,stroke-width:2px
     style POST fill:#f9f,stroke:#333,stroke-width:2px
-```
+```text
 
 ```c
 // Netfilter 훅 위치
@@ -1218,7 +1262,7 @@ static unsigned int my_pre_routing_hook(void *priv,
     
     // 포트 80 차단
     if (ntohs(tcph->dest) == 80) {
-        pr_info("Blocking HTTP traffic\n");
+        pr_info("Blocking HTTP traffic, ");
         return NF_DROP;
     }
     
@@ -1267,7 +1311,7 @@ struct nf_conn {
     
     union nf_conntrack_proto proto;
 };
-```
+```text
 
 ## 커널 바이패스 기술
 
@@ -1294,7 +1338,7 @@ Max latency: 450 ns
 99% percentile: 125 ns
 
 # 무려 30배 차이! 💨
-```
+```text
 
 ### DPDK (Data Plane Development Kit)
 
@@ -1317,7 +1361,7 @@ DPDK = [
     "→ 애플리케이션 처리",
     "총 2단계, 컨텍스트 스위칭 없음!"
 ]
-```
+```text
 
 제가 DPDK로 패킷 생성기를 만들었을 때의 성능:
 
@@ -1330,7 +1374,7 @@ CPU Usage: Core 1: 100%, Core 2: 100%, Core 3: 100%
 Dropped: 0 packets
 
 # 일반 소켓으로는 불가능한 성능입니다!
-```
+```text
 
 ```c
 // DPDK 초기화와 패킷 처리
@@ -1372,7 +1416,7 @@ static inline int port_init(uint16_t port, struct rte_mempool *mbuf_pool) {
         
     retval = rte_eth_dev_info_get(port, &dev_info);
     if (retval != 0) {
-        printf("Error during getting device (port %u) info: %s\n",
+        printf("Error during getting device (port %u) info: %s, ",
                port, strerror(-retval));
         return retval;
     }
@@ -1432,10 +1476,10 @@ static void lcore_main(void) {
     RTE_ETH_FOREACH_DEV(port) {
         if (rte_eth_dev_socket_id(port) >= 0 &&
             rte_eth_dev_socket_id(port) != (int)rte_socket_id())
-            printf("WARNING: port %u on different NUMA node\n", port);
+            printf("WARNING: port %u on different NUMA node, ", port);
     }
     
-    printf("Core %u forwarding packets\n", rte_lcore_id());
+    printf("Core %u forwarding packets, ", rte_lcore_id());
     
     while (1) {
         RTE_ETH_FOREACH_DEV(port) {
@@ -1463,7 +1507,7 @@ static void lcore_main(void) {
         }
     }
 }
-```
+```text
 
 ### XDP (eXpress Data Path)
 
@@ -1492,7 +1536,7 @@ CPU 사용율: 15%
 지연시간: 1.2ms (거의 영향 없음)
 
 # XDP가 압도적으로 효율적! 🎯
-```
+```text
 
 ```c
 // XDP 프로그램 (eBPF)
@@ -1554,7 +1598,7 @@ int xdp_prog(struct xdp_md *ctx) {
 }
 
 char _license[] SEC("license") = "GPL";
-```
+```text
 
 ## 요약
 
@@ -1579,7 +1623,7 @@ char _license[] SEC("license") = "GPL";
 □ Netfilter 규칙 최적화 (불필요한 규칙 제거)
 □ 고성능 필요시 DPDK/XDP 검토
 □ CPU 친화도 설정 (네트워크 인터럽트 분산)
-```
+```text
 
 TCP/IP 스택은 리눅스 커널의 핵심 구성 요소로, 패킷 수신부터 애플리케이션 전달까지 복잡한 처리 과정을 거칩니다. sk_buff는 네트워크 패킷을 표현하는 중심 구조체이며, NAPI는 인터럽트와 폴링을 조합하여 고성능을 달성합니다.
 
@@ -1587,14 +1631,14 @@ TCP 상태 머신은 연결의 생명주기를 관리하고, 혼잡 제어 알�
 
 ### 🚀 성능 비교 총정리
 
-```
+```text
 처리 방식           지연시간      처리량        CPU 사용율
 ─────────────────────────────────────────────────────
 일반 소켓           3 µs         1 Mpps       높음
 NAPI 최적화         2 µs         3 Mpps       중간
 XDP                500 ns       10 Mpps      낮음  
 DPDK               100 ns       15 Mpps      100%
-```
+```text
 
 다음 절에서는 고성능 네트워크 서버 구현과 최적화 기법을 살펴보겠습니다.
 

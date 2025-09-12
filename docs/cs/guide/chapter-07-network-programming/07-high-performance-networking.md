@@ -49,7 +49,7 @@ graph TD
         U[메모리 사전 할당]
         V[캐시 최적화]
     end
-```
+```text
 
 ## 1. 고성능 네트워킹 분석 도구
 
@@ -152,33 +152,46 @@ int set_cpu_affinity(int cpu_core) {
 }
 
 // 링 버퍼 초기화
+// Lock-Free Ring Buffer 생성 - 고성능 패킷 처리의 핵심 자료구조
+// 실제 사용: DPDK, Intel SPDK, Linux Kernel의 네트워크 스택, Redis의 pub/sub
+// 성능 이점: Mutex/Lock 대비 10-100배 빠른 생산자-소비자 큐
 ring_buffer_t* create_ring_buffer(size_t size) {
-    // 크기를 2의 거듭제곱으로 조정
+    // ⭐ 1단계: 크기를 2의 거듭제곱으로 정규화
+    // 핵심 최적화: modulo 연산 대신 비트 마스킹 사용 (% → &)
+    // 성능: modulo는 20-30 사이클, 비트 마스킹은 1 사이클
     size_t ring_size = 1;
     while (ring_size < size) {
-        ring_size <<= 1;
+        ring_size <<= 1;  // 2배씩 증가하여 다음 2^n 값 찾기
     }
 
+    // ⭐ 2단계: Ring Buffer 메타데이터 구조체 할당
     ring_buffer_t *ring = malloc(sizeof(ring_buffer_t));
     if (!ring) {
         return NULL;
     }
 
+    // ⭐ 3단계: Lock-Free 알고리즘을 위한 핵심 파라미터 설정
     ring->size = ring_size;
-    ring->mask = ring_size - 1;
-    ring->head = 0;
-    ring->tail = 0;
+    ring->mask = ring_size - 1;  // 2^n - 1 = 비트마스크 (예: 1024 → 1023 = 0x3FF)
+    ring->head = 0;  // 생산자 포인터 (write position)
+    ring->tail = 0;  // 소비자 포인터 (read position)
 
-    // 메모리 정렬된 버퍼 할당
+    // ⭐ 4단계: 캐시 라인 정렬된 메모리 할당
+    // posix_memalign(64): 64바이트(CPU 캐시 라인) 경계에 정렬
+    // 중요성: False sharing 방지, 캐시 성능 극대화
+    // 실무: Intel/AMD CPU에서 캐시 라인 크기가 64바이트
     if (posix_memalign(&ring->data, 64, ring_size * PACKET_SIZE) != 0) {
         free(ring);
         return NULL;
     }
 
-    // 메모리 잠금 (스와핑 방지)
+    // ⭐ 5단계: 메모리 페이지 잠금 (스와핑 방지)
+    // mlock(): 물리 메모리에 고정하여 페이지 스왑 방지
+    // 실무 중요성: 레이턴시 중요 애플리케이션에서 스왑으로 인한 지연 제거
+    // 예시: 고빈도 거래, 실시간 스트리밍에서 필수
     if (mlock(ring->data, ring_size * PACKET_SIZE) != 0) {
         perror("mlock");
-        // 경고만 출력하고 계속 진행
+        // 경고만 출력하고 계속 진행 - 권한 부족이나 메모리 제한 시 실패 가능
     }
 
     return ring;
@@ -391,36 +404,51 @@ int batch_receive(int sock, ring_buffer_t *rx_ring, packet_stats_t *stats) {
     return received > 0 ? received : 0;
 }
 
-// 고성능 폴링 루프
+// 고성능 워커 스레드 - 극한 성능을 위한 Busy Polling 패턴
+// 실제 사용: Intel DPDK, Cloudflare의 Pingora, Nginx Plus, HAProxy Enterprise
+// 성능 이점: 컨텍스트 스위칭 제거, 인터럽트 오버헤드 제거, 마이크로초 단위 레이턴시 달성
 void* high_performance_worker(void *arg) {
     worker_thread_t *worker = (worker_thread_t*)arg;
 
-    // CPU 친화성 설정
+    // ⭐ 1단계: CPU 친화성 설정 - 캐시 지역성 극대화
+    // 핵심: 특정 CPU 코어에 스레드를 고정하여 캐시 미스 최소화
+    // 실무 중요성: L1/L2 캐시 히트율이 95% → 99%로 향상 시 레이턴시 50% 감소
     if (set_cpu_affinity(worker->cpu_core) != 0) {
-        printf("워커 %d: CPU 친화성 설정 실패\n", worker->thread_id);
+        printf("워커 %d: CPU 친화성 설정 실패, ", worker->thread_id);
     }
 
-    printf("워커 %d: CPU %d에서 시작\n", worker->thread_id, worker->cpu_core);
+    printf("워커 %d: CPU %d에서 시작, ", worker->thread_id, worker->cpu_core);
 
+    // ⭐ 2단계: 목적지 주소 사전 계산
+    // 최적화: 반복 계산 제거, 핫 패스에서 메모리 접근 최소화
     struct sockaddr_in dest_addr;
     memset(&dest_addr, 0, sizeof(dest_addr));
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     dest_addr.sin_port = htons(8080);
 
-    // 폴링 루프 (busy waiting)
+    // ⭐ 3단계: Busy Polling 메인 루프 - 극한 성능의 핵심
+    // 트레이드오프: CPU 사용률 100% vs 마이크로초 단위 레이턴시
+    // 적용 분야: 고빈도 거래, 실시간 게임 서버, CDN 에지 서버
     while (worker->running) {
-        // 수신 처리
+        // ⭐ 4단계: 배치 수신 처리
+        // recvmmsg() 시스템콜로 한 번에 여러 패킷 처리
+        // 성능 이점: 시스템콜 오버헤드를 패킷 수만큼 분할
         batch_receive(worker->socket_fd, worker->rx_ring, worker->stats);
 
-        // 송신 처리
+        // ⭐ 5단계: 배치 송신 처리
+        // sendmmsg() 시스템콜로 한 번에 여러 패킷 전송
+        // 네트워크 카드의 배치 처리 능력 최대 활용
         batch_send(worker->socket_fd, &dest_addr, worker->tx_ring, worker->stats);
 
-        // CPU 사이클 최소화를 위한 힌트
+        // ⭐ 6단계: CPU 파이프라인 최적화 힌트
+        // __builtin_ia32_pause(): Intel x86의 PAUSE 명령어
+        // 효과: Hyper-Threading 환경에서 다른 논리 코어에 CPU 사이클 양보
+        // 전력 효율성: Busy waiting 중 전력 소모 약 10-15% 감소
         __builtin_ia32_pause(); // x86에서만 사용 가능
     }
 
-    printf("워커 %d: 종료\n", worker->thread_id);
+    printf("워커 %d: 종료, ", worker->thread_id);
     return NULL;
 }
 
@@ -433,59 +461,59 @@ void print_performance_stats(packet_stats_t *stats, int duration_sec) {
     uint64_t errors = atomic_load(&stats->errors);
     uint64_t drops = atomic_load(&stats->drops);
 
-    printf("\n=== 성능 통계 (%d초) ===\n", duration_sec);
-    printf("송신 패킷: %lu (%.2f pps)\n",
+    printf(", === 성능 통계 (%d초) ===, ", duration_sec);
+    printf("송신 패킷: %lu (%.2f pps), ",
            packets_sent, (double)packets_sent / duration_sec);
-    printf("수신 패킷: %lu (%.2f pps)\n",
+    printf("수신 패킷: %lu (%.2f pps), ",
            packets_received, (double)packets_received / duration_sec);
-    printf("송신 대역폭: %.2f Mbps\n",
+    printf("송신 대역폭: %.2f Mbps, ",
            (double)bytes_sent * 8 / (duration_sec * 1000000));
-    printf("수신 대역폭: %.2f Mbps\n",
+    printf("수신 대역폭: %.2f Mbps, ",
            (double)bytes_received * 8 / (duration_sec * 1000000));
-    printf("오류: %lu\n", errors);
-    printf("드롭: %lu\n", drops);
+    printf("오류: %lu, ", errors);
+    printf("드롭: %lu, ", drops);
 
     if (stats->latency_samples > 0) {
         double avg_latency = (double)stats->total_latency_ns / stats->latency_samples;
-        printf("지연시간 - 최소: %lu ns, 평균: %.0f ns, 최대: %lu ns\n",
+        printf("지연시간 - 최소: %lu ns, 평균: %.0f ns, 최대: %lu ns, ",
                stats->min_latency_ns, avg_latency, stats->max_latency_ns);
-        printf("지연시간 샘플 수: %lu\n", stats->latency_samples);
+        printf("지연시간 샘플 수: %lu, ", stats->latency_samples);
     }
 }
 
 // 시스템 최적화 권장사항 출력
 void print_optimization_recommendations() {
-    printf("\n=== 고성능 네트워킹 최적화 권장사항 ===\n");
+    printf(", === 고성능 네트워킹 최적화 권장사항 ===, ");
 
     // CPU 주파수 거버너 확인
-    printf("1. CPU 주파수 설정:\n");
+    printf("1. CPU 주파수 설정:, ");
     system("cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || echo '   설정 정보 없음'");
-    printf("   권장: performance 모드\n");
-    printf("   명령어: sudo cpupower frequency-set -g performance\n\n");
+    printf("   권장: performance 모드, ");
+    printf("   명령어: sudo cpupower frequency-set -g performance, , ");
 
     // NUMA 설정 확인
-    printf("2. NUMA 토폴로지:\n");
+    printf("2. NUMA 토폴로지:, ");
     system("numactl --hardware 2>/dev/null | head -5 || echo '   NUMA 정보 없음'");
-    printf("   권장: 메모리와 CPU를 같은 NUMA 노드에 바인딩\n\n");
+    printf("   권장: 메모리와 CPU를 같은 NUMA 노드에 바인딩, , ");
 
     // 인터럽트 설정
-    printf("3. 네트워크 인터럽트 최적화:\n");
-    printf("   권장: 네트워크 인터럽트를 전용 CPU 코어에 바인딩\n");
-    printf("   명령어: echo 2 > /proc/irq/[IRQ번호]/smp_affinity\n\n");
+    printf("3. 네트워크 인터럽트 최적화:, ");
+    printf("   권장: 네트워크 인터럽트를 전용 CPU 코어에 바인딩, ");
+    printf("   명령어: echo 2 > /proc/irq/[IRQ번호]/smp_affinity, , ");
 
     // 커널 파라미터
-    printf("4. 커널 파라미터 최적화:\n");
-    printf("   net.core.busy_read = 50\n");
-    printf("   net.core.busy_poll = 50\n");
-    printf("   net.core.netdev_max_backlog = 30000\n");
-    printf("   kernel.sched_migration_cost_ns = 5000000\n\n");
+    printf("4. 커널 파라미터 최적화:, ");
+    printf("   net.core.busy_read = 50, ");
+    printf("   net.core.busy_poll = 50, ");
+    printf("   net.core.netdev_max_backlog = 30000, ");
+    printf("   kernel.sched_migration_cost_ns = 5000000, , ");
 
     // 대안 기술
-    printf("5. 고급 기술 고려사항:\n");
-    printf("   - DPDK: 커널 우회 패킷 처리\n");
-    printf("   - RDMA: 원격 메모리 직접 접근\n");
-    printf("   - AF_XDP: eBPF 기반 고속 패킷 처리\n");
-    printf("   - io_uring: 차세대 비동기 I/O\n");
+    printf("5. 고급 기술 고려사항:, ");
+    printf("   - DPDK: 커널 우회 패킷 처리, ");
+    printf("   - RDMA: 원격 메모리 직접 접근, ");
+    printf("   - AF_XDP: eBPF 기반 고속 패킷 처리, ");
+    printf("   - io_uring: 차세대 비동기 I/O, ");
 }
 
 // 메인 함수
@@ -503,24 +531,24 @@ int main(int argc, char *argv[]) {
         } else if (strcmp(argv[i], "-p") == 0 && i + 1 < argc) {
             base_port = atoi(argv[++i]);
         } else if (strcmp(argv[i], "--help") == 0) {
-            printf("고성능 네트워킹 테스트 도구\n");
-            printf("사용법: %s [-w workers] [-t duration] [-p port]\n", argv[0]);
-            printf("  -w workers   워커 스레드 수 (기본값: 4)\n");
-            printf("  -t duration  테스트 시간 (초, 기본값: 30)\n");
-            printf("  -p port      기본 포트 (기본값: 8080)\n");
+            printf("고성능 네트워킹 테스트 도구, ");
+            printf("사용법: %s [-w workers] [-t duration] [-p port], ", argv[0]);
+            printf("  -w workers   워커 스레드 수 (기본값: 4), ");
+            printf("  -t duration  테스트 시간 (초, 기본값: 30), ");
+            printf("  -p port      기본 포트 (기본값: 8080), ");
             return 0;
         }
     }
 
-    printf("고성능 네트워킹 성능 테스트 시작\n");
-    printf("워커 스레드: %d개\n", num_workers);
-    printf("테스트 시간: %d초\n", duration_sec);
-    printf("기본 포트: %d\n", base_port);
+    printf("고성능 네트워킹 성능 테스트 시작, ");
+    printf("워커 스레드: %d개, ", num_workers);
+    printf("테스트 시간: %d초, ", duration_sec);
+    printf("기본 포트: %d, ", base_port);
 
     // 권한 확인
     if (geteuid() != 0) {
-        printf("\n경고: 최적 성능을 위해서는 root 권한이 필요합니다.\n");
-        printf("mlock, 스케줄링 우선순위 등의 기능이 제한될 수 있습니다.\n\n");
+        printf(", 경고: 최적 성능을 위해서는 root 권한이 필요합니다., ");
+        printf("mlock, 스케줄링 우선순위 등의 기능이 제한될 수 있습니다., , ");
     }
 
     // 워커 스레드 배열
@@ -539,7 +567,7 @@ int main(int argc, char *argv[]) {
         workers[i].running = 1;
 
         if (workers[i].socket_fd < 0) {
-            printf("워커 %d: 소켓 생성 실패\n", i);
+            printf("워커 %d: 소켓 생성 실패, ", i);
             continue;
         }
 
@@ -548,13 +576,13 @@ int main(int argc, char *argv[]) {
         workers[i].rx_ring = create_ring_buffer(RING_SIZE);
 
         if (!workers[i].tx_ring || !workers[i].rx_ring) {
-            printf("워커 %d: 링 버퍼 생성 실패\n", i);
+            printf("워커 %d: 링 버퍼 생성 실패, ", i);
             continue;
         }
 
         // 스레드 시작
         if (pthread_create(&threads[i], NULL, high_performance_worker, &workers[i]) != 0) {
-            printf("워커 %d: 스레드 생성 실패\n", i);
+            printf("워커 %d: 스레드 생성 실패, ", i);
             workers[i].running = 0;
         }
     }
@@ -563,7 +591,7 @@ int main(int argc, char *argv[]) {
     char test_packet[PACKET_SIZE];
     memset(test_packet, 0xAA, sizeof(test_packet));
 
-    printf("\n테스트 패킷 생성 중...\n");
+    printf(", 테스트 패킷 생성 중..., ");
 
     // 각 워커의 송신 링에 패킷 추가
     for (int round = 0; round < 1000; round++) {
@@ -574,7 +602,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    printf("성능 테스트 실행 중... (%d초)\n", duration_sec);
+    printf("성능 테스트 실행 중... (%d초), ", duration_sec);
 
     // 테스트 실행
     sleep(duration_sec);
@@ -627,7 +655,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-```
+```text
 
 ## 2. DPDK 통합 예제
 
@@ -971,7 +999,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
 
     retval = rte_eth_dev_info_get(port, &dev_info);
     if (retval != 0) {
-        printf("Error during getting device (port %u) info: %s\n",
+        printf("Error during getting device (port %u) info: %s, ",
                 port, strerror(-retval));
         return retval;
     }
@@ -1012,7 +1040,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
     if (retval != 0)
         return retval;
 
-    printf("Port %u MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
+    printf("Port %u MAC: %02x:%02x:%02x:%02x:%02x:%02x, ",
             port,
             addr.addr_bytes[0], addr.addr_bytes[1],
             addr.addr_bytes[2], addr.addr_bytes[3],
@@ -1035,10 +1063,10 @@ lcore_main(void)
                 rte_eth_dev_socket_id(port) !=
                         (int)rte_socket_id())
             printf("WARNING, port %u is on remote NUMA node to "
-                    "polling thread.\n\tPerformance will "
-                    "not be optimal.\n", port);
+                    "polling thread., \tPerformance will "
+                    "not be optimal., ", port);
 
-    printf("\nCore %u forwarding packets. [Ctrl+C to quit]\n",
+    printf(", Core %u forwarding packets. [Ctrl+C to quit], ",
             rte_lcore_id());
 
     for (;;) {
@@ -1070,28 +1098,28 @@ main(int argc, char *argv[])
 
     int ret = rte_eal_init(argc, argv);
     if (ret < 0)
-        rte_panic("Cannot init EAL\n");
+        rte_panic("Cannot init EAL, ");
 
     argc -= ret;
     argv += ret;
 
     nb_ports = rte_eth_dev_count_avail();
     if (nb_ports < 2 || (nb_ports & 1))
-        rte_exit(EXIT_FAILURE, "Error: number of ports must be even\n");
+        rte_exit(EXIT_FAILURE, "Error: number of ports must be even, ");
 
     mbuf_pool = rte_pktmbuf_pool_create("MBUF_POOL", NUM_MBUFS * nb_ports,
         MBUF_CACHE_SIZE, 0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
 
     if (mbuf_pool == NULL)
-        rte_exit(EXIT_FAILURE, "Cannot create mbuf pool\n");
+        rte_exit(EXIT_FAILURE, "Cannot create mbuf pool, ");
 
     RTE_ETH_FOREACH_DEV(portid)
         if (port_init(portid, mbuf_pool) != 0)
-            rte_exit(EXIT_FAILURE, "Cannot init port %"PRIu16 "\n",
+            rte_exit(EXIT_FAILURE, "Cannot init port %"PRIu16 ", ",
                     portid);
 
     if (rte_lcore_count() > 1)
-        printf("\nWARNING: Too many lcores enabled. Only 1 used.\n");
+        printf(", WARNING: Too many lcores enabled. Only 1 used., ");
 
     lcore_main();
 
@@ -1221,6 +1249,6 @@ main() {
 
 # 스크립트 실행
 main "$@"
-```
+```text
 
 이 문서는 고성능 네트워킹이 필요한 애플리케이션을 위한 고급 최적화 기법들을 제공합니다. 커널 바이패스, 제로 카피, DPDK 등의 기술을 활용하여 마이크로초 단위의 지연시간과 높은 처리량을 달성할 수 있습니다.

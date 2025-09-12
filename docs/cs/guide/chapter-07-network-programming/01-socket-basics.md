@@ -39,7 +39,7 @@ int sock = socket(AF_INET, SOCK_STREAM, 0);
 connect(sock, &addr, sizeof(addr));
 read(sock, buffer, 1024);
 close(sock);
-```
+```text
 
 ### 💡 실전 경험: 첫 네트워크 프로그램
 
@@ -52,7 +52,7 @@ addr.sin_port = 8080;  // 잘못됨!
 
 // 올바른 코드
 addr.sin_port = htons(8080);  // 네트워크 바이트 순서!
-```
+```text
 
 왜 이런 일이 생길까요? Intel CPU는 리틀 엔디안, 네트워크는 빅 엔디안을 사용하기 때문입니다.
 포트 8080(0x1F90)이 0x901F로 바뀌어 36895번 포트로 연결을 시도했죠! 😅
@@ -77,7 +77,7 @@ addr.sin_port = htons(8080);  // 네트워크 바이트 순서!
 # 게임 서버: UDP 사용 (낮은 지연 중요)
 # 모니터링: Raw Socket (패킷 분석)
 # Docker: Unix Socket (컨테이너 통신)
-```
+```text
 
 ### 소켓 도메인과 타입
 
@@ -119,7 +119,7 @@ Sequenced"]
     SOCK_STREAM --> TRANSPORT
     SOCK_DGRAM --> TRANSPORT
     SOCK_RAW --> NETWORK
-```
+```text
 
 ### 📦 소켓 구조체와 주소 체계
 
@@ -183,7 +183,7 @@ uint64_t htobe64(uint64_t host_64bits);
 uint16_t be16toh(uint16_t big_endian_16bits);
 uint32_t be32toh(uint32_t big_endian_32bits);
 uint64_t be64toh(uint64_t big_endian_64bits);
-```
+```text
 
 ## TCP 소켓 프로그래밍
 
@@ -227,22 +227,29 @@ void setup_signal_handlers(void) {
     sigaction(SIGCHLD, &sa, NULL);
 }
 
-// TCP 서버 소켓 생성
+// TCP 서버 소켓 생성 - 모든 네트워크 서버의 기본 구현 패턴
+// 실제 사용: Apache, Nginx, Node.js, 모든 웹서버와 API 서버의 시작점
+// 성능: 이 함수의 최적화가 서버의 동시 연결 처리량을 결정
 int create_tcp_server(const char *addr, uint16_t port) {
     int server_fd;
     struct sockaddr_in server_addr;
     
-    // 1. 소켓 생성
+    // ⭐ 1단계: TCP 소켓 생성 - 네트워크 통신의 엔드포인트 생성
+    // AF_INET: IPv4 주소 패밀리 (IPv6는 AF_INET6)
+    // SOCK_STREAM: TCP 프로토콜 사용 (신뢰성 있는 연결 지향)  
+    // 0: 프로토콜 자동 선택 (TCP의 경우 IPPROTO_TCP와 동일)
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
         perror("socket");
         return -1;
     }
     
-    // 2. 소켓 옵션 설정
+    // ⭐ 2단계: 소켓 옵션 설정 - 서버 운영에 필수적인 설정들
     int opt = 1;
     
-    // SO_REUSEADDR: TIME_WAIT 상태에서도 바인드 허용
+    // SO_REUSEADDR: 서버 재시작 시 "Address already in use" 오류 방지
+    // 실무 중요성: 서버 재배포 시 TIME_WAIT 상태의 소켓 때문에 바인드 실패하는 문제 해결
+    // Netflix, Facebook 같은 대형 서비스에서 필수로 사용하는 옵션
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR,
                    &opt, sizeof(opt)) < 0) {
         perror("setsockopt SO_REUSEADDR");
@@ -250,23 +257,34 @@ int create_tcp_server(const char *addr, uint16_t port) {
         return -1;
     }
     
-    // SO_REUSEPORT: 여러 프로세스가 같은 포트 바인드 (로드 밸런싱)
+    // SO_REUSEPORT: 멀티 프로세스 로드 밸런싱 활성화
+    // 실무 예시: Nginx의 worker 프로세스들이 동일한 포트로 listen하여 커널 레벨 로드 밸런싱
+    // 성능 이점: accept() lock 경합 제거, CPU 코어별 균등 분산
     #ifdef SO_REUSEPORT
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT,
                    &opt, sizeof(opt)) < 0) {
         perror("setsockopt SO_REUSEPORT");
-        // Non-critical, continue
+        // Non-critical, continue - 이 옵션은 성능 향상용이므로 실패해도 계속 진행
     }
     #endif
     
-    // 3. 주소 구조체 설정
+    // ⭐ 3단계: 서버 주소 구조체 초기화 및 설정
+    // sockaddr_in: IPv4 주소 구조체 (IP 주소 + 포트 + 주소 패밀리)
     memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
+    server_addr.sin_family = AF_INET;  // IPv4 명시
+    
+    // htons(): Host TO Network Short - 바이트 순서 변환 (little endian → big endian)
+    // 네트워크는 big endian 사용, x86은 little endian 사용하므로 변환 필요
     server_addr.sin_port = htons(port);
     
     if (addr == NULL) {
-        server_addr.sin_addr.s_addr = INADDR_ANY;  // 모든 인터페이스
+        // INADDR_ANY: 시스템의 모든 네트워크 인터페이스에 바인드
+        // 실무 예시: 0.0.0.0으로 바인드하여 localhost, 외부 IP 모두에서 접근 가능
+        server_addr.sin_addr.s_addr = INADDR_ANY;
     } else {
+        // inet_pton(): 문자열 IP 주소를 이진 형태로 변환
+        // 예: "192.168.1.1" → 32비트 네트워크 바이트 순서 정수
+        // 보안: inet_addr() 대신 사용 (더 안전한 변환)
         if (inet_pton(AF_INET, addr, &server_addr.sin_addr) <= 0) {
             perror("inet_pton");
             close(server_fd);
@@ -274,7 +292,10 @@ int create_tcp_server(const char *addr, uint16_t port) {
         }
     }
     
-    // 4. 바인드
+    // ⭐ 4단계: 소켓을 특정 주소에 바인드
+    // bind(): 소켓 파일 디스크립터에 네트워크 주소 할당
+    // 실제 동작: 커널의 소켓 테이블에 (IP, 포트) → 소켓 매핑 등록
+    // 실무 중요성: 이후 클라이언트가 이 주소로 연결 시도할 수 있게 됨
     if (bind(server_fd, (struct sockaddr *)&server_addr,
              sizeof(server_addr)) < 0) {
         perror("bind");
@@ -282,14 +303,17 @@ int create_tcp_server(const char *addr, uint16_t port) {
         return -1;
     }
     
-    // 5. 리슨
+    // ⭐ 5단계: 연결 대기 상태로 전환 (LISTEN 상태)
+    // listen(): 소켓을 passive 모드로 설정, 클라이언트 연결 요청 수락 준비
+    // LISTEN_BACKLOG: SYN queue 크기 설정 (일반적으로 128-1024)
+    // 성능 튜닝: 높은 동시 연결수가 예상되면 backlog 증가 (단, 메모리 사용량 증가)
     if (listen(server_fd, LISTEN_BACKLOG) < 0) {
         perror("listen");
         close(server_fd);
         return -1;
     }
     
-    printf("TCP server listening on %s:%u\n",
+    printf("TCP server listening on %s:%u, ",
            addr ? addr : "0.0.0.0", port);
     
     return server_fd;
@@ -302,7 +326,7 @@ void handle_client(int client_fd, struct sockaddr_in *client_addr) {
     
     // 클라이언트 주소 출력
     inet_ntop(AF_INET, &client_addr->sin_addr, addr_str, sizeof(addr_str));
-    printf("Client connected from %s:%u\n",
+    printf("Client connected from %s:%u, ",
            addr_str, ntohs(client_addr->sin_port));
     
     // 에코 루프
@@ -317,7 +341,7 @@ void handle_client(int client_fd, struct sockaddr_in *client_addr) {
         }
         
         if (n == 0) {
-            printf("Client disconnected\n");
+            printf("Client disconnected, ");
             break;
         }
         
@@ -374,7 +398,7 @@ void tcp_server_loop(int server_fd) {
         }
     }
 }
-```
+```text
 
 ### 🔌 TCP 클라이언트: 식당 방문하기
 
@@ -433,61 +457,86 @@ int tcp_client_connect(const char *server_addr, uint16_t server_port) {
         return -1;
     }
     
-    printf("Connected to %s:%u\n", server_addr, server_port);
+    printf("Connected to %s:%u, ", server_addr, server_port);
     
     return sock_fd;
 }
 
-// 논블로킹 연결
+// 비블로킹 연결 - 고성능 네트워크 클라이언트의 핵심 기법
+// 실제 사용: 웹 브라우저, API 클라이언트, 로드 밸런서, 마이크로서비스 간 통신
+// 성능 이점: 연결 대기 중에도 다른 작업 수행 가능, UI 응답성 향상
 int tcp_connect_nonblocking(const char *server_addr, uint16_t server_port,
                            int timeout_ms) {
     int sock_fd;
     struct sockaddr_in server;
     
+    // ⭐ 1단계: 비블로킹 모드로 소켓 생성
+    // SOCK_NONBLOCK: Linux 2.6.27+에서 지원하는 원자적 비블로킹 모드 설정
+    // 장점: socket() + fcntl() 두 번의 시스템 콜 대신 한 번에 처리
+    // 실무: Chrome, Firefox 등 브라우저에서 다중 연결 시 필수적으로 사용
     sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     if (sock_fd < 0) {
         perror("socket");
         return -1;
     }
     
+    // ⭐ 2단계: 서버 주소 구조체 설정
+    // 표준적인 IPv4 주소 설정 패턴
     memset(&server, 0, sizeof(server));
     server.sin_family = AF_INET;
     server.sin_port = htons(server_port);
     inet_pton(AF_INET, server_addr, &server.sin_addr);
     
-    // 논블로킹 connect
+    // ⭐ 3단계: 비블로킹 연결 시도
+    // 비블로킹 모드에서 connect()는 즉시 반환 (대부분 -1과 EINPROGRESS)
+    // 실제 TCP 3-way handshake는 백그라운드에서 계속 진행
     int ret = connect(sock_fd, (struct sockaddr *)&server, sizeof(server));
     
+    // ⭐ 4단계: connect() 반환값 분석 및 오류 처리
     if (ret < 0 && errno != EINPROGRESS) {
+        // EINPROGRESS가 아닌 다른 에러: 즉시 실패 (주소 오류, 권한 문제 등)
+        // 실무 예시: 잘못된 IP, 방화벽 차단, 네트워크 인터페이스 문제
         perror("connect");
         close(sock_fd);
         return -1;
     }
     
     if (ret == 0) {
-        // 즉시 연결 성공 (로컬호스트 등)
+        // 즉시 연결 성공 - 매우 드문 경우
+        // 발생 조건: localhost 연결, Unix domain socket, 또는 로컬 네트워크
         return sock_fd;
     }
     
-    // select를 사용한 연결 대기
+    // ⭐ 5단계: select()를 사용한 연결 완료 대기
+    // write_fds 모니터링: 소켓이 쓰기 가능해지면 연결 완료 의미
+    // 핵심 원리: TCP 연결이 완료되면 소켓이 쓰기 가능 상태가 됨
     fd_set write_fds;
     FD_ZERO(&write_fds);
     FD_SET(sock_fd, &write_fds);
     
+    // ⭐ 6단계: 타임아웃 설정
+    // 밀리초를 초/마이크로초로 변환
+    // 실무: 마이크로서비스에서는 보통 100-500ms, 웹 서비스는 3-10초
     struct timeval timeout = {
         .tv_sec = timeout_ms / 1000,
         .tv_usec = (timeout_ms % 1000) * 1000
     };
     
+    // ⭐ 7단계: select() 시스템 콜로 이벤트 대기
+    // sock_fd + 1: 파일 디스크립터 번호의 최댓값 + 1
+    // NULL, &write_fds, NULL: 읽기/쓰기/예외 이벤트 중 쓰기만 모니터링
     ret = select(sock_fd + 1, NULL, &write_fds, NULL, &timeout);
     
     if (ret <= 0) {
-        // 타임아웃 또는 에러
+        // ret == 0: 타임아웃 발생 (지정된 시간 내 연결 실패)
+        // ret < 0: select() 시스템 오류 (시그널 인터럽트 등)
         close(sock_fd);
         return -1;
     }
     
-    // 연결 상태 확인
+    // ⭐ 8단계: 연결 성공 여부 검증 - 핵심 단계!
+    // 중요: select()에서 쓰기 가능해도 연결 실패일 수 있음 (연결 거부, 타임아웃 등)
+    // SO_ERROR 소켓 옵션으로 실제 연결 결과 확인 필수
     int error;
     socklen_t len = sizeof(error);
     if (getsockopt(sock_fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
@@ -496,18 +545,22 @@ int tcp_connect_nonblocking(const char *server_addr, uint16_t server_port,
     }
     
     if (error != 0) {
-        errno = error;
+        // error != 0: 연결 실패
+        // 일반적인 오류: ECONNREFUSED (연결 거부), ETIMEDOUT (연결 타임아웃)
+        errno = error;  // 원래 오류 코드를 errno에 설정
         close(sock_fd);
         return -1;
     }
     
-    // 블로킹 모드로 복귀
+    // ⭐ 9단계: 성공적 연결 완료 후 블로킹 모드로 복귀
+    // 이유: 이후 send()/recv()는 일반적으로 블로킹 방식으로 사용
+    // 실무: 비블로킹은 연결에만 사용하고, 데이터 전송은 블로킹 또는 별도 관리
     int flags = fcntl(sock_fd, F_GETFL, 0);
     fcntl(sock_fd, F_SETFL, flags & ~O_NONBLOCK);
     
     return sock_fd;
 }
-```
+```text
 
 ## UDP 소켓 프로그래밍
 
@@ -524,7 +577,7 @@ UDP는 TCP와 완전히 다른 철학입니다:
 // FPS 게임의 위치 업데이트
 // TCP 사용 시: 지연 50ms, 끊김 현상
 // UDP 사용 시: 지연 5ms, 가끔 패킷 손실 (보간으로 해결)
-```
+```text
 
 UDP가 적합한 경우:
 
@@ -566,7 +619,7 @@ void udp_echo_server(uint16_t port) {
         return;
     }
     
-    printf("UDP server listening on port %u\n", port);
+    printf("UDP server listening on port %u, ", port);
     
     // 메시지 수신 및 에코
     while (1) {
@@ -587,7 +640,7 @@ void udp_echo_server(uint16_t port) {
         
         char addr_str[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &client_addr.sin_addr, addr_str, sizeof(addr_str));
-        printf("Received %zd bytes from %s:%u: %s\n",
+        printf("Received %zd bytes from %s:%u: %s, ",
                n, addr_str, ntohs(client_addr.sin_port), buffer);
         
         // 에코백
@@ -639,7 +692,7 @@ void udp_client(const char *server_addr, uint16_t server_port) {
     ssize_t n = recv(sock_fd, buffer, sizeof(buffer) - 1, 0);
     if (n > 0) {
         buffer[n] = '\0';
-        printf("Received: %s\n", buffer);
+        printf("Received: %s, ", buffer);
     }
     
     close(sock_fd);
@@ -675,7 +728,7 @@ void udp_broadcast(uint16_t port, const char *message) {
               sizeof(broadcast_addr)) < 0) {
         perror("sendto");
     } else {
-        printf("Broadcast sent to port %u\n", port);
+        printf("Broadcast sent to port %u, ", port);
     }
     
     close(sock_fd);
@@ -763,7 +816,7 @@ void udp_multicast_receiver(const char *mcast_addr, uint16_t port) {
                         (struct sockaddr *)&sender_addr, &sender_len);
     if (n > 0) {
         buffer[n] = '\0';
-        printf("Received multicast: %s\n", buffer);
+        printf("Received multicast: %s, ", buffer);
     }
     
     // 멀티캐스트 그룹 탈퇴
@@ -772,7 +825,7 @@ void udp_multicast_receiver(const char *mcast_addr, uint16_t port) {
     
     close(sock_fd);
 }
-```
+```text
 
 ## 소켓 옵션과 제어
 
@@ -792,7 +845,7 @@ void udp_multicast_receiver(const char *mcast_addr, uint16_t port) {
 # 기본 버퍼: 87KB/s
 # 256KB 버퍼: 250KB/s
 # 1MB 버퍼: 980KB/s (기가비트 네트워크 포화!)
-```
+```text
 
 ### 주요 소켓 옵션들
 
@@ -838,7 +891,7 @@ void configure_socket_options(int sock_fd) {
     // 실제 설정된 값 확인
     optlen = sizeof(opt);
     getsockopt(sock_fd, SOL_SOCKET, SO_RCVBUF, &opt, &optlen);
-    printf("Actual receive buffer size: %d\n", opt);
+    printf("Actual receive buffer size: %d, ", opt);
     
     // 5. SO_RCVTIMEO/SO_SNDTIMEO: 타임아웃
     struct timeval timeout = {
@@ -891,7 +944,7 @@ void get_socket_info(int sock_fd) {
                     &addr_len) == 0) {
         char addr_str[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &local_addr.sin_addr, addr_str, sizeof(addr_str));
-        printf("Local address: %s:%u\n",
+        printf("Local address: %s:%u, ",
                addr_str, ntohs(local_addr.sin_port));
     }
     
@@ -901,7 +954,7 @@ void get_socket_info(int sock_fd) {
                     &addr_len) == 0) {
         char addr_str[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &peer_addr.sin_addr, addr_str, sizeof(addr_str));
-        printf("Peer address: %s:%u\n",
+        printf("Peer address: %s:%u, ",
                addr_str, ntohs(peer_addr.sin_port));
     }
     
@@ -910,7 +963,7 @@ void get_socket_info(int sock_fd) {
     socklen_t optlen = sizeof(sock_type);
     if (getsockopt(sock_fd, SOL_SOCKET, SO_TYPE,
                    &sock_type, &optlen) == 0) {
-        printf("Socket type: %s\n",
+        printf("Socket type: %s, ",
                sock_type == SOCK_STREAM ? "SOCK_STREAM" :
                sock_type == SOCK_DGRAM ? "SOCK_DGRAM" : "Other");
     }
@@ -920,7 +973,7 @@ void get_socket_info(int sock_fd) {
     optlen = sizeof(error);
     if (getsockopt(sock_fd, SOL_SOCKET, SO_ERROR,
                    &error, &optlen) == 0 && error != 0) {
-        printf("Socket error: %s\n", strerror(error));
+        printf("Socket error: %s, ", strerror(error));
     }
     
     // TCP 정보 (Linux)
@@ -929,17 +982,17 @@ void get_socket_info(int sock_fd) {
     optlen = sizeof(tcpi);
     if (getsockopt(sock_fd, IPPROTO_TCP, TCP_INFO,
                    &tcpi, &optlen) == 0) {
-        printf("TCP State: %u\n", tcpi.tcpi_state);
-        printf("RTT: %u us\n", tcpi.tcpi_rtt);
-        printf("RTT variance: %u us\n", tcpi.tcpi_rttvar);
-        printf("Send MSS: %u\n", tcpi.tcpi_snd_mss);
-        printf("Receive MSS: %u\n", tcpi.tcpi_rcv_mss);
-        printf("Retransmits: %u\n", tcpi.tcpi_retrans);
-        printf("Total retransmits: %u\n", tcpi.tcpi_total_retrans);
+        printf("TCP State: %u, ", tcpi.tcpi_state);
+        printf("RTT: %u us, ", tcpi.tcpi_rtt);
+        printf("RTT variance: %u us, ", tcpi.tcpi_rttvar);
+        printf("Send MSS: %u, ", tcpi.tcpi_snd_mss);
+        printf("Receive MSS: %u, ", tcpi.tcpi_rcv_mss);
+        printf("Retransmits: %u, ", tcpi.tcpi_retrans);
+        printf("Total retransmits: %u, ", tcpi.tcpi_total_retrans);
     }
     #endif
 }
-```
+```text
 
 ## Raw 소켓과 패킷 캡처
 
@@ -955,7 +1008,7 @@ $ sudo ./my_packet_sniffer
 SYN sent to 192.168.1.100:80
 RST received - 포트가 닫혀있음!
 # 아, 방화벽 문제구나!
-```
+```text
 
 ⚠️ 주의: Raw 소켓은 root 권한이 필요합니다. 큰 힘에는 큰 책임이...
 
@@ -1029,7 +1082,7 @@ int send_ping(const char *dest_addr) {
         return -1;
     }
     
-    printf("Ping sent to %s\n", dest_addr);
+    printf("Ping sent to %s, ", dest_addr);
     
     // 응답 수신
     char recv_buffer[1024];
@@ -1047,7 +1100,7 @@ int send_ping(const char *dest_addr) {
                                                          ip_header_len);
         
         if (icmp_header->type == ICMP_ECHOREPLY) {
-            printf("Ping reply received from %s\n", dest_addr);
+            printf("Ping reply received from %s, ", dest_addr);
         }
     }
     
@@ -1085,7 +1138,7 @@ void packet_sniffer(void) {
         struct ethhdr *eth = (struct ethhdr *)buffer;
         
         printf("Ethernet: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x -> "
-               "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
+               "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x, ",
                eth->h_source[0], eth->h_source[1], eth->h_source[2],
                eth->h_source[3], eth->h_source[4], eth->h_source[5],
                eth->h_dest[0], eth->h_dest[1], eth->h_dest[2],
@@ -1099,7 +1152,7 @@ void packet_sniffer(void) {
             inet_ntop(AF_INET, &ip->saddr, src_ip, sizeof(src_ip));
             inet_ntop(AF_INET, &ip->daddr, dst_ip, sizeof(dst_ip));
             
-            printf("IP: %s -> %s, Protocol: %d\n",
+            printf("IP: %s -> %s, Protocol: %d, ",
                    src_ip, dst_ip, ip->protocol);
             
             // TCP 패킷인 경우
@@ -1115,11 +1168,11 @@ void packet_sniffer(void) {
                 if (tcp->fin) printf("FIN ");
                 if (tcp->rst) printf("RST ");
                 if (tcp->psh) printf("PSH ");
-                printf("\n");
+                printf(", ");
             }
         }
         
-        printf("---\n");
+        printf("---, ");
     }
     
     // Promiscuous 모드 해제
@@ -1129,7 +1182,7 @@ void packet_sniffer(void) {
     
     close(sock_fd);
 }
-```
+```text
 
 ## Unix 도메인 소켓
 
@@ -1149,7 +1202,7 @@ Latency: 25 μs
 $ ./benchmark unix
 Throughput: 9.8 GB/s  # 4배 빠름!
 Latency: 2 μs  # 12배 빠름!
-```
+```text
 
 실제 사용 예:
 
@@ -1199,7 +1252,7 @@ void unix_socket_server(const char *socket_path) {
         return;
     }
     
-    printf("Unix domain socket server listening on %s\n", socket_path);
+    printf("Unix domain socket server listening on %s, ", socket_path);
     
     while (1) {
         socklen_t client_len = sizeof(client_addr);
@@ -1218,7 +1271,7 @@ void unix_socket_server(const char *socket_path) {
         
         if (getsockopt(client_fd, SOL_SOCKET, SO_PEERCRED,
                       &cred, &cred_len) == 0) {
-            printf("Client PID: %d, UID: %d, GID: %d\n",
+            printf("Client PID: %d, UID: %d, GID: %d, ",
                    cred.pid, cred.uid, cred.gid);
         }
         #endif
@@ -1288,7 +1341,7 @@ int receive_fd_over_unix_socket(int socket_fd) {
     
     return -1;
 }
-```
+```text
 
 ## 요약
 
@@ -1331,7 +1384,7 @@ nc -v localhost 8080
 # 소켓 상태 확인
 ss -tan  # 모든 TCP 소켓
 ss -uan  # 모든 UDP 소켓
-```
+```text
 
 소켓은 단순해 보이지만, 인터넷 전체가 이 위에서 돌아갑니다. 여러분이 보는 모든 웹페이지, 모든 앱 알림, 모든 온라인 게임이 소켓을 통해 전달됩니다! 🌐
 

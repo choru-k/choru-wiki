@@ -62,8 +62,8 @@ graph TB
     subgraph "I/O Models"
         BLOCK[Blocking I/O]
         NBLOCK[Non-blocking I/O]
-        MULTI[I/O Multiplexing<br/>select/poll/epoll]
-        ASYNC[Async I/O<br/>io_uring]
+        MULTI[I/O Multiplexing, select/poll/epoll]
+        ASYNC[Async I/O, io_uring]
     end
     
     APP --> SOCK
@@ -82,7 +82,7 @@ graph TB
     style SOCK fill:#FFE082
     style TCP fill:#81C784
     style MULTI fill:#64B5F6
-```
+```text
 
 ## 이 장의 구성
 
@@ -175,7 +175,7 @@ $ ab -n 10000 -c 100    # Apache Bench
 # 네트워크 디버깅
 $ strace -e network     # 네트워크 시스템 콜 추적
 $ ltrace -e socket      # 라이브러리 호출 추적
-```
+```text
 
 ## 이 장을 읽고 나면
 
@@ -188,62 +188,65 @@ $ ltrace -e socket      # 라이브러리 호출 추적
 ## 핵심 개념 미리보기
 
 ```mermaid
-mindmap
-  root((네트워크 프로그래밍))
-    소켓 API
-      생성과 연결
-        socket()
-        bind()
-        listen()
-        accept()
-        connect()
-      데이터 전송
-        send()/recv()
-        sendto()/recvfrom()
-        writev()/readv()
-      옵션 설정
-        SO_REUSEADDR
-        SO_KEEPALIVE
-        TCP_NODELAY
-    TCP/IP 스택
-      TCP
-        3-way handshake
-        4-way close
-        흐름 제어
-        혼잡 제어
-      IP
-        라우팅
-        단편화
-        TTL
-      버퍼 관리
-        송신 버퍼
-        수신 버퍼
-        윈도우 크기
-    I/O 모델
-      동기 I/O
-        블로킹
-        논블로킹
-      I/O 멀티플렉싱
-        select
-        poll
-        epoll/kqueue
-      비동기 I/O
-        POSIX AIO
-        io_uring
-    성능 최적화
-      Zero-copy
-        sendfile
-        splice
-        MSG_ZEROCOPY
-      커널 우회
-        DPDK
-        XDP
-        RDMA
-      튜닝
-        TCP 파라미터
-        소켓 버퍼
-        인터럽트 처리
-```
+graph TD
+    ROOT[네트워크 프로그래밍]
+    
+    subgraph SOCKET["소켓 API"]
+        CREATE[생성과 연결]
+        SOCKET_FUNC[socket함수]
+        BIND_FUNC[bind함수]
+        LISTEN_FUNC[listen함수]
+        ACCEPT_FUNC[accept함수]
+        CONNECT_FUNC[connect함수]
+        
+        TRANSFER[데이터 전송]
+        SEND_RECV[send/recv함수]
+        SENDTO_RECVFROM[sendto/recvfrom함수]
+        WRITEV_READV[writev/readv함수]
+        
+        OPTION[옵션 설정]
+        SO_REUSEADDR[SO_REUSEADDR]
+        SO_KEEPALIVE[SO_KEEPALIVE]
+        TCP_NODELAY[TCP_NODELAY]
+    end
+    
+    subgraph TCPIP["TCP/IP 스택"]
+        TCP[TCP]
+        HANDSHAKE[3-way handshake]
+        CLOSE[4-way close]
+        FLOW[흐름 제어]
+        CONGESTION[혼잡 제어]
+        
+        IP[IP]
+        ROUTING[라우팅]
+        FRAGMENT[단편화]
+        TTL[TTL]
+        
+        BUFFER[버퍼 관리]
+        SEND_BUF[송신 버퍼]
+        RECV_BUF[수신 버퍼]
+        WINDOW[윈도우 크기]
+    end
+    
+    subgraph IO["I/O 모델"]
+        SYNC_IO[동기 I/O]
+        BLOCKING[블로킹]
+        NONBLOCKING[논블로킹]
+        
+        MULTIPLEX[I/O 멀티플렉싱]
+        SELECT[select]
+        POLL[poll]
+        EPOLL[epoll/kqueue]
+        
+        ASYNC_IO[비동기 I/O]
+        POSIX_AIO[POSIX AIO]
+        IO_URING[io_uring]
+    end
+    
+    ROOT --> SOCKET
+    ROOT --> TCPIP
+    ROOT --> IO
+```text
 
 ## 네트워크 문제 진단 플로우차트
 
@@ -266,7 +269,7 @@ graph TD
     Type -->|TIME_WAIT| TimeWait[소켓 상태 확인]
     TimeWait --> Tuning[커널 파라미터 조정]
     Tuning --> Reuse[SO_REUSEADDR 설정]
-```
+```text
 
 ## 다음 단계
 

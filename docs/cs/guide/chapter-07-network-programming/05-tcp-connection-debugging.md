@@ -50,7 +50,7 @@ graph TD
         T[perf/eBPF]
         U[커스텀 모니터링]
     end
-```
+```text
 
 ## 1. TCP 연결 진단 도구
 
@@ -117,16 +117,16 @@ typedef struct {
 static tcp_analyzer_t analyzer;
 
 void print_usage(const char *prog_name) {
-    printf("TCP 연결 분석기\n");
-    printf("사용법: %s [옵션]\n", prog_name);
-    printf("옵션:\n");
-    printf("  -h HOST        대상 호스트 (기본값: localhost)\n");
-    printf("  -p PORT        대상 포트 (기본값: 8080)\n");
-    printf("  -c COUNT       최대 동시 연결 수 (기본값: 100)\n");
-    printf("  -t TIMEOUT     연결 타임아웃 (초, 기본값: 30)\n");
-    printf("  -k KEEPALIVE   Keep-alive 타임아웃 (초, 기본값: 60)\n");
-    printf("  -m MODE        모드: client|server|monitor (기본값: monitor)\n");
-    printf("  --help         이 도움말 출력\n");
+    printf("TCP 연결 분석기, ");
+    printf("사용법: %s [옵션], ", prog_name);
+    printf("옵션:, ");
+    printf("  -h HOST        대상 호스트 (기본값: localhost), ");
+    printf("  -p PORT        대상 포트 (기본값: 8080), ");
+    printf("  -c COUNT       최대 동시 연결 수 (기본값: 100), ");
+    printf("  -t TIMEOUT     연결 타임아웃 (초, 기본값: 30), ");
+    printf("  -k KEEPALIVE   Keep-alive 타임아웃 (초, 기본값: 60), ");
+    printf("  -m MODE        모드: client|server|monitor (기본값: monitor), ");
+    printf("  --help         이 도움말 출력, ");
 }
 
 int set_socket_nonblocking(int fd) {
@@ -206,18 +206,18 @@ void get_socket_info(int fd, char *buffer, size_t buffer_size) {
 void print_connection_stats() {
     pthread_mutex_lock(&analyzer.mutex);
     
-    printf("\n=== TCP 연결 분석 결과 ===\n");
-    printf("총 연결 시도: %lu\n", analyzer.total_connections);
-    printf("실패한 연결: %lu (%.2f%%)\n", 
+    printf(", === TCP 연결 분석 결과 ===, ");
+    printf("총 연결 시도: %lu, ", analyzer.total_connections);
+    printf("실패한 연결: %lu (%.2f%%), ", 
            analyzer.failed_connections,
            analyzer.total_connections > 0 ? 
            (double)analyzer.failed_connections / analyzer.total_connections * 100 : 0);
-    printf("현재 활성 연결: %d\n", analyzer.connection_count);
-    printf("총 송신 바이트: %lu\n", analyzer.bytes_total_sent);
-    printf("총 수신 바이트: %lu\n", analyzer.bytes_total_received);
-    printf("연결 오류: %lu\n", analyzer.connection_errors);
+    printf("현재 활성 연결: %d, ", analyzer.connection_count);
+    printf("총 송신 바이트: %lu, ", analyzer.bytes_total_sent);
+    printf("총 수신 바이트: %lu, ", analyzer.bytes_total_received);
+    printf("연결 오류: %lu, ", analyzer.connection_errors);
     
-    printf("\n=== 활성 연결 상세 ===\n");
+    printf(", === 활성 연결 상세 ===, ");
     time_t now = time(NULL);
     
     for (int i = 0; i < analyzer.connection_count; i++) {
@@ -228,14 +228,14 @@ void print_connection_stats() {
         inet_ntop(AF_INET, &conn->addr.sin_addr, addr_str, INET_ADDRSTRLEN);
         get_socket_info(conn->fd, socket_info, sizeof(socket_info));
         
-        printf("연결 %d: %s:%d\n", i + 1, addr_str, ntohs(conn->addr.sin_port));
-        printf("  연결 시간: %ld초 전\n", now - conn->connect_time);
-        printf("  마지막 활동: %ld초 전\n", now - conn->last_activity);
-        printf("  송신: %lu bytes, 수신: %lu bytes\n", 
+        printf("연결 %d: %s:%d, ", i + 1, addr_str, ntohs(conn->addr.sin_port));
+        printf("  연결 시간: %ld초 전, ", now - conn->connect_time);
+        printf("  마지막 활동: %ld초 전, ", now - conn->last_activity);
+        printf("  송신: %lu bytes, 수신: %lu bytes, ", 
                conn->bytes_sent, conn->bytes_received);
-        printf("  오류 수: %d\n", conn->error_count);
-        printf("  TCP 정보: %s\n", socket_info);
-        printf("\n");
+        printf("  오류 수: %d, ", conn->error_count);
+        printf("  TCP 정보: %s, ", socket_info);
+        printf(", ");
     }
     
     pthread_mutex_unlock(&analyzer.mutex);
@@ -322,7 +322,7 @@ void* stress_test_thread(void* arg) {
 }
 
 void run_stress_test(int num_connections, int num_threads) {
-    printf("스트레스 테스트 시작: %d개 연결, %d개 스레드\n", 
+    printf("스트레스 테스트 시작: %d개 연결, %d개 스레드, ", 
            num_connections, num_threads);
     
     pthread_t threads[num_threads];
@@ -369,21 +369,21 @@ void run_stress_test(int num_connections, int num_threads) {
 }
 
 void analyze_network_stack() {
-    printf("\n=== 네트워크 스택 분석 ===\n");
+    printf(", === 네트워크 스택 분석 ===, ");
     
     // TCP 연결 상태 분석
     system("echo '=== 현재 TCP 연결 상태 ==='");
     system("ss -tuln | head -20");
     
-    printf("\n");
+    printf(", ");
     system("echo '=== TCP 연결 통계 ==='");
     system("ss -s");
     
-    printf("\n");
+    printf(", ");
     system("echo '=== 네트워크 인터페이스 통계 ==='");
     system("cat /proc/net/dev | head -10");
     
-    printf("\n");
+    printf(", ");
     system("echo '=== TCP 설정 확인 ==='");
     system("sysctl net.ipv4.tcp_keepalive_time");
     system("sysctl net.ipv4.tcp_keepalive_probes");
@@ -391,13 +391,13 @@ void analyze_network_stack() {
     system("sysctl net.core.somaxconn");
     system("sysctl net.ipv4.tcp_max_syn_backlog");
     
-    printf("\n");
+    printf(", ");
     system("echo '=== 소켓 통계 ==='");
     system("cat /proc/net/sockstat");
 }
 
 void signal_handler(int sig) {
-    printf("\n신호 %d 수신, 정리 중...\n", sig);
+    printf(", 신호 %d 수신, 정리 중..., ", sig);
     analyzer.running = 0;
 }
 
@@ -441,9 +441,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    printf("TCP 연결 분석기 시작\n");
-    printf("대상: %s:%d\n", analyzer.target_host, analyzer.target_port);
-    printf("모드: %s\n", mode);
+    printf("TCP 연결 분석기 시작, ");
+    printf("대상: %s:%d, ", analyzer.target_host, analyzer.target_port);
+    printf("모드: %s, ", mode);
     
     if (strcmp(mode, "monitor") == 0) {
         analyze_network_stack();
@@ -453,23 +453,23 @@ int main(int argc, char *argv[]) {
         // 단일 클라이언트 연결 테스트
         int fd = create_test_connection(analyzer.target_host, analyzer.target_port);
         if (fd >= 0) {
-            printf("연결 성공: %d\n", fd);
+            printf("연결 성공: %d, ", fd);
             
             char socket_info[512];
             get_socket_info(fd, socket_info, sizeof(socket_info));
-            printf("TCP 정보: %s\n", socket_info);
+            printf("TCP 정보: %s, ", socket_info);
             
             sleep(5);
             close(fd);
         } else {
-            printf("연결 실패\n");
+            printf("연결 실패, ");
         }
     }
     
     pthread_mutex_destroy(&analyzer.mutex);
     return 0;
 }
-```
+```text
 
 ## 2. 연결 풀 최적화 스크립트
 
@@ -584,13 +584,13 @@ analyze_connections() {
     echo "=== TCP 연결 상태 통계 ==="
     ss -s
     
-    echo -e "\n=== 연결 상태별 카운트 ==="
+    echo -e ", === 연결 상태별 카운트 ==="
     ss -tan | awk 'NR>1 {count[$1]++} END {for (state in count) print state, count[state]}' | sort -k2 -nr
     
-    echo -e "\n=== 포트별 연결 수 (상위 10개) ==="
+    echo -e ", === 포트별 연결 수 (상위 10개) ==="
     ss -tan | awk 'NR>1 {split($4,a,":"); count[a[length(a)]]++} END {for (port in count) print port, count[port]}' | sort -k2 -nr | head -10
     
-    echo -e "\n=== TIME_WAIT 상태 연결 분석 ==="
+    echo -e ", === TIME_WAIT 상태 연결 분석 ==="
     local time_wait_count=$(ss -tan | grep TIME-WAIT | wc -l)
     echo "TIME_WAIT 연결 수: $time_wait_count"
     
@@ -598,7 +598,7 @@ analyze_connections() {
         log_warning "TIME_WAIT 연결이 너무 많습니다 ($time_wait_count). 최적화가 필요합니다."
     fi
     
-    echo -e "\n=== 로컬 포트 사용량 ==="
+    echo -e ", === 로컬 포트 사용량 ==="
     local local_port_range=$(sysctl net.ipv4.ip_local_port_range | cut -d= -f2)
     echo "로컬 포트 범위: $local_port_range"
     
@@ -729,13 +729,13 @@ monitor_connections() {
         echo "현재 연결 상태:"
         ss -s | grep TCP
         
-        echo -e "\n포트별 연결 수 (상위 5개):"
+        echo -e ", 포트별 연결 수 (상위 5개):"
         ss -tan | awk 'NR>1 {split($4,a,":"); count[a[length(a)]]++} END {for (port in count) print port, count[port]}' | sort -k2 -nr | head -5
         
-        echo -e "\n연결 상태별 분포:"
+        echo -e ", 연결 상태별 분포:"
         ss -tan | awk 'NR>1 {count[$1]++} END {for (state in count) print state, count[state]}' | sort -k2 -nr
         
-        echo -e "\n시스템 부하:"
+        echo -e ", 시스템 부하:"
         uptime
         
         sleep 10
@@ -838,7 +838,7 @@ server {
     
     location /health {
         access_log off;
-        return 200 "healthy\n";
+        return 200 "healthy, ";
         add_header Content-Type text/plain;
     }
 }
@@ -892,7 +892,7 @@ main() {
 
 # 스크립트 실행
 main "$@"
-```
+```text
 
 ## 3. Python 기반 실시간 연결 모니터링
 
@@ -1181,21 +1181,21 @@ class TCPConnectionMonitor:
                 if self.connections_history:
                     latest_data = self.connections_history[-1]
                     
-                    print(f"\n📊 현재 연결 상태:")
+                    print(f", 📊 현재 연결 상태:")
                     print(f"  총 연결 수: {latest_data['total']}")
                     print(f"  ESTABLISHED: {latest_data['states'].get('ESTABLISHED', 0)}")
                     print(f"  TIME_WAIT: {latest_data['states'].get('TIME_WAIT', 0)}")
                     print(f"  LISTEN: {latest_data['states'].get('LISTEN', 0)}")
                     
                     # 상위 포트
-                    print(f"\n🔌 활성 포트 (상위 5개):")
+                    print(f", 🔌 활성 포트 (상위 5개):")
                     top_ports = sorted(latest_data['local_ports'].items(), 
                                      key=lambda x: x[1], reverse=True)[:5]
                     for port, count in top_ports:
                         print(f"  포트 {port}: {count}개 연결")
                     
                     # 상위 프로세스
-                    print(f"\n🔧 상위 프로세스 (상위 5개):")
+                    print(f", 🔧 상위 프로세스 (상위 5개):")
                     top_processes = sorted(latest_data['processes'].items(), 
                                          key=lambda x: x[1], reverse=True)[:5]
                     for process, count in top_processes:
@@ -1204,20 +1204,20 @@ class TCPConnectionMonitor:
                 # 포트 사용량
                 port_info = self.check_port_exhaustion()
                 if port_info:
-                    print(f"\n🚪 포트 사용량:")
+                    print(f", 🚪 포트 사용량:")
                     print(f"  사용 중: {port_info['used_ports']}/{port_info['available_ports']} "
                           f"({port_info['usage_ratio']:.1%})")
                 
                 # 패턴 분석
                 patterns = self.analyze_connection_patterns()
                 if patterns:
-                    print(f"\n📈 연결 패턴:")
+                    print(f", 📈 연결 패턴:")
                     print(f"  변화율: {patterns['connection_rate_of_change']:.1f}/초")
                     print(f"  평균 TIME_WAIT: {patterns['avg_time_wait_connections']:.0f}")
                     print(f"  패턴: {patterns['pattern_detected']}")
                 
                 # 최근 알림
-                print(f"\n🚨 최근 알림:")
+                print(f", 🚨 최근 알림:")
                 recent_alerts = self.alerts[-5:] if self.alerts else []
                 if recent_alerts:
                     for alert in recent_alerts:
@@ -1226,7 +1226,7 @@ class TCPConnectionMonitor:
                 else:
                     print("  알림 없음")
                 
-                print(f"\n📋 시스템 정보:")
+                print(f", 📋 시스템 정보:")
                 print(f"  모니터링 시간: {len(self.connections_history) * 5}초")
                 print(f"  데이터 포인트: {len(self.connections_history)}")
                 
@@ -1281,7 +1281,7 @@ class TCPConnectionMonitor:
             # 대시보드 출력
             self.print_dashboard()
         except KeyboardInterrupt:
-            print("\n모니터링 중단...")
+            print(", 모니터링 중단...")
         finally:
             self.running = False
 
@@ -1323,6 +1323,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-```
+```text
 
 이 문서는 TCP 연결 문제를 체계적으로 진단하고 해결하는 방법을 제공합니다. C 기반 분석 도구, Bash 최적화 스크립트, Python 모니터링 시스템을 통해 네트워크 연결 문제를 실시간으로 추적하고 해결할 수 있습니다.
