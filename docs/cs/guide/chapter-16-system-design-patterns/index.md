@@ -83,27 +83,27 @@ graph TD
     end
     
     subgraph "API Gateway Layer"
-        Gateway[API Gateway<br/>- Rate Limiting<br/>- Authentication<br/>- Load Balancing]
+        Gateway[API Gateway, - Rate Limiting, - Authentication, - Load Balancing]
     end
     
     subgraph "Microservices Layer"
-        Auth[Auth Service<br/>인증/인가]
-        Course[Course Service<br/>강의 관리]
-        Video[Video Service<br/>스트리밍]
-        Payment[Payment Service<br/>결제]
-        Analytics[Analytics Service<br/>데이터 분석]
+        Auth[Auth Service, 인증/인가]
+        Course[Course Service, 강의 관리]
+        Video[Video Service, 스트리밍]
+        Payment[Payment Service, 결제]
+        Analytics[Analytics Service, 데이터 분석]
     end
     
     subgraph "Data Layer"
-        AuthDB[(Auth DB<br/>PostgreSQL)]
-        CourseDB[(Course DB<br/>MongoDB)]
-        VideoDB[(Video DB<br/>Redis + S3)]
-        PaymentDB[(Payment DB<br/>PostgreSQL)]
-        AnalyticsDB[(Analytics DB<br/>ClickHouse)]
+        AuthDB[(Auth DB, PostgreSQL)]
+        CourseDB[(Course DB, MongoDB)]
+        VideoDB[(Video DB, Redis + S3)]
+        PaymentDB[(Payment DB, PostgreSQL)]
+        AnalyticsDB[(Analytics DB, ClickHouse)]
     end
     
     subgraph "Message Layer"
-        Queue[Message Queue<br/>RabbitMQ/Kafka]
+        Queue[Message Queue, RabbitMQ/Kafka]
     end
     
     Web --> Gateway
@@ -467,7 +467,7 @@ func (s *OrderProcessingSaga) compensate(ctx context.Context, data interface{}) 
         stepIndex := s.executedSteps[i]
         if err := s.steps[stepIndex].Compensate(ctx, data); err != nil {
             // 보상 실패 로깅 (수동 개입 필요)
-            fmt.Printf("보상 실패 - Step %d: %v\n", stepIndex, err)
+            fmt.Printf("보상 실패 - Step %d: %v, ", stepIndex, err)
         }
     }
 }
@@ -490,7 +490,7 @@ func main() {
     }
     
     if err := saga.Execute(context.Background(), orderData); err != nil {
-        fmt.Printf("Saga 실행 실패: %v\n", err)
+        fmt.Printf("Saga 실행 실패: %v, ", err)
     } else {
         fmt.Println("주문 처리 완료!")
     }
@@ -785,8 +785,8 @@ BASE (NoSQL):
 ```mermaid
 graph TB
     subgraph "Frontend Layer"
-        CDN[CDN<br/>Static Content]
-        LB1[Load Balancer<br/>L7/L4]
+        CDN[CDN, Static Content]
+        LB1[Load Balancer, L7/L4]
     end
     
     subgraph "Application Layer"
@@ -803,19 +803,19 @@ graph TB
     end
     
     subgraph "Data Layer"
-        Cache[Redis Cluster<br/>Caching]
-        MQ[Message Queue<br/>Kafka/RabbitMQ]
+        Cache[Redis Cluster, Caching]
+        MQ[Message Queue, Kafka/RabbitMQ]
         
         subgraph "Database Tier"
-            Master[(Master DB<br/>Write)]
-            Slave1[(Slave DB 1<br/>Read)]
-            Slave2[(Slave DB 2<br/>Read)]
+            Master[(Master DB, Write)]
+            Slave1[(Slave DB 1, Read)]
+            Slave2[(Slave DB 2, Read)]
         end
     end
     
     subgraph "Storage Layer"
-        FileStorage[Object Storage<br/>S3/MinIO]
-        Search[Search Engine<br/>Elasticsearch]
+        FileStorage[Object Storage, S3/MinIO]
+        Search[Search Engine, Elasticsearch]
     end
     
     CDN --> LB1

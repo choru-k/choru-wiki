@@ -73,27 +73,27 @@ tags:
 ```mermaid
 graph TB
     subgraph "Command Side (쓰기)"
-        CommandAPI[Command API<br/>거래 실행, 계좌 생성 등]
-        CommandHandlers[Command Handlers<br/>비즈니스 로직]
-        EventStore[(Event Store<br/>모든 이벤트 저장)]
-        Aggregates[Domain Aggregates<br/>Account, Transaction]
+        CommandAPI[Command API, 거래 실행, 계좌 생성 등]
+        CommandHandlers[Command Handlers, 비즈니스 로직]
+        EventStore[(Event Store, 모든 이벤트 저장)]
+        Aggregates[Domain Aggregates, Account, Transaction]
     end
     
     subgraph "Query Side (읽기)"
-        QueryAPI[Query API<br/>조회 전용]
-        ReadModels[Read Models<br/>최적화된 뷰]
+        QueryAPI[Query API, 조회 전용]
+        ReadModels[Read Models, 최적화된 뷰]
         
         subgraph "Specialized Read Stores"
-            AccountSummaryDB[(계좌 요약 DB<br/>MongoDB)]
-            TransactionHistoryDB[(거래 내역 DB<br/>Elasticsearch)]
-            AnalyticsDB[(분석 DB<br/>ClickHouse)]
-            CacheLayer[Cache Layer<br/>Redis]
+            AccountSummaryDB[(계좌 요약 DB, MongoDB)]
+            TransactionHistoryDB[(거래 내역 DB, Elasticsearch)]
+            AnalyticsDB[(분석 DB, ClickHouse)]
+            CacheLayer[Cache Layer, Redis]
         end
     end
     
     subgraph "Event Processing"
-        EventBus[Event Bus<br/>Apache Kafka]
-        Projectors[Projectors<br/>Read Model 생성]
+        EventBus[Event Bus, Apache Kafka]
+        Projectors[Projectors, Read Model 생성]
     end
     
     subgraph "Clients"

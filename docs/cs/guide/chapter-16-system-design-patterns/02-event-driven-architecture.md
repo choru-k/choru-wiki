@@ -62,21 +62,21 @@ graph TB
     end
     
     subgraph "Event Streaming Layer"
-        Kafka[Apache Kafka<br/>- user-events<br/>- content-events<br/>- system-events]
+        Kafka[Apache Kafka, - user-events, - content-events, - system-events]
     end
     
     subgraph "Event Processing Services"
-        Analytics[실시간 분석<br/>Apache Flink]
-        Recommendation[추천 엔진<br/>실시간 업데이트]
-        Notification[알림 서비스<br/>개인화 알림]
-        Trending[트렌딩 분석<br/>인기 콘텐츠]
+        Analytics[실시간 분석, Apache Flink]
+        Recommendation[추천 엔진, 실시간 업데이트]
+        Notification[알림 서비스, 개인화 알림]
+        Trending[트렌딩 분석, 인기 콘텐츠]
     end
     
     subgraph "Event Stores & Views"
-        EventStore[(Event Store<br/>전체 이벤트)]
-        UserProfile[(사용자 프로필<br/>실시간 업데이트)]
-        ContentMetrics[(콘텐츠 메트릭<br/>실시간 집계)]
-        RecommendationDB[(추천 결과<br/>실시간 갱신)]
+        EventStore[(Event Store, 전체 이벤트)]
+        UserProfile[(사용자 프로필, 실시간 업데이트)]
+        ContentMetrics[(콘텐츠 메트릭, 실시간 집계)]
+        RecommendationDB[(추천 결과, 실시간 갱신)]
     end
     
     subgraph "Consumer Applications"

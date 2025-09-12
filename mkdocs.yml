@@ -373,12 +373,34 @@ nav:
               - "Architecture: Disney+'s 450 Edge Locations": cs/aws-internals/cloudfront/01-architecture.md
               - "Optimization: TikTok's Viral Challenge": cs/aws-internals/cloudfront/02-optimization.md
       - Kubernetes Deep Dive (Storytelling):
+          - cs/kubernetes/index.md
           - Architecture:
+              - cs/kubernetes/architecture/index.md
               - "Overview: Google's 2B Containers Secret": cs/kubernetes/architecture/01-overview.md
               - "API Server: Cloudflare's DDoS Defense": cs/kubernetes/architecture/02-api-server.md
               - "etcd: Discord's 1B Messages Recovery": cs/kubernetes/architecture/03-etcd.md
           - Workloads:
+              - cs/kubernetes/workloads/index.md
               - "Pods: Airbnb's 10K Bookings/sec": cs/kubernetes/workloads/01-pods.md
+              - "Controllers: Kubernetes' Self-healing Systems": cs/kubernetes/workloads/02-controllers.md
+              - "StatefulSets: Persistent Workload Management": cs/kubernetes/workloads/03-statefulsets.md
+              - "DaemonSets: Node-level System Services": cs/kubernetes/workloads/04-daemonsets.md
+          - Networking:
+              - cs/kubernetes/networking/index.md
+              - "Cluster Networking: Shopify's Pod Communication": cs/kubernetes/networking/01-cluster-networking.md
+              - "Services: Netflix's Load Balancing": cs/kubernetes/networking/02-services.md
+              - "Ingress: GitHub Pages' Traffic Routing": cs/kubernetes/networking/03-ingress.md
+              - "CNI Plugins: Discord's Network Performance": cs/kubernetes/networking/04-cni-plugins.md
+          - Storage:
+              - cs/kubernetes/storage/index.md
+              - "Volumes: Spotify's Data Persistence": cs/kubernetes/storage/01-volumes.md
+              - "Persistent Volumes: Uber's Stateful Apps": cs/kubernetes/storage/02-persistent-volumes.md
+              - "CSI Drivers: Netflix's Storage Integration": cs/kubernetes/storage/03-csi-drivers.md
+          - Scaling:
+              - cs/kubernetes/scaling/index.md
+              - "HPA: Target's Black Friday Autoscaling": cs/kubernetes/scaling/01-hpa.md
+              - "VPA: Spotify's Resource Optimization": cs/kubernetes/scaling/02-vpa.md
+              - "Cluster Autoscaler: Airbnb's Dynamic Infrastructure": cs/kubernetes/scaling/03-cluster-autoscaler.md
   - DevOps:
       - Service Mesh:
           - Istio Traffic Interception: devops/istio-traffic-interception.md

@@ -64,13 +64,13 @@ Product 팀:
 ```mermaid
 graph TD
     subgraph "기존 Monolithic Architecture"
-        M1[Web Controller Layer<br/>- User Management<br/>- Product Catalog<br/>- Order Processing<br/>- Payment Gateway<br/>- Inventory Management<br/>- Notification System<br/>- Analytics<br/>- Admin Panel]
+        M1[Web Controller Layer, - User Management, - Product Catalog, - Order Processing, - Payment Gateway, - Inventory Management, - Notification System, - Analytics, - Admin Panel]
         
-        M2[Business Logic Layer<br/>- 모든 비즈니스 로직이 섞여있음<br/>- 서로 강하게 결합됨<br/>- 공유 데이터 모델]
+        M2[Business Logic Layer, - 모든 비즈니스 로직이 섞여있음, - 서로 강하게 결합됨, - 공유 데이터 모델]
         
-        M3[Data Access Layer<br/>- 단일 대형 데이터베이스<br/>- 복잡한 JOIN 쿼리<br/>- 트랜잭션 복잡성]
+        M3[Data Access Layer, - 단일 대형 데이터베이스, - 복잡한 JOIN 쿼리, - 트랜잭션 복잡성]
         
-        DB[(Monolithic Database<br/>- users, products, orders<br/>- payments, inventory<br/>- notifications, analytics)]
+        DB[(Monolithic Database, - users, products, orders, - payments, inventory, - notifications, analytics)]
     end
     
     M1 --> M2
@@ -134,47 +134,47 @@ graph TD
 ```mermaid
 graph TB
     subgraph "Client Layer"
-        Web[Web Frontend<br/>React SPA]
-        Mobile[Mobile App<br/>React Native]
-        Admin[Admin Dashboard<br/>Vue.js]
+        Web[Web Frontend, React SPA]
+        Mobile[Mobile App, React Native]
+        Admin[Admin Dashboard, Vue.js]
     end
     
     subgraph "API Gateway & Service Mesh"
-        Gateway[API Gateway<br/>Kong/Zuul]
-        ServiceMesh[Service Mesh<br/>Istio]
+        Gateway[API Gateway, Kong/Zuul]
+        ServiceMesh[Service Mesh, Istio]
     end
     
     subgraph "Core Business Services"
-        UserSvc[User Service<br/>Spring Boot]
-        ProductSvc[Product Service<br/>Spring Boot]
-        OrderSvc[Order Service<br/>Spring Boot]
-        PaymentSvc[Payment Service<br/>Node.js]
-        InventorySvc[Inventory Service<br/>Go]
-        ShippingSvc[Shipping Service<br/>Python]
+        UserSvc[User Service, Spring Boot]
+        ProductSvc[Product Service, Spring Boot]
+        OrderSvc[Order Service, Spring Boot]
+        PaymentSvc[Payment Service, Node.js]
+        InventorySvc[Inventory Service, Go]
+        ShippingSvc[Shipping Service, Python]
     end
     
     subgraph "Supporting Services"
-        NotificationSvc[Notification Service<br/>Node.js]
-        AnalyticsSvc[Analytics Service<br/>Python]
-        ReviewSvc[Review Service<br/>Java]
-        RecommendationSvc[Recommendation Service<br/>Python + ML]
+        NotificationSvc[Notification Service, Node.js]
+        AnalyticsSvc[Analytics Service, Python]
+        ReviewSvc[Review Service, Java]
+        RecommendationSvc[Recommendation Service, Python + ML]
     end
     
     subgraph "Data Layer"
-        UserDB[(User DB<br/>PostgreSQL)]
-        ProductDB[(Product DB<br/>MongoDB)]
-        OrderDB[(Order DB<br/>PostgreSQL)]
-        PaymentDB[(Payment DB<br/>PostgreSQL)]
-        InventoryDB[(Inventory DB<br/>Redis + PostgreSQL)]
-        AnalyticsDB[(Analytics DB<br/>ClickHouse)]
-        SearchDB[(Search DB<br/>Elasticsearch)]
+        UserDB[(User DB, PostgreSQL)]
+        ProductDB[(Product DB, MongoDB)]
+        OrderDB[(Order DB, PostgreSQL)]
+        PaymentDB[(Payment DB, PostgreSQL)]
+        InventoryDB[(Inventory DB, Redis + PostgreSQL)]
+        AnalyticsDB[(Analytics DB, ClickHouse)]
+        SearchDB[(Search DB, Elasticsearch)]
     end
     
     subgraph "Infrastructure Services"
-        MessageQueue[Message Broker<br/>Apache Kafka]
-        Cache[Distributed Cache<br/>Redis Cluster]
-        Storage[Object Storage<br/>MinIO/S3]
-        Monitoring[Monitoring<br/>Prometheus + Grafana]
+        MessageQueue[Message Broker, Apache Kafka]
+        Cache[Distributed Cache, Redis Cluster]
+        Storage[Object Storage, MinIO/S3]
+        Monitoring[Monitoring, Prometheus + Grafana]
     end
     
     Web --> Gateway

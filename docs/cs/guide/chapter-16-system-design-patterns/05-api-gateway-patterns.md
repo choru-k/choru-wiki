@@ -79,7 +79,7 @@ graph TB
     end
     
     subgraph "API Gateway Layer"
-        Gateway[🚪 API Gateway<br/>- Authentication<br/>- Rate Limiting<br/>- Load Balancing<br/>- Request Routing<br/>- Response Aggregation]
+        Gateway[🚪 API Gateway, - Authentication, - Rate Limiting, - Load Balancing, - Request Routing, - Response Aggregation]
         
         subgraph "Gateway Features"
             Auth[🔐 Auth Service]
@@ -91,19 +91,19 @@ graph TB
     end
     
     subgraph "Backend Services"
-        UserSvc[👤 User Service<br/>:8001]
-        PostSvc[📝 Post Service<br/>:8002]  
-        MediaSvc[🖼️ Media Service<br/>:8003]
-        NotificationSvc[🔔 Notification Service<br/>:8004]
-        AnalyticsSvc[📈 Analytics Service<br/>:8005]
-        CommentSvc[💬 Comment Service<br/>:8006]
+        UserSvc[👤 User Service, :8001]
+        PostSvc[📝 Post Service, :8002]  
+        MediaSvc[🖼️ Media Service, :8003]
+        NotificationSvc[🔔 Notification Service, :8004]
+        AnalyticsSvc[📈 Analytics Service, :8005]
+        CommentSvc[💬 Comment Service, :8006]
         MoreSvcs[... 54 more services]
     end
     
     subgraph "Infrastructure"
-        ServiceDiscovery[🗺️ Service Discovery<br/>Consul/Eureka]
+        ServiceDiscovery[🗺️ Service Discovery, Consul/Eureka]
         ConfigServer[⚙️ Config Server]
-        LogAggregator[📝 Log Aggregator<br/>ELK Stack]
+        LogAggregator[📝 Log Aggregator, ELK Stack]
     end
     
     iOS --> Gateway

@@ -155,7 +155,7 @@ Saga 적용 후:
 ```mermaid
 graph TB
     subgraph "Orchestration (오케스트레이션)"
-        O_Orchestrator[Saga Orchestrator<br/>중앙 집중형 제어]
+        O_Orchestrator[Saga Orchestrator, 중앙 집중형 제어]
         O_Service1[Service 1]
         O_Service2[Service 2]
         O_Service3[Service 3]
@@ -168,10 +168,10 @@ graph TB
     end
     
     subgraph "Choreography (코레오그래피)"
-        C_Service1[Service 1<br/>이벤트 발행]
-        C_Service2[Service 2<br/>이벤트 구독]
-        C_Service3[Service 3<br/>이벤트 구독]
-        C_Service4[Service 4<br/>이벤트 구독]
+        C_Service1[Service 1, 이벤트 발행]
+        C_Service2[Service 2, 이벤트 구독]
+        C_Service3[Service 3, 이벤트 구독]
+        C_Service4[Service 4, 이벤트 구독]
         C_EventBus[Event Bus]
         
         C_Service1 --> C_EventBus
