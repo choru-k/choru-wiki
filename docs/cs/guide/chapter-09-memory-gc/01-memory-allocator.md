@@ -20,7 +20,7 @@ tags:
 
 ## 1. malloc의 충격적인 진실
 
-### 1.1 첫 번째 충격: malloc은 시스템 콜이 아니다!
+### 1.1 첫 번째 충격: malloc은 시스템 콜이 아니다
 
 2015년, 신입 개발자였던 저는 선배에게 이런 질문을 받았습니다:
 
@@ -48,11 +48,11 @@ int main() {
     // 결과: brk() 시스템 콜 단 몇 번!
     // malloc은 미리 큰 덩어리를 받아서 나눠 쓴다!
 }
-```
+```text
 
 **실제 동작 방식:**
 
-```
+```text
 사용자: malloc(100) 호출
    ↓
 malloc: "내 캐시에 있나?" 
@@ -64,7 +64,7 @@ malloc: 그 중 100바이트만 반환
 사용자: 다음 malloc(100) 호출
    ↓
 malloc: "아까 받은 덩어리에서 또 100바이트 떼주기" (시스템 콜 없음!)
-```
+```text
 
 ### 1.2 glibc malloc (ptmalloc2)의 내부 구조
 
@@ -74,59 +74,82 @@ malloc: "아까 받은 덩어리에서 또 100바이트 떼주기" (시스템 �
 // ptmalloc2의 핵심 구조체들 (단순화)
 
 // 1. Arena: 스레드별 메모리 관리 영역
+// 각 스레드마다 독립적인 Arena를 가져 경합을 줄입니다
 struct malloc_arena {
     // 뮤텍스 (멀티스레드 동기화)
+    // 스레드 간 Arena 접근 시 동기화 보장
     pthread_mutex_t mutex;
     
     // Fastbins: 작은 크기 전용 (16~80 바이트)
-    // LIFO로 동작 (캐시 효율성!)
-    mfastbinptr fastbins[NFASTBINS];  // 10개
+    // LIFO로 동작하여 캐시 지역성 최대화
+    // 최근 해제된 메모리를 먼저 재사용해 CPU 캐시 효율성 향상
+    mfastbinptr fastbins[NFASTBINS];  // 10개 크기 클래스
     
-    // Unsorted bin: 방금 free된 청크들의 캐시
+    // Unsorted bin: 방금 free된 청크들의 임시 저장소
+    // 다음 malloc에서 크기가 맞으면 즉시 반환하는 캐시 역할
     mchunkptr unsorted_bin;
     
-    // Small bins: 512바이트 미만
-    mchunkptr smallbins[NSMALLBINS];  // 62개
+    // Small bins: 512바이트 미만의 고정 크기 청크
+    // 정확한 크기 매칭으로 내부 단편화 최소화
+    mchunkptr smallbins[NSMALLBINS];  // 62개 크기별 관리
     
-    // Large bins: 512바이트 이상
-    mchunkptr largebins[NBINS - NSMALLBINS];  // 63개
+    // Large bins: 512바이트 이상의 가변 크기 청크
+    // 크기별로 정렬되어 best-fit 할당 가능
+    mchunkptr largebins[NBINS - NSMALLBINS];  // 63개 범위별 관리
     
-    // Top chunk: 아직 할당 안 된 영역
+    // Top chunk: 힙의 최상단 미할당 영역
+    // 연속된 큰 메모리 블록, 다른 bin에서 실패 시 최후 수단
     mchunkptr top;
 };
 
-// 2. Chunk: 실제 메모리 블록
+// 2. Chunk: 실제 메모리 블록의 헤더 구조
 struct malloc_chunk {
-    size_t prev_size;  // 이전 청크 크기 (free일 때만)
-    size_t size;       // 현재 청크 크기 + 플래그
+    // 이전 청크 크기 (인접 청크가 free일 때만 유효)
+    // 병합(coalescing) 시 이전 청크 찾기 위해 사용
+    size_t prev_size;
     
-    // free 상태일 때만 사용
-    struct malloc_chunk* fd;  // forward pointer
-    struct malloc_chunk* bk;  // backward pointer
+    // 현재 청크 크기 + 상태 플래그 (하위 3비트)
+    // PREV_INUSE, IS_MMAPPED, NON_MAIN_ARENA 플래그 포함
+    size_t size;
     
-    // Large bin일 때 추가
+    // free 상태일 때만 사용되는 링크드 리스트 포인터
+    struct malloc_chunk* fd;  // 다음 free 청크 (forward)
+    struct malloc_chunk* bk;  // 이전 free 청크 (backward)
+    
+    // Large bin에서만 사용하는 크기별 정렬 포인터
+    // 같은 bin 내에서 크기순 정렬을 위한 추가 링크
     struct malloc_chunk* fd_nextsize;
     struct malloc_chunk* bk_nextsize;
 };
 
-// 3. 실제 할당 과정
+// 3. 실제 할당 과정 - 크기별 최적화된 경로 선택
 void* ptmalloc_malloc(size_t size) {
-    // Step 1: 크기별 최적 경로 선택
+    // Step 1: 요청 크기에 따른 할당 전략 결정
+    // 각 크기 범위마다 다른 데이터 구조와 알고리즘 사용
+    
     if (size <= 80) {
-        // Fastbin 경로 (가장 빠름!)
+        // Fastbin 경로 (가장 빠른 할당)
+        // 단일 연결 리스트로 O(1) 할당/해제
+        // 동기화 없이 빠른 접근, 작은 객체에 최적화
         return fastbin_malloc(size);
     } else if (size <= 512) {
-        // Smallbin 경로
+        // Smallbin 경로 (정확한 크기 매칭)
+        // 고정 크기 bin으로 내부 단편화 없음
+        // 이중 연결 리스트로 중간 제거 효율적
         return smallbin_malloc(size);
     } else if (size <= 128 * 1024) {
-        // Largebin 경로
+        // Largebin 경로 (best-fit 할당)
+        // 크기별 정렬로 가장 적합한 청크 선택
+        // 큰 청크를 분할하여 내부 단편화 최소화
         return largebin_malloc(size);
     } else {
-        // mmap 직접 사용 (huge allocation)
+        // mmap 직접 사용 (거대한 할당)
+        // 힙 영역을 건드리지 않고 별도 매핑
+        // 해제 시 즉시 OS에 반환되어 메모리 효율적
         return mmap_malloc(size);
     }
 }
-```
+```text
 
 ### 1.3 메모리 단편화: 조용한 살인자
 
@@ -186,7 +209,7 @@ public:
         // 실제로 메모리 해제 없음! 재사용만!
     }
 };
-```
+```text
 
 ## 2. 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc
 
@@ -196,34 +219,48 @@ Google이 만든 TCMalloc (Thread-Caching Malloc)의 혁신:
 
 ```c++
 // TCMalloc의 핵심: Thread-local 캐시
+// 각 스레드가 독립적인 캐시를 가져 lock 없는 고속 할당 실현
 class ThreadCache {
 private:
     // 크기별 free list (per-thread, lock-free!)
-    FreeList list_[kNumClasses];  // 88개 크기 클래스
-    size_t size_;  // 현재 캐시 크기
+    // 88개의 서로 다른 크기 클래스로 세분화된 관리
+    // 각 크기마다 별도 리스트로 할당 속도 극대화
+    FreeList list_[kNumClasses];  // 88개 크기 클래스 (8B~32KB)
+    
+    // 현재 캐시 크기 추적 (메모리 사용량 제어)
+    size_t size_;  // 바이트 단위 총 캐시 크기
     
 public:
     void* Allocate(size_t size) {
+        // 요청 크기를 미리 정의된 크기 클래스로 매핑
+        // 예: 17바이트 요청 → 24바이트 클래스로 반올림
         const int cl = SizeClass(size);
         FreeList* list = &list_[cl];
         
         if (!list->empty()) {
-            // Fast path: lock 없이 할당!
+            // Fast path: 스레드 로컬 캐시에서 즉시 반환
+            // 뮤텍스나 atomic 연산 없이 O(1) 할당
+            // CPU 캐시 친화적으로 최근 해제된 메모리 재사용
             return list->Pop();
         }
         
-        // Slow path: Central heap에서 가져오기
+        // Slow path: 로컬 캐시 부족 시 중앙 힙에서 배치 가져오기
+        // 여러 객체를 한 번에 가져와 시스템 호출 오버헤드 감소
         return FetchFromCentralCache(cl);
     }
     
     void Deallocate(void* ptr, size_t size) {
+        // 해제할 객체의 크기 클래스 결정
         const int cl = SizeClass(size);
         FreeList* list = &list_[cl];
         
+        // 스레드 로컬 캐시에 추가 (즉시 재사용 가능)
         list->Push(ptr);
         
-        // 캐시가 너무 크면 일부 반환
+        // 캐시 크기 제한으로 메모리 과다 사용 방지
+        // 임계값 초과 시 중앙 캐시로 일부 반환
         if (list->length() > list->max_length()) {
+            // 배치 단위로 반환하여 중앙 캐시 경합 최소화
             ReleaseToCentralCache(list, num_to_release);
         }
     }
@@ -255,7 +292,7 @@ void benchmark_allocators() {
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         
-        printf("%s: %ld ms\n", name, duration.count());
+        printf("%s: %ld ms, ", name, duration.count());
     };
     
     test("glibc malloc", malloc, free);         // 12,000 ms
@@ -263,7 +300,7 @@ void benchmark_allocators() {
     test("jemalloc", je_malloc, je_free);       // 3,500 ms
     test("mimalloc", mi_malloc, mi_free);       // 2,800 ms (최신, 가장 빠름!)
 }
-```
+```text
 
 ### 2.2 JEMalloc: Facebook의 선택
 
@@ -271,31 +308,46 @@ Facebook, Firefox, Redis가 선택한 jemalloc의 특징:
 
 ```c
 // JEMalloc의 핵심: Arena와 크기 클래스
+// NUMA 아키텍처에 최적화된 메모리 할당자
 
 // 1. Arena 구조 (NUMA 친화적)
+// 각 CPU 코어마다 독립된 Arena를 배치하여 원격 메모리 접근 최소화
 typedef struct arena_s {
-    // 각 CPU별로 Arena 할당 -> 경합 감소
+    // 동시 접근 제어를 위한 뮤텍스
+    // CPU별 Arena로 경합을 줄였지만 완전히 제거할 수는 없음
     malloc_mutex_t lock;
     
-    // Bins: 크기별 관리
+    // Bins: 크기별 청크 관리 전략
+    // Small bins (39개): 8B~3KB, 정확한 크기 매칭으로 내부 단편화 없음
+    // Large bins: 4KB~4MB, 베스트핯 할당으로 단편화 최소화
     arena_bin_t bins[NBINS];  // Small: 39개, Large: 별도
     
     // Huge allocations (chunk 크기 이상)
+    // 4MB 이상의 거대 할당은 별도 관리로 mmap 직접 사용
+    // 트리 구조로 빠른 검색과 병합 지원
     extent_tree_t huge;
     
-    // 통계
+    // 성능 모니터링을 위한 통계 정보
+    // 할당/해제 빈도, 단편화율, 메모리 사용량 등 추적
     arena_stats_t stats;
 } arena_t;
 
 // 2. Slab 할당 (작은 객체용)
+// 같은 크기의 객체들을 한 페이지에 모아 관리
 typedef struct arena_bin_s {
+    // bin 단위 동기화 (세밀한 잠금 제어)
     malloc_mutex_t lock;
     
-    // Slab: 같은 크기 객체들의 그룹
-    arena_slab_t *slabcur;  // 현재 할당 중인 slab
-    extent_heap_t slabs_nonfull;  // 부분적으로 찬 slabs
+    // Slab: 같은 크기 객체들의 그룹 페이지
+    // 연속된 메모리 영역을 동일 크기로 분할하여 관리
+    arena_slab_t *slabcur;  // 현재 할당 중인 slab (가장 빠른 할당)
+    
+    // 부분적으로 찬 slabs 관리 (힙 구조)
+    // 사용 가능한 슬롯이 있는 slab들을 효율적 관리
+    extent_heap_t slabs_nonfull;  
     
     // 비트맵으로 할당 상태 추적
+    // 각 슬롯의 사용 여부를 1비트로 관리 (메모리 효율적)
     bitmap_t bitmap[BITMAP_GROUPS];
 } arena_bin_t;
 
@@ -318,7 +370,7 @@ void redis_jemalloc_tuning() {
     
     // 결과: 메모리 사용량 30% 감소, 지연시간 영향 없음!
 }
-```
+```text
 
 ### 2.3 MIMalloc: Microsoft의 최신작
 
@@ -326,26 +378,43 @@ void redis_jemalloc_tuning() {
 
 ```c++
 // MIMalloc의 핵심: Sharded free list + Local heap
+// 2019년 Microsoft에서 공개한 최신 메모리 할당자
 
 // 1. Free list sharding (false sharing 방지)
+// CPU 캐시라인 단위로 free list를 분할하여 성능 최적화
 typedef struct mi_page_s {
-    // 여러 개의 free list (캐시라인별)
+    // 여러 개의 free list (캐시라인별 분할)
+    // 64비트 시스템에서 6개로 분할 (2^6=64바이트 캐시라인)
+    // 독립적인 free list로 false sharing 완전 제거
     mi_block_t* free[MI_INTPTR_SHIFT];  // 64-bit에서 6개
+    
+    // 현재 사용 중인 블록 수 (빠른 가득성 검사)
     size_t used;
+    
+    // 네코딩된 블록 크기 (보안 + 공간 절약)
+    // 실제 크기 정보를 인코딩하여 메타데이터 오버헤드 감소
     size_t xblock_size;  // encoded block size
     
-    // Thread-local free list
+    // Thread-local free list (가장 빠른 할당 경로)
+    // 현재 스레드가 최근 해제한 블록들의 링크
     mi_block_t* local_free;
 } mi_page_t;
 
 // 2. Segment와 Page 구조
 // - Segment: 2MB (huge page 친화적)
+//   OS의 huge page와 정렬하여 TLB 미스 최소화
+//   메모리 주소 변환 오버헤드 크게 감소
 // - Page: Segment 내부를 나눔
+//   동일 크기 블록들을 모아둔 관리 단위
 // - 장점: 메모리 지역성 극대화!
+//   공간적 지역성으로 CPU 캐시 효율성 극대화
 
 // 3. Free list 인코딩 (보안 + 성능)
+// XOR 인코딩으로 보안성 강화와 메타데이터 압축
 static inline mi_block_t* mi_block_next(mi_page_t* page, mi_block_t* block) {
     // XOR 인코딩으로 heap overflow 공격 방어
+    // 예측 불가능한 주소 패턴으로 ROP/JOP 공격 차단
+    // 동시에 포인터 앞에 별도 사이즈 필드 없이 공간 절약
     return (mi_block_t*)((uintptr_t)block->next ^ page->keys[0]);
 }
 
@@ -372,7 +441,7 @@ void analyze_mimalloc_performance() {
 - mimalloc: 15% 빠름, 5% 적은 메모리 (승자!)
 - 특히 작은 할당이 많은 워크로드에서 압도적
 */
-```
+```text
 
 ## 3. 커스텀 메모리 할당자 구현
 
@@ -458,7 +527,7 @@ public:
         tail %= SIZE;
     }
 };
-```
+```text
 
 ### 3.2 Slab Allocator: Linux 커널의 선택
 
@@ -550,7 +619,7 @@ struct task_struct {  // 프로세스 구조체
 };
 
 SlabAllocator<task_struct> task_cache;  // 프로세스 생성/소멸 최적화!
-```
+```text
 
 ### 3.3 Buddy System: 단편화 방지의 정석
 
@@ -671,11 +740,11 @@ void benchmark_fragmentation() {
     
     size_t buddy_usage = buddy.get_memory_usage();
     
-    printf("일반 malloc: %zu MB (단편화 심함)\n", malloc_usage / 1024 / 1024);
-    printf("Buddy System: %zu MB (단편화 최소)\n", buddy_usage / 1024 / 1024);
+    printf("일반 malloc: %zu MB (단편화 심함), ", malloc_usage / 1024 / 1024);
+    printf("Buddy System: %zu MB (단편화 최소), ", buddy_usage / 1024 / 1024);
     // 결과: Buddy가 20-30% 적은 메모리 사용!
 }
-```
+```text
 
 ## 4. 실전 메모리 최적화 사례
 
@@ -727,15 +796,15 @@ void profile_memory_usage() {
     je_mallctl("stats.resident", &resident, &sz, NULL, 0);
     je_mallctl("stats.mapped", &mapped, &sz, NULL, 0);
     
-    printf("Allocated: %.2f MB\n", allocated / 1048576.0);
-    printf("Active: %.2f MB\n", active / 1048576.0);
-    printf("Metadata: %.2f MB\n", metadata / 1048576.0);
-    printf("Resident: %.2f MB\n", resident / 1048576.0);
-    printf("Mapped: %.2f MB\n", mapped / 1048576.0);
-    printf("Fragmentation: %.2f%%\n", 
+    printf("Allocated: %.2f MB, ", allocated / 1048576.0);
+    printf("Active: %.2f MB, ", active / 1048576.0);
+    printf("Metadata: %.2f MB, ", metadata / 1048576.0);
+    printf("Resident: %.2f MB, ", resident / 1048576.0);
+    printf("Mapped: %.2f MB, ", mapped / 1048576.0);
+    printf("Fragmentation: %.2f%%, ", 
            (1.0 - (double)allocated / active) * 100);
 }
-```
+```text
 
 ### 4.2 Discord의 Go 메모리 최적화
 
@@ -804,7 +873,7 @@ func processRequest(data []byte) {
 // - 메모리 사용량: 10GB -> 3GB (70% 감소)
 // - GC 일시정지: 10ms -> 1ms (90% 감소)
 // - 처리량: 30% 증가
-```
+```text
 
 ### 4.3 게임 엔진의 Zero-allocation 패턴
 
@@ -886,7 +955,7 @@ public:
     // 프레임 끝
     void end_frame() {
         if (stats.allocations > 0) {
-            printf("Frame allocations: %zu (%.2f KB)\n",
+            printf("Frame allocations: %zu (%.2f KB), ",
                    stats.allocations,
                    stats.bytes_allocated / 1024.0);
         }
@@ -912,7 +981,7 @@ void game_loop() {
         // 60 FPS 유지!
     }
 }
-```
+```text
 
 ## 5. 마무리: 메모리 할당자 선택 가이드
 

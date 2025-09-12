@@ -24,7 +24,7 @@ tags:
 
 2018년, 금융 거래 시스템에서 일어난 실화입니다:
 
-```
+```text
 월요일: "서버 메모리가 좀 높네요" - 4GB
 화요일: "음... 6GB인데 괜찮겠죠?" 
 수요일: "8GB... 뭔가 이상한데?"
@@ -32,7 +32,7 @@ tags:
 금요일 새벽 3시: "서버 다운! OOM!" - 16GB 💥
 
 손실: 3시간 다운타임, 수억 원 손해...
-```
+```text
 
 원인은 단 한 줄의 코드였습니다:
 
@@ -47,7 +47,7 @@ public class TradingSystem {
         // ... 처리 로직
     }
 }
-```
+```text
 
 ### 1.2 메모리 누수의 10가지 패턴
 
@@ -163,7 +163,7 @@ public class LeakPattern10 {
         // Finalizer 큐가 쌓여서 메모리 누수처럼 보임
     }
 }
-```
+```text
 
 ## 2. 메모리 누수 사냥 도구
 
@@ -213,7 +213,7 @@ void advanced_valgrind() {
     // Helgrind: 스레드 오류 탐지
     // $ valgrind --tool=helgrind ./program
 }
-```
+```text
 
 ### 2.2 AddressSanitizer (ASan)
 
@@ -265,7 +265,7 @@ Direct leak of 1024 byte(s) in 1 object(s) allocated from:
     #0 0x7f8a4a8a9b40 in malloc
     #1 0x401267 in memory_leak() address_sanitizer.cpp:17
 */
-```
+```text
 
 ### 2.3 Java 메모리 프로파일링
 
@@ -339,7 +339,7 @@ class MemoryMonitor {
             long heapMax = heapUsage.getMax() / 1024 / 1024;
             long nonHeapUsed = nonHeapUsage.getUsed() / 1024 / 1024;
             
-            System.out.printf("Heap: %d/%d MB, Non-Heap: %d MB\n",
+            System.out.printf("Heap: %d/%d MB, Non-Heap: %d MB, ",
                 heapUsed, heapMax, nonHeapUsed);
             
             // 임계값 초과 시 경고
@@ -351,7 +351,7 @@ class MemoryMonitor {
         }, 0, 10, TimeUnit.SECONDS);
     }
 }
-```
+```text
 
 ## 3. Zero-allocation 프로그래밍
 
@@ -494,9 +494,9 @@ class ZeroAllocationBenchmark {
         }
         long zeroAllocTime = System.nanoTime() - start;
         
-        System.out.printf("Normal: %d ms\n", normalTime / 1_000_000);
-        System.out.printf("Zero-alloc: %d ms\n", zeroAllocTime / 1_000_000);
-        System.out.printf("Speedup: %.2fx\n", 
+        System.out.printf("Normal: %d ms, ", normalTime / 1_000_000);
+        System.out.printf("Zero-alloc: %d ms, ", zeroAllocTime / 1_000_000);
+        System.out.printf("Speedup: %.2fx, ", 
             (double)normalTime / zeroAllocTime);
         
         // 결과:
@@ -505,7 +505,7 @@ class ZeroAllocationBenchmark {
         // Speedup: 16.67x
     }
 }
-```
+```text
 
 ### 3.2 게임 엔진의 프레임 할당자
 
@@ -589,7 +589,7 @@ class GameEngine {
         }
     }
 };
-```
+```text
 
 ## 4. Cache-friendly 자료구조
 
@@ -601,10 +601,10 @@ class CachePerformance {
 public:
     static void measureLatency() {
         // Intel i7 기준
-        printf("L1 Cache: 4 cycles (~1ns)\n");
-        printf("L2 Cache: 12 cycles (~3ns)\n");
-        printf("L3 Cache: 40 cycles (~10ns)\n");
-        printf("RAM: 200+ cycles (~60ns)\n");
+        printf("L1 Cache: 4 cycles (~1ns), ");
+        printf("L2 Cache: 12 cycles (~3ns), ");
+        printf("L3 Cache: 40 cycles (~10ns), ");
+        printf("RAM: 200+ cycles (~60ns), ");
         
         // 60배 차이!
     }
@@ -669,9 +669,9 @@ public:
         }
         auto soa_time = std::chrono::high_resolution_clock::now() - start;
         
-        printf("AoS: %ld ms\n", 
+        printf("AoS: %ld ms, ", 
             std::chrono::duration_cast<std::chrono::milliseconds>(aos_time).count());
-        printf("SoA: %ld ms\n",
+        printf("SoA: %ld ms, ",
             std::chrono::duration_cast<std::chrono::milliseconds>(soa_time).count());
         
         // 결과:
@@ -679,7 +679,7 @@ public:
         // SoA: 120 ms (3.75배 빠름!)
     }
 };
-```
+```text
 
 ### 4.2 False Sharing 방지
 
@@ -749,16 +749,16 @@ void testFalseSharing() {
     t4.join();
     auto good_time = std::chrono::high_resolution_clock::now() - start;
     
-    printf("With false sharing: %ld ms\n",
+    printf("With false sharing: %ld ms, ",
         std::chrono::duration_cast<std::chrono::milliseconds>(bad_time).count());
-    printf("Without false sharing: %ld ms\n",
+    printf("Without false sharing: %ld ms, ",
         std::chrono::duration_cast<std::chrono::milliseconds>(good_time).count());
     
     // 결과:
     // With false sharing: 800 ms
     // Without false sharing: 200 ms (4배 빠름!)
 }
-```
+```text
 
 ### 4.3 NUMA-aware 프로그래밍
 
@@ -789,7 +789,7 @@ public:
     
     static void optimize_for_numa() {
         int num_nodes = numa_num_configured_nodes();
-        printf("NUMA nodes: %d\n", num_nodes);
+        printf("NUMA nodes: %d, ", num_nodes);
         
         // 각 노드에 스레드와 데이터 할당
         std::vector<std::thread> threads;
@@ -835,7 +835,7 @@ public:
         }
         
         for (auto& [node, count] : node_count) {
-            printf("Node %d: %d pages\n", node, count);
+            printf("Node %d: %d pages, ", node, count);
         }
     }
 };
@@ -860,16 +860,16 @@ void numa_benchmark() {
     memset(local_mem, 0, SIZE);
     auto local_time = std::chrono::high_resolution_clock::now() - start;
     
-    printf("Remote NUMA access: %ld ms\n",
+    printf("Remote NUMA access: %ld ms, ",
         std::chrono::duration_cast<std::chrono::milliseconds>(remote_time).count());
-    printf("Local NUMA access: %ld ms\n",
+    printf("Local NUMA access: %ld ms, ",
         std::chrono::duration_cast<std::chrono::milliseconds>(local_time).count());
     
     // 결과:
     // Remote NUMA access: 250 ms
     // Local NUMA access: 150 ms (40% 빠름!)
 }
-```
+```text
 
 ## 5. 실전 최적화 사례
 
@@ -957,7 +957,7 @@ public class NetflixOptimization {
     // - GC pause 80% 감소
     // - 처리량 20% 증가
 }
-```
+```text
 
 ### 5.2 Discord의 Go 서비스 최적화
 
@@ -1067,7 +1067,7 @@ func tuneGC() {
 // - GC 횟수: 30% 증가
 // - GC pause: 변화 없음 (여전히 <1ms)
 // - 처리량: 5% 증가
-```
+```text
 
 ## 6. 마무리: 메모리 최적화 체크리스트
 
@@ -1091,7 +1091,7 @@ def memory_optimization_checklist():
     ]
     
     return checklist
-```
+```text
 
 ### 💡 핵심 교훈
 

@@ -76,7 +76,7 @@ graph TB
     style MALLOC fill:#FFE082
     style GENERATIONAL fill:#81C784
     style OWNERSHIP fill:#64B5F6
-```
+```text
 
 ## 이 장의 구성
 
@@ -148,7 +148,7 @@ $ GODEBUG=gctrace=1 ./app   # Go GC 추적
 $ htop                       # 메모리 사용량 모니터링
 $ vmstat 1                   # 가상 메모리 통계
 $ /proc/<pid>/status        # 상세 메모리 정보
-```
+```text
 
 ## 이 장을 읽고 나면
 
@@ -212,7 +212,7 @@ mindmap
         Heap Profiler
         Allocation Tracker
         Memory Snapshot
-```
+```text
 
 ## 메모리 문제 진단 플로우차트
 
@@ -235,7 +235,7 @@ graph TD
     Type -->|세그폴트| Crash[크래시 분석]
     Crash --> Core[코어 덤프 분석]
     Core --> Fix[메모리 접근 수정]
-```
+```text
 
 ## 다음 단계
 

@@ -24,13 +24,13 @@ tags:
 
 1959년, MIT AI Lab에서 일어난 일입니다:
 
-```
+```text
 John McCarthy: "프로그래머가 메모리 해제를 잊어버리면 어떻게 될까?"
 동료: "메모리 누수로 프로그램이 죽겠죠."
 McCarthy: "그럼 컴퓨터가 알아서 치우게 하면 어떨까?"
 동료: "그게 가능해요?"
 McCarthy: "제가 Lisp에 구현해봤는데..."
-```
+```text
 
 그렇게 Garbage Collection이 탄생했습니다!
 
@@ -62,57 +62,54 @@ public:
 
 // 결과: 하루에 10GB 메모리 누수
 // 서버가 3일마다 OOM으로 재시작... 😭
-```
+```text
 
 ### 1.3 GC의 기본 원리: 도달 가능성
 
 ```c
-// GC의 핵심 아이디어: Reachability
+// GC의 핵심 아이디어: Reachability (도달 가능성)
 // "Root에서 도달할 수 없는 객체 = 쓰레기"
 
-// Root Set (GC의 시작점)
-// 1. 스택 변수
-// 2. 전역 변수  
-// 3. CPU 레지스터
-// 4. JNI 참조 (Java)
-
+// Root Set (GC의 시작점) - GC가 살아있다고 확신할 수 있는 참조들
 void* roots[] = {
-    stack_variables,
-    global_variables,
-    cpu_registers,
-    jni_references
+    stack_variables,   // 1. 스택 변수: 현재 실행 중인 함수의 로컬 변수
+    global_variables,  // 2. 전역 변수: 프로그램 생명주기 동안 유지되는 변수
+    cpu_registers,     // 3. CPU 레지스터: 현재 처리 중인 포인터
+    jni_references     // 4. JNI 참조: Native 코드와 연결된 객체 (Java)
 };
 
-// 도달 가능성 판단
+// 도달 가능성 판단 - BFS 알고리즘으로 객체 그래프 탐색
 bool is_reachable(Object* obj) {
-    // BFS로 root에서 도달 가능한지 확인
-    Queue<Object*> queue;
-    Set<Object*> visited;
+    // BFS(너비 우선 탐색)로 root에서 도달 가능한지 확인
+    Queue<Object*> queue;      // 탐색할 객체 대기열
+    Set<Object*> visited;      // 이미 방문한 객체 집합 (중복 방문 방지)
     
-    // Root set을 큐에 추가
+    // Phase 1: Root set을 큐에 추가 (탐색 시작점)
     for (auto root : roots) {
         queue.push(root);
     }
     
+    // Phase 2: BFS 탐색으로 객체 그래프 순회
     while (!queue.empty()) {
         Object* current = queue.pop();
-        visited.insert(current);
+        visited.insert(current);      // 방문 기록
         
+        // 찾고자 하는 객체에 도달했나?
         if (current == obj) {
-            return true;  // 도달 가능!
+            return true;  // 도달 가능! (GC 대상이 아님)
         }
         
-        // 참조하는 객체들 탐색
+        // Phase 3: 현재 객체가 참조하는 모든 객체를 탐색 대상에 추가
         for (auto ref : current->references) {
             if (!visited.contains(ref)) {
-                queue.push(ref);
+                queue.push(ref);  // 아직 방문하지 않은 객체만 추가
             }
         }
     }
     
-    return false;  // 도달 불가능 = 쓰레기
+    return false;  // 도달 불가능 = 쓰레기 (GC 대상)
 }
-```
+```text
 
 ## 2. 기본 GC 알고리즘
 
@@ -121,62 +118,68 @@ bool is_reachable(Object* obj) {
 1960년대부터 사용된 고전 알고리즘:
 
 ```c++
-// Mark & Sweep 구현
+// Mark & Sweep GC 구현 - 가장 기본적인 GC 알고리즘
 class MarkSweepGC {
 private:
     struct Object {
-        bool marked = false;
-        size_t size;
-        void* data;
-        std::vector<Object*> references;
+        bool marked = false;                    // GC 표시 플래그 (살아있음/죽음)
+        size_t size;                           // 객체 크기 (메모리 해제시 필요)
+        void* data;                            // 실제 객체 데이터
+        std::vector<Object*> references;       // 이 객체가 참조하는 다른 객체들
     };
     
-    std::vector<Object*> all_objects;
-    std::vector<void*> roots;
+    std::vector<Object*> all_objects;          // 힙의 모든 객체 목록
+    std::vector<void*> roots;                  // Root set (GC 시작점)
     
 public:
+    // 메인 GC 수집 함수 - 전형적인 2단계 과정
     void collect() {
-        // Phase 1: Mark (표시)
+        // Phase 1: Mark (표시) - 살아있는 객체 찾기
         mark();
         
-        // Phase 2: Sweep (청소)
+        // Phase 2: Sweep (청소) - 죽은 객체 제거
         sweep();
     }
     
 private:
+    // Phase 1: Mark 단계 - 도달 가능한 모든 객체에 표시
     void mark() {
-        // 모든 객체를 unmarked로 초기화
+        // Step 1: 모든 객체를 unmarked로 초기화 ("모두 죽었다고 가정")
         for (auto obj : all_objects) {
             obj->marked = false;
         }
         
-        // Root set부터 시작해서 도달 가능한 객체 표시
+        // Step 2: Root set부터 시작해서 도달 가능한 객체들을 재귀적으로 표시
         for (auto root : roots) {
             mark_object(static_cast<Object*>(root));
         }
     }
     
+    // 재귀적 표시 함수 - DFS(깊이 우선 탐색) 방식
     void mark_object(Object* obj) {
+        // 종료 조건: null이거나 이미 표시된 객체
         if (!obj || obj->marked) return;
         
-        obj->marked = true;  // 표시!
+        obj->marked = true;  // "이 객체는 살아있다!" 표시
         
-        // 재귀적으로 참조 객체들도 표시
+        // 재귀적으로 이 객체가 참조하는 모든 객체들도 표시
+        // (객체 그래프를 따라 전파)
         for (auto ref : obj->references) {
             mark_object(ref);
         }
     }
     
+    // Phase 2: Sweep 단계 - 표시되지 않은 객체들을 메모리에서 제거
     void sweep() {
         auto it = all_objects.begin();
         while (it != all_objects.end()) {
             if (!(*it)->marked) {
-                // 표시 안 된 객체 = 쓰레기
-                delete (*it)->data;
-                delete *it;
-                it = all_objects.erase(it);
+                // 표시 안 된 객체 = 쓰레기 -> 메모리 해제
+                delete (*it)->data;                // 객체 데이터 해제
+                delete *it;                       // 객체 구조체 해제
+                it = all_objects.erase(it);       // 목록에서 제거
             } else {
-                ++it;
+                ++it;  // 살아있는 객체는 그대로 두고 다음으로
             }
         }
     }
@@ -196,14 +199,14 @@ void benchmark_mark_sweep() {
     auto end = high_resolution_clock::now();
     
     auto duration = duration_cast<milliseconds>(end - start);
-    printf("Mark & Sweep: %ld ms (Stop-the-world!)\n", duration.count());
+    printf("Mark & Sweep: %ld ms (Stop-the-world!), ", duration.count());
     // 결과: 약 100ms - 게임에서는 치명적!
 }
-```
+```text
 
 **Mark & Sweep의 문제점:**
 
-```
+```text
 메모리 레이아웃 (GC 전):
 [객체A][객체B][빈공간][객체C][객체D][빈공간][객체E]
 
@@ -211,64 +214,67 @@ GC 후:
 [객체A][빈공간][빈공간][객체C][빈공간][빈공간][객체E]
 
 문제: 메모리 단편화! (Swiss cheese problem)
-```
+```text
 
 ### 2.2 Copying Collector: 단편화 해결사
 
 Cheney's Algorithm (1970):
 
 ```c++
-// Semi-space Copying Collector
+// Semi-space Copying Collector - 단편화 문제 해결을 위한 복사 방식 GC
 class CopyingGC {
 private:
-    uint8_t* from_space;  // 현재 사용 중인 공간
-    uint8_t* to_space;    // 복사 대상 공간
-    size_t space_size;
-    uint8_t* allocation_ptr;  // 다음 할당 위치
+    uint8_t* from_space;      // 현재 사용 중인 공간 ("Old" space)
+    uint8_t* to_space;        // 복사 대상 공간 ("New" space)
+    size_t space_size;        // 각 공간의 크기 (전체 힙의 50%)
+    uint8_t* allocation_ptr;  // 다음 할당 위치 (bump pointer 방식)
     
     struct Object {
-        size_t size;
-        Object* forwarding_ptr;  // 이동한 주소
-        std::vector<Object**> references;
+        size_t size;                        // 객체 크기
+        Object* forwarding_ptr;             // 복사된 새 주소 (중복 복사 방지)
+        std::vector<Object**> references;   // 이 객체의 참조 포인터들
     };
     
 public:
     CopyingGC(size_t size) : space_size(size) {
-        from_space = new uint8_t[size];
-        to_space = new uint8_t[size];
-        allocation_ptr = from_space;
+        from_space = new uint8_t[size];     // 현재 활성 공간
+        to_space = new uint8_t[size];       // 복사 대상 공간
+        allocation_ptr = from_space;        // 할당 시작 위치
     }
     
+    // Cheney's Algorithm을 사용한 복사 수집
     void collect() {
-        // Cheney's algorithm: BFS로 복사
-        uint8_t* scan_ptr = to_space;
-        uint8_t* free_ptr = to_space;
+        // BFS(너비 우선 탐색)로 복사 - 큐 없이 공간 자체를 큐로 활용하는 천재적 방법!
+        uint8_t* scan_ptr = to_space;       // 스캔할 다음 객체 위치
+        uint8_t* free_ptr = to_space;       // 다음 복사할 위치
         
-        // 1. Root set 복사
+        // Phase 1: Root set의 모든 객체를 to_space로 복사
         for (auto& root : roots) {
             if (is_in_from_space(root)) {
-                root = copy_object(root, &free_ptr);
+                root = copy_object(root, &free_ptr);  // root 포인터 업데이트
             }
         }
         
-        // 2. BFS로 참조 객체들 복사
+        // Phase 2: BFS로 참조 객체들을 순차적으로 복사
+        // scan_ptr < free_ptr인 동안 계속 (큐가 빌 때까지)
         while (scan_ptr < free_ptr) {
             Object* obj = reinterpret_cast<Object*>(scan_ptr);
             
+            // 현재 객체가 참조하는 모든 객체들을 복사
             for (auto& ref_ptr : obj->references) {
                 if (is_in_from_space(*ref_ptr)) {
-                    *ref_ptr = copy_object(*ref_ptr, &free_ptr);
+                    *ref_ptr = copy_object(*ref_ptr, &free_ptr);  // 참조 업데이트
                 }
             }
             
-            scan_ptr += obj->size;
+            scan_ptr += obj->size;  // 다음 객체로 이동
         }
         
-        // 3. 공간 교체
+        // Phase 3: 공간 역할 교체 (from <-> to)
         std::swap(from_space, to_space);
-        allocation_ptr = free_ptr;
+        allocation_ptr = free_ptr;  // 새로운 할당 시작점
         
-        // 4. 이전 공간 정리 (간단!)
+        // Phase 4: 이전 공간 정리 (매우 간단! - Mark&Sweep와 달리 개별 객체 해제 불필요)
         memset(to_space, 0, space_size);
     }
     
@@ -293,19 +299,19 @@ private:
 
 // 장단점 비교
 void compare_gc_algorithms() {
-    printf("=== Mark & Sweep ===\n");
-    printf("장점: 메모리 50%만 사용\n");
-    printf("단점: 단편화 발생, 할당 느림\n\n");
+    printf("=== Mark & Sweep ===, ");
+    printf("장점: 메모리 50%만 사용, ");
+    printf("단점: 단편화 발생, 할당 느림, , ");
     
-    printf("=== Copying Collector ===\n");
-    printf("장점: 단편화 없음, 할당 빠름 (bump pointer)\n");
-    printf("단점: 메모리 50%만 사용 가능\n");
+    printf("=== Copying Collector ===, ");
+    printf("장점: 단편화 없음, 할당 빠름 (bump pointer), ");
+    printf("단점: 메모리 50%만 사용 가능, ");
     
     // 실제 벤치마크
     // 할당 속도: Copying이 10배 빠름!
     // GC 시간: 살아있는 객체 수에만 비례
 }
-```
+```text
 
 ### 2.3 Mark & Compact: 둘의 장점을 합치다
 
@@ -378,7 +384,7 @@ V8의 Mark-Compact:
 
 결과: Chrome이 빠른 이유 중 하나!
 */
-```
+```text
 
 ## 3. 세대별 GC (Generational GC)
 
@@ -389,6 +395,7 @@ V8의 Mark-Compact:
 > "대부분의 객체는 젊어서 죽는다" (Infant mortality)
 
 실제 측정 결과:
+
 - 80-98%의 객체가 첫 GC 전에 죽음
 - 살아남은 객체는 오래 삶
 - 오래된 객체가 젊은 객체를 참조하는 경우는 드물다
@@ -413,7 +420,7 @@ public class Application {
     private final Database db = new Database();
     private final Cache cache = new Cache(1000);
 }
-```
+```text
 
 ### 3.2 Generational GC 구현
 
@@ -473,7 +480,7 @@ public:
     }
     
     void minor_gc() {
-        printf("Minor GC 시작 (Young Generation만)\n");
+        printf("Minor GC 시작 (Young Generation만), ");
         auto start = high_resolution_clock::now();
         
         // 1. Root set + Old->Young 참조 스캔
@@ -496,12 +503,12 @@ public:
         
         auto end = high_resolution_clock::now();
         auto duration = duration_cast<microseconds>(end - start);
-        printf("Minor GC 완료: %ld μs\n", duration.count());
+        printf("Minor GC 완료: %ld μs, ", duration.count());
         // 보통 1-10ms (매우 빠름!)
     }
     
     void major_gc() {
-        printf("Major GC 시작 (전체 힙)\n");
+        printf("Major GC 시작 (전체 힙), ");
         // Mark & Sweep 또는 Mark & Compact
         // 훨씬 느림 (100ms - 1s)
     }
@@ -546,16 +553,16 @@ void benchmark_generational_gc() {
     simulate_web_server(&gen_gc, 10000);
     auto gen_time = high_resolution_clock::now() - start;
     
-    printf("Basic GC: %ld ms\n", 
+    printf("Basic GC: %ld ms, ", 
            duration_cast<milliseconds>(basic_time).count());
-    printf("Generational GC: %ld ms\n",
+    printf("Generational GC: %ld ms, ",
            duration_cast<milliseconds>(gen_time).count());
     
     // 결과:
     // Basic GC: 5000 ms (매번 전체 힙 스캔)
     // Generational GC: 500 ms (10배 빠름!)
 }
-```
+```text
 
 ## 4. Concurrent GC: Stop-the-world 제거하기
 
@@ -564,55 +571,58 @@ void benchmark_generational_gc() {
 Dijkstra가 1978년에 제안한 방법:
 
 ```c++
-// Tri-color Marking
+// Tri-color Marking - Dijkstra의 동시 실행 가능한 표시 알고리즘
 enum Color {
-    WHITE,  // 미방문 (쓰레기 후보)
-    GRAY,   // 방문했지만 자식 미처리
-    BLACK   // 완전 처리
+    WHITE,  // 미방문 상태 (쓰레기 후보, 아직 탐색되지 않음)
+    GRAY,   // 방문했지만 자식들이 아직 처리되지 않은 상태
+    BLACK   // 완전 처리된 상태 (본인과 모든 자식이 처리됨)
 };
 
 class TriColorGC {
 private:
     struct Object {
-        std::atomic<Color> color{WHITE};
+        std::atomic<Color> color{WHITE};        // 원자적 색상 (동시 접근 안전)
         size_t size;
         std::vector<Object*> references;
     };
     
-    std::queue<Object*> gray_queue;  // Gray 객체들
-    std::mutex queue_mutex;
+    std::queue<Object*> gray_queue;  // GRAY 객체들의 작업 큐
+    std::mutex queue_mutex;          // 큐 동시 접근 보호
     
 public:
-    // Concurrent Marking
+    // Concurrent Marking - 애플리케이션 실행 중에도 동시에 수행 가능
     void concurrent_mark() {
-        // 1. Root set을 gray로
+        // Phase 1: Root set을 GRAY로 초기화 (탐색 시작점)
         for (auto root : get_roots()) {
-            root->color = GRAY;
-            gray_queue.push(root);
+            root->color = GRAY;           // "아직 처리할 게 있다" 표시
+            gray_queue.push(root);        // 작업 큐에 추가
         }
         
-        // 2. Concurrent marking (애플리케이션과 동시 실행!)
+        // Phase 2: Concurrent marking (핵심! 애플리케이션과 동시 실행)
         while (!gray_queue.empty()) {
             Object* obj;
             {
+                // 큐 접근을 위한 임계 영역 (최소화)
                 std::lock_guard<std::mutex> lock(queue_mutex);
                 if (gray_queue.empty()) break;
                 obj = gray_queue.front();
                 gray_queue.pop();
             }
             
-            // Gray -> Black
+            // 현재 객체(GRAY)가 참조하는 모든 객체를 처리
             for (auto ref : obj->references) {
                 Color expected = WHITE;
+                // 원자적 비교-교환: WHITE면 GRAY로 변경
                 if (ref->color.compare_exchange_strong(expected, GRAY)) {
-                    gray_queue.push(ref);
+                    gray_queue.push(ref);  // 새로 발견된 객체를 큐에 추가
                 }
             }
             
+            // 모든 자식 처리 완료 -> BLACK으로 변경
             obj->color = BLACK;
         }
         
-        // 3. Sweep (WHITE 객체들 제거)
+        // Phase 3: Sweep - WHITE 색상인 객체들만 제거
         sweep_white_objects();
     }
     
@@ -653,7 +663,7 @@ Weak Invariant: White 객체로 가는 모든 경로에 Gray 객체가 있다
 
 이 불변성을 유지하면 concurrent marking이 안전하다!
 */
-```
+```text
 
 ### 4.2 CMS (Concurrent Mark Sweep)
 
@@ -739,7 +749,7 @@ public class CMSCollector {
 - 동시 실행이라 CPU 더 사용
 - 해결: -XX:ConcGCThreads로 스레드 수 조정
 */
-```
+```text
 
 ## 5. 현대적 GC: G1과 ZGC
 
@@ -748,40 +758,45 @@ public class CMSCollector {
 2004년 논문, 2012년 Java 7u4에서 정식 출시:
 
 ```java
-// G1GC의 혁신: Region 기반
+// G1GC의 혁신: Region 기반 가비지 컬렉션
 public class G1GC {
-    static final int REGION_SIZE = 2 * 1024 * 1024;  // 2MB
+    static final int REGION_SIZE = 2 * 1024 * 1024;  // 2MB 고정 크기 영역
     
+    // Region 타입 분류 - 각 2MB 영역의 역할
     enum RegionType {
-        FREE,      // 빈 영역
-        EDEN,      // Young - 새 할당
-        SURVIVOR,  // Young - 생존자
-        OLD,       // Old generation
-        HUMONGOUS  // 거대 객체 (region 크기의 50% 이상)
+        FREE,      // 빈 영역 (할당 가능)
+        EDEN,      // Young generation - 새 객체 할당
+        SURVIVOR,  // Young generation - Minor GC 생존자
+        OLD,       // Old generation - 승격된 오래된 객체
+        HUMONGOUS  // 거대 객체 (region 크기의 50% 이상인 객체)
     }
     
+    // 각 Region의 상태 정보
     class Region {
-        RegionType type;
-        int liveBytes;  // 살아있는 바이트
-        double garbageRatio;  // 쓰레기 비율
-        long timestamp;  // 마지막 GC 시간
+        RegionType type;              // 현재 region의 역할
+        int liveBytes;               // 살아있는 객체의 바이트 수
+        double garbageRatio;         // 쓰레기 비율 (수집 우선순위 결정)
+        long timestamp;              // 마지막 GC 수행 시간
         
-        // Remember Set: 이 region을 가리키는 외부 참조
+        // Remember Set: 다른 region에서 이 region을 가리키는 참조들
+        // (Minor GC 시 Old->Young 참조 추적용)
         Set<Card> rememberSet = new HashSet<>();
     }
     
-    Region[] regions = new Region[HEAP_SIZE / REGION_SIZE];
+    Region[] regions = new Region[HEAP_SIZE / REGION_SIZE];  // 전체 힙을 region으로 분할
     
-    // Mixed GC: Young + 일부 Old regions
+    // Mixed GC: Young generation + 선별된 Old generation regions 수집
     void mixedGC() {
-        // 1. Garbage가 많은 region 선택 (Garbage First!)
+        // Phase 1: "Garbage First" 원칙으로 수집할 region 선택
+        // 가비지 비율이 높은 region부터 우선 선택
         List<Region> collectionSet = selectRegions();
         
-        // 2. 선택된 region들만 수집
+        // Phase 2: 선택된 region들만 선별적으로 수집 (전체 힙 대신)
         evacuateRegions(collectionSet);
         
-        // 목표: Pause time target 달성
+        // 핵심 목표: 사용자 지정 Pause time target 달성
         // -XX:MaxGCPauseMillis=200 (200ms 목표)
+        // 예측 모델을 통해 목표 시간 내에서 최대한 많은 garbage 수집
     }
     
     List<Region> selectRegions() {
@@ -830,38 +845,40 @@ After (G1GC):
 
 결과: P99 latency 70% 개선!
 */
-```
+```text
 
 ### 5.2 ZGC: 10ms의 마법
 
 2018년 Java 11에서 실험적 도입:
 
 ```c++
-// ZGC의 핵심: Colored Pointers
+// ZGC의 핵심 혁신: Colored Pointers (64비트 포인터에 메타데이터 저장)
 class ZGC {
 private:
-    // 64비트 포인터 활용
-    // [63:48] - 16 bits: 미사용
-    // [47:44] - 4 bits: 색상 (metadata)
-    // [43:0]  - 44 bits: 실제 주소 (16TB 지원)
+    // 64비트 포인터의 상위 비트를 메타데이터로 활용하는 천재적 아이디어
+    // [63:48] - 16 bits: 미사용 (향후 확장 가능)
+    // [47:44] - 4 bits:  색상 비트 (GC 상태 메타데이터)
+    // [43:0]  - 44 bits: 실제 메모리 주소 (최대 16TB 힙 지원)
     
-    static constexpr uint64_t FINALIZABLE_MASK = 0x0001000000000000ULL;
-    static constexpr uint64_t REMAPPED_MASK    = 0x0002000000000000ULL;
-    static constexpr uint64_t MARKED0_MASK     = 0x0004000000000000ULL;
-    static constexpr uint64_t MARKED1_MASK     = 0x0008000000000000ULL;
+    // 색상 마스크 정의 - 각 비트는 특정 GC 단계를 나타냄
+    static constexpr uint64_t FINALIZABLE_MASK = 0x0001000000000000ULL;  // Finalizer 대기
+    static constexpr uint64_t REMAPPED_MASK    = 0x0002000000000000ULL;  // 재매핑됨
+    static constexpr uint64_t MARKED0_MASK     = 0x0004000000000000ULL;  // Mark 사이클 0
+    static constexpr uint64_t MARKED1_MASK     = 0x0008000000000000ULL;  // Mark 사이클 1
     
-    // Load Barrier: 읽을 때마다 체크
+    // Load Barrier: 모든 객체 참조 시 자동으로 호출되는 핵심 메커니즘
     template<typename T>
     T* load_barrier(T** addr) {
-        T* ptr = *addr;
+        T* ptr = *addr;  // 포인터 읽기
         
-        // Bad color?
+        // "Bad color" 체크 - 포인터의 색상이 현재 GC 단계와 맞지 않는가?
         if (is_bad_color(ptr)) {
+            // Self-healing: 객체를 올바른 위치로 재배치하고 포인터 업데이트
             ptr = relocate_object(ptr);
-            *addr = ptr;  // Self-healing
+            *addr = ptr;  // 원본 참조도 자동으로 수정 ("자가 치유")
         }
         
-        return ptr;
+        return ptr;  // 올바른 포인터 반환
     }
     
     // Concurrent Relocation
@@ -884,14 +901,16 @@ private:
         // Load barrier가 알아서 처리!
     }
     
-    // Multi-mapping으로 같은 메모리를 여러 주소로
+    // Multi-mapping 기술 - 같은 물리 메모리를 여러 가상 주소로 매핑
     void setup_multi_mapping() {
-        // 같은 물리 메모리를 3개 가상 주소로 매핑
-        void* heap = mmap(HEAP_BASE, HEAP_SIZE, ...);
-        mmap(HEAP_BASE + MARKED0_OFFSET, HEAP_SIZE, ..., heap);
-        mmap(HEAP_BASE + MARKED1_OFFSET, HEAP_SIZE, ..., heap);
+        // 하나의 물리 메모리를 여러 가상 주소 영역에 매핑하는 천재적 방법
+        void* heap = mmap(HEAP_BASE, HEAP_SIZE, ...);                    // 기본 힙 영역
+        mmap(HEAP_BASE + MARKED0_OFFSET, HEAP_SIZE, ..., heap);          // MARKED0 색상용 매핑
+        mmap(HEAP_BASE + MARKED1_OFFSET, HEAP_SIZE, ..., heap);          // MARKED1 색상용 매핑
         
-        // 장점: 포인터 색상만 바꿔도 같은 객체!
+        // 혁신적 장점: 포인터 색상 비트만 변경하면 같은 객체에 대해
+        // 다른 가상 주소로 접근 가능! (객체 복사 없이 매핑만으로 해결)
+        // 메모리 사용량: 실제 1배, 가상 주소 공간만 3배
     }
 };
 
@@ -913,7 +932,7 @@ void zgc_production_metrics() {
     - 하지만 latency가 중요한 서비스에는 최고!
     */
 }
-```
+```text
 
 ### 5.3 Shenandoah: Red Hat의 도전
 
@@ -972,7 +991,7 @@ class ShenandoahGC {
 - Shenandoah이 조금 더 안정적
 - ZGC가 메모리 효율적
 */
-```
+```text
 
 ## 6. 실전 GC 튜닝
 
@@ -995,7 +1014,7 @@ java -Xlog:gc*:file=gc.log:time,uptime,level,tags \
 # 2. Promotion Rate: Old로 승격량  
 # 3. GC Frequency: GC 빈도
 # 4. GC Duration: GC 시간
-```
+```text
 
 ### 6.2 실제 튜닝 사례
 
@@ -1024,7 +1043,7 @@ ByteBuffer offHeap = ByteBuffer.allocateDirect(1024 * 1024 * 1024);
 // -Xmx32g -Xms32g (같게 설정)
 
 // 결과: P99.9 latency 100ms -> 5ms
-```
+```text
 
 ### 6.3 GC 선택 가이드
 
@@ -1063,7 +1082,7 @@ G1GC:         Throughput: 90%, Avg Pause: 50ms,  Max: 200ms
 ZGC:          Throughput: 85%, Avg Pause: 2ms,   Max: 10ms
 Shenandoah:   Throughput: 87%, Avg Pause: 5ms,   Max: 15ms
 */
-```
+```text
 
 ## 7. 마무리: GC의 미래
 
