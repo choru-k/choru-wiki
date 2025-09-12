@@ -328,7 +328,7 @@ mpstat -P ALL 1 10 | awk '
 /Average/ && /CPU/ { 
     if ($2 ~ /^[0-9]+$/) {
         core=$2; user=$3; system=$5; idle=$12
-        printf "Core %2s: User=%5.1f%% System=%5.1f%% Idle=%5.1f%%\n", core, user, system, idle
+        printf "Core %2s: User=%5.1f%% System=%5.1f%% Idle=%5.1f%%, ", core, user, system, idle
     }
 }'
 

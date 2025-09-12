@@ -21,7 +21,6 @@ tags:
 
 Docker 컨테이너의 종료 상태는 다음과 같이 정의됩니다:
 
-```bash
 ```text
 # Docker Exit Codes
 Exit Code 0   : 정상 종료
@@ -32,8 +31,6 @@ Exit Code 127 : 명령어/파일을 찾을 수 없음
 Exit Code 137 : SIGKILL (9) 신호로 인한 강제 종료  ← 주목!
 Exit Code 139 : SIGSEGV (11) Segmentation fault
 Exit Code 143 : SIGTERM (15) 정상적인 종료 요청
-```
-
 ```
 
 ### SIGKILL과 Exit Code 137의 관계
@@ -65,9 +62,9 @@ kernel: Out of memory: Killed process 12345 (myapp) total-vm:2048000kB, anon-rss
 kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=docker-abc123.scope,mems_allowed=0,oom_memcg=/docker/abc123,task_memcg=/docker/abc123
 ```
 
-```
 
 메모리 사용량 추적:
+
 ```bash
 # 컨테이너 메모리 사용량 실시간 모니터링
 docker stats container_name --no-stream
@@ -97,14 +94,12 @@ PartOf=nginx.service    # 위험! nginx가 죽으면 myapp도 죽음
 ```
 
 # nginx 서비스 상태 확인
-
 systemctl status nginx.service
 
 # Active: failed (Result: exit-code)
 
-```
-
 **문제 상황 재현:**
+
 ```yaml
 # /etc/systemd/system/myapp.service
 [Unit]
@@ -136,9 +131,7 @@ systemd[1]: Stopping myapp.service (PartOf dependency)
 systemd[1]: Sent signal KILL to main process 12345 (myapp)
 ```
 
-```
-
-### 3. Docker 리소스 제한
+## 3. Docker 리소스 제한
 
 ```bash
 # Docker 컨테이너 리소스 제한 확인
@@ -150,7 +143,7 @@ cat /sys/fs/cgroup/memory/docker/container_id/memory.limit_in_bytes
 echo $(($(cat /sys/fs/cgroup/memory/docker/container_id/memory.limit_in_bytes) / 1024 / 1024))MB
 ```
 
-### 4. 사용자 수동 종료
+## 4. 사용자 수동 종료
 
 ```bash
 # 프로세스 종료 로그 추적
@@ -317,7 +310,7 @@ class Exit137Analyzer:
             result = subprocess.run(['journalctl', '-k', '--since', '1 hour ago'], 
                                   capture_output=True, text=True)
             
-            oom_messages = [line for line in result.stdout.split('\n') 
+            oom_messages = [line for line in result.stdout.split(', ') 
                            if re.search(r'oom.*kill|killed.*process', line, re.IGNORECASE)]
             
             if oom_messages:
@@ -337,7 +330,7 @@ class Exit137Analyzer:
             result = subprocess.run(['systemctl', 'list-units', '--type=service'], 
                                   capture_output=True, text=True)
             
-            services = [line for line in result.stdout.split('\n') 
+            services = [line for line in result.stdout.split(', ') 
                        if self.container_name.lower() in line.lower()]
             
             if services:
@@ -349,7 +342,7 @@ class Exit137Analyzer:
                                           capture_output=True, text=True)
                 
                 dangerous_deps = []
-                for line in dep_result.stdout.split('\n'):
+                for line in dep_result.stdout.split(', '):
                     if re.match(r'(After|PartOf|Requires)=', line) and line.strip() != '':
                         dangerous_deps.append(line.strip())
                 
@@ -370,7 +363,7 @@ class Exit137Analyzer:
         try:
             result = subprocess.run(['df', '-h'], capture_output=True, text=True)
             
-            for line in result.stdout.split('\n')[1:]:  # 헤더 제외
+            for line in result.stdout.split(', ')[1:]:  # 헤더 제외
                 if line.strip():
                     fields = line.split()
                     if len(fields) >= 5:
@@ -384,7 +377,7 @@ class Exit137Analyzer:
             docker_result = subprocess.run(['docker', 'system', 'df'], 
                                          capture_output=True, text=True)
             self.findings.append("Docker disk usage:")
-            for line in docker_result.stdout.split('\n')[1:4]:  # TYPE, TOTAL, ACTIVE 라인만
+            for line in docker_result.stdout.split(', ')[1:4]:  # TYPE, TOTAL, ACTIVE 라인만
                 if line.strip():
                     self.findings.append(f"   {line.strip()}")
                     
@@ -393,14 +386,14 @@ class Exit137Analyzer:
     
     def generate_report(self):
         """최종 보고서 생성"""
-        print(f"\n=== Exit 137 Analysis Report for {self.container_name} ===")
+        print(f", === Exit 137 Analysis Report for {self.container_name} ===")
         print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print("\nFindings:")
+        print(", Findings:")
         
         for i, finding in enumerate(self.findings, 1):
             print(f"{i:2d}. {finding}")
         
-        print("\n=== Recommended Actions ===")
+        print(", === Recommended Actions ===")
         
         # 권장사항 생성
         if any("OOM" in finding for finding in self.findings):

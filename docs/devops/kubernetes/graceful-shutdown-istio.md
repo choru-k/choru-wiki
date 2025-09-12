@@ -21,11 +21,8 @@ tags:
 
 일반적인 Production 환경의 트래픽 경로:
 
-```
 ```text
 Internet → NLB/ALB → Istio Gateway → Envoy Sidecar → App Container
-```
-
 ```
 
 각 레이어마다 서로 다른 종료 타이밍과 메커니즘을 가져서 복잡도가 증가합니다:
@@ -59,7 +56,6 @@ myservice   10.0.1.100:8080,10.0.1.101:8080   5m
 myservice   10.0.1.101:8080                    5m    # 지연 후 업데이트
 ```
 
-```
 
 이는 다음과 같은 이유 때문입니다:
 
@@ -93,12 +89,9 @@ UnhealthyThresholdCount: 3            # 3회 실패시 unhealthy
 
 **문제점**: Pod가 종료되어도 NLB가 인식하기까지 **최대 90초** 소요 가능!
 
-```
 ```text
 Pod Deletion (T=0) → ... → NLB Detection (T=90s)
 └─ 이 사이에 들어오는 요청들이 실패!
-```
-
 ```
 
 ### 3. Istio Envoy Configuration 업데이트 지연
@@ -421,7 +414,7 @@ while true; do
     # 에러율
     ERROR_RATE=$(curl -s "$PROMETHEUS_URL/api/v1/query?query=sum(rate(envoy_cluster_upstream_rq_xx{envoy_response_code=~\"5..\",app=\"$APP_NAME\"}[1m]))" | jq -r '.data.result[0].value[1] // "0"')
     
-    printf "[%s] Connections: %s, RPS: %.2f, Errors/s: %.2f\n" "$TIMESTAMP" "$ACTIVE_CONN" "$RPS" "$ERROR_RATE"
+    printf "[%s] Connections: %s, RPS: %.2f, Errors/s: %.2f, " "$TIMESTAMP" "$ACTIVE_CONN" "$RPS" "$ERROR_RATE"
     
     sleep 5
 done

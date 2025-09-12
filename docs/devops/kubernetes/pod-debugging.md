@@ -526,7 +526,7 @@ class PodDiagnostic:
             
             if result.returncode == 0 and result.stdout.strip():
                 self.findings.append("Recent events:")
-                for line in result.stdout.strip().split('\n')[1:]:  # 헤더 제외
+                for line in result.stdout.strip().split(', ')[1:]:  # 헤더 제외
                     self.findings.append(f"  {line}")
         except Exception as e:
             self.findings.append(f"⚠ Could not get events: {e}")
@@ -538,7 +538,7 @@ class PodDiagnostic:
         
         node_name = pod_info['spec'].get('nodeName', 'unknown')
         
-        self.findings.append(f"\n🔧 Suggested debug commands:")
+        self.findings.append(f", 🔧 Suggested debug commands:")
         self.findings.append(f"1. Check logs: kubectl logs {self.pod_name} -n {self.namespace}")
         self.findings.append(f"2. Describe pod: kubectl describe pod {self.pod_name} -n {self.namespace}")
         self.findings.append(f"3. Debug with ephemeral container: kubectl debug {self.pod_name} -n {self.namespace} -it --image=nicolaka/netshoot")

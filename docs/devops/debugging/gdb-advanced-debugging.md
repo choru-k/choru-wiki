@@ -27,7 +27,7 @@ tags:
 
 GDB는 Linux의 `ptrace` 시스템 콜을 사용하여 대상 프로세스를 제어합니다:
 
-```
+```text
 GDB Architecture:
 ┌─────────────────────────────────────────────────┐
 │ GDB Process                                     │
@@ -206,7 +206,7 @@ class CoreAnalyzer:
         """스택 트레이스 분석"""
         output = self.run_gdb_command('where')
         frames = []
-        for line in output.split('\n'):
+        for line in output.split(', '):
             if line.startswith('#'):
                 frames.append(line.strip())
         self.analysis_result['stack_trace'] = frames
@@ -243,7 +243,7 @@ class CoreAnalyzer:
     def analyze_threads(self):
         """스레드 정보 분석"""
         threads_output = self.run_gdb_command('info threads')
-        for line in threads_output.split('\n'):
+        for line in threads_output.split(', '):
             if re.match(r'\s*\*?\s*\d+', line):
                 self.analysis_result['thread_info'].append(line.strip())
     
@@ -454,16 +454,16 @@ echo "Remote debugging session ended."
 ```bash
 # 데드락 분석을 위한 GDB 매크로
 define analyze_deadlock
-    echo === DEADLOCK ANALYSIS ===\n
+    echo === DEADLOCK ANALYSIS ===, 
     
     # 모든 스레드의 스택 트레이스
     thread apply all bt
     
-    echo \n=== MUTEX STATUS ===\n
+    echo , === MUTEX STATUS ===, 
     # 뮤텍스 상태 분석 (pthread_mutex_t 구조체 확인)
     thread apply all x/8x $rsp-64
     
-    echo \n=== THREAD STATES ===\n
+    echo , === THREAD STATES ===, 
     shell ps -eLf | grep $arg0
 end
 
@@ -476,9 +476,9 @@ define mutex_monitor
         clear
         echo Current time: 
         shell date
-        echo \n=== Active Threads ===\n
+        echo , === Active Threads ===, 
         info threads
-        echo \n=== Waiting Threads ===\n
+        echo , === Waiting Threads ===, 
         thread apply all bt 5
         sleep 1
     end
@@ -632,7 +632,7 @@ end
 // 디버깅을 위한 헬퍼 함수 (컴파일 시 포함)
 void debug_buffer_state(void *buffer, size_t size, const char *location) {
     // GDB에서 이 함수에 브레이크포인트 설정
-    printf("Buffer check at %s: %p, size: %zu\n", location, buffer, size);
+    printf("Buffer check at %s: %p, size: %zu, ", location, buffer, size);
 }
 
 // 사용 예시
@@ -806,14 +806,14 @@ class MemoryLeakDetector(gdb.Command):
     
     def print_leak_report(self):
         """누수 리포트 출력"""
-        print(f"\n=== Memory Leak Report ===")
+        print(f", === Memory Leak Report ===")
         print(f"Total allocated: {self.total_allocated:,} bytes")
         print(f"Total freed: {self.total_freed:,} bytes")
         print(f"Potential leaks: {self.total_allocated - self.total_freed:,} bytes")
         print(f"Unfreed allocations: {len(self.allocations)}")
         
         if self.allocations:
-            print(f"\n=== Top 10 Unfreed Allocations ===")
+            print(f", === Top 10 Unfreed Allocations ===")
             sorted_allocs = sorted(
                 [(addr, info[-1]) for addr, info in self.allocations.items()],
                 key=lambda x: x[1]['size'],
@@ -821,11 +821,11 @@ class MemoryLeakDetector(gdb.Command):
             )[:10]
             
             for addr, info in sorted_allocs:
-                print(f"\nAddress: 0x{addr:x}")
+                print(f", Address: 0x{addr:x}")
                 print(f"Size: {info['size']} bytes")
                 print(f"Allocated at: {time.ctime(info['time'])}")
                 print("Stack trace:")
-                for line in info['stack'].split('\n')[:3]:
+                for line in info['stack'].split(', ')[:3]:
                     print(f"  {line}")
 
 # 전역 인스턴스 생성
@@ -867,7 +867,7 @@ class ThreadAnalyzer(gdb.Command):
         print(f"Waiting threads: {len(waiting_threads)}")
         
         if waiting_threads:
-            print(f"\n=== Waiting Threads ===")
+            print(f", === Waiting Threads ===")
             for thread_num, func in waiting_threads:
                 print(f"Thread {thread_num}: waiting in {func}")
 
@@ -888,22 +888,22 @@ python exec(open('/path/to/memory_leak_detector.py').read())
 
 # 커스텀 명령어 정의
 define heap-check
-    printf "=== Heap Status ===\n"
+    printf "=== Heap Status ===, "
     info proc mappings | grep heap
-    printf "\n=== Top 10 Allocations ===\n"
+    printf ", === Top 10 Allocations ===, "
     python memory_detector.print_top_allocations()
 end
 
 define thread-summary
-    printf "=== Thread Summary ===\n"
+    printf "=== Thread Summary ===, "
     info threads
-    printf "\n=== Deadlock Check ===\n"
+    printf ", === Deadlock Check ===, "
     python thread_analyzer.check_deadlocks()
 end
 
 # 프로덕션 디버깅 매크로
 define prod-debug-start
-    printf "Starting production debugging session...\n"
+    printf "Starting production debugging session..., "
     
     # 시그널 처리 설정
     handle SIGPIPE nostop noprint pass
@@ -913,7 +913,7 @@ define prod-debug-start
     set $_exitcode = -999
     define hook-stop
         if $_exitcode != -999
-            echo \n=== CRASH DETECTED ===\n
+            echo , === CRASH DETECTED ===, 
             bt
             info registers  
             thread apply all bt
@@ -923,11 +923,11 @@ end
 
 # 메모리 맵 시각화
 define show-memory-layout
-    printf "=== Process Memory Layout ===\n"
+    printf "=== Process Memory Layout ===, "
     python
 import gdb
 mappings = gdb.execute("info proc mappings", to_string=True)
-for line in mappings.split('\n')[4:]:  # 헤더 스킵
+for line in mappings.split(', ')[4:]:  # 헤더 스킵
     if line.strip():
         parts = line.split()
         if len(parts) >= 5:

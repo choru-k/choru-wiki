@@ -40,7 +40,7 @@ int main() {
             if (WIFSTOPPED(status)) {
                 // 시스템 콜 진입/종료시 중단됨
                 long syscall = ptrace(PTRACE_PEEKUSER, child, 8 * ORIG_RAX, NULL);
-                printf("System call: %ld\n", syscall);
+                printf("System call: %ld, ", syscall);
                 ptrace(PTRACE_SYSCALL, child, NULL, NULL);  // 계속 실행
             }
         }
@@ -129,7 +129,6 @@ $ head -20 startup.log
 
 **분석**: 데이터베이스 연결에서 2초 이상 타임아웃 발생!
 
-```
 
 시간이 오래 걸리는 시스템 콜 분석:
 
@@ -144,7 +143,6 @@ read(4, "", 4096) = 0 <0.567890>
 open("/etc/ssl/certs/ca-certificates.crt", O_RDONLY) = 5 <0.123456>
 ```
 
-```
 
 ### 시나리오 2: 높은 CPU 사용률, 하지만 원인 불명
 
@@ -166,8 +164,6 @@ timeout 5 strace -p 12345 -c
   0.42    0.001234           3       412           close
 ```
 
-```
-
 **분석**: write 시스템 콜이 85%의 시간을 차지 → 과도한 로그 출력이 원인
 
 ### 시나리오 3: 메모리 사용량이 계속 증가
@@ -187,7 +183,6 @@ mmap(NULL, 16384, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f
 # munmap 호출이 보이지 않음 → 메모리 누수 의심
 ```
 
-```
 
 메모리 할당/해제 균형 확인:
 
@@ -228,8 +223,6 @@ close(3) = 0
 **분석**: 3306 포트로 연결 시도하지만 거부됨
 **해결책**: 방화벽 확인, MySQL 서비스 상태 확인
 
-```
-
 ### HTTP 요청 분석
 
 ```bash
@@ -240,10 +233,8 @@ strace -e trace=network curl https://api.example.com/users
 # 출력에서 확인할 수 있는 정보:
 socket(AF_INET, SOCK_STREAM, IPPROTO_TCP) = 3    # 소켓 생성
 connect(3, {sa_family=AF_INET, sin_port=htons(443), sin_addr=inet_addr("1.2.3.4")}, 16) = 0  # HTTPS 연결
-sendto(3, "GET /users HTTP/1.1\r\nHost: api.example.com\r\n...", 145, MSG_NOSIGNAL, NULL, 0) = 145  # 요청 전송
-recvfrom(3, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n...", 16384, 0, NULL, NULL) = 1234  # 응답 수신
-```
-
+sendto(3, "GET /users HTTP/1.1\r, Host: api.example.com\r, ...", 145, MSG_NOSIGNAL, NULL, 0) = 145  # 요청 전송
+recvfrom(3, "HTTP/1.1 200 OK\r, Content-Type: application/json\r, ...", 16384, 0, NULL, NULL) = 1234  # 응답 수신
 ```
 
 ## 파일 I/O 문제 분석
@@ -272,9 +263,7 @@ strace -e trace=open,openat ./app 2>&1 | grep -E "\.(conf|config|cfg|ini|yaml|js
 # 출력:
 openat(AT_FDCWD, "/etc/app/config.yaml", O_RDONLY) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/usr/local/etc/app.conf", O_RDONLY) = 3
-read(3, "database:\n  host: localhost\n  port: 5432\n", 4096) = 45
-```
-
+read(3, "database:,   host: localhost,   port: 5432, ", 4096) = 45
 ```
 
 ### 로그 파일 과다 쓰기 분석
@@ -288,14 +277,12 @@ strace -e trace=write -v -s 100 ./app
 
 ```text
 # 출력 예시:
-write(2, "[2024-01-15 10:30:45] DEBUG: Processing request id=12345\n", 58) = 58
-write(2, "[2024-01-15 10:30:45] DEBUG: Validating user input\n", 51) = 51
-write(2, "[2024-01-15 10:30:45] DEBUG: Database query: SELECT * FROM users WHERE id = 12345\n", 81) = 81
+write(2, "[2024-01-15 10:30:45] DEBUG: Processing request id=12345, ", 58) = 58
+write(2, "[2024-01-15 10:30:45] DEBUG: Validating user input, ", 51) = 51
+write(2, "[2024-01-15 10:30:45] DEBUG: Database query: SELECT * FROM users WHERE id = 12345, ", 81) = 81
 ```
 
 **분석**: DEBUG 로그가 과도하게 출력됨
-
-```
 
 ## Production 환경에서의 고급 활용
 
@@ -435,7 +422,7 @@ def parse_strace_log(filename):
     return syscall_stats, syscall_counts
 
 def analyze_patterns(syscall_stats):
-    print("=== System Call Performance Analysis ===\n")
+    print("=== System Call Performance Analysis ===")
 
     for syscall, times in syscall_stats.items():
         if len(times) < 5:  # 최소 5회 이상 호출된 것만 분석

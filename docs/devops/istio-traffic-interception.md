@@ -456,14 +456,14 @@ kubectl exec -it client-pod -- \
 curl-format.txt:
 
 ```text
-     time_namelookup:  %{time_namelookup}\n
-        time_connect:  %{time_connect}\n
-     time_appconnect:  %{time_appconnect}\n
-    time_pretransfer:  %{time_pretransfer}\n
-       time_redirect:  %{time_redirect}\n
-  time_starttransfer:  %{time_starttransfer}\n
-                     ----------\n
-          time_total:  %{time_total}\n
+     time_namelookup:  %{time_namelookup}, 
+        time_connect:  %{time_connect}, 
+     time_appconnect:  %{time_appconnect}, 
+    time_pretransfer:  %{time_pretransfer}, 
+       time_redirect:  %{time_redirect}, 
+  time_starttransfer:  %{time_starttransfer}, 
+                     ----------, 
+          time_total:  %{time_total}, 
 ```
 
 ## 정리

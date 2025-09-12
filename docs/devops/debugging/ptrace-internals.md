@@ -32,7 +32,7 @@ long ptrace(enum __ptrace_request request, pid_t pid, void *addr, void *data);
 
 ### 커널 레벨에서의 동작
 
-```
+```text
 ptrace Architecture:
 ┌─────────────────────────────────────────────────┐
 │ Tracer Process (gdb, strace)                    │
@@ -100,7 +100,7 @@ int main() {
 
     if (child == 0) {
         // 자식 프로세스: 추적 허용
-        printf("Child: Allowing parent to trace me\n");
+        printf("Child: Allowing parent to trace me, ");
 
         if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1) {
             perror("ptrace TRACEME failed");
@@ -111,19 +111,19 @@ int main() {
         raise(SIGSTOP);
 
         // 실제 실행할 프로그램
-        printf("Child: About to exec\n");
+        printf("Child: About to exec, ");
         execl("/bin/ls", "ls", "-l", NULL);
 
     } else if (child > 0) {
         // 부모 프로세스: tracer
         int status;
-        printf("Parent: Waiting for child to stop\n");
+        printf("Parent: Waiting for child to stop, ");
 
         // 자식이 SIGSTOP으로 멈출 때까지 대기
         waitpid(child, &status, 0);
 
         if (WIFSTOPPED(status)) {
-            printf("Parent: Child stopped with signal %d\n", WSTOPSIG(status));
+            printf("Parent: Child stopped with signal %d, ", WSTOPSIG(status));
 
             // 자식 실행 재개
             ptrace(PTRACE_CONT, child, NULL, NULL);
@@ -131,7 +131,7 @@ int main() {
 
         // 자식 프로세스 완료 대기
         waitpid(child, &status, 0);
-        printf("Parent: Child exited with status %d\n", WEXITSTATUS(status));
+        printf("Parent: Child exited with status %d, ", WEXITSTATUS(status));
 
     } else {
         perror("fork failed");
@@ -153,7 +153,7 @@ int main() {
 #include <stdio.h>
 
 int attach_to_process(pid_t target_pid) {
-    printf("Attempting to attach to process %d\n", target_pid);
+    printf("Attempting to attach to process %d, ", target_pid);
 
     // 대상 프로세스에 추적 연결
     if (ptrace(PTRACE_ATTACH, target_pid, NULL, NULL) == -1) {
@@ -169,7 +169,7 @@ int attach_to_process(pid_t target_pid) {
     }
 
     if (WIFSTOPPED(status)) {
-        printf("Successfully attached. Process stopped with signal %d\n",
+        printf("Successfully attached. Process stopped with signal %d, ",
                WSTOPSIG(status));
         return 0;
     }
@@ -178,7 +178,7 @@ int attach_to_process(pid_t target_pid) {
 }
 
 void detach_from_process(pid_t target_pid) {
-    printf("Detaching from process %d\n", target_pid);
+    printf("Detaching from process %d, ", target_pid);
 
     // 추적 연결 해제 및 프로세스 재개
     if (ptrace(PTRACE_DETACH, target_pid, NULL, NULL) == -1) {
@@ -222,7 +222,7 @@ void trace_syscalls(pid_t child) {
 
         // 프로세스가 종료되었는지 확인
         if (WIFEXITED(status)) {
-            printf("Child exited with status %d\n", WEXITSTATUS(status));
+            printf("Child exited with status %d, ", WEXITSTATUS(status));
             break;
         }
 
@@ -232,10 +232,10 @@ void trace_syscalls(pid_t child) {
             if (ptrace(PTRACE_GETREGS, child, NULL, &regs) == 0) {
                 if (syscall_enter) {
                     printf("System call entry: %lld (", regs.orig_rax);
-                    printf("args: %lld, %lld, %lld)\n",
+                    printf("args: %lld, %lld, %lld), ",
                            regs.rdi, regs.rsi, regs.rdx);
                 } else {
-                    printf("System call exit: return value = %lld\n", regs.rax);
+                    printf("System call exit: return value = %lld, ", regs.rax);
                 }
                 syscall_enter = !syscall_enter;
             }
@@ -252,11 +252,11 @@ int main() {
         raise(SIGSTOP);
 
         // 간단한 시스템 콜들 실행
-        printf("Hello from traced process\n");
+        printf("Hello from traced process, ");
         sleep(1);
 
     } else {
-        printf("Starting syscall tracing for PID %d\n", child);
+        printf("Starting syscall tracing for PID %d, ", child);
         trace_syscalls(child);
     }
 
@@ -322,7 +322,7 @@ int patch_return_value(pid_t pid, long new_value) {
         return -1;
     }
 
-    printf("Original return value (RAX): 0x%llx\n", regs.rax);
+    printf("Original return value (RAX): 0x%llx, ", regs.rax);
 
     // RAX 레지스터 (리턴 값) 변경
     regs.rax = new_value;
@@ -333,7 +333,7 @@ int patch_return_value(pid_t pid, long new_value) {
         return -1;
     }
 
-    printf("Modified return value to: 0x%lx\n", new_value);
+    printf("Modified return value to: 0x%lx, ", new_value);
     return 0;
 }
 ```
@@ -368,7 +368,7 @@ void setup_advanced_tracing(pid_t child) {
     if (ptrace(PTRACE_SETOPTIONS, child, NULL, options) == -1) {
         perror("ptrace SETOPTIONS failed");
     } else {
-        printf("Advanced tracing options set successfully\n");
+        printf("Advanced tracing options set successfully, ");
     }
 }
 
@@ -377,25 +377,25 @@ void handle_ptrace_events(pid_t child, int status) {
 
     switch (event) {
     case PTRACE_EVENT_FORK:
-        printf("Target process forked\n");
+        printf("Target process forked, ");
         break;
     case PTRACE_EVENT_VFORK:
-        printf("Target process vforked\n");
+        printf("Target process vforked, ");
         break;
     case PTRACE_EVENT_CLONE:
-        printf("Target process cloned\n");
+        printf("Target process cloned, ");
         break;
     case PTRACE_EVENT_EXEC:
-        printf("Target process execed\n");
+        printf("Target process execed, ");
         break;
     case PTRACE_EVENT_EXIT:
-        printf("Target process is exiting\n");
+        printf("Target process is exiting, ");
         break;
     default:
         if (WSTOPSIG(status) == (SIGTRAP | 0x80)) {
-            printf("System call trap (TRACESYSGOOD)\n");
+            printf("System call trap (TRACESYSGOOD), ");
         } else {
-            printf("Other stop signal: %d\n", WSTOPSIG(status));
+            printf("Other stop signal: %d, ", WSTOPSIG(status));
         }
         break;
     }
@@ -420,8 +420,6 @@ cat /proc/sys/kernel/yama/ptrace_scope
 # 3: ptrace 완전 비활성화
 ```
 
-```
-
 실제 Yama 제한 우회 방법:
 
 ```c
@@ -435,14 +433,14 @@ int bypass_yama_restrictions() {
         return -1;
     }
 
-    printf("Yama restriction bypassed for parent process\n");
+    printf("Yama restriction bypassed for parent process, ");
     return 0;
 }
 
 // 또는 CAP_SYS_PTRACE capability 확인
 int check_ptrace_capability() {
     if (geteuid() == 0) {
-        printf("Running as root - ptrace should work\n");
+        printf("Running as root - ptrace should work, ");
         return 0;
     }
 
@@ -451,7 +449,7 @@ int check_ptrace_capability() {
     // cap_flag_value_t cap_val;
     // cap_get_flag(caps, CAP_SYS_PTRACE, CAP_EFFECTIVE, &cap_val);
 
-    printf("Non-root user - check capabilities\n");
+    printf("Non-root user - check capabilities, ");
     return -1;
 }
 ```
@@ -516,7 +514,7 @@ int set_breakpoint(pid_t pid, void *addr) {
         return -1;
     }
 
-    printf("Original instruction at %p: 0x%lx\n", addr, original_instruction);
+    printf("Original instruction at %p: 0x%lx, ", addr, original_instruction);
 
     // INT3 명령어 (0xCC)로 교체
     long breakpoint_instruction = (original_instruction & ~0xFF) | 0xCC;
@@ -526,7 +524,7 @@ int set_breakpoint(pid_t pid, void *addr) {
         return -1;
     }
 
-    printf("Breakpoint set at %p\n", addr);
+    printf("Breakpoint set at %p, ", addr);
     return 0;
 }
 
@@ -536,8 +534,8 @@ void handle_breakpoint(pid_t pid, void *addr, long original_instruction) {
     // 현재 레지스터 상태 읽기
     ptrace(PTRACE_GETREGS, pid, NULL, &regs);
 
-    printf("Breakpoint hit at %p\n", addr);
-    printf("RIP: 0x%llx, RSP: 0x%llx\n", regs.rip, regs.rsp);
+    printf("Breakpoint hit at %p, ", addr);
+    printf("RIP: 0x%llx, RSP: 0x%llx, ", regs.rip, regs.rsp);
 
     // RIP를 브레이크포인트 주소로 되돌림 (INT3는 RIP를 증가시킴)
     regs.rip = (unsigned long long)addr;
@@ -613,7 +611,7 @@ void print_syscall_info(pid_t pid) {
         break;
     }
 
-    printf(")\n");
+    printf("), ");
 }
 ```
 
@@ -627,7 +625,7 @@ int hook_plt_entry(pid_t pid, void *plt_addr, const char *func_name) {
     // PLT 엔트리의 원본 주소 읽기
     long original_addr = ptrace(PTRACE_PEEKTEXT, pid, plt_addr, NULL);
 
-    printf("Hooking %s at PLT address %p (original: 0x%lx)\n",
+    printf("Hooking %s at PLT address %p (original: 0x%lx), ",
            func_name, plt_addr, original_addr);
 
     // 브레이크포인트 설정 (0xCC)
@@ -652,7 +650,7 @@ void handle_library_call(pid_t pid, const char *func_name) {
         printf("format=\"%s\"", format);
     }
 
-    printf(")\n");
+    printf("), ");
 }
 ```
 
@@ -693,17 +691,17 @@ double get_time_diff(struct timespec *start, struct timespec *end) {
 }
 
 void print_statistics() {
-    printf("\n=== Production Syscall Statistics ===\n");
-    printf("%-20s %10s %10s %15s %15s\n",
+    printf(", === Production Syscall Statistics ===, ");
+    printf("%-20s %10s %10s %15s %15s, ",
            "SYSCALL", "COUNT", "TOTAL(s)", "AVG(ms)", "MAX(ms)");
-    printf("------------------------------------------------------------\n");
+    printf("------------------------------------------------------------, ");
 
     for (int i = 0; i < 400; i++) {
         if (stats[i].count > 0) {
             double avg_ms = (stats[i].total_time / stats[i].count) * 1000;
             double max_ms = stats[i].max_time * 1000;
 
-            printf("%-20s %10lu %10.6f %15.3f %15.3f\n",
+            printf("%-20s %10lu %10.6f %15.3f %15.3f, ",
                    stats[i].name[0] ? stats[i].name : "unknown",
                    stats[i].count,
                    stats[i].total_time,
@@ -714,7 +712,7 @@ void print_statistics() {
 }
 
 int trace_production_process(pid_t target_pid, int duration_sec) {
-    printf("Attaching to process %d for %d seconds...\n",
+    printf("Attaching to process %d for %d seconds..., ",
            target_pid, duration_sec);
 
     // 신호 핸들러 설정
@@ -748,7 +746,7 @@ int trace_production_process(pid_t target_pid, int duration_sec) {
         }
 
         if (WIFEXITED(status)) {
-            printf("Target process exited\n");
+            printf("Target process exited, ");
             break;
         }
 
@@ -798,7 +796,7 @@ int trace_production_process(pid_t target_pid, int duration_sec) {
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
-        printf("Usage: %s <pid> <duration_seconds>\n", argv[0]);
+        printf("Usage: %s <pid> <duration_seconds>, ", argv[0]);
         return 1;
     }
 
@@ -833,7 +831,7 @@ int sample_based_tracing(pid_t pid, double sample_rate) {
             struct user_regs_struct regs;
             ptrace(PTRACE_GETREGS, pid, NULL, &regs);
 
-            printf("Sampled syscall: %lld\n", regs.orig_rax);
+            printf("Sampled syscall: %lld, ", regs.orig_rax);
 
             should_trace = 0;
             sample_counter = 0;
@@ -908,7 +906,7 @@ int inject_mmap_call(pid_t pid) {
     struct user_regs_struct result_regs;
     ptrace(PTRACE_GETREGS, pid, NULL, &result_regs);
 
-    printf("mmap() returned: 0x%llx\n", result_regs.rax);
+    printf("mmap() returned: 0x%llx, ", result_regs.rax);
 
     // 원본 명령어 복구
     ptrace(PTRACE_POKETEXT, pid, rip, original_instruction);
@@ -928,7 +926,7 @@ int hook_malloc_calls(pid_t pid) {
     // malloc 함수의 PLT 주소 찾기 (실제로는 /proc/pid/maps 파싱 필요)
     void *malloc_plt = find_plt_address(pid, "malloc");
     if (!malloc_plt) {
-        printf("malloc PLT not found\n");
+        printf("malloc PLT not found, ");
         return -1;
     }
 
@@ -938,7 +936,7 @@ int hook_malloc_calls(pid_t pid) {
     // 후킹 함수로 점프하는 코드 작성
     // 실제로는 더 복잡한 trampoline 코드가 필요
 
-    printf("malloc() hook installed at %p\n", malloc_plt);
+    printf("malloc() hook installed at %p, ", malloc_plt);
 
     // 후킹된 호출 감지 및 로깅
     while (1) {
@@ -952,7 +950,7 @@ int hook_malloc_calls(pid_t pid) {
             ptrace(PTRACE_GETREGS, pid, NULL, &regs);
 
             if ((void *)regs.rip == malloc_plt) {
-                printf("malloc(%lld) called\n", regs.rdi);
+                printf("malloc(%lld) called, ", regs.rdi);
 
                 // 원본 함수 실행을 위한 복구 및 재실행
                 ptrace(PTRACE_POKETEXT, pid, malloc_plt, original_instruction);
@@ -985,7 +983,7 @@ void benchmark_ptrace_overhead(pid_t pid) {
     struct timespec start, end;
     int iterations = 10000;
 
-    printf("Benchmarking ptrace overhead...\n");
+    printf("Benchmarking ptrace overhead..., ");
 
     // PTRACE_PEEKDATA 성능 테스트
     clock_gettime(CLOCK_MONOTONIC, &start);
@@ -999,7 +997,7 @@ void benchmark_ptrace_overhead(pid_t pid) {
     double peek_time = (end.tv_sec - start.tv_sec) +
                        (end.tv_nsec - start.tv_nsec) / 1000000000.0;
 
-    printf("PEEKDATA: %d calls in %.6f seconds (%.2f µs/call)\n",
+    printf("PEEKDATA: %d calls in %.6f seconds (%.2f µs/call), ",
            iterations, peek_time, (peek_time * 1000000) / iterations);
 
     // PTRACE_GETREGS 성능 테스트
@@ -1015,7 +1013,7 @@ void benchmark_ptrace_overhead(pid_t pid) {
     double getregs_time = (end.tv_sec - start.tv_sec) +
                           (end.tv_nsec - start.tv_nsec) / 1000000000.0;
 
-    printf("GETREGS: %d calls in %.6f seconds (%.2f µs/call)\n",
+    printf("GETREGS: %d calls in %.6f seconds (%.2f µs/call), ",
            iterations, getregs_time, (getregs_time * 1000000) / iterations);
 }
 ```
@@ -1083,7 +1081,7 @@ struct memory_allocation allocations[MAX_ALLOCATIONS];
 int allocation_count = 0;
 
 void track_memory_allocations(pid_t pid) {
-    printf("Starting memory allocation tracking for PID %d\n", pid);
+    printf("Starting memory allocation tracking for PID %d, ", pid);
 
     while (1) {
         if (ptrace(PTRACE_SYSCALL, pid, NULL, NULL) == -1) break;
@@ -1113,7 +1111,7 @@ void track_memory_allocations(pid_t pid) {
                 allocations[allocation_count].active = 1;
                 allocation_count++;
 
-                printf("mmap: allocated %zu bytes at %p\n", size, allocated_addr);
+                printf("mmap: allocated %zu bytes at %p, ", size, allocated_addr);
             }
         }
         // munmap 시스템 콜 감지
@@ -1124,7 +1122,7 @@ void track_memory_allocations(pid_t pid) {
             for (int i = 0; i < allocation_count; i++) {
                 if (allocations[i].active && allocations[i].addr == addr) {
                     allocations[i].active = 0;
-                    printf("munmap: freed memory at %p\n", addr);
+                    printf("munmap: freed memory at %p, ", addr);
                     break;
                 }
             }
@@ -1139,14 +1137,14 @@ void track_memory_allocations(pid_t pid) {
         if (allocations[i].active) {
             total_leaked += allocations[i].size;
             leaked_blocks++;
-            printf("Leaked: %zu bytes at %p (allocated at %ld)\n",
+            printf("Leaked: %zu bytes at %p (allocated at %ld), ",
                    allocations[i].size, allocations[i].addr,
                    allocations[i].timestamp);
         }
     }
 
-    printf("\nMemory leak summary:\n");
-    printf("Total leaked: %zu bytes in %d blocks\n", total_leaked, leaked_blocks);
+    printf(", Memory leak summary:, ");
+    printf("Total leaked: %zu bytes in %d blocks, ", total_leaked, leaked_blocks);
 }
 ```
 
@@ -1190,10 +1188,10 @@ void analyze_network_performance(pid_t pid) {
                 connections[connection_count].connect_time = time(NULL);
                 connections[connection_count].active = 1;
 
-                printf("New connection established: fd=%d\n", fd);
+                printf("New connection established: fd=%d, ", fd);
                 connection_count++;
             } else if (regs.rax != 0) {
-                printf("Connection failed: errno=%lld\n", -regs.rax);
+                printf("Connection failed: errno=%lld, ", -regs.rax);
             }
             break;
         }
@@ -1238,7 +1236,7 @@ void analyze_network_performance(pid_t pid) {
                     time_t duration = time(NULL) - connections[i].connect_time;
 
                     printf("Connection closed: fd=%d, duration=%lds, "
-                           "sent=%zu, received=%zu\n",
+                           "sent=%zu, received=%zu, ",
                            fd, duration,
                            connections[i].bytes_sent,
                            connections[i].bytes_received);
@@ -1291,7 +1289,7 @@ int check_if_already_traced(pid_t pid) {
             fclose(f);
 
             if (tracer_pid != 0) {
-                printf("Process %d is already traced by PID %d\n", pid, tracer_pid);
+                printf("Process %d is already traced by PID %d, ", pid, tracer_pid);
                 return tracer_pid;
             }
             return 0;

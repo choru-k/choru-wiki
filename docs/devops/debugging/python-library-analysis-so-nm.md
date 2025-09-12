@@ -80,8 +80,6 @@ nm -D /opt/python/lib/python3.9/site-packages/numpy/core/_multiarray_umath.cpyth
                  U PyErr_SetString@GLIBC_2.2.5
 ```
 
-```
-
 **심볼 타입 설명:**
 
 - `T` (text): 정의된 함수 (exported)
@@ -108,8 +106,6 @@ nm -D mymodule.so | grep -E "^[[:space:]]*U.*Py" | sort
                  U PyModule_Create2
 ```
 
-```
-
 #### 2. 외부 라이브러리 의존성 확인
 
 ```bash
@@ -124,15 +120,9 @@ GLIBC_2.14
 ```
 
 # 수학 라이브러리 의존성
-
 nm -D mymodule.so | grep -E "(sin|cos|exp|log)"
-                 U sin@GLIBC_2.2.5
-                 U cos@GLIBC_2.2.5
-                 U exp@GLIBC_2.2.5
 
-```
-
-#### 3. 정의된 함수 목록 (API 분석)
+### 3. 정의된 함수 목록 (API 분석)
 
 ```bash
 # 모듈에서 export하는 함수들
@@ -140,6 +130,9 @@ nm -D mymodule.so | grep " T " | awk '{print $3}'
 
 # Python 모듈 초기화 함수 확인
 nm -D mymodule.so | grep PyInit
+```
+
+```text
 00000000002b8180 T PyInit_mymodule
 ```
 
@@ -179,7 +172,7 @@ nm -D "$MODULE_SO" | grep " T " | awk '{print $3}' | sort
 echo
 
 echo "4. Python C API Usage:"
-nm -D "$MODULE_SO" | grep "^[[:space:]]*U.*Py" | wc -l | xargs printf "  Uses %d Python C API functions\n"
+nm -D "$MODULE_SO" | grep "^[[:space:]]*U.*Py" | wc -l | xargs printf "  Uses %d Python C API functions, "
 
 echo "5. GLIBC Version Requirements:"
 nm -D "$MODULE_SO" | grep GLIBC | awk -F'@' '{print $2}' | sort -V | uniq | sed 's/^/  /'
@@ -218,8 +211,6 @@ nm -D "$MODULE_SO" | grep GLIBC | awk -F'@' '{print $2}' | sort -V | uniq | sed 
 5. GLIBC Version Requirements:
   GLIBC_2.2.5
   GLIBC_2.14
-```
-
 ```
 
 ## Production 문제 해결 시나리오
@@ -329,7 +320,7 @@ def check_native_dependencies(module_path):
         return False
         
     missing_deps = []
-    for line in result.stdout.split('\n'):
+    for line in result.stdout.split(', '):
         if 'not found' in line:
             missing_deps.append(line.strip())
     
@@ -373,7 +364,7 @@ def validate_python_module(module_name):
 if __name__ == "__main__":
     modules_to_check = ['numpy', 'scipy', 'pandas', 'tensorflow', 'torch']
     
-    print("=== Python Native Dependency Validation ===\n")
+    print("=== Python Native Dependency Validation ===")
     
     for module in modules_to_check:
         print(f"Checking {module}...")
