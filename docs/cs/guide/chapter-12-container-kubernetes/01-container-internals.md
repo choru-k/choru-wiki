@@ -62,15 +62,15 @@ graph TD
     end
     
     subgraph "Linux Kernel Features"
-        N[Namespaces<br/>격리된 View 제공]
-        CG[Cgroups<br/>리소스 제한]
-        UF[Union FS<br/>레이어드 파일시스템]
+        N[Namespaces, 격리된 View 제공]
+        CG[Cgroups, 리소스 제한]
+        UF[Union FS, 레이어드 파일시스템]
     end
     
     subgraph "보안 강화"
-        SE[SELinux/AppArmor<br/>접근 제어]
-        SC[Seccomp<br/>시스템 콜 제한]
-        CAP[Capabilities<br/>권한 세분화]
+        SE[SELinux/AppArmor, 접근 제어]
+        SC[Seccomp, 시스템 콜 제한]
+        CAP[Capabilities, 권한 세분화]
     end
     
     C --> N
@@ -584,32 +584,50 @@ setup_cgroups() {
 }
 
 # 3단계: 컨테이너 실행
+# Docker 런타임의 핵심 구현 - 7단계 컨테이너 격리 프로세스
+# 실제 사용: containerd, CRI-O, Podman 등 모든 컨테이너 런타임의 기본 동작
 run_container() {
     echo "🎯 Starting container..."
     
+    # ⭐ 컨테이너 실행의 7단계 프로세스
+    # 이는 Linux 네임스페이스 + cgroup + chroot의 조합으로 진정한 컨테이너 격리 구현
     # PID를 cgroup에 추가하고 네임스페이스 격리로 실행
     sudo unshare -p -f -n -m -u -i bash -c "
-        # cgroup에 현재 프로세스 추가
+        # ⭐ 1단계: Cgroup 리소스 제한 적용 (Docker의 --memory, --cpus 옵션 구현)
+        # 현재 프로세스를 사전에 생성한 cgroup에 등록하여 리소스 사용량 제한
+        # 실제 동작: 메모리 100MB, CPU 50% 제한이 이 시점부터 적용됨
         echo \$\$ > /sys/fs/cgroup/memory/container-$CONTAINER_ID/cgroup.procs
         echo \$\$ > /sys/fs/cgroup/cpu/container-$CONTAINER_ID/cgroup.procs
         
-        # 호스트명 변경
+        # ⭐ 2단계: UTS 네임스페이스 격리 (컨테이너 고유 호스트명 설정)
+        # unshare -u로 생성된 독립 UTS 네임스페이스에서 호스트명 변경
+        # 실제 효과: 호스트와 다른 hostname, domainname 사용 가능
         hostname container-$CONTAINER_ID
         
-        # 루트 파일시스템 전환
+        # ⭐ 3단계: Mount 네임스페이스 준비 (독립 파일시스템 구성 시작)
+        # bind mount로 컨테이너 루트를 자기 자신에게 마운트 (pivot_root 준비)
+        # 실제 목적: chroot 이전에 마운트 포인트 독립성 확보
         mount --bind $CONTAINER_ROOT $CONTAINER_ROOT
         cd $CONTAINER_ROOT
         
-        # /proc, /sys 마운트
+        # ⭐ 4단계: 가상 파일시스템 마운트 (컨테이너 내부에서 시스템 정보 접근)
+        # /proc: 프로세스 정보 가상 파일시스템 (ps, top 명령 동작을 위해 필수)
+        # /sys: 시스템/하드웨어 정보 가상 파일시스템 (udev, systemd 등을 위해 필요)
         mount -t proc proc proc/
         mount -t sysfs sysfs sys/
         
-        # chroot로 파일시스템 격리
+        # ⭐ 5단계: 파일시스템 격리 완성 (chroot로 루트 디렉토리 변경)
+        # exec chroot: 현재 프로세스를 대체하여 새로운 루트 파일시스템에서 실행
+        # 실제 결과: 컨테이너 내부에서는 호스트의 파일시스템을 볼 수 없음
         exec chroot . /bin/bash -c '
+            # ⭐ 6단계: 컨테이너 환경 정보 출력 (격리 상태 검증)
             echo \"🎉 Welcome to container $CONTAINER_ID!\"
-            echo \"Hostname: \$(hostname)\"
-            echo \"PID 1 process: \$(ps aux | head -2 | tail -1)\"
-            echo \"Memory limit: \$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo \"N/A\")\"
+            echo \"Hostname: \$(hostname)\"  # UTS 네임스페이스 격리 확인
+            echo \"PID 1 process: \$(ps aux | head -2 | tail -1)\"  # PID 네임스페이스 격리 확인
+            echo \"Memory limit: \$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo \"N/A\")\"  # Cgroup 제한 확인
+            
+            # ⭐ 7단계: 컨테이너 대화형 쉘 실행 (사용자 상호작용 환경 제공)
+            # 이 bash는 완전히 격리된 환경에서 PID 1으로 실행됨 (init 프로세스 역할)
             /bin/bash
         '
     "

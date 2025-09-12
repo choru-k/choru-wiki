@@ -31,25 +31,25 @@ tags:
 ```mermaid
 graph TB
     subgraph "Control Plane"
-        API[API Server<br/>모든 요청의 중심]
-        ETCD[etcd<br/>클러스터 상태 저장소]
-        SCHED[Scheduler<br/>Pod 배치 결정]
-        CM[Controller Manager<br/>상태 관리]
-        CCM[Cloud Controller Manager<br/>클라우드 연동]
+        API[API Server, 모든 요청의 중심]
+        ETCD[etcd, 클러스터 상태 저장소]
+        SCHED[Scheduler, Pod 배치 결정]
+        CM[Controller Manager, 상태 관리]
+        CCM[Cloud Controller Manager, 클라우드 연동]
     end
     
     subgraph "Worker Node 1"
-        KUB1[Kubelet<br/>Pod 생명주기 관리]
-        PROXY1[Kube-proxy<br/>네트워크 규칙 관리]
-        RT1[Container Runtime<br/>컨테이너 실행]
+        KUB1[Kubelet, Pod 생명주기 관리]
+        PROXY1[Kube-proxy, 네트워크 규칙 관리]
+        RT1[Container Runtime, 컨테이너 실행]
         POD1[Pod 1]
         POD2[Pod 2]
     end
     
     subgraph "Worker Node 2"  
-        KUB2[Kubelet<br/>Pod 생명주기 관리]
-        PROXY2[Kube-proxy<br/>네트워크 규칙 관리]
-        RT2[Container Runtime<br/>컨테이너 실행]
+        KUB2[Kubelet, Pod 생명주기 관리]
+        PROXY2[Kube-proxy, 네트워크 규칙 관리]
+        RT2[Container Runtime, 컨테이너 실행]
         POD3[Pod 3]
         POD4[Pod 4]
     end

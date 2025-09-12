@@ -818,7 +818,7 @@ spec:
 
 echo "=== Namespace Resource Usage ==="
 kubectl top pods --all-namespaces --no-headers | \
-  awk '{cpu[$1]+=$2; mem[$1]+=$3} END {for (ns in cpu) printf "%-20s CPU: %s Memory: %s\n", ns, cpu[ns], mem[ns]}' | \
+  awk '{cpu[$1]+=$2; mem[$1]+=$3} END {for (ns in cpu) printf "%-20s CPU: %s Memory: %s, ", ns, cpu[ns], mem[ns]}' | \
   sort -k3 -nr
 
 echo ""

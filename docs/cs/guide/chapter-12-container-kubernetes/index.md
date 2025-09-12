@@ -160,9 +160,9 @@ spec:
 ```mermaid
 graph TD
     subgraph "Container Fundamentals"
-        N[Linux Namespaces<br/>PID, Network, Mount, UTS, IPC]
-        C[Control Groups<br/>CPU, Memory, I/O 제한]
-        U[Union Filesystem<br/>OverlayFS, AUFS]
+        N[Linux Namespaces, PID, Network, Mount, UTS, IPC]
+        C[Control Groups, CPU, Memory, I/O 제한]
+        U[Union Filesystem, OverlayFS, AUFS]
     end
     
     subgraph "Container Runtime"
@@ -173,17 +173,17 @@ graph TD
     end
     
     subgraph "Kubernetes Core"
-        AP[API Server<br/>중앙 제어점]
-        ET[etcd<br/>분산 저장소]
-        SC[Scheduler<br/>파드 배치]
-        CM[Controller Manager<br/>상태 관리]
+        AP[API Server, 중앙 제어점]
+        ET[etcd, 분산 저장소]
+        SC[Scheduler, 파드 배치]
+        CM[Controller Manager, 상태 관리]
     end
     
     subgraph "Workload Management"  
-        PO[Pods<br/>최소 실행 단위]
-        DP[Deployments<br/>앱 배포 관리]
-        SV[Services<br/>네트워크 추상화]
-        IN[Ingress<br/>외부 트래픽 라우팅]
+        PO[Pods, 최소 실행 단위]
+        DP[Deployments, 앱 배포 관리]
+        SV[Services, 네트워크 추상화]
+        IN[Ingress, 외부 트래픽 라우팅]
     end
     
     N --> D
