@@ -51,27 +51,23 @@ print("😱 교훈: S3 보안은 단순히 암호화만의 문제가 아니다!"
 
 ```mermaid
 sequenceDiagram
-    participant H as 해커
-    participant WAF as Web Application Firewall
-    participant EC2 as EC2 Instance
-    participant MD as EC2 Metadata Service
-    participant S3 as S3 Bucket
+    participant H as Hacker
+    participant W as WAF
+    participant E as EC2
+    participant M as Metadata
+    participant S as S3
     
-    Note over H,S3: 1단계: 진입점 찾기
-    H->>WAF: 설정 오류 발견
-    WAF->>EC2: SSRF 취약점 악용
+    H->>W: 설정오류발견
+    W->>E: SSRF취약점악용  
+    E->>M: 메타데이터요청
+    M-->>E: IAM Role 반환
+    E-->>H: AWS Token
+    H->>S: 데이터다운로드
+    S-->>H: 데이터유출완료
     
-    Note over H,S3: 2단계: 권한 탈취
-    EC2->>MD: curl 169.254.169.254 메타데이터 요청
-    MD-->>EC2: IAM Role 크레덴셜 반환
-    EC2-->>H: AWS Access Key 및 Token
-    
-    Note over H,S3: 3단계: 데이터 유출
-    H->>S3: Data download command
-    S3-->>H: 데이터 유출 완료
-    
-    style H fill:#FF6B6B
-    style S3 fill:#FF6B6B
+    Note right of H: 1단계 진입점찾기
+    Note right of H: 2단계 권한탈취  
+    Note right of H: 3단계 데이터유출
 ```
 
 ## Part 1: S3 보안의 3중 방어선 🛡️

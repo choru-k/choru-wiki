@@ -157,34 +157,26 @@ S3는 트래픽 패턴을 학습하고 자동으로 확장합니다:
 
 ```mermaid
 sequenceDiagram
-    participant App as 애플리케이션
-    participant S3 as S3 Frontend
-    participant AS as Auto Scaler
-    participant P as Partition Layer
+    participant A as App
+    participant S as S3
+    participant AS as AutoScaler
+    participant P as Partition
     
-    Note over App,P: 초기 상태: 일반 트래픽
+    A->>S: 초당1000요청
+    S->>P: 단일파티션처리
     
-    App->>S3: 초당 1,000 요청
-    S3->>P: 단일 파티션에서 처리
+    A->>S: 초당5000요청  
+    S->>AS: 한계근접알림
+    AS->>P: 파티션분할시작
     
-    Note over App,P: 트래픽 증가 감지
+    A->>S: 초당50000요청
+    S->>P: 다중파티션분산처리
+    P-->>A: 안정적처리
     
-    App->>S3: 초당 5,000 요청
-    S3->>AS: 한계 근접 알림
-    AS->>P: 파티션 분할 시작
-    
-    Note over P: 파티션 분할 중 (약 5분)
-    
-    Note over P: Partition 1 → Partition 1a, 1b
-    Note over P: Partition 2 → Partition 2a, 2b
-    
-    Note over App,P: 스케일링 완료
-    
-    App->>S3: 초당 50,000 요청
-    S3->>P: 10개 파티션에서 분산 처리
-    P-->>App: 안정적 처리
-    
-    style AS fill:#FFD700
+    Note right of A: 초기상태일반트래픽
+    Note right of AS: 트래픽증가감지
+    Note right of P: 파티션분할약5분
+    Note right of P: 스케일링완료
 ```
 
 ## Part 2: Multipart Upload - 대용량 파일의 구원자 📦
