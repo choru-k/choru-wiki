@@ -30,12 +30,11 @@ tags:
 
 ```mermaid
 sequenceDiagram
-    participant U as "사용자
-"    participant S as "쉘/탐색기
-"    participant K as "커널
-"    participant L as "로더
-"    participant P as "새 프로세스
-"
+    participant U as "사용자"
+    participant S as "쉘/탐색기"
+    participant K as "커널"
+    participant L as "로더"
+    participant P as "새 프로세스"
     U->>S: 프로그램 실행 (더블클릭)
     S->>K: exec() 시스템 콜
     K->>K: 프로세스 생성
@@ -45,13 +44,13 @@ sequenceDiagram
     L->>L: 라이브러리 로드
     L->>P: 제어권 전달
     P->>P: main() 실행
-```
+```text
 
 ### 1.2 실행 파일 검증
 
 로더가 가장 먼저 하는 일은 파일이 실행 가능한지 확인하는 것입니다:
 
-```
+```text
 실행 파일 헤더 검사
 ┌────────────────────────┐
 │ 매직 넘버 확인         │ ← 0x7F 'E' 'L' 'F' (Linux)
@@ -64,7 +63,7 @@ sequenceDiagram
 ├────────────────────────┤
 │ 종속성 확인            │ ← 필요한 라이브러리 존재?
 └────────────────────────┘
-```
+```text
 
 ### 1.3 프로세스 생성
 
@@ -80,7 +79,7 @@ PCB"]
 Address Space"]
         FD["파일 디스크립터
 테이블"]
-        SIG["시그널 핸들러]
+        SIG["시그널 핸들러"]
     end
 
     K[커널"] --> PID
@@ -90,7 +89,7 @@ Address Space"]
     K --> SIG
 
     style AS fill:#4CAF50
-```
+```text
 
 ## 2. 메모리 공간 구성
 
@@ -98,7 +97,7 @@ Address Space"]
 
 모든 프로세스는 자신만의 가상 주소 공간을 가집니다:
 
-```
+```text
 64비트 시스템의 가상 주소 공간 (Linux)
 ┌─────────────────┐ 0xFFFFFFFFFFFFFFFF
 │                 │
@@ -124,7 +123,7 @@ Address Space"]
 ├─────────────────┤
 │    텍스트       │ (실행 코드)
 └─────────────────┘ 0x0000000000400000
-```
+```text
 
 ### 2.2 왜 가상 메모리인가?
 
@@ -132,21 +131,21 @@ Address Space"]
 
 #### 문제 1: 주소 충돌
 
-```
+```text
 물리 메모리 직접 사용 시
 ┌─────────────────┐
 │  Program A      │ 0x1000: int data = 5;
 ├─────────────────┤
 │  Program B      │ 0x1000: char* str = "hello";  // 충돌!
 └─────────────────┘
-```
+```text
 
 #### 문제 2: 보안 문제
 
-```
+```text
 악의적인 프로그램이 다른 프로그램의 메모리를 읽거나 수정 가능
 Program A의 비밀번호 → Program B가 훔쳐볼 수 있음
-```
+```text
 
 #### 해결: 가상 메모리
 
@@ -176,7 +175,7 @@ graph LR
     style VB1 fill:#81C784
     style PA fill:#FFB74D
     style PB fill:#FFB74D
-```
+```text
 
 같은 가상 주소 0x1000이 서로 다른 물리 주소로 매핑됩니다!
 
@@ -207,7 +206,7 @@ program.exe"]
 
     style VT fill:#E1F5FE
     style VD fill:#FFF3E0
-```
+```text
 
 메모리 매핑의 장점:
 
@@ -242,11 +241,11 @@ int main() {                    // .text
     int local = 10;             // stack
     return 0;
 }
-```
+```text
 
 메모리 배치:
 
-```
+```text
 가상 주소 공간
 ┌─────────────────┐ 높은 주소
 │   스택          │
@@ -266,7 +265,7 @@ int main() {                    // .text
 │   .text         │
 │ main() 코드     │
 └─────────────────┘ 낮은 주소
-```
+```text
 
 ## 4. 동적 링킹의 실제
 
@@ -276,12 +275,10 @@ int main() {                    // .text
 
 ```mermaid
 sequenceDiagram
-    participant P as "프로그램
-"    participant DL as "동적 링커
-(ld.so)"
-    participant L1 as "libc.so
-"    participant L2 as "libmath.so
-"
+    participant P as "프로그램"
+    participant DL as "동적 링커 (ld.so)"
+    participant L1 as "libc.so"
+    participant L2 as "libmath.so"
     Note over P: 프로그램 시작
     P->>DL: 인터프리터로 제어 전달
     DL->>P: 의존성 확인
@@ -292,13 +289,13 @@ sequenceDiagram
     DL->>DL: 재배치 수행
     DL->>DL: 심볼 해결
     DL->>P: main() 호출
-```
+```text
 
 ### 4.2 PLT와 GOT
 
 동적 링킹은 PLT(Procedure Linkage Table)와 GOT(Global Offset Table)를 사용합니다:
 
-```
+```text
 첫 번째 printf() 호출
 ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
 │   main()     │ ---> │   PLT        │ ---> │   GOT        │
@@ -316,9 +313,31 @@ sequenceDiagram
 └──────────────┘      └──────────────┘      └──────────────┘
                                                     ↓
                                              직접 printf 호출
-```
+```text
 
 이를 **Lazy Binding**이라고 합니다. 함수를 처음 호출할 때만 주소를 찾습니다.
+
+#### PLT/GOT 실제 어셈블리 코드
+
+```assembly
+; printf@plt 엔트리 (첫 번째 호출)
+printf@plt:
+    jmp    QWORD PTR [rip+0x2f92]  ; GOT[printf]로 점프
+    push   0x1                      ; 재배치 인덱스
+    jmp    .plt.got               ; 동적 링커 호출
+
+; 동적 링커가 주소 해결 후 GOT 업데이트
+; GOT[printf] = 0x7ffff7a649c0 (실제 printf 주소)
+
+; printf@plt 엔트리 (두 번째 호출 이후)
+printf@plt:
+    jmp    QWORD PTR [rip+0x2f92]  ; 직접 printf로 점프!
+```text
+
+이러한 메커니즘으로:
+
+- 첫 호출: PLT → GOT → 동적 링커 → 실제 함수 (느림)
+- 이후 호출: PLT → GOT → 실제 함수 (빠름)
 
 ### 4.3 공유 라이브러리의 메모리 공유
 
@@ -351,7 +370,7 @@ graph TD
     VC -.매핑.-> LIBC
 
     style LIBC fill:#4CAF50
-```
+```text
 
 메모리 절약 효과:
 
@@ -365,7 +384,7 @@ graph TD
 
 프로그램은 main()이 아닌 _start에서 시작합니다:
 
-```
+```text
 실행 흐름
 ┌─────────────┐
 │   _start    │ ← 진짜 시작점
@@ -382,7 +401,7 @@ graph TD
 ┌─────────────┐
 │    exit()   │ ← 정리 작업
 └─────────────┘
-```
+```text
 
 ### 5.2 C 런타임 초기화
 
@@ -418,13 +437,13 @@ void __libc_start_main() {
     // 9. 종료 처리
     exit(ret);
 }
-```
+```text
 
 ### 5.3 스택 초기화
 
 main() 호출 전 스택 상태:
 
-```
+```text
 스택 (높은 주소에서 낮은 주소로)
 ┌─────────────────┐
 │  환경 변수      │ "PATH=/usr/bin"
@@ -446,7 +465,7 @@ main() 호출 전 스택 상태:
 ├─────────────────┤
 │  argc           │ 3
 └─────────────────┘
-```
+```text
 
 ## 6. 메모리 보호와 보안
 
@@ -456,7 +475,7 @@ main() 호출 전 스택 상태:
 
 #### DEP/NX (Data Execution Prevention)
 
-```
+```text
 ┌─────────────────┐
 │   스택 (RW-)    │ ← 실행 불가! 쉘코드 방지
 ├─────────────────┤
@@ -464,11 +483,11 @@ main() 호출 전 스택 상태:
 ├─────────────────┤
 │   코드 (R-X)    │ ← 쓰기 불가! 코드 변조 방지
 └─────────────────┘
-```
+```text
 
 #### ASLR (Address Space Layout Randomization)
 
-```
+```text
 실행할 때마다 주소가 달라짐:
 
 첫 번째 실행:
@@ -480,7 +499,7 @@ libc: 0x7f8899aabbcc
 스택: 0x7ffea9876543  ← 다름!
 힙:   0x5587fedcba00  ← 다름!
 libc: 0x7f1122334455  ← 다름!
-```
+```text
 
 ### 6.2 Copy-on-Write (CoW)
 
@@ -514,7 +533,7 @@ graph TD
 
     style PM fill:#FFE082
     style PM2 fill:#81C784
-```
+```text
 
 ## 7. 실전: 프로그램 로딩 분석
 
@@ -546,7 +565,7 @@ mmap(NULL, 8192, PROT_READ|PROT_WRITE, ...)  # 메모리 매핑
 access("/etc/ld.so.preload", R_OK)     # 프리로드 확인
 open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY)  # libc 열기
 mmap(NULL, 3936288, PROT_READ|PROT_EXEC, ...)      # libc 매핑
-```
+```text
 
 ### 7.2 성능 최적화
 
@@ -558,11 +577,11 @@ LD_PRELOAD=/path/to/mylib.so ./program
 
 # 시스템 전체 프리로드
 echo "/usr/lib/important.so" >> /etc/ld.so.preload
-```
+```text
 
 #### Prelinking (deprecated but instructive)
 
-```
+```text
 일반 동적 링킹:
 프로그램 시작 → 라이브러리 로드 → 재배치 → 실행
                               ↑
@@ -572,7 +591,7 @@ Prelinking:
 사전에 재배치 완료 → 프로그램 시작 → 즉시 실행
                                 ↑
                            시간 절약
-```
+```text
 
 ## 8. 특수한 로딩 시나리오
 
@@ -583,7 +602,7 @@ Prelinking:
 ```python
 #!/usr/bin/python3
 print("Hello, World!")
-```
+```text
 
 로딩 과정:
 
@@ -596,13 +615,13 @@ graph LR
     S2 --> E[실행]
 
     style I fill:#FFE082
-```
+```text
 
 ### 8.2 정적 링킹 프로그램
 
 정적으로 링크된 프로그램의 로딩:
 
-```
+```text
 동적 링킹 프로그램:          정적 링킹 프로그램:
 ┌─────────────┐            ┌─────────────┐
 │  작은 실행  │            │  큰 실행    │
@@ -617,7 +636,7 @@ graph LR
 
 로딩 시간: 느림             로딩 시간: 빠름
 메모리: 효율적              메모리: 비효율적
-```
+```text
 
 ## 9. 정리: 로딩과 실행의 핵심
 

@@ -26,7 +26,7 @@ tags:
 /usr/bin/ld: main.o: in function `main':
 main.c:(.text+0x1a): undefined reference to `my_function'
 collect2: error: ld returned 1 exit status
-```
+```text
 
 "분명히 함수를 만들었는데 왜 찾을 수 없다고 하지?"
 "라이브러리도 설치했는데 왜 링킹이 안되지?"
@@ -58,7 +58,7 @@ mindmap
       컨테이너 호환성
       크로스 컴파일
       운영체제 차이
-```
+```text
 
 각 원인별로 **체계적인 해결 과정**을 배워보겠습니다.
 
@@ -82,7 +82,7 @@ flowchart TD
     
     style ERROR fill:#ffcccb
     style DEEP fill:#ffd54f
-```
+```text
 
 **단계별 진단 방법**:
 
@@ -106,7 +106,7 @@ SEARCH_DIR("/usr/local/lib")
 $ find /usr/lib /lib /usr/local/lib -name "libmylib*" 2>/dev/null
 /usr/lib/libmylib.so.1.0
 /usr/lib/libmylib.a
-```
+```text
 
 ### 1.2 실제 디버깅 사례
 
@@ -121,7 +121,7 @@ int calcuate_sum(int a, int b);  // 오타: calculate가 아님
 int main() {
     return calculate_sum(1, 2);  // 정확한 철자로 호출
 }
-```
+```text
 
 ```bash
 # 에러 발생
@@ -131,7 +131,7 @@ undefined reference to `calculate_sum'
 # 진단: 심볼 테이블 확인
 $ nm -D libmylib.so | grep calcul
 00001234 T calcuate_sum   # 오타 발견!
-```
+```text
 
 **사례 2: C++ name mangling 문제**
 
@@ -142,7 +142,7 @@ int my_function(int x) { return x * 2; }
 // main.c (C로 컴파일됨)
 int my_function(int x);
 int main() { return my_function(5); }
-```
+```text
 
 ```bash
 # C++ 심볼은 mangling됨
@@ -155,7 +155,7 @@ $ nm main.o
 
 # 해결책: extern "C" 사용
 extern "C" int my_function(int x);
-```
+```text
 
 ### 2. multiple definition 에러
 
@@ -183,7 +183,7 @@ __attribute__((weak)) int global_var = 42;
 // 선언만, 정의는 하나의 .c 파일에서만
 extern int global_var;
 #endif
-```
+```text
 
 ## 고급 심볼 분석 도구
 
@@ -209,7 +209,7 @@ $ nm -S --size-sort libmylib.a
 # T = text (코드), D = data (초기화된 변수)
 # B = BSS (초기화되지 않은 변수), U = undefined
 # W = weak symbol, A = absolute
-```
+```text
 
 ### objdump - 오브젝트 파일 분석
 
@@ -234,7 +234,7 @@ $ objdump -S -d program
 
 # 특정 섹션만 덤프
 $ objdump -s -j .rodata main.o
-```
+```text
 
 ### readelf - ELF 파일 분석
 
@@ -260,7 +260,7 @@ $ readelf -r main.o
 # 의존성 라이브러리 확인
 $ readelf -d program | grep NEEDED
  0x0000000000000001 (NEEDED)    Shared library: [libm.so.6]
-```
+```text
 
 ## 라이브러리 경로와 검색
 
@@ -284,7 +284,7 @@ $ ldd program
     linux-vdso.so.1 => (0x00007fff)
     libmylib.so.1 => /opt/lib/libmylib.so.1
     libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6
-```
+```text
 
 ### RPATH vs RUNPATH 설정
 
@@ -301,7 +301,7 @@ $ gcc -Wl,-rpath,'$ORIGIN/../lib' main.c -o program
 # 기존 RPATH 수정
 $ chrpath -r /new/path program
 $ patchelf --set-rpath /new/path program
-```
+```text
 
 ## symbol visibility와 링킹
 
@@ -323,7 +323,7 @@ __attribute__((visibility("hidden"))) void internal_function();
 
 // 컴파일 시 기본 가시성 설정
 // gcc -fvisibility=hidden -DBUILDING_MYLIB -shared lib.cpp -o libmylib.so
-```
+```text
 
 ### 심볼 버전 관리
 
@@ -333,18 +333,18 @@ __attribute__((visibility("hidden"))) void internal_function();
 
 // 구버전 함수
 void old_function_v1() {
-    printf("old version\n");
+    printf("old version, ");
 }
 
 // 신버전 함수
 void new_function_v2() {
-    printf("new version\n");
+    printf("new version, ");
 }
 
 // 심볼 별칭과 기본 버전 설정
 __asm__(".symver old_function_v1,my_function@MYLIB_1.0");
 __asm__(".symver new_function_v2,my_function@@MYLIB_2.0");  // 기본
-```
+```text
 
 ```bash
 # 버전 맵 파일 생성 (libmylib.map)
@@ -367,7 +367,7 @@ $ gcc -shared -Wl,--version-script=libmylib.map lib.c -o libmylib.so
 # 버전 정보 확인
 $ objdump -T libmylib.so | grep my_function
 00001234 g    DF .text  0000001a  MYLIB_2.0   my_function
-```
+```text
 
 ## 정적 vs 동적 링킹 디버깅
 
@@ -390,7 +390,7 @@ $ gcc main.c -lpthread -lmylib  # 잘못된 순서 (링크 에러 가능)
 
 # whole-archive 옵션 (모든 오브젝트 포함)
 $ gcc main.c -Wl,--whole-archive -lmylib -Wl,--no-whole-archive
-```
+```text
 
 ### 동적 링킹 문제 해결
 
@@ -410,7 +410,7 @@ $ readelf -r program | grep JUMP_SLOT
 
 # 라이브러리 preload
 $ LD_PRELOAD=./my_override.so ./program
-```
+```text
 
 ## 크로스 컴파일 링킹 문제
 
@@ -431,7 +431,7 @@ $ arm-linux-gnueabihf-gcc \
     --sysroot=/usr/arm-linux-gnueabihf \
     -L/usr/arm-linux-gnueabihf/lib \
     main.c -lmylib -o program_arm
-```
+```text
 
 ### pkg-config 활용
 
@@ -449,7 +449,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(OPENCV REQUIRED opencv4)
 target_link_libraries(myapp ${OPENCV_LIBRARIES})
 target_include_directories(myapp PRIVATE ${OPENCV_INCLUDE_DIRS})
-```
+```text
 
 ## Docker 환경에서의 링킹 문제
 
@@ -473,7 +473,7 @@ RUN gcc -static main.c -o program
 FROM scratch
 COPY --from=builder /src/program /program
 ENTRYPOINT ["/program"]
-```
+```text
 
 ### Alpine Linux 링킹 이슈
 
@@ -486,7 +486,7 @@ RUN apk add --no-cache gcc musl-dev
 FROM alpine:latest
 RUN apk add --no-cache gcompat  # glibc 호환 레이어
 COPY program_glibc /program
-```
+```text
 
 ## 실전 디버깅 워크플로우
 
@@ -508,23 +508,23 @@ FILE=$1
 echo "1. File type and architecture:"
 file "$FILE"
 
-echo -e "\n2. Undefined symbols:"
+echo -e ", 2. Undefined symbols:"
 nm -u "$FILE" 2>/dev/null || echo "Not an object/executable file"
 
-echo -e "\n3. Dynamic library dependencies:"
+echo -e ", 3. Dynamic library dependencies:"
 if [[ "$FILE" =~ \.(so|dylib)$ ]] || [ -x "$FILE" ]; then
     ldd "$FILE" 2>/dev/null || otool -L "$FILE" 2>/dev/null
 fi
 
-echo -e "\n4. RPATH/RUNPATH information:"
+echo -e ", 4. RPATH/RUNPATH information:"
 readelf -d "$FILE" 2>/dev/null | grep -E 'RPATH|RUNPATH' || echo "No RPATH/RUNPATH"
 
-echo -e "\n5. Section information:"
+echo -e ", 5. Section information:"
 readelf -S "$FILE" 2>/dev/null | head -20
 
-echo -e "\n6. Symbol table summary:"
+echo -e ", 6. Symbol table summary:"
 nm "$FILE" 2>/dev/null | awk '{print $2}' | sort | uniq -c | sort -nr
-```
+```text
 
 ### 라이브러리 호환성 체커
 
@@ -542,7 +542,7 @@ def get_symbols(library_path):
         result = subprocess.run(['nm', '-D', library_path], 
                               capture_output=True, text=True)
         symbols = []
-        for line in result.stdout.split('\n'):
+        for line in result.stdout.split(', '):
             if ' T ' in line:  # Text symbols only
                 symbol = line.split()[-1]
                 symbols.append(symbol)
@@ -578,8 +578,8 @@ if __name__ == '__main__':
         sys.exit(1)
     
     compatible = check_compatibility(sys.argv[1], sys.argv[2])
-    print(f"\nCompatibility: {'OK' if compatible else 'BROKEN'}")
-```
+    print(f", Compatibility: {'OK' if compatible else 'BROKEN'}")
+```text
 
 ## 실무 체크리스트
 

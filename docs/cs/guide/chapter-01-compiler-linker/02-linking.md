@@ -20,11 +20,11 @@ tags:
 
 프로그래밍을 하다 보면 이런 오류를 본 적이 있을 것입니다:
 
-```
+```text
 undefined reference to `calculate_sum'
 multiple definition of `global_counter'
 cannot find -lmath
-```
+```text
 
 이것들은 모두 '링커(Linker)' 오류입니다. 컴파일은 성공했지만, 링킹 단계에서 실패한 것이죠.
 
@@ -38,14 +38,14 @@ cannot find -lmath
 
 하나의 거대한 파일로 프로그램을 작성한다고 상상해봅시다:
 
-```
+```text
 program.c (100,000줄)
 ├── 네트워크 코드
 ├── 데이터베이스 코드
 ├── UI 코드
 ├── 비즈니스 로직
 └── 유틸리티 함수들
-```
+```text
 
 문제점:
 
@@ -75,7 +75,7 @@ graph TD
 
     style L fill:#4CAF50
     style E fill:#2196F3
-```
+```text
 
 각 파일을 독립적으로 컴파일하고, 나중에 합치는 방식입니다.
 
@@ -96,7 +96,7 @@ int main() {
     int result = add(3, 4);
     return result;
 }
-```
+```text
 
 `main.c`를 컴파일할 때, 컴파일러는 `add` 함수가 어디 있는지 모릅니다:
 
@@ -107,7 +107,7 @@ main:
     push 3
     call ????    ; add 함수의 주소를 모름!
     ret
-```
+```text
 
 이 `????` 부분을 채우는 것이 링커의 역할입니다.
 
@@ -125,7 +125,7 @@ main:
 
 각 오브젝트 파일은 심볼 테이블을 가지고 있습니다:
 
-```
+```text
 심볼 테이블 (math.o)
 ┌─────────────┬──────────┬────────┬─────────┐
 │ 이름         │ 타입      │ 값      │ 섹션     │
@@ -141,7 +141,7 @@ main:
 │ main        │ FUNCTION │ 0x0000 │ .text   │
 │ add         │ UNDEFINED│ 0x0000 │ -       │
 └─────────────┴──────────┴────────┴─────────┘
-```
+```text
 
 `main.o`에서 `add`는 **UNDEFINED**로 표시됩니다. "이 함수를 사용하지만 여기엔 없어요"라는 의미입니다.
 
@@ -165,7 +165,7 @@ Undefined"]
     style G fill:#81C784
     style L fill:#90CAF9
     style W fill:#CE93D8
-```
+```text
 
 #### 전역 심볼 (Global Symbol)
 
@@ -177,7 +177,7 @@ int calculate(int x) { return x * 2; }
 
 // 전역 변수
 int global_data = 100;
-```
+```text
 
 #### 지역 심볼 (Local Symbol)
 
@@ -189,7 +189,7 @@ static int helper(int x) { return x + 1; }
 
 // static 변수
 static int file_counter = 0;
-```
+```text
 
 #### 약한 심볼 (Weak Symbol)
 
@@ -203,7 +203,7 @@ int buffer_size;  // weak
 int buffer_size = 1024;  // strong
 
 // 약한 심볼은 강한 심볼에 의해 덮어써짐
-```
+```text
 
 ## 3. 링킹 과정 상세
 
@@ -218,11 +218,10 @@ int buffer_size = 1024;  // strong
 
 ```mermaid
 sequenceDiagram
-    participant M as "main.o
-"    participant L as "링커
-"    participant A as "math.o
-"    participant B as "lib.o
-"
+    participant M as "main.o"
+    participant L as "링커"
+    participant A as "math.o"
+    participant B as "lib.o"
     M->>L: add() 함수 필요
     L->>A: add() 찾기
     A->>L: add() @ 0x1000
@@ -232,7 +231,7 @@ sequenceDiagram
     L->>B: printf() 찾기
     B->>L: printf() @ 0x2000
     L->>M: printf() = 0x2000으로 해결
-```
+```text
 
 실제 예제로 봅시다:
 
@@ -259,7 +258,7 @@ int main() {
     func2();
     return shared_var;
 }
-```
+```text
 
 링커의 심볼 해결 과정:
 
@@ -272,7 +271,7 @@ int main() {
 
 오브젝트 파일의 코드는 주소 0부터 시작한다고 가정합니다:
 
-```
+```text
 math.o:
 0x0000: add 함수 시작
 0x0020: multiply 함수 시작
@@ -280,18 +279,18 @@ math.o:
 main.o:
 0x0000: main 함수 시작
 0x0030: call ????  (add 호출)
-```
+```text
 
 링커가 최종 실행 파일을 만들 때:
 
-```
+```text
 실행 파일:
 0x1000: main 함수 (main.o에서)
 0x1030: call 0x2000  (수정됨!)
 ...
 0x2000: add 함수 (math.o에서)
 0x2020: multiply 함수
-```
+```text
 
 이 과정을 시각화하면:
 
@@ -307,7 +306,7 @@ call ????"]
     subgraph "재배치 후"
         M2["0x1000: main
 call 0x2000"]
-        A2[0x2000: add()]
+        A2["0x2000: add()"]
     end
 
     M1 -.재배치.-> M2
@@ -316,13 +315,13 @@ call 0x2000"]
 
     style M2 fill:#4CAF50
     style A2 fill:#4CAF50
-```
+```text
 
 ### 3.4 재배치 정보
 
 오브젝트 파일은 재배치 정보를 포함합니다:
 
-```
+```text
 재배치 테이블 (main.o)
 ┌──────────┬───────────┬──────────────┐
 │ 오프셋   │ 심볼      │ 타입         │
@@ -330,7 +329,7 @@ call 0x2000"]
 │ 0x0030   │ add       │ R_CALL       │
 │ 0x0040   │ global_var│ R_ABS32      │
 └──────────┴───────────┴──────────────┘
-```
+```text
 
 이 정보는 "0x0030 위치의 명령어는 add 함수를 호출하니까, add의 실제 주소로 수정해주세요"라는 의미입니다.
 
@@ -343,8 +342,8 @@ call 0x2000"]
 ```mermaid
 graph TD
     subgraph "정적 링킹"
-        M["main.o] --> L[링커]
-        MA[math.o"] --> L
+        M["main.o"] --> L["링커"]
+        MA["math.o"] --> L
         LIB["libstd.a
 정적 라이브러리"] --> L
         L --> E["실행 파일
@@ -352,7 +351,7 @@ graph TD
     end
 
     style E fill:#FF9800
-```
+```text
 
 장점:
 
@@ -373,20 +372,20 @@ graph TD
 ```mermaid
 graph TD
     subgraph "동적 링킹"
-        M["main.o] --> L[링커]
-        MA[math.o"] --> L
+        M["main.o"] --> L["링커"]
+        MA["math.o"] --> L
         L --> E["실행 파일
 참조만 포함"]
 
-        E -.실행 시.-> DL[동적 링커]
+        E -.실행 시.-> DL["동적 링커"]
         LIB["libstd.so
 공유 라이브러리"] --> DL
-        DL --> R[실행]
+        DL --> R["실행"]
     end
 
     style E fill:#4CAF50
     style DL fill:#2196F3
-```
+```text
 
 장점:
 
@@ -406,11 +405,10 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant P as "프로그램
-"    participant K as "커널
-"    participant D as "동적 링커
-"    participant L as "라이브러리
-"
+    participant P as "프로그램"
+    participant K as "커널"
+    participant D as "동적 링커"
+    participant L as "라이브러리"
     P->>K: 실행 요청
     K->>D: 동적 링커 로드
     D->>P: 필요한 라이브러리 확인
@@ -420,7 +418,7 @@ sequenceDiagram
     D->>D: 재배치 수행
     D->>P: 제어권 전달
     P->>P: main() 실행
-```
+```text
 
 ## 5. 실행 파일 형식
 
@@ -445,7 +443,7 @@ sequenceDiagram
 
 Linux의 ELF 형식을 예로 들어봅시다:
 
-```
+```text
 ELF 파일 구조
 ┌─────────────────────┐
 │    ELF 헤더         │ ← 매직 넘버, 아키텍처, 엔트리 포인트
@@ -468,7 +466,7 @@ ELF 파일 구조
 ├─────────────────────┤
 │  섹션 헤더 테이블    │ ← 링킹 시 사용 (섹션 정보)
 └─────────────────────┘
-```
+```text
 
 ### 5.3 실행 파일 분석 도구
 
@@ -490,7 +488,7 @@ $ nm program
 
 # T: 정의된 텍스트(코드) 심볼
 # U: 미정의 심볼 (외부 라이브러리)
-```
+```text
 
 ## 6. 링커 스크립트
 
@@ -518,7 +516,7 @@ SECTIONS
         *(.bss)
     }
 }
-```
+```text
 
 ### 6.2 왜 링커 스크립트가 필요한가?
 
@@ -550,7 +548,7 @@ SECTIONS
         *(.bss)
     } > RAM
 }
-```
+```text
 
 #### 부트로더
 
@@ -570,7 +568,7 @@ SECTIONS
         SHORT(0xAA55)  /* 부트 시그니처 */
     }
 }
-```
+```text
 
 ## 7. 링킹 최적화 기법
 
@@ -600,7 +598,7 @@ graph LR
     end
 
     style D2 fill:#4CAF50
-```
+```text
 
 LTO의 장점:
 
@@ -627,7 +625,7 @@ graph TD
     end
 
     style L2 fill:#4CAF50
-```
+```text
 
 ## 8. 실전 예제: 링킹 문제 해결
 
@@ -647,13 +645,13 @@ int Add(int a, int b);  // 대소문자 오타!
 int main() {
     return Add(3, 4);
 }
-```
+```text
 
 ```bash
 $ gcc -c math.c main.c
 $ gcc math.o main.o
 main.o: undefined reference to `Add'
-```
+```text
 
 해결 방법:
 
@@ -674,12 +672,12 @@ int global_var = 10;  // 문제! 헤더에 정의
 
 // file2.c
 #include "header.h"
-```
+```text
 
 ```bash
 $ gcc file1.c file2.c
 multiple definition of `global_var'
-```
+```text
 
 해결 방법:
 
@@ -689,7 +687,7 @@ extern int global_var;  // 선언만
 
 // file1.c
 int global_var = 10;    // 한 곳에서만 정의
-```
+```text
 
 ### 8.3 라이브러리 순서 문제
 
@@ -704,7 +702,7 @@ $ gcc main.o -lmath -lbase
 $ gcc main.o -lbase -lmath
 # 또는 순환 의존성 해결
 $ gcc main.o -lmath -lbase -lmath
-```
+```text
 
 의존성 그래프:
 
@@ -716,7 +714,7 @@ graph LR
     style main.o fill:#FFE082
     style libmath.a fill:#81C784
     style libbase.a fill:#90CAF9
-```
+```text
 
 ## 9. 정리: 링킹의 핵심 개념
 

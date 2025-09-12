@@ -47,7 +47,7 @@ mindmap
       오래된 링커
       LTO 미사용
       체크 링커
-```
+```text
 
 각각이 어떻게 연결되어 느린 빌드를 만드는지 하나씩 파헤쳐보겠습니다.
 
@@ -77,7 +77,7 @@ graph LR
     style SLOW1 fill:#ffcccb
     style SLOW2 fill:#ffcccb
     style SLOW3 fill:#ffcccb
-```
+```text
 
 각 단계에서 시간이 오래 걸리는 이유:
 
@@ -98,7 +98,7 @@ sys     1m45.678s  # CPU가 시스템 모드에서 소비한 시간
 
 # user + sys > real 이면 병렬화가 효과적으로 동작 중
 # user + sys ≈ real 이면 병렬화 개선 필요
-```
+```text
 
 병렬 빌드 효과를 측정해보세요:
 
@@ -110,7 +110,7 @@ for threads in 1 2 4 8 16; do
     make clean > /dev/null
     time make -j$threads
 done
-```
+```text
 
 결과 해석:
 
@@ -138,7 +138,7 @@ $ make -j1 2>&1 | grep -E '^\[.*\].*\.cpp' | \
   while read line; do 
     echo "$(date): $line"
   done
-```
+```text
 
 **의존성 그래프 해석법**:
 
@@ -161,7 +161,7 @@ graph TD
         L[auth.cpp] --> H
         style H fill:#ffcccb
     end
-```
+```text
 
 - **정상**: 각 모듈이 독립적 → 병렬 빌드 효과 좋음
 - **문제**: 모든 파일이 하나의 헤더에 의존 → 순차 빌드 유발
@@ -189,7 +189,7 @@ sequenceDiagram
     Compiler->>File: 소스 코드 읽기
     Compiler->>Compiler: 전처리, 파싱, 최적화... (똑같은 작업!)
     Compiler->>Dev: utils.o 완성! (또 2초 소요 😭)
-```
+```text
 
 ccache는 이 문제를 해결합니다:
 
@@ -213,7 +213,7 @@ graph LR
     
     style CACHED fill:#c8e6c9
     style C2 fill:#ffcccb
-```
+```text
 
 **핵심 아이디어**:
 
@@ -241,7 +241,7 @@ $ export CXX="ccache g++"
 # CMake에서 ccache 사용
 set(CMAKE_C_COMPILER_LAUNCHER ccache)
 set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
-```
+```text
 
 **중요한 설정 팁들**:
 
@@ -255,7 +255,7 @@ $ ccache --set-config sloppiness=time_macros
 # 병렬 압축 (최신 ccache)
 $ ccache --set-config compression_level=1  # 속도 우선
 $ ccache --set-config compression_level=9  # 압축률 우선
-```
+```text
 
 ### ccache 통계와 최적화
 
@@ -277,7 +277,7 @@ $ ccache -c        # 통계 초기화
 $ ccache -z        # 통계 초기화
 $ make clean && make
 $ ccache -s        # 결과 확인
-```
+```text
 
 ### sccache (Rust 기반 분산 캐시)
 
@@ -299,7 +299,7 @@ export SCCACHE_REGION=us-west-2
 
 # 통계 확인
 $ sccache --show-stats
-```
+```text
 
 ## Docker 빌드 최적화
 
@@ -333,7 +333,7 @@ COPY src/ /app/src/
 
 # 실제 빌드
 RUN make -j$(nproc)
-```
+```text
 
 ### Docker BuildKit 활용
 
@@ -350,7 +350,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
 RUN --mount=type=cache,target=/root/.ccache \
     --mount=type=bind,source=.,target=/src \
     cd /src && make -j$(nproc)
-```
+```text
 
 ### Docker 빌드 명령어 최적화
 
@@ -371,7 +371,7 @@ $ docker build --cache-from myapp:latest \
 # 멀티 스테이지 빌드 타겟 지정
 $ docker build --target builder \
     -t myapp:builder .
-```
+```text
 
 ## incremental compilation 이해
 
@@ -399,7 +399,7 @@ src/%.o: src/%.c
 .PHONY: clean
 clean:
  rm -f $(OBJECTS) $(DEPENDS) myapp
-```
+```text
 
 ### CMake의 의존성 추적
 
@@ -420,7 +420,7 @@ set_property(TARGET myapp PROPERTY UNITY_BUILD_BATCH_SIZE 8)
 
 # Ninja 빌드 시스템
 set(CMAKE_GENERATOR "Ninja")
-```
+```text
 
 ### 헤더 파일 최적화
 
@@ -447,7 +447,7 @@ public:
     void process(const std::string& data);
     void work(BigClass* obj);  // 포인터/참조는 전방선언으로 충분
 };
-```
+```text
 
 ## 링커 최적화
 
@@ -464,7 +464,7 @@ $ clang -flto=thin -O2 file1.o file2.o -o program
 
 # 병렬 LTO
 $ gcc -flto -fuse-linker-plugin -O2 -Wl,-flto-partition=balanced *.o
-```
+```text
 
 ### 링커 선택과 최적화
 
@@ -480,7 +480,7 @@ $ gcc -B/usr/local/libexec/mold *.o -o program
 
 # 병렬 링킹
 $ ld --threads --thread-count=8
-```
+```text
 
 ## 빌드 모니터링과 분석
 
@@ -499,7 +499,7 @@ $ cmake --build . -- -j$(nproc) --time
 
 # Ninja 빌드 로그
 $ ninja -j$(nproc) -v -d stats
-```
+```text
 
 ### 빌드 메트릭 수집
 
@@ -526,20 +526,20 @@ def measure_build():
         'timestamp': datetime.now().isoformat(),
         'build_time': build_time,
         'success': result.returncode == 0,
-        'output_lines': len(result.stdout.split('\n')),
-        'error_lines': len(result.stderr.split('\n'))
+        'output_lines': len(result.stdout.split(', ')),
+        'error_lines': len(result.stderr.split(', '))
     }
     
     # 결과 저장
     with open('build_metrics.json', 'a') as f:
         json.dump(metrics, f)
-        f.write('\n')
+        f.write(', ')
     
     return metrics
 
 if __name__ == '__main__':
     print(json.dumps(measure_build(), indent=2))
-```
+```text
 
 ## CI/CD 최적화
 
@@ -588,7 +588,7 @@ jobs:
       with:
         path: build
         key: ${{ runner.os }}-build-${{ github.sha }}
-```
+```text
 
 ### Jenkins 빌드 최적화
 
@@ -637,7 +637,7 @@ pipeline {
         }
     }
 }
-```
+```text
 
 ## 실전 디버깅 시나리오
 
@@ -662,7 +662,7 @@ $ nm libmylib.a | grep my_function
 $ gcc main.c libmylib.a -o program
 # 또는
 $ gcc main.c -L. -lmylib -o program
-```
+```text
 
 ### 시나리오 2: "헤더 파일 수정 시 전체 재빌드"
 
@@ -676,7 +676,7 @@ $ gcc -M src/*.c | dot -Tpng > dependencies.png
 // 해결책: 헤더 분할
 // common.h -> common_types.h + common_functions.h
 // 자주 변경되지 않는 부분과 자주 변경되는 부분 분리
-```
+```text
 
 ### 시나리오 3: "릴리즈 빌드에서만 크래시"
 
@@ -693,7 +693,7 @@ $ gcc -O2 main.c && ./a.out  # 문제?
 
 # 특정 최적화 옵션 비활성화
 $ gcc -O2 -fno-strict-aliasing main.c
-```
+```text
 
 ## 성능 측정과 최적화 효과 확인
 
@@ -721,7 +721,7 @@ ccache -s
 make clean
 time make -j8  # 두 번째 빌드 (캐시 활용)
 ccache -s
-```
+```text
 
 ### 메모리 사용량 모니터링
 
@@ -735,7 +735,7 @@ $ while true; do
 
 # 실행 후
 $ make -j8
-```
+```text
 
 ## 실무 체크리스트
 

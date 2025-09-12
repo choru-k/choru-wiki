@@ -31,7 +31,7 @@ tags:
 if (temperature > 30) {
     turn_on_aircon();
 }
-```
+```text
 
 이것은 매우 자연스러운 사고 흐름입니다. 조건이 있고, 그에 따른 행동이 있죠. 우리는 "temperature"라는 단어가 온도를 의미한다는 것을 알고, ">"가 '크다'를 의미한다는 것을 압니다.
 
@@ -39,12 +39,12 @@ if (temperature > 30) {
 
 하지만 CPU는 오직 0과 1, 즉 전기 신호의 유무만을 이해합니다. CPU가 실제로 실행하는 것은 이런 형태입니다:
 
-```
+```asm
 10110000 00011110    ; 30이라는 숫자를 레지스터에 넣어라
 00111001 11000001    ; 메모리의 특정 위치 값과 비교하라
 01110111 00001000    ; 조건이 참이면 8바이트 뒤로 점프하라
 ...
-```
+```text
 
 이진수의 나열입니다. 각 숫자 묶음은 특정한 의미를 가진 '명령어(instruction)'입니다.
 
@@ -52,12 +52,12 @@ if (temperature > 30) {
 
 만약 우리가 모든 프로그램을 0과 1로 작성해야 한다면 어떨까요?
 
-```
+```text
 원하는 동작: 두 숫자를 더하기
 고급 언어: result = a + b;
 어셈블리: ADD RAX, RBX
 기계어: 01001000 00000001 11011000
-```
+```text
 
 간단한 덧셈 하나도 이진수로 표현하려면 복잡합니다. 더 큰 문제는:
 
@@ -79,7 +79,7 @@ graph TD
     style C fill:#81d4fa
     style D fill:#4fc3f7
     style E fill:#29b6f6
-```
+```text
 
 ## 2. 컴파일러의 내부 구조
 
@@ -105,7 +105,7 @@ Code Generation"]
 
     style SC fill:#fff3e0
     style MC fill:#e8f5e9
-```
+```text
 
 각 단계를 자세히 살펴보죠.
 
@@ -117,15 +117,15 @@ Code Generation"]
 
 ```c
 int sum = a + b;
-```
+```text
 
 이 코드는 다음과 같은 토큰들로 분해됩니다:
 
-```
+```text
 [int] [sum] [=] [a] [+] [b] [;]
   ↓     ↓    ↓   ↓   ↓   ↓   ↓
 키워드 식별자 연산자 식별자 연산자 식별자 구분자
-```
+```text
 
 이것은 마치 문장을 단어로 나누는 것과 같습니다:
 
@@ -146,7 +146,7 @@ int sum = a + b;
 if (x > 5) {
     y = x * 2;
 }
-```
+```text
 
 이것은 다음과 같은 트리 구조가 됩니다:
 
@@ -165,7 +165,7 @@ graph TD
     MULT --> X2["x"]
     MULT --> MUL["*"]
     MULT --> TWO[2]
-```
+```text
 
 이 단계에서 문법 오류를 발견합니다:
 
@@ -184,7 +184,7 @@ int x = "hello";  // 타입 불일치: 정수 변수에 문자열 할당
 y = 10;           // 오류: y가 선언되지 않음
 int arr[5];
 arr[10] = 1;      // 경고: 배열 범위 초과 (일부 컴파일러)
-```
+```text
 
 의미 분석은 **심볼 테이블(symbol table)**을 만들어 관리합니다:
 
@@ -211,11 +211,11 @@ graph TD
         C3["C 코드"] --> IR["중간 표현"]
         PY3["Python"] --> IR
         RUST["Rust"] --> IR
-        IR --> X863[x86 기계어"]
-        IR --> ARM3["ARM 기계어]
-        IR --> WASM[WebAssembly"]
+        IR --> X863["x86 기계어"]
+        IR --> ARM3["ARM 기계어"]
+        IR --> WASM["WebAssembly"]
     end
-```
+```text
 
 중간 표현의 장점:
 
@@ -232,7 +232,7 @@ entry:
     %sum = add i32 %a, %b
     ret i32 %sum
 }
-```
+```text
 
 ### 2.6 최적화 (Optimization)
 
@@ -246,7 +246,7 @@ int x = 2 * 3 * 4;
 
 // 최적화 후
 int x = 24;  // 컴파일 시점에 계산
-```
+```text
 
 #### 죽은 코드 제거 (Dead Code Elimination)
 
@@ -262,7 +262,7 @@ int calculate() {
 int calculate() {
     return 5;
 }
-```
+```text
 
 #### 루프 최적화
 
@@ -280,7 +280,7 @@ for (int i = 0; i < 1000; i += 4) {
     arr[i+3] = (i+3) * 2;
 }
 // 루프 제어 오버헤드 감소
-```
+```text
 
 #### 인라인 확장
 
@@ -295,7 +295,7 @@ int main() {
 int main() {
     int result = 5 * 5;  // 함수 호출 오버헤드 제거
 }
-```
+```text
 
 ## 3. 왜 같은 프로그램이 다른 컴퓨터에서 안 돌아갈까?
 
@@ -315,7 +315,7 @@ ADD R0, R0, #3
 ; RISC-V
 LI a0, 5
 ADDI a0, a0, 3
-```
+```text
 
 같은 "5 + 3"이라는 연산도 CPU마다 다른 명령어를 사용합니다. 이것은 마치 한국어, 영어, 일본어가 다른 것과 같습니다.
 
@@ -340,7 +340,7 @@ graph TD
     WIN --> WAPI
     LINUX --> POSIX
     MAC --> MAPI
-```
+```text
 
 예를 들어, 파일을 열 때:
 
@@ -352,7 +352,7 @@ HANDLE file = CreateFile("test.txt", GENERIC_READ, ...);
 int fd = open("test.txt", O_RDONLY);
 
 // 같은 동작, 다른 시스템 호출
-```
+```text
 
 ### 3.3 라이브러리 의존성
 
@@ -363,9 +363,9 @@ int fd = open("test.txt", O_RDONLY);
 #include <math.h>   // 수학 라이브러리
 
 int main() {
-    printf("Square root of 2: %f\n", sqrt(2.0));
+    printf("Square root of 2: %f, ", sqrt(2.0));
 }
-```
+```text
 
 이 프로그램이 실행되려면:
 
@@ -390,10 +390,10 @@ graph TB
 
     subgraph "인터프리터 언어 (Python, JavaScript, Ruby)"
         IS[소스 코드] -->|"해석+실행
-매번"| INT["인터프리터]
-        INT --> CPU2[CPU"]
+매번"| INT["인터프리터"]
+        INT --> CPU2["CPU"]
     end
-```
+```text
 
 ### 4.2 각 방식의 특징
 
@@ -433,12 +433,12 @@ graph TB
 
 ```mermaid
 graph LR
-    JAVA["Java 소스] -->|javac| BYTE[바이트코드]
-    BYTE -->|JVM| INT[인터프리터"]
-    BYTE -->|JIT| MC[기계어]
+    JAVA["Java 소스"] -->|javac| BYTE["바이트코드"]
+    BYTE -->|JVM| INT["인터프리터"]
+    BYTE -->|JIT| MC["기계어"]
     INT --> CPU
     MC --> CPU
-```
+```text
 
 Java는:
 
@@ -464,7 +464,7 @@ dis.dis(hello)
 #               6 POP_TOP
 #               8 LOAD_CONST               0 (None)
 #              10 RETURN_VALUE
-```
+```text
 
 ## 5. 컴파일 과정의 실제 예제
 
@@ -480,16 +480,16 @@ int main() {
     int x = 5;
     int y = 10;
     int sum = x + y;
-    printf("Sum: %d\n", sum);
+    printf("Sum: %d, ", sum);
     return 0;
 }
-```
+```text
 
 ### 5.2 전처리 후
 
 ```bash
 gcc -E hello.c  # 전처리만 수행
-```
+```text
 
 ```c
 // stdio.h의 내용이 포함됨
@@ -500,16 +500,16 @@ int main() {
     int x = 5;
     int y = 10;
     int sum = x + y;
-    printf("Sum: %d\n", sum);
+    printf("Sum: %d, ", sum);
     return 0;
 }
-```
+```text
 
 ### 5.3 어셈블리 코드
 
 ```bash
 gcc -S hello.c  # 어셈블리 생성
-```
+```text
 
 ```assembly
 main:
@@ -524,18 +524,18 @@ main:
     mov     DWORD PTR [rbp-12], eax ; sum = eax
     mov     eax, DWORD PTR [rbp-12]
     mov     esi, eax
-    lea     rdi, .LC0[rip]          ; "Sum: %d\n"
+    lea     rdi, .LC0[rip]          ; "Sum: %d, "
     call    printf
     mov     eax, 0
     leave
     ret
-```
+```text
 
 ### 5.4 최적화된 버전
 
 ```bash
 gcc -O2 -S hello.c  # 최적화 레벨 2
-```
+```text
 
 ```assembly
 main:
@@ -547,7 +547,7 @@ main:
     xor     eax, eax
     add     rsp, 8
     ret
-```
+```text
 
 컴파일러가 `x + y`를 컴파일 시점에 계산해서 `15`로 바꿨네요!
 
@@ -585,6 +585,17 @@ main:
 
 ## 관련 문서
 
+### 직접 연관 문서
+
 - [1-2: 링킹은 어떻게 동작하는가](02-linking.md) - 컴파일 후 링킹 과정
 - [1-4: 컴파일러 최적화](04-optimization.md) - 컴파일러의 최적화 기법
+
+### 고급 주제
+
+- [1-5: 빌드 시스템 디버깅](05-build-debugging.md) - 컴파일 성능 최적화
+- [1-6: 링커 에러 해결](06-linking-debugging.md) - 컴파일/링킹 문제 해결
+
+### 관련 시스템 개념
+
 - [Chapter 2: 메모리 아키텍처](../chapter-02-memory/index.md) - 컴파일된 프로그램의 메모리 구조
+- [프로세스와 스레드](../chapter-04-process-thread/index.md) - 컴파일된 프로그램의 실행 환경

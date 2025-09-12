@@ -33,24 +33,24 @@ tags:
 ```mermaid
 graph LR
     subgraph "우리가 작성하는 것"
-        SC[소스 코드<br/>.c, .cpp]
-        HC[헤더 파일<br/>.h, .hpp]
+        SC[소스 코드, .c, .cpp]
+        HC[헤더 파일, .h, .hpp]
     end
     
     subgraph "컴파일 과정"
-        PP[전처리<br/>Preprocessing]
-        CC[컴파일<br/>Compilation]
-        AS[어셈블<br/>Assembly]
+        PP[전처리, Preprocessing]
+        CC[컴파일, Compilation]
+        AS[어셈블, Assembly]
     end
     
     subgraph "링킹 과정"
-        OBJ[오브젝트 파일<br/>.o, .obj]
-        LINK[링커<br/>Linker]
-        LIB[라이브러리<br/>.a, .so, .lib, .dll]
+        OBJ[오브젝트 파일, .o, .obj]
+        LINK[링커, Linker]
+        LIB[라이브러리, .a, .so, .lib, .dll]
     end
     
     subgraph "최종 결과"
-        EXE[실행 파일<br/>a.out, .exe]
+        EXE[실행 파일, a.out, .exe]
     end
     
     SC --> PP
@@ -66,7 +66,7 @@ graph LR
     style CC fill:#81C784
     style LINK fill:#64B5F6
     style EXE fill:#FF8A65
-```
+```text
 
 ## 이 장의 구성
 
@@ -140,7 +140,7 @@ $ gcc -save-temps  # 중간 파일들 저장 (.i, .s, .o)
 $ gcc -S          # 어셈블리 코드만 생성
 $ gcc -E          # 전처리만 수행
 $ gcc -v          # 상세한 컴파일 과정 출력
-```
+```text
 
 ## 이 장을 읽고 나면
 
@@ -189,7 +189,7 @@ mindmap
         PLT
         GOT
         지연 바인딩
-```
+```text
 
 ## 다음 단계
 
