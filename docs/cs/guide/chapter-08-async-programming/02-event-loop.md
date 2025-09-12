@@ -23,9 +23,9 @@ tags:
 
 ### 1.1 The C10K Problem: 인터넷 성장의 병목
 
-```
+```text
 때는 1999년... 닷컴 버블의 정점...
-```
+```text
 
 Dan Kegel이 "The C10K Problem"이라는 논문을 발표합니다. 당시 웹 서버들은 동시 연결 10,000개(C10K)를 처리하는 데 심각한 어려움을 겪고 있었죠.
 
@@ -51,7 +51,7 @@ void handle_client(int client_fd) {
 // - 10,000 연결 = 20GB RAM!
 // - Context switching 지옥
 // - Fork 오버헤드
-```
+```text
 
 실제로 제가 2010년에 스타트업에서 일할 때, Apache 서버가 동시 접속자 500명만 넘어도 서버가 죽는 경험을 했습니다. RAM은 충분했는데도요! 문제는 프로세스 컨텍스트 스위칭이었습니다.
 
@@ -86,7 +86,7 @@ void event_loop() {
 // - 스레드 1개로 수만 개 연결 처리
 // - 연결당 메모리: ~10KB (200배 절약!)
 // - Context switching 최소화
-```
+```text
 
 ## 2. 이벤트 루프 내부 구조: libuv의 마법
 
@@ -114,7 +114,7 @@ Node.js의 이벤트 루프는 사실 6개의 phase로 구성된 정교한 시�
 │  ┌─────────────┴─────────────┐
 └──┤      close callbacks      │ <-- socket.on('close', ...)
    └───────────────────────────┘
-```
+```text
 
 **각 Phase의 실제 동작을 코드로 보기:**
 
@@ -154,7 +154,7 @@ setImmediate(() => console.log('Immediate'));
 // Promise in I/O     <-- Promise가 그 다음
 // Immediate in I/O   <-- 같은 phase
 // Timer in I/O       <-- 다음 루프의 timer phase
-```
+```text
 
 ### 2.2 Microtask vs Macrotask: 우선순위 전쟁
 
@@ -186,7 +186,7 @@ class BetterEventEmitter {
         });
     }
 }
-```
+```text
 
 ### 2.3 Event Loop Blocking 탐지하기
 
@@ -237,7 +237,7 @@ const processData = trackSlowOperation('processData', async (data) => {
         // 복잡한 계산
     }
 });
-```
+```text
 
 ## 3. I/O Multiplexing의 진화: select에서 io_uring까지
 
@@ -264,7 +264,7 @@ for (int fd = 0; fd < num_clients; fd++) {
 }
 
 // 성능: 1000개 연결에서 CPU 90% 사용!
-```
+```text
 
 ### 3.2 epoll: Linux의 게임 체인저
 
@@ -285,7 +285,7 @@ struct epoll_event events[MAX_EVENTS];
 int n = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
 
 // 성능: 100,000개 연결에서도 CPU 10% 사용!
-```
+```text
 
 **실제 벤치마크 결과 (제 경험):**
 
@@ -306,7 +306,7 @@ Latency p99: 50ms
 Throughput: 50,000 req/s
 
 # 10배 성능 향상!
-```
+```text
 
 ### 3.3 io_uring: 미래의 I/O (2019년~)
 
@@ -334,7 +334,7 @@ connection = (Connection*)cqe->user_data;
 process_data(connection, cqe->res);
 
 // 성능: epoll 대비 2-3배 향상!
-```
+```text
 
 ## 4. Reactor vs Proactor: 두 가지 패턴의 대결
 
@@ -343,72 +343,104 @@ process_data(connection, cqe->res);
 Node.js, Nginx, Redis가 사용하는 패턴:
 
 ```javascript
-// Reactor 패턴 구현
+// Reactor 패턴 구현 - "I/O 준비되면 알려주는" 비동기 이벤트 처리 모델
+// Node.js, Nginx, Redis 등의 핵심 아키텍처로 epoll/kqueue 기반으로 고성능 달성
 class Reactor {
     constructor() {
-        this.handlers = new Map();
-        this.epoll = new Epoll();
+        // 파일 디스크립터별 이벤트 핸들러 매핑 테이블
+        this.handlers = new Map();  // fd -> handler 매핑
+        // Linux epoll 인터페이스 - O(1) 성능으로 대량 동시 연결 처리 가능
+        this.epoll = new Epoll();   // epoll 인스턴스 생성
     }
     
+    // 이벤트 핸들러 등록 - 특정 파일 디스크립터에 대한 이벤트 모니터링 시작
     registerHandler(fd, events, handler) {
+        // 1. 핸들러를 내부 맅에 저장 - O(1) 룩업 속도
         this.handlers.set(fd, handler);
+        
+        // 2. epoll에 파일 디스크립터와 관심 이벤트 등록
+        // 예: EPOLLIN (읽기 가능), EPOLLOUT (쓰기 가능), EPOLLET (Edge-triggered)
         this.epoll.add(fd, events);
     }
     
+    // 메인 이벤트 루프 - 이곳이 모든 비동기 이벤트 처리의 중심
     run() {
-        while (true) {
-            // 이벤트 대기
+        while (true) {  // 무한 루프 - 서버 종료시까지 계속 실행
+            // epoll_wait() 호출 - I/O 이벤트가 준비될 때까지 블로킹
+            // 이 한 줄이 대량 동시 연결의 핵심 - select()의 O(n) 한계를 O(1)로 해결
             const events = this.epoll.wait();
             
+            // 준비된 이벤트 순차적 처리 - 각 이벤트는 비동기로 바로 처리 가능
             for (const event of events) {
-                // 핸들러가 직접 I/O 수행
+                // 해당 파일 디스크립터에 대한 핸들러 찾기
                 const handler = this.handlers.get(event.fd);
                 
+                // 읽기 가능 이벤트 처리 - 데이터가 도착했다는 신호
                 if (event.readable) {
-                    const data = fs.readSync(event.fd);  // 여기서 읽기!
+                    // 실제 I/O 작업 수행 - 비동기이지만 데이터가 준비된 상태라 빠름
+                    const data = fs.readSync(event.fd);  // 여기서 데이터 읽기!
+                    // 사용자 정의 비즈니스 로직 실행
                     handler.handleRead(data);
                 }
                 
+                // 쓰기 가능 이벤트 처리 - 소켓 버퍼에 공간이 생겼다는 신호
                 if (event.writable) {
+                    // 예비된 데이터를 전송하거나 연결 완료 처리
                     handler.handleWrite();
                 }
             }
         }
     }
 }
-```
+```text
 
 ### 4.2 Proactor 패턴: "완료되면 알려줘"
 
 Windows IOCP, io_uring이 지원하는 패턴:
 
 ```c++
-// Proactor 패턴 구현
+// Proactor 패턴 구현 - "완료되면 알려주는" 진정한 비동기 I/O 모델
+// Windows IOCP, Linux io_uring이 지원하는 최고 성능 패턴
+// 핵심: OS 커널이 I/O 작업을 대신 수행하여 CPU 사용률 최소화
 class Proactor {
+    // 비동기 읽기 작업 요청 - I/O 작업을 OS에게 위임하고 즉시 리턴
     void asyncRead(int fd, Buffer* buffer, CompletionHandler handler) {
-        // OS가 I/O를 대신 수행
+        // io_uring submission queue entry 준비 - 커널에게 I/O 작업 지시
+        // 이 한 줄이 핵심: 애플리케이션은 I/O를 기다리지 않고 다른 작업 수행 가능
         io_uring_prep_read(sqe, fd, buffer->data, buffer->size, 0);
+        
+        // 작업 완료 시 호출될 컨텍스트 정보 저장
+        // 커널이 I/O 완료 후 이 데이터를 통해 원래 컨텍스트 복구
         sqe->user_data = new Context{handler, buffer};
+        
+        // 작업을 커널에 제출 - 이제 OS가 대신 I/O 수행
         io_uring_submit(&ring);
     }
     
+    // 메인 이벤트 루프 - 완료된 I/O 작업에 대한 결과 처리
     void run() {
-        while (true) {
-            // 완료된 작업 수신
+        while (true) {  // 서버 수명주기 동안 계속 실행
+            // 완료된 작업 대기 - completion queue에서 결과 받기
+            // 중요: 여기서 블로킹되는 동안 OS가 백그라운드에서 I/O 작업 수행
             io_uring_cqe* cqe;
-            io_uring_wait_cqe(&ring, &cqe);
+            io_uring_wait_cqe(&ring, &cqe);  // 완료된 I/O 작업이 있을 때까지 대기
             
+            // 이전에 저장한 컨텍스트 정보 복구
             auto* ctx = (Context*)cqe->user_data;
             
-            // I/O는 이미 완료됨!
-            ctx->handler(ctx->buffer, cqe->res);
+            // 핵심 포인트: I/O 작업은 이미 OS가 완료! 데이터가 버퍼에 준비됨
+            // Reactor와 달리 여기서는 I/O 작업 없이 바로 비즈니스 로직 처리 가능
+            ctx->handler(ctx->buffer, cqe->res);  // 사용자 콜백 호출
             
+            // 자원 정리 - 메모리 리크 방지
             delete ctx;
+            
+            // completion queue entry를 처리 완료로 표시
             io_uring_cqe_seen(&ring, cqe);
         }
     }
 };
-```
+```text
 
 **두 패턴의 트레이드오프:**
 
@@ -427,104 +459,123 @@ class Proactor {
 Go와 Java의 ForkJoinPool이 사용하는 기법:
 
 ```go
-// Go의 work stealing 스케줄러 (단순화)
-type P struct {  // Processor
-    runq     [256]*G  // Local run queue
-    runqhead uint32
-    runqtail uint32
+// Go의 work stealing 스케줄러 - 수백만 goroutine을 소수 OS 스레드에서 처리하는 비밀
+// 핵심 아이디어: 각 CPU 코어별로 전용 큐를 두고, 비어있으면 다른 코어에서 일을 '훔쳐온다'
+type P struct {  // Processor - CPU 코어당 1개씩 존재 (보통 GOMAXPROCS = CPU 코어 수)
+    runq     [256]*G  // 로컬 실행 대기열 - 각 P마다 독립적인 goroutine 큐
+    runqhead uint32   // 큐 머리 인덱스 - 다음에 가져올 goroutine 위치
+    runqtail uint32   // 큐 꼬리 인덱스 - 새로운 goroutine을 추가할 위치
 }
 
-// 각 P는 자신의 큐에서 G(goroutine) 실행
+// 스케줄링 심장부 - 실행할 다음 goroutine을 결정하는 핵심 알고리즘
+// 성능 우선순위: 로컬 > 글로벌 > 다른 P에서 훔치기 > 네트워크 I/O
 func schedule() *G {
-    // 1. 로컬 큐에서 가져오기 (빠름!)
+    // 1단계: 로컬 큐에서 가져오기 - 가장 빠른 경로 (cache-local, lock-free)
+    // 로컬 큐는 해당 P에서만 접근하므로 동기화 오버헤드 없음
     if g := runqget(); g != nil {
-        return g
+        return g  // 90% 이상의 경우가 여기서 해결됨
     }
     
-    // 2. 글로벌 큐 확인
+    // 2단계: 글로벌 큐 확인 - 모든 P가 공유하는 대기열
+    // 주로 새로 생성된 goroutine이나 시스템 작업들이 대기 중
     if g := globrunqget(); g != nil {
         return g
     }
     
-    // 3. 다른 P의 큐에서 훔치기!
-    for i := 0; i < 4; i++ {
-        p := allp[fastrand()%uint32(len(allp))]
+    // 3단계: Work Stealing - 다른 P의 플을 배어하는 핵심 전략!
+    // 전체 시스템 로드 밸런싱을 위해 바쁜 P의 작업을 유휴 P가 가져옴
+    for i := 0; i < 4; i++ {  // 최대 4번만 시도 - 과도한 검색 방지
+        p := allp[fastrand()%uint32(len(allp))]  // 랜덤하게 P 선택
         if g := runqsteal(p); g != nil {
-            return g  // 훔치기 성공!
+            return g  // 훔치기 성공! 다른 P에서 일을 가져옴
         }
     }
     
-    // 4. 네트워크 폴링
+    // 4단계: 네트워크 I/O 폴링 - I/O 대기 중인 goroutine 찾기
+    // 비동기 I/O 작업이 완료된 goroutine이 있으면 깨우기
     if g := netpoll(); g != nil {
         return g
     }
+    
+    // 모든 경로에서 일을 찾지 못한 경우 nil 반환 (유휴 상태로 전환)
 }
 
-// 훔치기 전략: 절반을 가져옴
+// runqsteal - 진짜 'Work Stealing' 실행 함수
+// 다른 P의 로컬 큐에서 절반의 goroutine을 배치로 가져오는 전략
 func runqsteal(p *P) *G {
-    n := p.runqsize() / 2  // 절반만 훔치기
+    n := p.runqsize() / 2  // 절반만 훔치기 - 공정성과 캐시 효율성의 균형
     if n == 0 {
-        return nil
+        return nil  // 빈 큐에서는 훔칠 것이 없음
     }
     
-    // 배치로 훔쳐서 캐시 효율성 극대화
-    batch := make([]*G, n)
+    // 배치 전송 전략 - 개별 전송의 오버헤드를 피하고 캐시 효율성 극대화
+    batch := make([]*G, n)  // 훔쳐올 goroutine 배열 준비
     for i := 0; i < n; i++ {
-        batch[i] = p.runqget()
+        batch[i] = p.runqget()  // 대상 P에서 goroutine 하나씩 가져오기
     }
     
-    // 로컬 큐에 추가
+    // 내 로컬 큐에 추가 - 첨 번째를 제외한 나머지를 저장
     for _, g := range batch[1:] {
-        runqput(g)
+        runqput(g)  // 훔쳐온 goroutine을 내 P에 배치
     }
     
-    return batch[0]  // 첫 번째는 즉시 실행
+    return batch[0]  // 첫 번째 goroutine은 즉시 실행용으로 반환
 }
-```
+```text
 
 ### 5.2 M:N 모델의 실제 구현
 
 ```go
-// Go의 GPM 모델
-// G: Goroutine (수백만 개 가능)
-// P: Processor (GOMAXPROCS개, 보통 CPU 코어 수)
-// M: Machine thread (OS 스레드)
+// Go의 GPM 모델 - 수백만 goroutine을 수십 OS 스레드에서 처리하는 M:N 스케줄링
+// G: Goroutine (수백만 개 가능) - 경량 사용자 레벨 스레드
+// P: Processor (GOMAXPROCS개, 보통 CPU 코어 수) - 논리적 스케줄링 컨텍스트
+// M: Machine thread (OS 스레드) - 실제 시스템 에서 실행되는 스레드
 
+// G 구조체 - 각 goroutine의 실행 컨텍스트 보전
 type G struct {
-    stack       stack   // 2KB 시작, 동적 증가
-    sched       gobuf   // 레지스터 저장
-    atomicstatus uint32 // 상태
+    stack       stack   // 2KB로 시작하여 동적 증가 (최대 1GB)
+                        // 일반 OS 스레드 8MB에 비해 극도로 경량
+    sched       gobuf   // 레지스터 및 스택 포인터 저장 - 컨텍스트 스위칭용
+    atomicstatus uint32 // goroutine 상태 (Runnable, Running, Blocked 등)
+    waitreason  string  // 대기 중인 이유 (네트워크 I/O, 뮤텍스 등)
 }
 
+// M 구조체 - 실제 OS 스레드와 P 사이의 연결 개체
 type M struct {
-    g0      *G   // 스케줄링용 goroutine
-    curg    *G   // 현재 실행 중인 G
-    p       *P   // 연결된 P
-    spinning bool // work stealing 중?
+    g0      *G   // 스케줄링 전용 goroutine - 사용자 goroutine 전환용
+    curg    *G   // 현재 실행 중인 사용자 goroutine
+    p       *P   // 연결된 P (없으면 이 M은 유휴 상태)
+    spinning bool // work stealing 중인지 표시 - 다른 P에서 일을 찾고 있는 중
+    blocked  bool // 시스템 콜로 블록된 상태인지 표시
 }
 
+// P 구조체 - 논리적 프로세서, 스케줄링의 핵심 단위
 type P struct {
-    m       *M      // 연결된 M
-    runq    [256]*G // 로컬 큐
+    m       *M      // 연결된 Machine thread
+    runq    [256]*G // 로컬 실행 대기열 - lock-free LIFO queue
+    runqhead uint32 // 큐 머리 인덱스
+    runqtail uint32 // 큐 꼬리 인덱스
     
-    // GC 관련
-    gcBgMarkWorker *G
-    gcMarkWorkerMode gcMarkWorkerMode
+    // 가비지 콜렉터 관련 - Go의 concurrent GC를 위한 전용 worker
+    gcBgMarkWorker *G                  // 백그라운드 GC 마킹 작업용 goroutine
+    gcMarkWorkerMode gcMarkWorkerMode  // GC 모드 (idle, dedicated, fractional)
 }
 
-// 실제 컨텍스트 스위칭 (어셈블리)
+// 실제 goroutine 컨텍스트 스위칭 (어셈블리 코드)
+// 이 코드가 Go의 경량 스레드의 비밀 - 극도로 빠른 컨텍스트 전환
 TEXT runtime·mcall(SB), NOSPLIT, $0-8
-    MOVQ fn+0(FP), DI
+    MOVQ fn+0(FP), DI           // 호출할 함수 주소를 DI 레지스터에 저장
     
-    MOVQ g(CX), AX    // g = getg()
-    MOVQ 0(SP), BX    // caller's PC
-    MOVQ BX, (g_sched+gobuf_pc)(AX)
-    LEAQ fn+0(FP), BX // caller's SP
-    MOVQ BX, (g_sched+gobuf_sp)(AX)
+    // 현재 goroutine의 컨텍스트 저장 - 나중에 재개할 수 있도록 모든 레지스터 보전
+    MOVQ g(CX), AX              // 현재 goroutine을 AX 레지스터에 저장
+    MOVQ 0(SP), BX              // 호출자의 Program Counter 저장
+    MOVQ BX, (g_sched+gobuf_pc)(AX)  // PC를 goroutine 컨텍스트에 저장
+    LEAQ fn+0(FP), BX          // 호출자의 Stack Pointer 계산
+    MOVQ BX, (g_sched+gobuf_sp)(AX)  // SP를 goroutine 컨텍스트에 저장
     
-    // Switch to g0 stack
-    MOVQ g_m(AX), BX
-    MOVQ m_g0(BX), SI
+    // 스케줄링 전용 g0 스택으로 전환 - 사용자 컨텍스트에서 커널 컨텍스트로
+    MOVQ g_m(AX), BX           // 현재 goroutine이 속한 M 찾기
+    MOVQ m_g0(BX), SI          // M의 스케줄링 전용 goroutine g0 찾기
     MOVQ SI, g(CX)
     MOVQ (g_sched+gobuf_sp)(SI), SP
     
@@ -534,7 +585,7 @@ TEXT runtime·mcall(SB), NOSPLIT, $0-8
     CALL DI
     POPQ AX
     RET
-```
+```text
 
 ## 6. 실전 디버깅과 모니터링
 
@@ -607,7 +658,7 @@ setImmediate(function checkLoopDelay() {
     lastLoopTime = now;
     setImmediate(checkLoopDelay);
 });
-```
+```text
 
 ### 6.2 Production 장애 사례와 해결
 
@@ -651,7 +702,7 @@ async function complexAnalysisAsync(data) {
     
     return mergeResults(results);
 }
-```
+```text
 
 **사례 2: Memory Leak으로 인한 GC Pressure**
 
@@ -695,7 +746,7 @@ setInterval(() => {
         process.exit(1);  // 재시작
     }
 }, 10000);
-```
+```text
 
 ## 7. 성능 최적화 전략
 
@@ -763,7 +814,7 @@ class BatchedUserLoader {
 // 성능 차이:
 // 일반 방식: 100개 요청 = 100개 쿼리 = 1000ms
 // 배치 방식: 100개 요청 = 1개 쿼리 = 50ms
-```
+```text
 
 ### 7.2 Connection Pooling과 Keep-Alive
 
@@ -793,7 +844,7 @@ async function benchmark() {
     console.timeEnd('With Keep-Alive');
     // 결과: 1000ms (5배 빠름!)
 }
-```
+```text
 
 ## 8. 마무리: Event Loop 마스터가 되는 길
 

@@ -22,11 +22,11 @@ tags:
 
 ### 1.1 역사의 아이러니: 1958년으로의 회귀
 
-```
+```text
 1958년: Melvin Conway가 코루틴 개념 발명
 1970년대: Preemptive multitasking이 대세가 됨
 2000년대: 코루틴의 부활 - "Everything old is new again"
-```
+```text
 
 재미있는 사실: 코루틴은 사실 스레드보다 먼저 발명되었습니다! 하지만 하드웨어가 발전하면서 OS 레벨 스레드가 주류가 되었죠. 그런데 왜 다시 코루틴으로 돌아왔을까요?
 
@@ -50,7 +50,7 @@ int main() {
     
     for (int i = 0; i < 10000; i++) {
         if (pthread_create(&threads[i], NULL, thread_func, NULL) != 0) {
-            printf("Failed at thread %d\n", i);
+            printf("Failed at thread %d, ", i);
             perror("pthread_create");
             break;
         }
@@ -63,7 +63,7 @@ int main() {
     // 메모리 사용: 380 * 8MB = 3GB!
     // 컨텍스트 스위칭: 수 마이크로초 * 380 = 밀리초 단위 지연
 }
-```
+```text
 
 **코루틴으로 같은 작업:**
 
@@ -95,8 +95,8 @@ func main() {
     endMem := runtime.MemStats{}
     runtime.ReadMemStats(&endMem)
     
-    fmt.Printf("Goroutines: %d\n", runtime.NumGoroutine())
-    fmt.Printf("Memory used: %d MB\n", 
+    fmt.Printf("Goroutines: %d, ", runtime.NumGoroutine())
+    fmt.Printf("Memory used: %d MB, ", 
         (endMem.Alloc-startMem.Alloc)/1024/1024)
     
     // 결과:
@@ -106,7 +106,7 @@ func main() {
     // 스레드 대비 15배 더 많은 동시성!
     wg.Wait()
 }
-```
+```text
 
 ### 1.2 Stackful vs Stackless: 두 가지 길
 
@@ -139,7 +139,7 @@ class StacklessCoroutine:
             print("Step 3")
             self.state = 3
             return None
-```
+```text
 
 ```c
 // Stackful 코루틴 (C with setjmp/longjmp)
@@ -171,13 +171,13 @@ void resume(Coroutine* coro) {
 }
 
 void coro_func(void* arg) {
-    printf("Coroutine: Step 1\n");
+    printf("Coroutine: Step 1, ");
     yield();
-    printf("Coroutine: Step 2\n");
+    printf("Coroutine: Step 2, ");
     yield();
-    printf("Coroutine: Step 3\n");
+    printf("Coroutine: Step 3, ");
 }
-```
+```text
 
 **비교표:**
 
@@ -224,7 +224,7 @@ def delegating_generator():
 async def modern_coroutine():
     await asyncio.sleep(1)  # 진정한 비동기!
     return "Done"
-```
+```text
 
 ### 2.2 asyncio 내부 구조 해부
 
@@ -310,7 +310,7 @@ class Task:
             self._step(None, exc)
         else:
             self._step(value, None)
-```
+```text
 
 ### 2.3 실제 asyncio 성능 측정
 
@@ -390,7 +390,7 @@ tracemalloc.stop()
 # 결과:
 # Thread memory: 15.3 MB
 # Async memory: 3.2 MB (5배 효율적!)
-```
+```text
 
 ## 3. Go의 Goroutine: 엔지니어링의 정수
 
@@ -466,7 +466,7 @@ type p struct {
     // GC 관련
     gcAssistTime int64
 }
-```
+```text
 
 ### 3.2 Goroutine 스택 관리: Contiguous Stack
 
@@ -517,7 +517,7 @@ func stackPreempt() {
     // 다음 함수 호출 시 스택 체크에서 걸림
     // -> preemption 처리
 }
-```
+```text
 
 ### 3.3 Channel의 내부 구현
 
@@ -585,7 +585,7 @@ func chansend(c *hchan, ep unsafe.Pointer, block bool) bool {
     unlock(&c.lock)
     return false
 }
-```
+```text
 
 ### 3.4 실전 Goroutine 패턴
 
@@ -702,7 +702,7 @@ func TimeoutOperation(ctx context.Context) error {
         return fmt.Errorf("operation timeout")
     }
 }
-```
+```text
 
 ## 4. Java Virtual Threads: Project Loom의 혁명
 
@@ -785,7 +785,7 @@ public class VirtualThread extends Thread {
         SCHEDULER.execute(this::run);
     }
 }
-```
+```text
 
 ### 4.2 Virtual Thread vs Platform Thread 성능 비교
 
@@ -865,7 +865,7 @@ public class ThreadComparison {
         Thread.sleep(1000);
         
         // Actual test
-        System.out.println("\n=== Performance Test ===");
+        System.out.println(", === Performance Test ===");
         platformThreadTest();
         // 결과: Time: 50000ms, Memory: 800MB
         
@@ -878,7 +878,7 @@ public class ThreadComparison {
         // Virtual Thread가 300배 빠르고 5배 메모리 효율적!
     }
 }
-```
+```text
 
 ### 4.3 Pinning 문제와 해결
 
@@ -943,7 +943,7 @@ public class PinningProblem {
         });
     }
 }
-```
+```text
 
 ## 5. 메모리 모델과 동기화
 
@@ -1001,7 +1001,7 @@ func GoMemoryModel() {
     
     wg.Wait()
 }
-```
+```text
 
 ### 5.2 Lock-Free 자료구조
 
@@ -1089,9 +1089,9 @@ func BenchmarkStacks() {
     
     lockFreeTime := time.Since(start)
     
-    fmt.Printf("Mutex Stack: %v\n", mutexTime)
-    fmt.Printf("Lock-free Stack: %v\n", lockFreeTime)
-    fmt.Printf("Improvement: %.2fx\n", 
+    fmt.Printf("Mutex Stack: %v, ", mutexTime)
+    fmt.Printf("Lock-free Stack: %v, ", lockFreeTime)
+    fmt.Printf("Improvement: %.2fx, ", 
         float64(mutexTime)/float64(lockFreeTime))
     
     // 결과:
@@ -1099,7 +1099,7 @@ func BenchmarkStacks() {
     // Lock-free Stack: 1.8s
     // Improvement: 2.89x
 }
-```
+```text
 
 ## 6. 실전 디버깅과 프로파일링
 
@@ -1119,13 +1119,13 @@ func DetectGoroutineLeak() {
         current := runtime.NumGoroutine()
         
         if current > startGoroutines*2 {
-            fmt.Printf("Potential goroutine leak: %d goroutines\n", 
+            fmt.Printf("Potential goroutine leak: %d goroutines, ", 
                 current)
             
             // 스택 덤프
             buf := make([]byte, 1<<20)
             stackSize := runtime.Stack(buf, true)
-            fmt.Printf("Stack dump:\n%s\n", buf[:stackSize])
+            fmt.Printf("Stack dump:, %s, ", buf[:stackSize])
         }
     }
 }
@@ -1156,7 +1156,7 @@ func LeakyPattern() {
     }()
     wg.Wait()  // 영원히 대기
 }
-```
+```text
 
 ### 6.2 Python asyncio 디버깅
 
@@ -1228,7 +1228,7 @@ async def main():
     # 출력:
     # Pending task: long_running_task
     # Stack: [<frame object at 0x...>]
-```
+```text
 
 ## 7. 성능 최적화 전략
 
@@ -1275,7 +1275,7 @@ async def main():
     results = await pool.map(process_item, items)
     
     await pool.shutdown()
-```
+```text
 
 ### 7.2 Hybrid 접근: CPU + I/O 최적화
 
@@ -1342,7 +1342,7 @@ async def benchmark():
     
     print(f"Processed {len(results)} items in {elapsed:.2f}s")
     print(f"Throughput: {len(results)/elapsed:.2f} items/s")
-```
+```text
 
 ## 8. 마무리: 코루틴의 미래
 

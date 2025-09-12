@@ -79,7 +79,7 @@ graph TB
     style ASYNC fill:#FFE082
     style LOOP fill:#81C784
     style AWAIT fill:#64B5F6
-```
+```text
 
 ## 이 장의 구성
 
@@ -163,7 +163,7 @@ $ perf record          # 성능 프로파일링
 # 이벤트 루프 디버깅
 $ node --trace-events-enabled
 $ node --inspect-brk   # Chrome DevTools 연결
-```
+```text
 
 ## 이 장을 읽고 나면
 
@@ -176,71 +176,59 @@ $ node --inspect-brk   # Chrome DevTools 연결
 ## 핵심 개념 미리보기
 
 ```mermaid
-mindmap
-  root((비동기 프로그래밍))
-    기본 개념
-      동기 vs 비동기
-        블로킹
-        논블로킹
-        동시성
-        병렬성
-      I/O 모델
-        동기 블로킹
-        동기 논블로킹
-        비동기 블로킹
-        비동기 논블로킹
-    Promise/Future
-      상태
-        Pending
-        Fulfilled
-        Rejected
-      메서드
-        then()
-        catch()
-        finally()
-      조합
-        Promise.all()
-        Promise.race()
-        Promise.allSettled()
-    이벤트 루프
-      페이즈
-        timers
-        pending callbacks
-        idle/prepare
-        poll
-        check
-        close callbacks
-      큐
-        마이크로태스크
-        매크로태스크
-        nextTick
-    코루틴
-      특징
-        협력적 스케줄링
-        상태 보존
-        경량성
-      구현
-        Generator
-        async/await
-        Fiber
-      언어별
-        Python asyncio
-        Go goroutine
-        Kotlin coroutine
-    분산 패턴
-      메시징
-        Pub/Sub
-        Request/Reply
-        Fire-and-Forget
-      패턴
-        Saga
-        Event Sourcing
-        CQRS
-      도구
-        RabbitMQ
-        Kafka
-        Redis Streams
-```
+graph TD
+    ROOT[비동기 프로그래밍]
+    
+    subgraph BASIC["기본 개념"]
+        SYNC_ASYNC[동기 vs 비동기]
+        BLOCKING[블로킹]
+        NONBLOCKING[논블로킹]
+        CONCURRENCY[동시성]
+        PARALLEL[병렬성]
+        
+        IO_MODEL[I/O 모델]
+        SYNC_BLOCK[동기 블로킹]
+        SYNC_NONBLOCK[동기 논블로킹]
+        ASYNC_BLOCK[비동기 블로킹]
+        ASYNC_NONBLOCK[비동기 논블로킹]
+    end
+    
+    subgraph PROMISE["Promise/Future"]
+        STATE[상태]
+        PENDING[Pending]
+        FULFILLED[Fulfilled]
+        REJECTED[Rejected]
+        
+        METHOD[메서드]
+        THEN[then함수]
+        CATCH[catch함수]
+        FINALLY[finally함수]
+        
+        COMBINE[조합]
+        PROMISE_ALL[Promise.all함수]
+        PROMISE_RACE[Promise.race함수]
+        PROMISE_SETTLED[Promise.allSettled함수]
+    end
+    
+    subgraph EVENTLOOP["이벤트 루프"]
+        PHASE[페이즈]
+        TIMERS[timers]
+        PENDING_CB[pending callbacks]
+        IDLE[idle/prepare]
+        POLL[poll]
+        CHECK[check]
+        CLOSE_CB[close callbacks]
+        
+        QUEUE[큐]
+        MICRO[마이크로태스크]
+        MACRO[매크로태스크]
+        NEXTTICK[nextTick]
+    end
+    
+    ROOT --> BASIC
+    ROOT --> PROMISE
+    ROOT --> EVENTLOOP
+```text
 
 ## 비동기 문제 진단 플로우차트
 
@@ -262,7 +250,7 @@ graph TD
     Type -->|타이밍 버그| Timing[실행 순서 추적]
     Timing --> Sync[동기화 메커니즘 추가]
     Sync --> Test[단위 테스트 작성]
-```
+```text
 
 ## 다음 단계
 

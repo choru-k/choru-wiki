@@ -67,7 +67,7 @@ public class TwoPhaseCommitCoordinator {
 
 Service C는 영원히 락 상태... 😱
 */
-```
+```text
 
 ### 1.2 Saga 패턴: 긴 여정의 지혜
 
@@ -159,7 +159,7 @@ class ChargePaymentStep implements SagaStep<OrderContext> {
         }
     }
 }
-```
+```text
 
 ### 1.3 Orchestration vs Choreography: 지휘자 vs 춤
 
@@ -237,7 +237,7 @@ class PaymentService:
             await self.publish_event(CancelInventoryReservationEvent(
                 reservation_id=event.reservation_id
             ))
-```
+```text
 
 **두 방식의 트레이드오프:**
 
@@ -395,7 +395,7 @@ class EventStore {
         return snapshot to events
     }
 }
-```
+```text
 
 ### 2.2 CQRS: 읽기와 쓰기의 분리
 
@@ -533,7 +533,7 @@ class OrderQueryHandler {
         return results.hits.hits.map(hit => hit._source);
     }
 }
-```
+```text
 
 ### 2.3 Eventual Consistency 처리
 
@@ -606,7 +606,7 @@ class ConsistencyManager {
         return checks.every(check => check === true);
     }
 }
-```
+```text
 
 ## 3. 메시지 큐와 스트리밍: 비동기 통신의 중추
 
@@ -787,7 +787,7 @@ public class ExactlyOnceKafkaConsumer {
         return idempotencyStore.exists(idempotencyKey);
     }
 }
-```
+```text
 
 ### 3.2 Back-pressure와 Flow Control
 
@@ -895,7 +895,7 @@ class ReactiveStreamProcessor extends Processor[Event, ProcessedEvent] {
     })
   }
 }
-```
+```text
 
 ## 4. Circuit Breaker와 Resilience Patterns
 
@@ -1037,7 +1037,7 @@ class PaymentService:
                     raise PaymentGatewayError(f"Status: {response.status}")
                 
                 return await response.json()
-```
+```text
 
 ### 4.2 Bulkhead Pattern: 격리의 미학
 
@@ -1156,7 +1156,7 @@ public class SemaphoreBulkhead {
         }
     }
 }
-```
+```text
 
 ### 4.3 Retry와 Timeout 전략
 
@@ -1308,7 +1308,7 @@ class HedgedRequestExecutor {
         throw IllegalStateException("No results received")
     }
 }
-```
+```text
 
 ## 5. 실전 사례: 대규모 이커머스 시스템
 
@@ -1394,7 +1394,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     ports:
       - "3000:3000"
-```
+```text
 
 ### 5.2 Production 장애 대응 사례
 
@@ -1572,7 +1572,7 @@ class ProductionIncidentHandler:
                 )
             
             await asyncio.sleep(10)
-```
+```text
 
 ## 6. 마무리: 분산 비동기의 미래
 

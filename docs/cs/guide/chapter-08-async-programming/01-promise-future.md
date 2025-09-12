@@ -97,7 +97,7 @@ graph LR
     
     style P fill:#f9f,stroke:#333
     style F fill:#bbf,stroke:#333
-```
+```text
 
 ### 1.2 C++ Promise/Future 구현
 
@@ -113,37 +113,61 @@ graph LR
 #include <queue>
 #include <functional>
 
-// 커스텀 Promise/Future 구현
+// 커스텀 Promise/Future 구현 - 비동기 프로그래밍의 핵심 메커니즘
+// 실제 사용: Facebook Folly, Microsoft PPL, Boost.Future의 내부 구현
+// 핵심 개념: Producer(Promise)-Consumer(Future) 분리를 통한 스레드 안전 데이터 전달
 template<typename T>
 class MyPromise;
 
 template<typename T>
 class MyFuture {
 private:
+    // ⭐ 핵심: SharedState - Promise와 Future 간 공유되는 상태 저장소
+    // 설계 원칙: Promise는 값을 설정하고, Future는 값을 소비하는 단방향 채널
     struct SharedState {
-        std::mutex mutex;
-        std::condition_variable cv;
-        bool ready = false;
-        bool has_exception = false;
-        T value;
-        std::exception_ptr exception;
-        std::vector<std::function<void()>> callbacks;
+        // 🔒 동시성 제어 - 여러 스레드에서 안전한 접근 보장
+        std::mutex mutex;                              // 상태 변경 시 mutual exclusion
+        std::condition_variable cv;                    // 완료 대기를 위한 조건 변수
+        
+        // 📊 상태 추적 - 비동기 작업의 현재 상태
+        bool ready = false;                            // 값 설정 완료 여부 (핵심 플래그)
+        bool has_exception = false;                    // 예외 발생 여부
+        
+        // 💾 데이터 저장소 - 실제 결과값과 예외 정보
+        T value;                                       // 성공 시 결과값
+        std::exception_ptr exception;                  // 예외 발생 시 예외 객체
+        
+        // 🔗 Continuation Chain - 비동기 체이닝을 위한 콜백 큐
+        // 실무: .then() 체인이 길어질 때 각 단계별 콜백이 여기 저장됨
+        std::vector<std::function<void()>> callbacks;  // 완료 시 실행할 콜백 함수들
     };
     
+    // 💡 스마트 포인터 사용 - Promise와 Future 간 안전한 상태 공유
+    // shared_ptr: 참조 카운팅으로 생명주기 자동 관리, 스레드 안전 보장
     std::shared_ptr<SharedState> state;
     
 public:
     MyFuture(std::shared_ptr<SharedState> s) : state(s) {}
     
-    // 블로킹 대기
+    // ⭐ 블로킹 대기 - 비동기 결과를 동기적으로 가져오기
+    // 실제 사용: C++11 std::future::get(), JavaScript await의 내부 동작
+    // 주의사항: 메인 스레드에서 호출 시 UI 블로킹 위험
     T get() {
+        // unique_lock: 조건 변수와 함께 사용하기 위한 유연한 락
         std::unique_lock<std::mutex> lock(state->mutex);
+        
+        // 📋 조건 변수로 값 설정 완료까지 대기
+        // Lambda predicate: spurious wakeup 방지를 위한 조건 재검사
+        // 실무 팁: 단순 while 루프보다 안전하고 효율적
         state->cv.wait(lock, [this] { return state->ready; });
         
+        // 🚨 예외 처리 - 원격 스레드의 예외를 현재 스레드로 전파
+        // exception_ptr: 스레드 간 예외 전달의 표준 메커니즘
         if (state->has_exception) {
-            std::rethrow_exception(state->exception);
+            std::rethrow_exception(state->exception);  // 원본 스택 트레이스 보존
         }
-        return state->value;
+        
+        return state->value;  // 성공 시 결과값 반환
     }
     
     // 논블로킹 체크
@@ -161,38 +185,53 @@ public:
         return std::future_status::timeout;
     }
     
-    // Continuation (then)
+    // ⭐ Continuation Chain - 비동기 체이닝의 핵심 메커니즘
+    // 실제 사용: JavaScript Promise.then(), C# Task.ContinueWith(), Scala Future.map()
+    // 핵심 개념: Monad 패턴 구현, 함수형 프로그래밍의 핵심
     template<typename F>
     auto then(F&& func) -> MyFuture<decltype(func(std::declval<T>()))> {
+        // 🔧 템플릿 메타프로그래밍: 컴파일 타임에 반환 타입 추론
         using ResultType = decltype(func(std::declval<T>()));
+        
+        // 🔗 체인의 다음 노드 생성: 새로운 Promise-Future 쌍
         auto next_promise = std::make_shared<MyPromise<ResultType>>();
         auto next_future = next_promise->get_future();
         
         std::lock_guard<std::mutex> lock(state->mutex);
         
+        // ⭐ 분기 1: 이미 완료된 Future (Hot Path)
         if (state->ready) {
-            // 이미 완료된 경우 즉시 실행
+            // 📈 성능 최적화: 이미 완료된 경우 즉시 실행 (콜백 등록 오버헤드 제거)
             if (state->has_exception) {
+                // 🚨 예외 전파: 체인 상의 예외를 다음 Future로 전달
                 next_promise->set_exception(state->exception);
             } else {
                 try {
+                    // 🎯 템플릿 특수화: void vs non-void 반환 타입 처리
                     if constexpr (std::is_void_v<ResultType>) {
+                        // void 반환: 사이드 이펙트만 수행
                         func(state->value);
-                        next_promise->set_value();
+                        next_promise->set_value();  // void 타입은 값 없이 완료 시그널만
                     } else {
+                        // 값 반환: 변환된 결과를 다음 Future에 전달
                         next_promise->set_value(func(state->value));
                     }
                 } catch (...) {
+                    // 💥 예외 캐치: 콜백 실행 중 발생한 예외를 다음 Future로 전파
                     next_promise->set_exception(std::current_exception());
                 }
             }
         } else {
-            // 콜백으로 등록
+            // ⭐ 분기 2: 미완료 Future (Cold Path) - 콜백 등록
+            // 🔄 지연 실행: Promise가 값을 설정할 때까지 콜백을 큐에 저장
+            // Perfect Forwarding: 함수 객체의 값 카테고리 보존
             state->callbacks.push_back([this, func = std::forward<F>(func), next_promise]() {
                 if (state->has_exception) {
+                    // 🚨 예외 전파 (지연 실행 버전)
                     next_promise->set_exception(state->exception);
                 } else {
                     try {
+                        // 🎯 동일한 로직을 콜백 내부에서 실행
                         if constexpr (std::is_void_v<ResultType>) {
                             func(state->value);
                             next_promise->set_value();
@@ -200,12 +239,14 @@ public:
                             next_promise->set_value(func(state->value));
                         }
                     } catch (...) {
+                        // 💥 콜백 실행 중 예외 처리
                         next_promise->set_exception(std::current_exception());
                     }
                 }
             });
         }
         
+        // 🔄 체인 연결: 새로운 Future 반환으로 메서드 체이닝 지원
         return next_future;
     }
 };
@@ -304,7 +345,7 @@ void promise_future_example() {
     
     std::cout << "String length: " << chained_future.get() << std::endl;
 }
-```
+```text
 
 ### 1.3 JavaScript Promise 구현
 
@@ -532,7 +573,7 @@ fetchUserData(1)
     .finally(() => {
         console.log('Cleanup');
     });
-```
+```text
 
 ## 2. 비동기 연산 조합
 
@@ -698,7 +739,7 @@ async function demonstratePromiseUtils() {
         console.log('Timed out:', error.message);
     }
 }
-```
+```text
 
 ### 2.2 C++ std::async와 Future 조합
 
@@ -921,7 +962,7 @@ void async_pipeline_example() {
     size_t result = pipeline.get();
     std::cout << "Final result: " << result << std::endl;
 }
-```
+```text
 
 ## 3. 취소와 타임아웃
 
@@ -946,7 +987,7 @@ fetch('/upload', {
 });
 // 사용자: "취소!"
 controller.abort(); // 즉시 중단!
-```
+```text
 
 ### 3.1 취소 가능한 Promise
 
@@ -1076,7 +1117,7 @@ void cancellable_operation_example() {
     
     canceller.join();
 }
-```
+```text
 
 ### 3.2 JavaScript AbortController
 
@@ -1262,7 +1303,7 @@ class RetryWithBackoff {
         });
     }
 }
-```
+```text
 
 ## 4. 실행 모델과 스케줄링
 
@@ -1449,7 +1490,7 @@ public:
         return future.get();
     }
 };
-```
+```text
 
 ### 4.2 JavaScript 마이크로태스크와 매크로태스크
 
@@ -1462,7 +1503,7 @@ setTimeout(() => console.log('1'), 0);
 Promise.resolve().then(() => console.log('2'));
 console.log('3');
 // 출력: 3, 2, 1 (왜 2가 1보다 먼저?!)
-```
+```text
 
 **비밀은 두 개의 큐:**
 
@@ -1698,7 +1739,7 @@ function* longRunningTask() {
 }
 
 scheduler.schedule(longRunningTask(), 'low');
-```
+```text
 
 ## 5. 에러 처리 패턴
 
@@ -1922,7 +1963,7 @@ class Bulkhead {
         }
     }
 }
-```
+```text
 
 ## 🎯 핵심 정리: 10분 만에 마스터하는 Promise/Future
 
