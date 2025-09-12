@@ -487,6 +487,25 @@ Kubernetes = 그리스어로 "키잡이, 조타수"
 
 ## 다음 단계
 
+## 관련 문서
+
+### 기반 지식
+
+- [Chapter 3: Virtual Memory](../chapter-03-virtual-memory/index.md) - 컨테이너 격리의 기반이 되는 메모리 가상화
+- [Chapter 4: Process & Thread](../chapter-04-process-thread/index.md) - 프로세스 격리와 네임스페이스 이해
+- [Chapter 7: Network Programming](../chapter-07-network-programming/index.md) - 컨테이너 네트워킹의 기반 원리
+
+### 연관 주제
+
+- [Chapter 11: Performance Optimization](../chapter-11-performance-optimization/index.md) - 컨테이너와 Kubernetes 성능 최적화
+- [Chapter 13: Observability & Debugging](../chapter-13-observability-debugging/index.md) - 컨테이너 환경 모니터링과 디버깅
+- [Chapter 15: Security Engineering](../chapter-15-security-engineering/index.md) - 컨테이너 보안과 Zero Trust 아키텍처
+
+### 고급 주제  
+
+- [Chapter 14: Distributed Systems](../chapter-14-distributed-systems/index.md) - 마이크로서비스와 분산 시스템 설계
+- [Chapter 16: System Design Patterns](../chapter-16-system-design-patterns/index.md) - 클라우드 네이티브 아키텍처 패턴
+
 준비되셨나요? [12.1 Container 핵심 기술](01-container-internals.md)에서 Linux 커널 레벨부터 컨테이너의 동작 원리를 파헤쳐보겠습니다.
 
-"개발 환경과 운영 환경이 다르다"는 변명은 이제 그만! 컨테이너로 **"Build once, Run anywhere"**를 실현해봅시다! 🚀
+"개발 환경과 운영 환경이 다르다"는 변명은 이제 그만! 컨테이너로 **"Build once, Run anywhere"**를 실현해봅시다!
