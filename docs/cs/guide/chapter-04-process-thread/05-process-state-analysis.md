@@ -33,21 +33,21 @@ stateDiagram-v2
     D --> R : I/O complete
     D --> [*] : kill -9 fails!
     Z --> [*] : parent wait()
-    
+
     state R {
         Running
         --
         CPU에서 실행 중이거나
         실행 대기 중
     }
-    
+
     state S {
         Interruptible_Sleep
         --
         신호로 깨울 수 있음
         일반적인 대기 상태
     }
-    
+
     state D {
         Uninterruptible_Sleep
         --
@@ -55,14 +55,14 @@ stateDiagram-v2
         I/O 작업 대기 중
         ⚠️ 위험한 상태
     }
-    
+
     state Z {
         Zombie
         --
         종료됐지만 정리 안됨
         부모 프로세스 대기 중
     }
-```text
+```
 
 ### 프로세스 상태 이상이 시스템에 미치는 영향
 
@@ -73,22 +73,22 @@ graph LR
         DPROC --> BLOCK2[리소스 점유]
         DPROC --> BLOCK3[신호 무시]
     end
-    
+
     subgraph "연쇄 효과"
         BLOCK1 --> QUEUE1[다른 프로세스 대기]
         BLOCK2 --> QUEUE2[리소스 부족]
         BLOCK3 --> QUEUE3[강제 종료 불가]
-        
+
         QUEUE1 --> CASCADE[시스템 전체 지연]
         QUEUE2 --> CASCADE
         QUEUE3 --> CASCADE
     end
-    
+
     CASCADE --> HANG[시스템 행업]
-    
+
     style DPROC fill:#ffcccb
     style HANG fill:#ff6b6b
-```text
+```
 
 ## 1. 프로세스 상태 완전 분석
 
@@ -107,7 +107,7 @@ $ ps axo pid,ppid,state,comm | head -20
 # Z - Zombie (좀비 프로세스) ⚠️
 # X - Dead (죽음, ps에서 보이지 않음)
 # I - Idle (유휴 상태, 커널 스레드)
-```text
+```
 
 ### 1.2 /proc/[pid]/stat 상세 분석
 
@@ -169,7 +169,7 @@ const char* state_description(char state) {
 int parse_proc_stat(int pid, proc_stat_t *stat_info) {
     char path[256];
     snprintf(path, sizeof(path), "/proc/%d/stat", pid);
-    
+
     // ⭐ 1단계: /proc/[pid]/stat 파일 열기
     // 이 파일은 커널이 실시간으로 생성하는 가상 파일
     // 프로세스가 사라지면 파일도 즉시 사라짐
@@ -178,7 +178,7 @@ int parse_proc_stat(int pid, proc_stat_t *stat_info) {
         // 프로세스가 이미 종료되었거나 권한이 없는 경우
         return -1;
     }
-    
+
     // ⭐ 2단계: 복잡한 /proc/[pid]/stat 형식 파싱
     // 주의사항: comm 필드는 괄호로 둘러싸이며 공백/특수문자 포함 가능
     // 예: "1234 (hello world) S 1 ..." 형태
@@ -210,9 +210,9 @@ int parse_proc_stat(int pid, proc_stat_t *stat_info) {
         &stat_info->rss,          // [24] ⭐ 실제 사용 메모리 (페이지 수)
         &stat_info->rsslim        // [25] RSS 제한값
     );
-    
+
     fclose(f);
-    
+
     // ⭐ 3단계: 파싱 결과 검증
     // 25개 필드가 모두 올바르게 읽혔는지 확인
     // /proc/[pid]/stat 형식이 커널 버전마다 다를 수 있으므로 중요
@@ -227,26 +227,26 @@ void print_process_analysis(const proc_stat_t *stat) {
     printf("부모 PID: %d, ", stat->ppid);
     printf("스레드 수: %ld, ", stat->num_threads);
     printf("우선순위: %ld (nice: %ld), ", stat->priority, stat->nice);
-    
+
     // 메모리 정보
     printf(", === 메모리 정보 ===, ");
     printf("가상 메모리: %.1f MB, ", stat->vsize / 1024.0 / 1024.0);
     printf("물리 메모리: %.1f MB, ", stat->rss * 4 / 1024.0);  // 페이지 크기 4KB 가정
-    
+
     // 페이지 폴트 정보
     printf(", === 페이지 폴트 통계 ===, ");
     printf("Minor faults: %lu, ", stat->minflt);
     printf("Major faults: %lu, ", stat->majflt);
     printf("자식 minor faults: %lu, ", stat->cminflt);
     printf("자식 major faults: %lu, ", stat->cmajflt);
-    
+
     // CPU 시간 정보
     long hz = sysconf(_SC_CLK_TCK);
     printf(", === CPU 시간 정보 ===, ");
     printf("사용자 모드: %.2f초, ", (double)stat->utime / hz);
     printf("커널 모드: %.2f초, ", (double)stat->stime / hz);
     printf("총 CPU 시간: %.2f초, ", (double)(stat->utime + stat->stime) / hz);
-    
+
     // 경고 메시지
     if (stat->state == 'D') {
         printf(", ⚠️  경고: 프로세스가 D state입니다!, ");
@@ -262,20 +262,20 @@ void print_process_analysis(const proc_stat_t *stat) {
 
 void monitor_process_state(int pid, int duration) {
     printf("프로세스 %d 상태 모니터링 시작 (%d초간)..., ", pid, duration);
-    
+
     time_t start_time = time(NULL);
     char last_state = 0;
-    
+
     while (time(NULL) - start_time < duration) {
         proc_stat_t stat;
         if (parse_proc_stat(pid, &stat) == 0) {
             if (stat.state != last_state) {
-                printf("[%s] 상태 변화: %c (%s), ", 
+                printf("[%s] 상태 변화: %c (%s), ",
                        ctime(&(time_t){time(NULL)}),
-                       stat.state, 
+                       stat.state,
                        state_description(stat.state));
                 last_state = stat.state;
-                
+
                 // 위험한 상태 감지
                 if (stat.state == 'D') {
                     printf("⚠️  D state 감지! I/O 대기 중..., ");
@@ -285,7 +285,7 @@ void monitor_process_state(int pid, int duration) {
             printf("프로세스 %d가 종료되었습니다., ", pid);
             break;
         }
-        
+
         sleep(1);
     }
 }
@@ -297,9 +297,9 @@ int main(int argc, char *argv[]) {
         printf("예시: %s 1234 60  # 60초간 모니터링, ", argv[0]);
         return 1;
     }
-    
+
     int pid = atoi(argv[1]);
-    
+
     if (argc == 2) {
         // 한 번만 분석
         proc_stat_t stat;
@@ -314,10 +314,10 @@ int main(int argc, char *argv[]) {
         int duration = atoi(argv[2]);
         monitor_process_state(pid, duration);
     }
-    
+
     return 0;
 }
-```text
+```
 
 ### 1.3 /proc/[pid]/status 정보 활용
 
@@ -330,56 +330,56 @@ status 파일은 stat보다 읽기 쉬운 형태로 정보를 제공합니다:
 analyze_process_status() {
     local pid=$1
     local status_file="/proc/$pid/status"
-    
+
     if [ ! -f "$status_file" ]; then
         echo "프로세스 $pid를 찾을 수 없습니다."
         return 1
     fi
-    
+
     echo "=== 프로세스 $pid 상세 분석 ==="
-    
+
     # 기본 정보
     echo "== 기본 정보 =="
     grep -E "^(Name|State|Pid|PPid|Tgid|Threads)" "$status_file"
-    
+
     # 메모리 정보
     echo -e ", == 메모리 정보 =="
     grep -E "^(VmPeak|VmSize|VmLck|VmPin|VmHWM|VmRSS|VmData|VmStk|VmExe|VmLib|VmPTE|VmSwap)" "$status_file"
-    
+
     # 신호 정보
     echo -e ", == 신호 정보 =="
     grep -E "^(SigQ|SigPnd|ShdPnd|SigBlk|SigIgn|SigCgt)" "$status_file"
-    
+
     # 권한 정보
     echo -e ", == 권한 정보 =="
     grep -E "^(Uid|Gid|Groups)" "$status_file"
-    
+
     # 상태별 분석
     local state=$(grep "^State:" "$status_file" | awk '{print $2}')
-    
+
     case $state in
         "D")
             echo -e ", ⚠️  D STATE 감지!"
             echo "현재 프로세스가 I/O 작업을 기다리고 있습니다."
             echo "관련 정보를 확인해보겠습니다..."
-            
+
             # 열린 파일 확인
             echo -e ", 열린 파일들:"
             lsof -p "$pid" 2>/dev/null | head -10
-            
+
             # I/O 통계
             if [ -f "/proc/$pid/io" ]; then
                 echo -e ", I/O 통계:"
                 cat "/proc/$pid/io"
             fi
-            
+
             # 스택 트레이스 (root 권한 필요)
             if [ -f "/proc/$pid/stack" ] && [ -r "/proc/$pid/stack" ]; then
                 echo -e ", 커널 스택 트레이스:"
                 cat "/proc/$pid/stack"
             fi
             ;;
-            
+
         "Z")
             echo -e ", ⚠️  ZOMBIE 프로세스 감지!"
             echo "부모 프로세스 정보:"
@@ -389,7 +389,7 @@ analyze_process_status() {
                 echo "부모 프로세스에 SIGCHLD 신호를 보내거나 재시작을 고려하세요."
             fi
             ;;
-            
+
         "T")
             echo -e ", ⚠️  정지된 프로세스 감지!"
             echo "SIGCONT 신호로 재시작할 수 있습니다: kill -CONT $pid"
@@ -400,7 +400,7 @@ analyze_process_status() {
 # 시스템 전체 프로세스 상태 요약
 system_process_summary() {
     echo "=== 시스템 프로세스 상태 요약 ==="
-    
+
     ps axo state | tail -n +2 | sort | uniq -c | while read count state; do
         echo "$count 개 프로세스: $state ($(
             case $state in
@@ -414,10 +414,10 @@ system_process_summary() {
             esac
         ))"
     done
-    
+
     # 문제가 있는 프로세스들 상세 분석
     echo -e ", === 문제 프로세스 분석 ==="
-    
+
     # D state 프로세스들
     local d_processes=$(ps axo pid,state,comm | awk '$2 ~ /^D/ {print $1}')
     if [ -n "$d_processes" ]; then
@@ -428,7 +428,7 @@ system_process_summary() {
             fi
         done
     fi
-    
+
     # Zombie 프로세스들
     local zombie_processes=$(ps axo pid,state,comm | awk '$2 ~ /^Z/ {print $1}')
     if [ -n "$zombie_processes" ]; then
@@ -454,7 +454,7 @@ if [ "$1" = "summary" ]; then
 else
     analyze_process_status "$1"
 fi
-```text
+```
 
 ## 2. D State 프로세스 심층 분석
 
@@ -468,14 +468,14 @@ graph TD
         IO_WAIT[I/O 대기] --> NFS[NFS 서버 응답 없음]
         IO_WAIT --> DISK[디스크 장애]
         IO_WAIT --> NETWORK[네트워크 I/O 지연]
-        
+
         KERNEL_LOCK[커널 잠금] --> MUTEX[뮤텍스 대기]
         KERNEL_LOCK --> SEMAPHORE[세마포어 대기]
-        
+
         DEVICE[장치 드라이버] --> USB[USB 장치 문제]
         DEVICE --> GPU[GPU 드라이버 문제]
     end
-    
+
     subgraph "해결 방법"
         NFS --> NFS_FIX[NFS 마운트 재설정]
         DISK --> DISK_FIX[디스크 점검/교체]
@@ -483,11 +483,11 @@ graph TD
         MUTEX --> REBOOT[시스템 재부팅]
         USB --> USB_FIX[USB 재연결]
     end
-    
+
     style IO_WAIT fill:#ffcccb
     style KERNEL_LOCK fill:#ffe0b2
     style DEVICE fill:#f3e5f5
-```text
+```
 
 ### 2.2 D State 프로세스 디버깅 도구
 
@@ -504,20 +504,20 @@ class DStateDebugger:
     def __init__(self):
         self.dstate_processes = {}
         self.io_patterns = defaultdict(list)
-        
+
     def find_dstate_processes(self):
         """D state 프로세스 찾기"""
         dstate_pids = []
-        
+
         for proc in psutil.process_iter(['pid', 'name', 'status']):
             try:
                 if proc.info['status'] == psutil.STATUS_DISK_SLEEP:
                     dstate_pids.append(proc.info['pid'])
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
-                
+
         return dstate_pids
-    
+
     def analyze_dstate_process(self, pid):
         """D state 프로세스 상세 분석"""
         try:
@@ -532,37 +532,37 @@ class DStateDebugger:
                 'io_counters': None,
                 'kernel_stack': None
             }
-            
+
             # 열린 파일들
             try:
                 info['open_files'] = [f.path for f in proc.open_files()]
             except (psutil.AccessDenied, psutil.NoSuchProcess):
                 pass
-            
+
             # 네트워크 연결
             try:
                 info['connections'] = proc.connections()
             except (psutil.AccessDenied, psutil.NoSuchProcess):
                 pass
-            
+
             # I/O 카운터
             try:
                 info['io_counters'] = proc.io_counters()
             except (psutil.AccessDenied, psutil.NoSuchProcess):
                 pass
-            
+
             # 커널 스택 (root 권한 필요)
             try:
                 with open(f'/proc/{pid}/stack', 'r') as f:
                     info['kernel_stack'] = f.read().strip()
             except (PermissionError, FileNotFoundError):
                 pass
-            
+
             return info
-            
+
         except psutil.NoSuchProcess:
             return None
-    
+
     def get_io_statistics(self, pid):
         """프로세스 I/O 통계"""
         try:
@@ -574,21 +574,21 @@ class DStateDebugger:
                 return io_stats
         except (FileNotFoundError, PermissionError, ValueError):
             return None
-    
+
     def detect_io_hang_cause(self, process_info):
         """I/O 행업 원인 추정"""
         causes = []
-        
+
         # NFS 마운트 점검
-        nfs_files = [f for f in process_info['open_files'] 
+        nfs_files = [f for f in process_info['open_files']
                     if any(nfs_path in f for nfs_path in ['/nfs', '/net', ':'])]
         if nfs_files:
             causes.append(f"NFS 파일 접근: {nfs_files[:3]}")
-        
+
         # 네트워크 I/O 확인
         if process_info['connections']:
             causes.append(f"네트워크 연결: {len(process_info['connections'])}개")
-        
+
         # 디스크 I/O 패턴
         if process_info['io_counters']:
             io = process_info['io_counters']
@@ -596,7 +596,7 @@ class DStateDebugger:
                 causes.append(f"대용량 읽기: {io.read_bytes / 1024 / 1024:.1f}MB")
             if io.write_bytes > 100 * 1024 * 1024:
                 causes.append(f"대용량 쓰기: {io.write_bytes / 1024 / 1024:.1f}MB")
-        
+
         # 커널 스택 분석
         if process_info['kernel_stack']:
             stack = process_info['kernel_stack']
@@ -606,76 +606,76 @@ class DStateDebugger:
                 causes.append("블록 I/O 대기")
             elif 'network' in stack.lower() or 'tcp' in stack.lower():
                 causes.append("네트워크 I/O 대기")
-        
+
         return causes
-    
+
     def monitor_dstate_processes(self, duration=300, interval=5):
         """D state 프로세스 모니터링"""
         print(f"D state 프로세스 모니터링 시작 ({duration}초간, {interval}초 간격)")
         print("=" * 80)
-        
+
         start_time = time.time()
-        
+
         while time.time() - start_time < duration:
             dstate_pids = self.find_dstate_processes()
-            
+
             if dstate_pids:
                 print(f", [{time.strftime('%H:%M:%S')}] D state 프로세스 감지: {len(dstate_pids)}개")
-                
+
                 for pid in dstate_pids:
                     info = self.analyze_dstate_process(pid)
                     if info:
                         print(f", ⚠️  PID {pid}: {info['name']}")
                         print(f"   명령어: {info['cmdline'][:80]}...")
                         print(f"   실행 시간: {time.time() - info['create_time']:.1f}초")
-                        
+
                         # I/O 원인 분석
                         causes = self.detect_io_hang_cause(info)
                         if causes:
                             print(f"   추정 원인: {', '.join(causes)}")
-                        
+
                         # 열린 파일 표시
                         if info['open_files']:
                             print(f"   열린 파일: {len(info['open_files'])}개")
                             for f in info['open_files'][:3]:
                                 print(f"     - {f}")
-                        
+
                         # 커널 스택 일부 표시
                         if info['kernel_stack']:
                             stack_lines = info['kernel_stack'].split(', ')[:3]
                             print(f"   커널 스택:")
                             for line in stack_lines:
                                 print(f"     {line}")
-                        
+
                         # 해결 제안
                         self.suggest_solutions(info)
-                        
+
             else:
                 print(f"[{time.strftime('%H:%M:%S')}] D state 프로세스 없음")
-            
+
             time.sleep(interval)
-    
+
     def suggest_solutions(self, process_info):
         """해결 방법 제안"""
         suggestions = []
-        
+
         # NFS 관련
-        nfs_files = [f for f in process_info['open_files'] 
+        nfs_files = [f for f in process_info['open_files']
                     if any(nfs_path in f for nfs_path in ['/nfs', '/net', ':'])]
         if nfs_files:
             suggestions.append("NFS 서버 연결 상태 확인")
             suggestions.append("NFS 마운트 재설정 고려")
-        
+
         # 디스크 I/O
         if process_info['io_counters']:
             suggestions.append("디스크 상태 점검 (dmesg, smartctl)")
             suggestions.append("I/O 스케줄러 확인")
-        
+
         # 네트워크
         if process_info['connections']:
             suggestions.append("네트워크 연결 상태 확인")
             suggestions.append("방화벽 설정 점검")
-        
+
         if suggestions:
             print(f"   제안 해결책:")
             for suggestion in suggestions[:3]:
@@ -684,16 +684,16 @@ class DStateDebugger:
 def check_system_io_health():
     """시스템 I/O 상태 전반적 점검"""
     print("=== 시스템 I/O 상태 점검 ===")
-    
+
     # 디스크 I/O 통계
     print(", 1. 디스크 I/O 통계:")
     try:
-        result = subprocess.run(['iostat', '-x', '1', '1'], 
+        result = subprocess.run(['iostat', '-x', '1', '1'],
                               capture_output=True, text=True, timeout=10)
         print(result.stdout)
     except (subprocess.TimeoutExpired, FileNotFoundError):
         print("iostat을 사용할 수 없습니다.")
-    
+
     # NFS 마운트 상태
     print(", 2. NFS 마운트 상태:")
     try:
@@ -703,21 +703,21 @@ def check_system_io_health():
                     print(f"   {line.strip()}")
     except FileNotFoundError:
         print("NFS 마운트 정보를 읽을 수 없습니다.")
-    
+
     # 메모리 압박 상태
     print(", 3. 메모리 상태:")
     mem = psutil.virtual_memory()
     print(f"   사용률: {mem.percent:.1f}%")
     print(f"   사용 가능: {mem.available / 1024 / 1024 / 1024:.1f}GB")
-    
+
     if mem.percent > 90:
         print("   ⚠️ 메모리 부족으로 인한 스왑 I/O 가능성")
 
 if __name__ == "__main__":
     import sys
-    
+
     debugger = DStateDebugger()
-    
+
     if len(sys.argv) > 1 and sys.argv[1] == "check":
         check_system_io_health()
     else:
@@ -725,7 +725,7 @@ if __name__ == "__main__":
             debugger.monitor_dstate_processes(duration=300, interval=10)
         except KeyboardInterrupt:
             print(", 모니터링 중단됨")
-```text
+```
 
 ## 3. Zombie 프로세스 처리
 
@@ -736,12 +736,12 @@ sequenceDiagram
     participant Child as 자식 프로세스
     participant Kernel as 커널
     participant Parent as 부모 프로세스
-    
+
     Child->>Kernel: exit() 호출
     Kernel->>Kernel: 프로세스 상태를 Zombie로 변경
     Kernel->>Kernel: 메모리는 해제하지만 PCB는 유지
     Kernel->>Parent: SIGCHLD 신호 전송
-    
+
     alt 정상적인 경우
         Parent->>Kernel: wait() 또는 waitpid() 호출
         Kernel->>Kernel: Zombie 프로세스 완전 정리
@@ -751,7 +751,7 @@ sequenceDiagram
         Note over Kernel: Zombie 프로세스 계속 남아있음 ⚠️
         Note over Kernel: 프로세스 테이블 엔트리 낭비
     end
-```text
+```
 
 ### 3.2 Zombie 프로세스 청소 도구
 
@@ -764,35 +764,35 @@ echo "=== Zombie 프로세스 청소 도구 ==="
 # Zombie 프로세스 찾기
 find_zombies() {
     local zombies=$(ps axo pid,ppid,state,comm | awk '$3 ~ /^Z/ {print $1 ":" $2 ":" $4}')
-    
+
     if [ -z "$zombies" ]; then
         echo "Zombie 프로세스가 없습니다."
         return 0
     fi
-    
+
     echo "발견된 Zombie 프로세스들:"
     echo "PID:PPID:명령어"
     echo "==================="
     echo "$zombies"
-    
+
     return 1
 }
 
 # 부모 프로세스별 Zombie 그룹화
 analyze_zombie_parents() {
     echo -e ", === 부모 프로세스별 Zombie 분석 ==="
-    
+
     ps axo pid,ppid,state,comm | awk '$3 ~ /^Z/' | while read pid ppid state comm; do
         echo "Zombie PID $pid (부모: $ppid, 명령어: $comm)"
-        
+
         if [ -f "/proc/$ppid/comm" ]; then
             parent_comm=$(cat "/proc/$ppid/comm" 2>/dev/null)
             echo "  부모 프로세스: $parent_comm"
-            
+
             # 부모 프로세스 상태 확인
             parent_state=$(ps -p "$ppid" -o state --no-headers 2>/dev/null)
             echo "  부모 상태: $parent_state"
-            
+
             # 부모 프로세스의 신호 처리 상태
             if [ -f "/proc/$ppid/status" ]; then
                 echo "  부모 신호 처리:"
@@ -808,20 +808,20 @@ analyze_zombie_parents() {
 # Zombie 프로세스 청소 시도
 cleanup_zombies() {
     echo "=== Zombie 프로세스 청소 시도 ==="
-    
+
     local cleaned=0
     local failed=0
-    
+
     ps axo pid,ppid,state,comm | awk '$3 ~ /^Z/' | while read pid ppid state comm; do
         echo "Zombie 프로세스 정리 시도: PID $pid (부모: $ppid)"
-        
+
         if [ -d "/proc/$ppid" ]; then
             # 부모 프로세스가 살아있는 경우
             echo "  부모 프로세스에 SIGCHLD 전송..."
             kill -CHLD "$ppid" 2>/dev/null
-            
+
             sleep 1
-            
+
             # 정리됐는지 확인
             if [ ! -d "/proc/$pid" ]; then
                 echo "  ✅ 정리 완료"
@@ -829,7 +829,7 @@ cleanup_zombies() {
             else
                 echo "  ❌ 정리 실패 - 부모 프로세스 재시작 필요할 수 있음"
                 ((failed++))
-                
+
                 # 부모 프로세스 정보 표시
                 echo "     부모 프로세스 재시작 명령어:"
                 parent_cmdline=$(tr '\0' ' ' < "/proc/$ppid/cmdline" 2>/dev/null)
@@ -841,9 +841,9 @@ cleanup_zombies() {
             ((failed++))
         fi
     done
-    
+
     echo -e ", 정리 결과: 성공 $cleaned개, 실패 $failed개"
-    
+
     if [ $failed -gt 0 ]; then
         echo "정리되지 않은 Zombie가 있습니다. 다음 방법을 시도해보세요:"
         echo "1. 부모 프로세스 재시작"
@@ -854,27 +854,27 @@ cleanup_zombies() {
 # 시스템 리소스 영향 분석
 analyze_zombie_impact() {
     echo "=== Zombie 프로세스 시스템 영향 분석 ==="
-    
+
     local zombie_count=$(ps axo state | grep -c '^Z')
     local total_processes=$(ps ax | wc -l)
     local max_processes=$(cat /proc/sys/kernel/pid_max)
-    
+
     echo "총 프로세스 수: $total_processes"
     echo "Zombie 프로세스 수: $zombie_count"
     echo "최대 프로세스 수: $max_processes"
-    
+
     if [ $zombie_count -gt 0 ]; then
         local zombie_percent=$((zombie_count * 100 / total_processes))
         echo "Zombie 비율: $zombie_percent%"
-        
+
         if [ $zombie_percent -gt 5 ]; then
             echo "⚠️ Zombie 프로세스 비율이 높습니다!"
         fi
-        
+
         # 프로세스 테이블 사용률
         local usage_percent=$((total_processes * 100 / max_processes))
         echo "프로세스 테이블 사용률: $usage_percent%"
-        
+
         if [ $usage_percent -gt 80 ]; then
             echo "⚠️ 프로세스 테이블 사용률이 높습니다!"
         fi
@@ -885,23 +885,23 @@ analyze_zombie_impact() {
 monitor_zombies() {
     local duration=${1:-300}  # 기본 5분
     local interval=${2:-10}   # 기본 10초
-    
+
     echo "Zombie 프로세스 모니터링 시작 ($duration초간, $interval초 간격)"
-    
+
     local start_time=$(date +%s)
     local end_time=$((start_time + duration))
-    
+
     while [ $(date +%s) -lt $end_time ]; do
         local current_time=$(date "+%H:%M:%S")
         local zombie_count=$(ps axo state | grep -c '^Z')
-        
+
         if [ $zombie_count -gt 0 ]; then
             echo "[$current_time] ⚠️ Zombie 프로세스 $zombie_count개 감지"
             ps axo pid,ppid,comm | grep '^[[:space:]]*[0-9][[:space:]]*[0-9][[:space:]]*Z'
         else
             echo "[$current_time] Zombie 프로세스 없음"
         fi
-        
+
         sleep $interval
     done
 }
@@ -942,7 +942,7 @@ case $choice in
         exit 1
         ;;
 esac
-```text
+```
 
 ## 4. Process Accounting 활용
 
@@ -967,13 +967,13 @@ check_packages() {
 # Process Accounting 활성화
 enable_accounting() {
     local acct_file="/var/log/account/pacct"
-    
+
     # 로그 디렉토리 생성
     mkdir -p "$(dirname "$acct_file")"
-    
+
     # Accounting 활성화
     accton "$acct_file"
-    
+
     if [ $? -eq 0 ]; then
         echo "✅ Process Accounting 활성화 완료"
         echo "로그 파일: $acct_file"
@@ -981,7 +981,7 @@ enable_accounting() {
         echo "❌ Process Accounting 활성화 실패"
         return 1
     fi
-    
+
     # 자동 시작 설정
     cat > /etc/systemd/system/process-accounting.service << 'EOF'
 [Unit]
@@ -997,7 +997,7 @@ RemainAfterExit=yes
 [Install]
 WantedBy=sysinit.target
 EOF
-    
+
     systemctl enable process-accounting
     echo "✅ 시스템 시작 시 자동 활성화 설정 완료"
 }
@@ -1005,24 +1005,24 @@ EOF
 # Accounting 정보 분석
 analyze_accounting() {
     echo "=== Process Accounting 분석 ==="
-    
+
     if [ ! -f "/var/log/account/pacct" ]; then
         echo "❌ Accounting이 활성화되지 않았습니다."
         return 1
     fi
-    
+
     echo "1. 명령어 사용 빈도 (상위 10개):"
     lastcomm | awk '{print $1}' | sort | uniq -c | sort -nr | head -10
-    
+
     echo -e ", 2. 사용자별 프로세스 실행 수:"
     lastcomm | awk '{print $2}' | sort | uniq -c | sort -nr
-    
+
     echo -e ", 3. 최근 종료된 프로세스들:"
     lastcomm | head -20
-    
+
     echo -e ", 4. 시스템 리소스 사용량이 높은 프로세스들:"
     sa -a | head -10
-    
+
     echo -e ", 5. 사용자별 CPU 시간 요약:"
     sa -u | head -10
 }
@@ -1030,21 +1030,21 @@ analyze_accounting() {
 # 특정 프로세스 추적
 track_process() {
     local process_name=$1
-    
+
     if [ -z "$process_name" ]; then
         read -p "추적할 프로세스 이름: " process_name
     fi
-    
+
     echo "프로세스 '$process_name' 추적 결과:"
-    
+
     # 실행 빈도
     local count=$(lastcomm "$process_name" | wc -l)
     echo "실행 횟수: $count"
-    
+
     # 최근 실행 기록
     echo -e ", 최근 실행 기록:"
     lastcomm "$process_name" | head -10
-    
+
     # 리소스 사용량
     echo -e ", 리소스 사용량 요약:"
     sa -c | grep "$process_name"
@@ -1085,7 +1085,7 @@ case $choice in
         echo "잘못된 선택입니다."
         ;;
 esac
-```text
+```
 
 ## 5. 프로세스 상태 모니터링 시스템
 
@@ -1122,7 +1122,7 @@ class ProcessStateMonitor:
             'stopped_duration': 300,    # T state 5분 이상
         }
         self.setup_logging()
-        
+
     def setup_logging(self):
         logging.basicConfig(
             level=logging.INFO,
@@ -1133,7 +1133,7 @@ class ProcessStateMonitor:
             ]
         )
         self.logger = logging.getLogger(__name__)
-        
+
     def get_process_state_info(self, proc):
         """프로세스 상태 정보 수집"""
         try:
@@ -1148,47 +1148,47 @@ class ProcessStateMonitor:
                 'open_files_count': 0,
                 'connections_count': 0
             }
-            
+
             # 추가 정보 (권한 허용 시)
             try:
                 info['open_files_count'] = len(proc.open_files())
             except (psutil.AccessDenied, psutil.NoSuchProcess):
                 pass
-                
+
             try:
                 info['connections_count'] = len(proc.connections())
             except (psutil.AccessDenied, psutil.NoSuchProcess):
                 pass
-                
+
             return info
-            
+
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             return None
-    
+
     def detect_anomalies(self, processes_info):
         """프로세스 상태 이상 감지"""
         current_time = time.time()
         alerts = []
-        
+
         # 상태별 프로세스 분류
         by_state = defaultdict(list)
         for info in processes_info:
             by_state[info['status']].append(info)
-        
+
         # D state 프로세스 검사
         for proc_info in by_state[psutil.STATUS_DISK_SLEEP]:
             pid = proc_info['pid']
-            
+
             # 상태 히스토리 업데이트
             self.state_history[pid].append((current_time, 'D'))
-            
+
             # D state 지속 시간 계산
             dstate_start = None
             for timestamp, state in reversed(self.state_history[pid]):
                 if state != 'D':
                     break
                 dstate_start = timestamp
-            
+
             if dstate_start:
                 duration = current_time - dstate_start
                 if duration > self.alert_thresholds['dstate_duration']:
@@ -1203,7 +1203,7 @@ class ProcessStateMonitor:
                             'connections': proc_info['connections_count']
                         }
                     ))
-        
+
         # Zombie 프로세스 수 검사
         zombie_count = len(by_state[psutil.STATUS_ZOMBIE])
         if zombie_count > self.alert_thresholds['zombie_count']:
@@ -1216,12 +1216,12 @@ class ProcessStateMonitor:
                     alert_type='zombie_count',
                     details={'total_zombies': zombie_count}
                 ))
-        
+
         # 정지된 프로세스 검사
         for proc_info in by_state[psutil.STATUS_STOPPED]:
             pid = proc_info['pid']
             stopped_duration = current_time - proc_info['create_time']
-            
+
             if stopped_duration > self.alert_thresholds['stopped_duration']:
                 alerts.append(ProcessAlert(
                     pid=pid,
@@ -1231,54 +1231,54 @@ class ProcessStateMonitor:
                     alert_type='stopped_duration',
                     details={}
                 ))
-        
+
         return alerts
-    
+
     def handle_alerts(self, alerts):
         """알림 처리"""
         for alert in alerts:
             self.alerts.append(alert)
-            
+
             # 로그 기록
             self.logger.warning(
                 f"프로세스 이상 감지: PID {alert.pid} ({alert.name}) "
                 f"상태 {alert.state}, 지속시간 {alert.duration:.1f}초"
             )
-            
+
             # 실시간 출력
             print(f"⚠️  [{time.strftime('%H:%M:%S')}] {alert.alert_type}: "
                   f"PID {alert.pid} ({alert.name}) - {alert.duration:.1f}초")
-            
+
             # 상세 정보 출력
             if alert.details:
                 for key, value in alert.details.items():
                     print(f"     {key}: {value}")
-    
+
     def generate_report(self):
         """모니터링 리포트 생성"""
         if not self.alerts:
             print("수집된 알림이 없습니다.")
             return
-        
+
         print(", " + "="*60)
         print("프로세스 상태 모니터링 리포트")
         print("="*60)
-        
+
         # 알림 타입별 집계
         alert_counts = defaultdict(int)
         for alert in self.alerts:
             alert_counts[alert.alert_type] += 1
-        
+
         print("알림 타입별 발생 횟수:")
         for alert_type, count in alert_counts.items():
             print(f"  {alert_type}: {count}회")
-        
+
         # 최근 알림들
         print(f", 최근 알림 {min(10, len(self.alerts))}개:")
         for alert in list(self.alerts)[-10:]:
             print(f"  {alert.alert_type}: PID {alert.pid} ({alert.name}) "
                   f"- {alert.duration:.1f}초")
-        
+
         # 권장사항
         print(", 권장사항:")
         if alert_counts['dstate_duration'] > 0:
@@ -1287,14 +1287,14 @@ class ProcessStateMonitor:
             print("  • Zombie 프로세스: 부모 프로세스 재시작 고려")
         if alert_counts['stopped_duration'] > 0:
             print("  • 정지 프로세스: SIGCONT로 재개 또는 프로세스 재시작")
-    
+
     def monitor(self, duration=3600, interval=10):
         """프로세스 상태 모니터링 실행"""
         self.monitoring = True
         self.logger.info(f"프로세스 상태 모니터링 시작 ({duration}초간, {interval}초 간격)")
-        
+
         start_time = time.time()
-        
+
         while self.monitoring and (time.time() - start_time < duration):
             try:
                 # 모든 프로세스 정보 수집
@@ -1303,46 +1303,46 @@ class ProcessStateMonitor:
                     info = self.get_process_state_info(proc)
                     if info:
                         processes_info.append(info)
-                
+
                 # 이상 상태 감지
                 alerts = self.detect_anomalies(processes_info)
-                
+
                 # 알림 처리
                 if alerts:
                     self.handle_alerts(alerts)
-                
+
                 # 상태 요약 출력
                 state_counts = defaultdict(int)
                 for info in processes_info:
                     state_counts[info['status']] += 1
-                
+
                 status_summary = ", ".join([
-                    f"{state.name}: {count}" 
+                    f"{state.name}: {count}"
                     for state, count in state_counts.items()
                 ])
-                
+
                 print(f"[{time.strftime('%H:%M:%S')}] 프로세스 상태: {status_summary}")
-                
+
                 time.sleep(interval)
-                
+
             except KeyboardInterrupt:
                 break
             except Exception as e:
                 self.logger.error(f"모니터링 중 오류: {e}")
                 time.sleep(interval)
-        
+
         self.monitoring = False
         self.generate_report()
-    
+
     def stop(self):
         """모니터링 중단"""
         self.monitoring = False
 
 if __name__ == "__main__":
     import sys
-    
+
     monitor = ProcessStateMonitor()
-    
+
     # 임계값 조정 옵션
     if len(sys.argv) > 1:
         if sys.argv[1] == "--strict":
@@ -1359,13 +1359,13 @@ if __name__ == "__main__":
                 'stopped_duration': 600,
             })
             print("관대 모드로 실행")
-    
+
     try:
         monitor.monitor(duration=1800, interval=15)  # 30분간 15초 간격
     except KeyboardInterrupt:
         print(", 모니터링 중단됨")
         monitor.stop()
-```text
+```
 
 ## 6. 정리와 실무 가이드
 
@@ -1392,18 +1392,18 @@ if __name__ == "__main__":
 ```mermaid
 graph TD
     DETECT[프로세스 상태 이상 감지] --> CLASSIFY{상태 분류}
-    
+
     CLASSIFY -->|D State| DSTATE_RESPONSE[I/O 분석, 스토리지 점검, 네트워크 확인]
     CLASSIFY -->|Zombie| ZOMBIE_RESPONSE[부모 프로세스 확인, SIGCHLD 전송, 필요시 재시작]
     CLASSIFY -->|Stopped| STOPPED_RESPONSE[SIGCONT 전송, 디버거 상태 확인, 프로세스 재시작]
-    
+
     DSTATE_RESPONSE --> ESCALATE{해결됨?}
     ZOMBIE_RESPONSE --> ESCALATE
     STOPPED_RESPONSE --> ESCALATE
-    
+
     ESCALATE -->|No| ADVANCED[고급 디버깅, 커널 스택 분석, 시스템 재시작 고려]
     ESCALATE -->|Yes| MONITOR[지속 모니터링]
-```text
+```
 
 다음 섹션에서는 스레드 동기화 디버깅을 다뤄보겠습니다.
 

@@ -22,29 +22,29 @@ tags:
 ```mermaid
 graph TD
     A[이벤트 발생] --> B{시그널 생성}
-    
+
     B --> C[SIGPIPE, 파이프 쓰기 실패]
     B --> D[SIGTERM, 종료 요청]
     B --> E[SIGINT, Ctrl+C 인터럽트]
     B --> F[SIGUSR1/2, 사용자 정의]
-    
+
     C --> C1{핸들러 등록?}
     D --> D1{핸들러 등록?}
     E --> E1{핸들러 등록?}
-    
+
     C1 -->|No| C2[프로세스 종료 ❌]
     C1 -->|Yes| C3[커스텀 처리 ✅]
-    
+
     D1 -->|No| D2[즉시 종료]
     D1 -->|Yes| D3[Graceful 종료 ✅]
-    
+
     E1 -->|No| E2[프로세스 종료]
     E1 -->|Yes| E3[인터럽트 처리 ✅]
-    
+
     C3 --> G[서비스 계속 실행]
     D3 --> H[정리 후 안전한 종료]
     E3 --> I[사용자 요청 처리]
-```text
+```
 
 ### 주요 시그널과 기본 동작
 
@@ -86,7 +86,7 @@ typedef struct {
     pthread_mutex_t mutex;
     FILE* log_file;
 } signal_monitor_t;
-```text
+```
 
 **설명**: 이 구조체들은 시그널 발생을 추적하고 통계를 수집하는 기본 틀을 제공합니다.
 
@@ -95,27 +95,27 @@ typedef struct {
 ```c
 void log_signal(signal_monitor_t* monitor, int signum) {
     pthread_mutex_lock(&monitor->mutex);
-    
+
     time_t now = time(NULL);
     struct tm* tm_info = localtime(&now);
     char timestamp[64];
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", tm_info);
-    
+
     // 시그널 이름 매핑
     const char* sig_names[] = {
-        [SIGPIPE] = "SIGPIPE", [SIGTERM] = "SIGTERM", 
+        [SIGPIPE] = "SIGPIPE", [SIGTERM] = "SIGTERM",
         [SIGINT] = "SIGINT", [SIGUSR1] = "SIGUSR1"
     };
-    
-    const char* sig_name = (signum < 32 && sig_names[signum]) ? 
+
+    const char* sig_name = (signum < 32 && sig_names[signum]) ?
                           sig_names[signum] : "UNKNOWN";
-    
-    printf("[%s] PID %d received %s (%d), ", 
+
+    printf("[%s] PID %d received %s (%d), ",
            timestamp, monitor->pid, sig_name, signum);
-    
+
     // 통계 업데이트
     for (int i = 0; i < 32; i++) {
-        if (monitor->signals[i].signal_num == signum || 
+        if (monitor->signals[i].signal_num == signum ||
             monitor->signals[i].signal_num == 0) {
             monitor->signals[i].signal_num = signum;
             monitor->signals[i].count++;
@@ -123,10 +123,10 @@ void log_signal(signal_monitor_t* monitor, int signum) {
             break;
         }
     }
-    
+
     pthread_mutex_unlock(&monitor->mutex);
 }
-```text
+```
 
 **동작 원리**:
 
@@ -139,17 +139,17 @@ void log_signal(signal_monitor_t* monitor, int signum) {
 ```c
 void analyze_sigpipe_context(pid_t pid) {
     printf(", === SIGPIPE 분석 ===, ");
-    
+
     // 열린 파일 디스크립터 확인
     char fd_path[256];
     snprintf(fd_path, sizeof(fd_path), "/proc/%d/fd", pid);
-    
+
     // ... (파일 디스크립터 분석 코드)
     // ... (네트워크 연결 상태 확인)
-    
+
     printf("권장사항: SIGPIPE 핸들러 등록 또는 MSG_NOSIGNAL 사용, ");
 }
-```text
+```
 
 **사용법**:
 
@@ -165,7 +165,7 @@ gcc -o signal_monitor signal_monitor.c -lpthread
 === SIGPIPE 분석 ===
 열린 소켓: 5개, 파이프: 2개
 권장사항: SIGPIPE 핸들러 등록 또는 MSG_NOSIGNAL 사용
-```text
+```
 
 ## 2. Robust 시그널 처리 라이브러리
 
@@ -190,7 +190,7 @@ int configure_signal(int signum, signal_action_t action);
 
 // 안전한 네트워크 전송
 ssize_t safe_send(int sockfd, const void* buf, size_t len, int flags);
-```text
+```
 
 ### 핵심 구현
 
@@ -207,13 +207,13 @@ void universal_signal_handler(int signum) {
             // SIGPIPE는 조용히 무시 (로그만 기록)
             fprintf(stderr, "SIGPIPE received and ignored\n");
             break;
-            
+
         case SIGTERM:
         case SIGINT:
             if (!graceful_shutdown_requested) {
                 graceful_shutdown_requested = 1;
                 printf("Graceful shutdown initiated...\n");
-                
+
                 // 등록된 정리 콜백들 실행
                 for (int i = 0; i < shutdown_callback_count; i++) {
                     if (shutdown_callbacks[i]) {
@@ -223,7 +223,7 @@ void universal_signal_handler(int signum) {
                 exit(0);
             }
             break;
-            
+
         default:
             printf("Signal %d received\n", signum);
     }
@@ -233,7 +233,7 @@ void universal_signal_handler(int signum) {
 int configure_signal(int signum, signal_action_t action) {
     struct sigaction sa;
     memset(&sa, 0, sizeof(sa));
-    
+
     switch (action) {
         case SIGNAL_ACTION_IGNORE:
             sa.sa_handler = SIG_IGN;
@@ -244,7 +244,7 @@ int configure_signal(int signum, signal_action_t action) {
             sa.sa_flags = SA_RESTART;  // 시스템 콜 재시작
             break;
     }
-    
+
     return sigaction(signum, &sa, NULL);
 }
 
@@ -253,7 +253,7 @@ ssize_t safe_send(int sockfd, const void* buf, size_t len, int flags) {
     // MSG_NOSIGNAL로 SIGPIPE 방지
     return send(sockfd, buf, len, flags | MSG_NOSIGNAL);
 }
-```text
+```
 
 **핵심 장점**:
 
@@ -276,7 +276,7 @@ static volatile int server_running = 1;
 void cleanup_server() {
     printf("Server shutting down...\n");
     server_running = 0;
-    
+
     if (server_socket != -1) {
         close(server_socket);
         server_socket = -1;
@@ -287,45 +287,45 @@ void cleanup_server() {
 int main() {
     // 시그널 처리 초기화
     init_robust_signal_handling();
-    
+
     // SIGPIPE 무시 설정
     configure_signal(SIGPIPE, SIGNAL_ACTION_IGNORE);
-    
+
     // Graceful shutdown 설정
     configure_signal(SIGTERM, SIGNAL_ACTION_GRACEFUL_SHUTDOWN);
     configure_signal(SIGINT, SIGNAL_ACTION_GRACEFUL_SHUTDOWN);
-    
+
     // 정리 콜백 등록
     register_shutdown_callback(cleanup_server);
-    
+
     // 서버 소켓 생성 및 바인딩
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     // ... (소켓 설정 코드)
-    
+
     printf("Server running on port 8080\n");
     printf("Send SIGTERM to gracefully shutdown: kill -TERM %d\n", getpid());
-    
+
     // 메인 루프
     while (server_running) {
         int client_fd = accept(server_socket, NULL, NULL);
         if (client_fd < 0) continue;
-        
+
         // 클라이언트 처리
         char response[] = "HTTP/1.1 200 OK\r, \r, Hello, World!";
-        
+
         // 안전한 전송 (SIGPIPE 방지)
         if (safe_send(client_fd, response, strlen(response), 0) == -1) {
             if (errno == EPIPE) {
                 printf("Client disconnected\n");
             }
         }
-        
+
         close(client_fd);
     }
-    
+
     return 0;
 }
-```text
+```
 
 **실행 결과**:
 
@@ -343,7 +343,7 @@ $ kill -TERM 1234
 Graceful shutdown initiated...
 Server shutting down...
 Server shutdown complete
-```text
+```
 
 ## 4. Python에서의 Robust 시그널 처리
 
@@ -362,36 +362,36 @@ class RobustSignalHandler:
     def __init__(self):
         self.shutdown_callbacks = []
         self.graceful_shutdown_requested = False
-        
+
         # 기본 핸들러 설정
         self._setup_handlers()
-    
+
     def _setup_handlers(self):
         # SIGPIPE 무시 (UNIX 시스템)
         if hasattr(signal, 'SIGPIPE'):
             signal.signal(signal.SIGPIPE, signal.SIG_IGN)
-        
+
         # Graceful shutdown
         signal.signal(signal.SIGTERM, self._graceful_shutdown)
         signal.signal(signal.SIGINT, self._graceful_shutdown)
-    
+
     def _graceful_shutdown(self, signum, frame):
         if self.graceful_shutdown_requested:
             # 이미 진행 중이면 강제 종료
             sys.exit(1)
-        
+
         self.graceful_shutdown_requested = True
         print(f"Graceful shutdown by signal {signum}")
-        
+
         # 정리 콜백 실행
         for callback in self.shutdown_callbacks:
             try:
                 callback()
             except Exception as e:
                 print(f"Cleanup error: {e}")
-        
+
         sys.exit(0)
-    
+
     def register_shutdown_callback(self, callback):
         self.shutdown_callbacks.append(callback)
 
@@ -409,21 +409,21 @@ def safe_socket_operation():
 # 사용 예제
 def main():
     signal_handler = RobustSignalHandler()
-    
+
     def cleanup():
         print("Cleaning up resources...")
-    
+
     signal_handler.register_shutdown_callback(cleanup)
-    
+
     print(f"Python server running (PID: {os.getpid()})")
     print("Press Ctrl+C for graceful shutdown")
-    
+
     # 메인 서버 루프
     import socket
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(('localhost', 8080))
     server.listen(5)
-    
+
     try:
         while True:
             with safe_socket_operation():
@@ -436,7 +436,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-```text
+```
 
 ## 5. 실무 적용 가이드
 
@@ -449,7 +449,7 @@ if __name__ == "__main__":
 signal(SIGPIPE, SIG_IGN);  // 또는
 // send()에서 MSG_NOSIGNAL 사용
 send(sockfd, data, len, MSG_NOSIGNAL);
-```text
+```
 
 #### 2단계: Graceful Shutdown 추가
 
@@ -463,7 +463,7 @@ void shutdown_handler(int sig) {
 
 signal(SIGTERM, shutdown_handler);
 signal(SIGINT, shutdown_handler);
-```text
+```
 
 #### 3단계: 로깅 및 모니터링
 
@@ -472,14 +472,14 @@ void log_signal(int sig) {
     time_t now = time(NULL);
     printf("[%s] Signal %d received, ", ctime(&now), sig);
 }
-```text
+```
 
 #### 4단계: 프로덕션 레벨 처리
 
 ```c
 // 시그널 마스킹, 통계 수집, 자동 복구 등
 // (위에서 구현한 robust_signal 라이브러리 사용)
-```text
+```
 
 ### ⚠️ 주의사항
 
@@ -514,7 +514,7 @@ strace -e signal -p PID
 kill -PIPE PID    # SIGPIPE 전송
 kill -TERM PID    # 정상 종료 테스트
 kill -USR1 PID    # 사용자 정의 시그널
-```text
+```
 
 ## 결론
 
