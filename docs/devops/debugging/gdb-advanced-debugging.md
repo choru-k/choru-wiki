@@ -59,14 +59,14 @@ GDB는 소프트웨어 브레이크포인트를 INT3 명령어(0xCC)로 구현�
 int set_software_breakpoint(pid_t pid, void *addr) {
     // 1. 원본 명령어 백업
     long original_instruction = ptrace(PTRACE_PEEKTEXT, pid, addr, NULL);
-    
+
     // 2. INT3 명령어(0xCC)로 교체
     long breakpoint_instruction = (original_instruction & ~0xFF) | 0xCC;
     ptrace(PTRACE_POKETEXT, pid, addr, breakpoint_instruction);
-    
+
     // 3. 브레이크포인트 정보 저장
     breakpoint_table[addr] = original_instruction;
-    
+
     return 0;
 }
 
@@ -77,15 +77,15 @@ void handle_breakpoint_hit(pid_t pid, void *addr) {
     ptrace(PTRACE_GETREGS, pid, NULL, &regs);
     regs.rip = (unsigned long)addr;
     ptrace(PTRACE_SETREGS, pid, NULL, &regs);
-    
+
     // 2. 원본 명령어 임시 복구
     long original = breakpoint_table[addr];
     ptrace(PTRACE_POKETEXT, pid, addr, original);
-    
+
     // 3. 한 스텝 실행 후 브레이크포인트 재설정
     ptrace(PTRACE_SINGLESTEP, pid, NULL, NULL);
     wait_for_signal(pid, SIGTRAP);
-    
+
     ptrace(PTRACE_POKETEXT, pid, addr, (original & ~0xFF) | 0xCC);
 }
 ```
@@ -151,7 +151,7 @@ Stack level 0, frame at 0x7fff1234abc0:
  source language c.
  Arglist at 0x7fff1234abb0, args: req=0x0
  Locals at 0x7fff1234abb0, Previous frame's sp is 0x7fff1234abc0
- 
+
 # 스택 경계 확인
 (gdb) info proc stat
 State:  t (tracing stop)
@@ -185,7 +185,7 @@ class CoreAnalyzer:
             'thread_info': [],
             'recommendations': []
         }
-    
+
     def run_gdb_command(self, command):
         """GDB 배치 모드로 명령어 실행"""
         cmd = ['gdb', '--batch', '--ex', command, self.binary_path, self.core_path]
@@ -194,14 +194,14 @@ class CoreAnalyzer:
             return result.stdout
         except subprocess.TimeoutExpired:
             return "TIMEOUT: GDB command took too long"
-    
+
     def analyze_signal(self):
         """크래시 시그널 분석"""
         output = self.run_gdb_command('info program')
         signal_match = re.search(r'terminated with signal (\w+)', output)
         if signal_match:
             self.analysis_result['signal'] = signal_match.group(1)
-    
+
     def analyze_stack_trace(self):
         """스택 트레이스 분석"""
         output = self.run_gdb_command('where')
@@ -210,13 +210,13 @@ class CoreAnalyzer:
             if line.startswith('#'):
                 frames.append(line.strip())
         self.analysis_result['stack_trace'] = frames
-    
+
     def analyze_memory_corruption(self):
         """메모리 corruption 패턴 검사"""
         # 스택 영역 검사
         stack_output = self.run_gdb_command('x/64x $rsp')
         corruption_patterns = ['0xdeadbeef', '0xbaadf00d', '0x41414141']
-        
+
         for pattern in corruption_patterns:
             if pattern in stack_output.lower():
                 self.analysis_result['memory_corruption'].append({
@@ -224,14 +224,14 @@ class CoreAnalyzer:
                     'pattern': pattern,
                     'location': 'stack'
                 })
-        
+
         # 힙 영역 검사 (첫 번째 힙 맵핑 주소 기준)
         mappings_output = self.run_gdb_command('info proc mappings')
         heap_match = re.search(r'0x([0-9a-f]+)\s+0x[0-9a-f]+.*\[heap\]', mappings_output)
         if heap_match:
             heap_addr = heap_match.group(1)
             heap_output = self.run_gdb_command(f'x/64x 0x{heap_addr}')
-            
+
             # Use-after-free 패턴 검사
             if '0xfeedfeed' in heap_output or '0xcdcdcdcd' in heap_output:
                 self.analysis_result['memory_corruption'].append({
@@ -239,61 +239,61 @@ class CoreAnalyzer:
                     'location': 'heap',
                     'address': f'0x{heap_addr}'
                 })
-    
+
     def analyze_threads(self):
         """스레드 정보 분석"""
         threads_output = self.run_gdb_command('info threads')
         for line in threads_output.split(', '):
             if re.match(r'\s*\*?\s*\d+', line):
                 self.analysis_result['thread_info'].append(line.strip())
-    
+
     def generate_recommendations(self):
         """분석 결과 기반 권장사항 생성"""
         recommendations = []
-        
+
         if self.analysis_result['signal'] == 'SIGSEGV':
             recommendations.append("NULL pointer dereference 또는 잘못된 메모리 접근 확인")
             recommendations.append("AddressSanitizer(-fsanitize=address)로 빌드하여 재현 시도")
-        
+
         if self.analysis_result['signal'] == 'SIGABRT':
             recommendations.append("assert() 또는 abort() 호출 확인")
             recommendations.append("malloc corruption 또는 double-free 의심")
-        
+
         if any('use_after_free' in c['type'] for c in self.analysis_result['memory_corruption']):
             recommendations.append("Valgrind 또는 AddressSanitizer로 메모리 오류 상세 분석")
-        
+
         if len(self.analysis_result['thread_info']) > 1:
             recommendations.append("멀티스레드 환경에서 race condition 또는 데드락 가능성 확인")
             recommendations.append("ThreadSanitizer(-fsanitize=thread)로 빌드하여 재현 시도")
-        
+
         self.analysis_result['recommendations'] = recommendations
-    
+
     def run_analysis(self):
         """전체 분석 실행"""
         print(f"Analyzing core dump: {self.core_path}")
         print(f"Binary: {self.binary_path}")
         print("=" * 60)
-        
+
         self.analyze_signal()
         self.analyze_stack_trace()
         self.analyze_memory_corruption()
         self.analyze_threads()
         self.generate_recommendations()
-        
+
         return self.analysis_result
-    
+
     def print_report(self):
         """분석 결과 출력"""
         result = self.analysis_result
-        
+
         print(f"🔍 CRASH SIGNAL: {result['signal']}")
         print()
-        
+
         print("📋 STACK TRACE:")
         for frame in result['stack_trace']:
             print(f"  {frame}")
         print()
-        
+
         if result['memory_corruption']:
             print("⚠️  MEMORY CORRUPTION DETECTED:")
             for corruption in result['memory_corruption']:
@@ -302,13 +302,13 @@ class CoreAnalyzer:
                 if 'pattern' in corruption:
                     print(f"  Pattern: {corruption['pattern']}")
                 print()
-        
+
         if len(result['thread_info']) > 1:
             print(f"🧵 THREADS ({len(result['thread_info'])}):")
             for thread in result['thread_info']:
                 print(f"  {thread}")
             print()
-        
+
         print("💡 RECOMMENDATIONS:")
         for rec in result['recommendations']:
             print(f"  • {rec}")
@@ -318,16 +318,16 @@ if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python3 core_analyzer.py <binary> <core_dump>")
         sys.exit(1)
-    
+
     analyzer = CoreAnalyzer(sys.argv[1], sys.argv[2])
     analyzer.run_analysis()
     analyzer.print_report()
-    
+
     # JSON 형태로도 출력 (파이프라인 연동을 위해)
     json_output = Path(sys.argv[2]).with_suffix('.analysis.json')
     with open(json_output, 'w') as f:
         json.dump(analyzer.analysis_result, f, indent=2)
-    
+
     print(f"📄 Detailed analysis saved to: {json_output}")
 ```
 
@@ -396,7 +396,7 @@ fi
 
 echo "Starting remote debugging session..."
 echo "Remote host: $REMOTE_HOST"
-echo "Binary: $BINARY_PATH" 
+echo "Binary: $BINARY_PATH"
 echo "PID: $PID"
 
 # SSH 터널 백그라운드 실행
@@ -454,16 +454,16 @@ echo "Remote debugging session ended."
 ```bash
 # 데드락 분석을 위한 GDB 매크로
 define analyze_deadlock
-    echo === DEADLOCK ANALYSIS ===, 
-    
+    echo === DEADLOCK ANALYSIS ===,
+
     # 모든 스레드의 스택 트레이스
     thread apply all bt
-    
-    echo , === MUTEX STATUS ===, 
+
+    echo , === MUTEX STATUS ===,
     # 뮤텍스 상태 분석 (pthread_mutex_t 구조체 확인)
     thread apply all x/8x $rsp-64
-    
-    echo , === THREAD STATES ===, 
+
+    echo , === THREAD STATES ===,
     shell ps -eLf | grep $arg0
 end
 
@@ -474,11 +474,11 @@ end
 define mutex_monitor
     while 1
         clear
-        echo Current time: 
+        echo Current time:
         shell date
-        echo , === Active Threads ===, 
+        echo , === Active Threads ===,
         info threads
-        echo , === Waiting Threads ===, 
+        echo , === Waiting Threads ===,
         thread apply all bt 5
         sleep 1
     end
@@ -503,7 +503,7 @@ end
 #2  database_query (query=0x...) at db.c:45
 #3  process_user_request (req=0x...) at handler.c:123
 
-# Thread 2 분석  
+# Thread 2 분석
 (gdb) thread 2
 (gdb) bt
 #0  __lll_lock_wait () at lowlevellock.S:135
@@ -517,12 +517,12 @@ end
 (gdb) print *db_mutex
 $1 = {__data = {__lock = 1, __count = 0, __owner = 12346, ...}}
 
-(gdb) thread 2  
+(gdb) thread 2
 (gdb) up 2
 (gdb) print *log_mutex
 $2 = {__data = {__lock = 1, __count = 0, __owner = 12345, ...}}
 
-# 데드락 발견: 
+# 데드락 발견:
 # Thread 1(12345)이 log_mutex를 소유하고 db_mutex를 대기
 # Thread 2(12346)가 db_mutex를 소유하고 log_mutex를 대기
 ```
@@ -534,7 +534,7 @@ $2 = {__data = {__lock = 1, __count = 0, __owner = 12345, ...}}
 (gdb) break shared_variable_access if shared_counter != expected_value
 (gdb) commands
     > info registers
-    > info threads  
+    > info threads
     > print shared_counter
     > print expected_value
     > continue
@@ -568,7 +568,7 @@ worker_thread (arg=0x0) at worker.c:89
     > continue
     > end
 
-(gdb) break free  
+(gdb) break free
 (gdb) commands
     > print $rdi  # 해제할 주소
     > x/32x $rdi  # 해제되는 메모리 내용 확인
@@ -583,8 +583,8 @@ define check_heap_integrity
     # glibc의 내부 구조체 확인
     print &main_arena
     x/32x &main_arena
-    
-    # 첫 번째 청크 확인  
+
+    # 첫 번째 청크 확인
     set $chunk = main_arena.top
     while $chunk != 0
         print $chunk
@@ -605,10 +605,10 @@ end
 define check_stack_smashing
     set $saved_rbp = *(void**)$rbp
     set $return_addr = *(void**)($rbp + 8)
-    
+
     print "Saved RBP:", $saved_rbp
     print "Return address:", $return_addr
-    
+
     # 리턴 주소가 정상 범위에 있는지 확인
     if $return_addr < 0x400000 || $return_addr > 0x7fffffffffff
         print "🚨 STACK CORRUPTION DETECTED!"
@@ -677,7 +677,7 @@ rcx            0x4005a0         4195744
 (gdb) disass /m main
 10      int result = calculate(x, y);
    0x401234 <main+20>:  mov    %eax,%edi
-   0x401237 <main+23>:  mov    %edx,%esi  
+   0x401237 <main+23>:  mov    %edx,%esi
    0x40123a <main+26>:  call   0x401180 <calculate>
    0x40123f <main+31>:  mov    %eax,0x10(%rbp)  # result가 rbp+0x10에 저장
 
@@ -729,51 +729,51 @@ from collections import defaultdict
 
 class MemoryLeakDetector(gdb.Command):
     """메모리 누수 탐지를 위한 GDB 확장"""
-    
+
     def __init__(self):
         super().__init__("detect-leaks", gdb.COMMAND_USER)
         self.allocations = defaultdict(list)
         self.total_allocated = 0
         self.total_freed = 0
-    
+
     def invoke(self, arg, from_tty):
         """명령어 실행"""
         duration = int(arg) if arg else 60
         print(f"Memory leak detection for {duration} seconds...")
-        
+
         # malloc/free 브레이크포인트 설정
         malloc_bp = gdb.Breakpoint("malloc", internal=True)
         malloc_bp.silent = True
         malloc_bp.commands = "python memory_detector.on_malloc()"
-        
-        free_bp = gdb.Breakpoint("free", internal=True)  
+
+        free_bp = gdb.Breakpoint("free", internal=True)
         free_bp.silent = True
         free_bp.commands = "python memory_detector.on_free()"
-        
+
         # 지정된 시간동안 실행
         start_time = time.time()
         gdb.execute("continue")
-        
+
         while time.time() - start_time < duration:
             try:
                 gdb.execute("continue", to_string=True)
             except gdb.error:
                 break
-        
+
         # 결과 출력
         self.print_leak_report()
-        
+
         # 브레이크포인트 제거
         malloc_bp.delete()
         free_bp.delete()
-    
+
     def on_malloc(self):
         """malloc 호출 시 처리"""
         try:
             size = int(gdb.parse_and_eval("$rdi"))  # malloc 크기
             gdb.execute("finish", to_string=True)   # malloc 완료까지 실행
             addr = int(gdb.parse_and_eval("$rax"))  # 할당된 주소
-            
+
             if addr != 0:
                 self.allocations[addr].append({
                     'size': size,
@@ -781,10 +781,10 @@ class MemoryLeakDetector(gdb.Command):
                     'stack': self.get_stack_trace()
                 })
                 self.total_allocated += size
-                
+
         except (gdb.error, ValueError):
             pass
-    
+
     def on_free(self):
         """free 호출 시 처리"""
         try:
@@ -795,7 +795,7 @@ class MemoryLeakDetector(gdb.Command):
                 del self.allocations[addr]
         except (gdb.error, ValueError):
             pass
-    
+
     def get_stack_trace(self):
         """현재 스택 트레이스 획득"""
         try:
@@ -803,7 +803,7 @@ class MemoryLeakDetector(gdb.Command):
             return bt_output.strip()
         except gdb.error:
             return "Stack trace unavailable"
-    
+
     def print_leak_report(self):
         """누수 리포트 출력"""
         print(f", === Memory Leak Report ===")
@@ -811,7 +811,7 @@ class MemoryLeakDetector(gdb.Command):
         print(f"Total freed: {self.total_freed:,} bytes")
         print(f"Potential leaks: {self.total_allocated - self.total_freed:,} bytes")
         print(f"Unfreed allocations: {len(self.allocations)}")
-        
+
         if self.allocations:
             print(f", === Top 10 Unfreed Allocations ===")
             sorted_allocs = sorted(
@@ -819,7 +819,7 @@ class MemoryLeakDetector(gdb.Command):
                 key=lambda x: x[1]['size'],
                 reverse=True
             )[:10]
-            
+
             for addr, info in sorted_allocs:
                 print(f", Address: 0x{addr:x}")
                 print(f"Size: {info['size']} bytes")
@@ -834,38 +834,38 @@ memory_detector = MemoryLeakDetector()
 # 추가 유틸리티 함수들
 class ThreadAnalyzer(gdb.Command):
     """스레드 분석 도구"""
-    
+
     def __init__(self):
         super().__init__("analyze-threads", gdb.COMMAND_USER)
-    
+
     def invoke(self, arg, from_tty):
         """스레드 상태 분석"""
         threads_info = gdb.execute("info threads", to_string=True)
-        
+
         print("=== Thread Analysis ===")
         waiting_threads = []
         running_threads = []
-        
+
         # 각 스레드 상태 확인
         for thread in gdb.selected_inferior().threads():
             thread.switch()
-            
+
             try:
                 frame = gdb.selected_frame()
                 func_name = frame.name()
-                
-                if any(wait_func in func_name for wait_func in 
+
+                if any(wait_func in func_name for wait_func in
                        ['__lll_lock_wait', 'pthread_cond_wait', 'futex']):
                     waiting_threads.append((thread.num, func_name))
                 else:
                     running_threads.append((thread.num, func_name))
-                    
+
             except (gdb.error, AttributeError):
                 pass
-        
+
         print(f"Running threads: {len(running_threads)}")
         print(f"Waiting threads: {len(waiting_threads)}")
-        
+
         if waiting_threads:
             print(f", === Waiting Threads ===")
             for thread_num, func in waiting_threads:
@@ -904,18 +904,18 @@ end
 # 프로덕션 디버깅 매크로
 define prod-debug-start
     printf "Starting production debugging session..., "
-    
+
     # 시그널 처리 설정
     handle SIGPIPE nostop noprint pass
     handle SIGUSR1 stop print nopass
-    
+
     # 자동 백트레이스 on crash
     set $_exitcode = -999
     define hook-stop
         if $_exitcode != -999
-            echo , === CRASH DETECTED ===, 
+            echo , === CRASH DETECTED ===,
             bt
-            info registers  
+            info registers
             thread apply all bt
         end
     end
@@ -1015,7 +1015,7 @@ rr replay
 (gdb) info threads
 (gdb) thread 1
 (gdb) reverse-step 10  # 10스텝 뒤로
-(gdb) thread 2  
+(gdb) thread 2
 (gdb) reverse-step 5   # 5스텝 뒤로
 ```
 
@@ -1064,7 +1064,7 @@ gdb vmlinux
         > print "Kernel stack overflow detected!"
         > bt
     > end
-    > continue  
+    > continue
     > end
 
 # 커널 메모리 corruption 검사
@@ -1166,7 +1166,7 @@ echo "Starting distributed debugging session..."
 # 모든 노드에서 디버깅 시작
 for node in "${NODES[@]}"; do
     echo "Setting up debugging on $node..."
-    
+
     # 각 노드에서 백그라운드로 GDB server 시작
     ssh $node "
         PID=\$(pgrep $APP_NAME)
@@ -1192,15 +1192,15 @@ echo "Connect with: gdb /path/to/binary -ex 'target remote node:port'"
 define profile_cpu
     set $sample_count = 0
     set $max_samples = 1000
-    
+
     while $sample_count < $max_samples
         # 프로세스 일시 중단
         signal SIGSTOP
-        
+
         # 현재 위치 기록
         set $pc = $rip
         printf "Sample %d: 0x%lx ", $sample_count, $pc
-        
+
         # 함수명 출력 시도
         python
 try:
@@ -1210,11 +1210,11 @@ try:
 except:
     print("(unknown)")
         end
-        
+
         # 잠시 실행 후 다시 샘플링
         signal SIGCONT
         shell sleep 0.01  # 10ms 대기
-        
+
         set $sample_count = $sample_count + 1
     end
 end
@@ -1236,21 +1236,21 @@ import gdb
 class MemoryTracer:
     def __init__(self):
         self.access_count = {}
-    
+
     def trace_access(self, address, size, access_type):
         addr_range = (address, address + size)
         if addr_range not in self.access_count:
             self.access_count[addr_range] = {'read': 0, 'write': 0}
         self.access_count[addr_range][access_type] += 1
-    
+
     def print_hotspots(self):
         print("=== Memory Access Hotspots ===")
         sorted_access = sorted(
-            self.access_count.items(), 
+            self.access_count.items(),
             key=lambda x: x[1]['read'] + x[1]['write'],
             reverse=True
         )[:10]
-        
+
         for addr_range, counts in sorted_access:
             start, end = addr_range
             total = counts['read'] + counts['write']
@@ -1284,8 +1284,8 @@ print(f"READ result: {result} bytes, {elapsed:.2f}ms")
         end
         continue
     end
-    
-    break write  
+
+    break write
     commands
         python
 import time
@@ -1314,35 +1314,35 @@ name: Core Dump Analysis
 
 on:
   push:
-    paths: 
+    paths:
     - 'src/**'
     - 'tests/**'
 
 jobs:
   test-with-core-analysis:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Install debugging tools
       run: |
         sudo apt-get update
         sudo apt-get install -y gdb valgrind
-        
+
     - name: Build with debug symbols
       run: |
         gcc -g -O0 -fno-omit-frame-pointer -o myapp src/*.c
-        
+
     - name: Enable core dumps
       run: |
         ulimit -c unlimited
         echo '/tmp/core.%e.%p.%t' | sudo tee /proc/sys/kernel/core_pattern
-        
+
     - name: Run tests with crash detection
       run: |
         timeout 300 ./run_tests.sh || true
-        
+
     - name: Analyze core dumps
       if: always()
       run: |
@@ -1350,7 +1350,7 @@ jobs:
           echo "Analyzing core dump: $core_file"
           python3 scripts/core_analyzer.py ./myapp "$core_file" > "${core_file}.analysis"
         done
-        
+
     - name: Upload crash analysis
       if: always()
       uses: actions/upload-artifact@v3
@@ -1551,13 +1551,13 @@ gdb -p $(pgrep myservice)
 # 2. 분석 결과
 === Memory Leak Report ===
 Total allocated: 2,456,789 bytes
-Total freed: 1,234,567 bytes  
+Total freed: 1,234,567 bytes
 Potential leaks: 1,222,222 bytes
 Unfreed allocations: 1,234
 
 Top unfreed allocation:
 Address: 0x7f123456789a
-Size: 65536 bytes  
+Size: 65536 bytes
 Stack trace:
   #0 malloc() at malloc.c:123
   #1 buffer_alloc() at buffer.c:45
@@ -1586,7 +1586,7 @@ Thread 2: waiting for db_mutex (owned by thread 1)
 # 2. 뮤텍스 순서 일관성 확인
 (gdb) thread 1
 (gdb) print log_mutex.__data.__owner  # Thread 2 ID
-(gdb) thread 2  
+(gdb) thread 2
 (gdb) print db_mutex.__data.__owner   # Thread 1 ID
 
 # 3. 해결책 적용
@@ -1601,7 +1601,7 @@ GDB는 단순한 디버거를 넘어서 production 환경의 복잡한 문제를
 ### 핵심 역량
 
 - **Deep System Analysis**: 메모리, 스레드, 시스템 콜 레벨 분석
-- **Remote Debugging**: 원격 환경에서 안전한 디버깅  
+- **Remote Debugging**: 원격 환경에서 안전한 디버깅
 - **Automation**: Python extension과 스크립팅으로 자동화
 - **Time Travel**: Record & replay로 재현 어려운 버그 추적
 - **Production Ready**: 최소 침입으로 라이브 시스템 분석
@@ -1609,7 +1609,7 @@ GDB는 단순한 디버거를 넘어서 production 환경의 복잡한 문제를
 ### Production 활용 전략
 
 1. **예방적 모니터링**: Core dump 자동 분석 시스템 구축
-2. **선택적 디버깅**: 특정 조건에서만 상세 분석 수행  
+2. **선택적 디버깅**: 특정 조건에서만 상세 분석 수행
 3. **원격 분석**: 개발 환경에서 production 데이터 분석
 4. **자동화**: 반복 작업을 스크립트와 extension으로 자동화
 5. **통합**: CI/CD 파이프라인과 모니터링 시스템 연동
@@ -1634,6 +1634,6 @@ GDB를 mastering하면 "디버깅이 불가능해 보이는" production 문제�
 ## 관련 문서
 
 - [ptrace 시스템 콜: 디버깅 도구의 핵심 메커니즘](ptrace-internals.md)
-- [strace로 문제 분석하기](strace-debugging.md)  
+- [strace로 문제 분석하기](strace-debugging.md)
 - [Docker Exit 137 디버깅](docker-exit-137-debugging.md)
 - [Memory Management Deep Dive](../../cs/memory/memory-management.md)

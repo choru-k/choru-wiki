@@ -24,7 +24,7 @@ Docker 컨테이너의 종료 상태는 다음과 같이 정의됩니다:
 ```text
 # Docker Exit Codes
 Exit Code 0   : 정상 종료
-Exit Code 1   : 일반적인 애플리케이션 오류  
+Exit Code 1   : 일반적인 애플리케이션 오류
 Exit Code 125 : Docker daemon 오류
 Exit Code 126 : 실행 권한 없음
 Exit Code 127 : 명령어/파일을 찾을 수 없음
@@ -50,7 +50,6 @@ exit_code = 128 + signal_number
 
 ### 1. OOM Killer (가장 흔한 경우)
 
-```bash
 ```bash
 # OOM 발생 확인
 journalctl -k | grep -i -E "memory|oom|killed"
@@ -80,7 +79,6 @@ cat /sys/fs/cgroup/memory/docker/container_id/memory.oom_control
 
 실제 Production 환경에서 경험한 복잡한 시나리오입니다:
 
-```bash
 ```bash
 # systemd 서비스 의존성 확인
 systemctl show myapp.service | grep -E "(After|Requires|Wants|PartOf)"
@@ -112,13 +110,12 @@ Type=simple
 ExecStart=/usr/bin/docker run --name myapp myapp:latest
 Restart=always
 
-[Install]  
+[Install]
 WantedBy=multi-user.target
 ```
 
 nginx가 실패하면 systemd가 myapp에 SIGKILL을 전송합니다:
 
-```bash
 ```bash
 # systemd 로그 확인
 journalctl -u myapp.service -f
@@ -245,16 +242,16 @@ while true; do
     TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
     MEMORY_USAGE=$(docker stats "$CONTAINER_NAME" --no-stream --format "{{.MemUsage}}")
     MEMORY_PERCENT=$(docker stats "$CONTAINER_NAME" --no-stream --format "{{.MemPerc}}")
-    
+
     echo "$TIMESTAMP - Memory: $MEMORY_USAGE ($MEMORY_PERCENT)"
-    
+
     # 메모리 사용량이 임계치 초과시 상세 분석
     PERCENT_NUM=$(echo "$MEMORY_PERCENT" | sed 's/%//')
     if (( $(echo "$PERCENT_NUM > 80" | bc -l) )); then
         echo "HIGH MEMORY USAGE DETECTED!"
         docker exec "$CONTAINER_NAME" ps aux --sort=-%mem | head -10
     fi
-    
+
     sleep 10
 done
 ```
@@ -276,76 +273,76 @@ class Exit137Analyzer:
     def __init__(self, container_name):
         self.container_name = container_name
         self.findings = []
-    
+
     def analyze_container(self):
         """컨테이너 기본 정보 분석"""
         try:
-            result = subprocess.run(['docker', 'inspect', self.container_name], 
+            result = subprocess.run(['docker', 'inspect', self.container_name],
                                   capture_output=True, text=True)
             if result.returncode == 0:
                 container_info = json.loads(result.stdout)[0]
-                
+
                 # Exit code 확인
                 exit_code = container_info['State']['ExitCode']
                 if exit_code == 137:
                     self.findings.append("✓ Confirmed Exit Code 137 (SIGKILL)")
-                
+
                 # 메모리 제한 확인
                 memory_limit = container_info['HostConfig']['Memory']
                 if memory_limit > 0:
                     self.findings.append(f"Memory limit: {memory_limit // 1024 // 1024}MB")
                 else:
                     self.findings.append("⚠ No memory limit set - potential OOM risk")
-                
+
                 # 재시작 정책 확인
                 restart_policy = container_info['HostConfig']['RestartPolicy']['Name']
                 self.findings.append(f"Restart policy: {restart_policy}")
-                
+
         except Exception as e:
             self.findings.append(f"❌ Container analysis failed: {e}")
-    
+
     def check_oom_killer(self):
         """OOM Killer 활동 확인"""
         try:
-            result = subprocess.run(['journalctl', '-k', '--since', '1 hour ago'], 
+            result = subprocess.run(['journalctl', '-k', '--since', '1 hour ago'],
                                   capture_output=True, text=True)
-            
-            oom_messages = [line for line in result.stdout.split(', ') 
+
+            oom_messages = [line for line in result.stdout.split(', ')
                            if re.search(r'oom.*kill|killed.*process', line, re.IGNORECASE)]
-            
+
             if oom_messages:
                 self.findings.append("🔥 OOM Killer activity detected:")
                 for msg in oom_messages[-3:]:  # 최근 3개만
                     self.findings.append(f"   {msg.strip()}")
             else:
                 self.findings.append("✓ No OOM Killer activity in last hour")
-                
+
         except Exception as e:
             self.findings.append(f"⚠ Could not check OOM logs: {e}")
-    
+
     def check_systemd_dependencies(self):
         """SystemD 의존성 문제 확인"""
         try:
             # 컨테이너 이름과 유사한 서비스 찾기
-            result = subprocess.run(['systemctl', 'list-units', '--type=service'], 
+            result = subprocess.run(['systemctl', 'list-units', '--type=service'],
                                   capture_output=True, text=True)
-            
-            services = [line for line in result.stdout.split(', ') 
+
+            services = [line for line in result.stdout.split(', ')
                        if self.container_name.lower() in line.lower()]
-            
+
             if services:
                 service_name = services[0].split()[0]
                 self.findings.append(f"Found related service: {service_name}")
-                
+
                 # 의존성 확인
-                dep_result = subprocess.run(['systemctl', 'show', service_name], 
+                dep_result = subprocess.run(['systemctl', 'show', service_name],
                                           capture_output=True, text=True)
-                
+
                 dangerous_deps = []
                 for line in dep_result.stdout.split(', '):
                     if re.match(r'(After|PartOf|Requires)=', line) and line.strip() != '':
                         dangerous_deps.append(line.strip())
-                
+
                 if dangerous_deps:
                     self.findings.append("⚠ SystemD dependencies found:")
                     for dep in dangerous_deps:
@@ -354,15 +351,15 @@ class Exit137Analyzer:
                             self.findings.append("   🔥 PartOf dependency can cause cascade failures!")
             else:
                 self.findings.append("✓ No related systemd services found")
-                
+
         except Exception as e:
             self.findings.append(f"⚠ SystemD analysis failed: {e}")
-    
+
     def check_disk_space(self):
         """디스크 공간 확인"""
         try:
             result = subprocess.run(['df', '-h'], capture_output=True, text=True)
-            
+
             for line in result.stdout.split(', ')[1:]:  # 헤더 제외
                 if line.strip():
                     fields = line.split()
@@ -372,49 +369,49 @@ class Exit137Analyzer:
                             self.findings.append(f"🔥 High disk usage: {fields[5]} at {usage_percent}%")
                         elif usage_percent > 80:
                             self.findings.append(f"⚠ Moderate disk usage: {fields[5]} at {usage_percent}%")
-            
+
             # Docker 디스크 사용량
-            docker_result = subprocess.run(['docker', 'system', 'df'], 
+            docker_result = subprocess.run(['docker', 'system', 'df'],
                                          capture_output=True, text=True)
             self.findings.append("Docker disk usage:")
             for line in docker_result.stdout.split(', ')[1:4]:  # TYPE, TOTAL, ACTIVE 라인만
                 if line.strip():
                     self.findings.append(f"   {line.strip()}")
-                    
+
         except Exception as e:
             self.findings.append(f"⚠ Disk space check failed: {e}")
-    
+
     def generate_report(self):
         """최종 보고서 생성"""
         print(f", === Exit 137 Analysis Report for {self.container_name} ===")
         print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(", Findings:")
-        
+
         for i, finding in enumerate(self.findings, 1):
             print(f"{i:2d}. {finding}")
-        
+
         print(", === Recommended Actions ===")
-        
+
         # 권장사항 생성
         if any("OOM" in finding for finding in self.findings):
             print("• Increase memory limits or optimize application memory usage")
-        
+
         if any("PartOf" in finding for finding in self.findings):
             print("• Review systemd service dependencies - remove PartOf if not necessary")
-            
+
         if any("No memory limit" in finding for finding in self.findings):
             print("• Set appropriate memory limits to prevent system-wide OOM")
-            
+
         if any("High disk usage" in finding for finding in self.findings):
             print("• Clean up disk space and implement log rotation")
 
 if __name__ == "__main__":
     import sys
-    
+
     if len(sys.argv) != 2:
         print("Usage: python3 exit_137_analyzer.py <container_name>")
         sys.exit(1)
-    
+
     analyzer = Exit137Analyzer(sys.argv[1])
     analyzer.analyze_container()
     analyzer.check_oom_killer()
@@ -528,11 +525,11 @@ EXITED_137=$(docker ps -a --filter "exited=137" --format "{{.Names}}" | head -5)
 if [[ -n "$EXITED_137" ]]; then
     echo "$(date): Found containers with Exit 137:" >> "$LOG_FILE"
     echo "$EXITED_137" >> "$LOG_FILE"
-    
+
     # 이메일 알림
     echo "Containers exited with code 137: $EXITED_137" | \
         mail -s "Docker Exit 137 Alert" "$ALERT_EMAIL"
-    
+
     # 자동 분석 실행
     for container in $EXITED_137; do
         python3 /opt/scripts/exit_137_analyzer.py "$container" >> "$LOG_FILE"

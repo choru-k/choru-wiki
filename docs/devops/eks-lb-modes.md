@@ -30,13 +30,13 @@ graph TB
         B --> E[Health Check Config]
         B --> F[Security Group Rules]
     end
-    
+
     subgraph "AWS"
         G[Network Load Balancer] --> H[Target Groups]
         I[Application Load Balancer] --> H
         H --> J[EC2 Instances / IP Targets]
     end
-    
+
     D --> H
     E --> H
     F --> G
@@ -96,7 +96,7 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 
 # Targets:
 # 10.0.1.100:3306 (proxysql-pod-1)
-# 10.0.1.101:3306 (proxysql-pod-2) 
+# 10.0.1.101:3306 (proxysql-pod-2)
 # 10.0.2.100:3306 (proxysql-pod-3)
 # 10.0.2.101:3306 (proxysql-pod-4)
 # ... (Pod 수만큼 Target 존재)
@@ -176,7 +176,7 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 
 # 문제 시나리오:
 # - Microservice Pod: 200개
-# - Port: 8080, 8443, 9090 (3개) 
+# - Port: 8080, 8443, 9090 (3개)
 # - Total Targets: 200 * 3 = 600개 ✗ (한도 초과)
 ```
 
@@ -227,7 +227,7 @@ spec:
 
 ---
 apiVersion: v1
-kind: Service  
+kind: Service
 metadata:
   name: proxysql-admin
   annotations:
@@ -245,7 +245,7 @@ spec:
 ### 장점: 확장성과 단순성
 
 ```bash
-# Instance Mode에서의 Node 경유 통신  
+# Instance Mode에서의 Node 경유 통신
 ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
 │   Client    │───▶│     NLB     │───▶│  Node:30306 │───▶│ Pod IP:3306 │
 └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
@@ -271,7 +271,7 @@ KUBE-SVC-XYZ  tcp  --  anywhere  anywhere  tcp dpt:30306
 
 $ iptables -t nat -L KUBE-SVC-XYZ
 KUBE-SEP-ABC  all  --  anywhere  anywhere  statistic mode random probability 0.25000
-KUBE-SEP-DEF  all  --  anywhere  anywhere  statistic mode random probability 0.33333  
+KUBE-SEP-DEF  all  --  anywhere  anywhere  statistic mode random probability 0.33333
 KUBE-SEP-GHI  all  --  anywhere  anywhere  statistic mode random probability 0.50000
 KUBE-SEP-JKL  all  --  anywhere  anywhere
 ```
@@ -302,7 +302,7 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
 
 ---
-# 다수의 Microservice: Instance Mode  
+# 다수의 Microservice: Instance Mode
 apiVersion: v1
 kind: Service
 metadata:
@@ -345,7 +345,7 @@ groups:
     labels:
       severity: warning
 
-  - alert: NLBUnhealthyTargets  
+  - alert: NLBUnhealthyTargets
     expr: |
       aws_networkelb_un_healthy_host_count > 0
     for: 1m
@@ -407,7 +407,7 @@ spec:
 
 ```yaml
 # Database, Cache 등: NLB Service 사용
-apiVersion: v1  
+apiVersion: v1
 kind: Service
 metadata:
   name: redis-cluster
@@ -460,7 +460,7 @@ kubectl apply -f -
 # Node별 Pod 분포 확인
 kubectl get pods -o wide | awk '{print $7}' | sort | uniq -c
 
-# kube-proxy iptables 규칙 확인  
+# kube-proxy iptables 규칙 확인
 kubectl get pods -n kube-system -l k8s-app=kube-proxy
 kubectl exec -n kube-system kube-proxy-xxx -- iptables -t nat -L | grep myapp
 ```
@@ -505,7 +505,7 @@ kubectl exec -it pod-name -- curl -f http://localhost:8080/health
 # - LCU (Load Balancer Capacity Unit): $0.006/hour
 # - 새로운 연결, 활성 연결, 대역폭, 규칙 평가에 따라 LCU 계산
 
-# ALB 비용 구조  
+# ALB 비용 구조
 # - Load Balancer: $0.0225/hour (~$16.2/month)
 # - LCU: $0.008/hour (NLB보다 33% 비싸지만 HTTP 기능 풍부)
 ```
@@ -535,7 +535,7 @@ EKS LoadBalancer 모드 선택 가이드
 - **소규모 서비스**: Target 수가 500개 미만
 - **Connection Stickiness**: 클라이언트-Pod 간 고정 연결 필요
 
-### Instance Mode 사용 시기  
+### Instance Mode 사용 시기
 
 - **대규모 서비스**: Pod 수가 많고 Port가 다양한 경우
 - **Dynamic Scaling**: Pod 수가 자주 변하는 환경

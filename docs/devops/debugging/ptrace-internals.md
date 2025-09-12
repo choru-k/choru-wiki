@@ -412,6 +412,8 @@ ptrace 사용을 제어하는 주요 보안 메커니즘:
 # Yama ptrace_scope 확인
 cat /proc/sys/kernel/yama/ptrace_scope
 
+```
+
 ```text
 # 값의 의미:
 # 0: 전통적인 ptrace 동작 (제한 없음)

@@ -50,7 +50,9 @@ kubectl get endpoints myservice -w
 
 ```text
 # 예상: 즉시 Pod IP 제거
+
 # 실제: 수 초의 지연 발생 가능
+
 NAME        ENDPOINTS                           AGE
 myservice   10.0.1.100:8080,10.0.1.101:8080   5m
 myservice   10.0.1.101:8080                    5m    # 지연 후 업데이트
@@ -129,19 +131,19 @@ echo "Pod IP: $POD_IP"
 # 실시간 네트워크 연결 모니터링
 while true; do
     TIMESTAMP=$(date '+%H:%M:%S')
-    
+
     # TCP 연결 수 확인 (Pod 내부에서)
     CONN_COUNT=$(kubectl exec "$POD_NAME" -- netstat -an | grep ":8080.*ESTABLISHED" | wc -l 2>/dev/null || echo "0")
-    
+
     # 초당 요청 수 추정 (nginx access log 기준)
     if kubectl exec "$POD_NAME" -- test -f /var/log/nginx/access.log 2>/dev/null; then
         REQ_COUNT=$(kubectl exec "$POD_NAME" -- tail -100 /var/log/nginx/access.log | grep "$(date '+%d/%b/%Y:%H:%M')" | wc -l)
     else
         REQ_COUNT="N/A"
     fi
-    
+
     echo "[$TIMESTAMP] Active connections: $CONN_COUNT, Recent requests: $REQ_COUNT"
-    
+
     sleep 1
 done
 ```
@@ -167,27 +169,27 @@ spec:
               - -c
               - |
                 echo "Starting graceful shutdown..."
-                
+
                 # 1. Health check endpoint 비활성화
                 touch /app/shutdown
-                
+
                 # 2. 현재 활성 연결 확인
                 echo "Active connections:"
                 netstat -an | grep ":8080.*ESTABLISHED" | wc -l
-                
+
                 # 3. 트래픽이 완전히 멈출 때까지 대기
                 for i in $(seq 1 30); do
                     CONN=$(netstat -an | grep ":8080.*ESTABLISHED" | wc -l)
                     echo "Waiting... connections: $CONN"
-                    
+
                     if [ "$CONN" -eq "0" ]; then
                         echo "No active connections. Safe to shutdown."
                         break
                     fi
-                    
+
                     sleep 2
                 done
-                
+
                 echo "PreStop hook completed"
         readinessProbe:
           httpGet:
@@ -197,7 +199,7 @@ spec:
           periodSeconds: 5
         livenessProbe:
           httpGet:
-            path: /health  
+            path: /health
             port: 8080
           initialDelaySeconds: 30
           periodSeconds: 10
@@ -221,7 +223,7 @@ app.get('/health', (req, res) => {
     if (fs.existsSync('/app/shutdown') || isShuttingDown) {
         return res.status(503).json({ status: 'shutting down' });
     }
-    
+
     res.json({ status: 'healthy' });
 });
 
@@ -229,13 +231,13 @@ app.get('/health', (req, res) => {
 process.on('SIGTERM', () => {
     console.log('SIGTERM received, starting graceful shutdown...');
     isShuttingDown = true;
-    
+
     // 새로운 요청 차단
     server.close(() => {
         console.log('Server closed');
         process.exit(0);
     });
-    
+
     // 강제 종료 방지 (30초 타임아웃)
     setTimeout(() => {
         console.log('Force shutdown');
@@ -353,31 +355,31 @@ sleep 5
 for POD in $PODS; do
     echo
     echo "Testing graceful shutdown of pod: $POD"
-    
+
     # 삭제 전 연결 수 확인
     echo "Connections before deletion:"
     kubectl exec "$POD" -n "$NAMESPACE" -- netstat -an | grep ":8080.*ESTABLISHED" | wc -l 2>/dev/null || echo "N/A"
-    
+
     # Pod 삭제
     kubectl delete pod "$POD" -n "$NAMESPACE" &
     DELETE_PID=$!
-    
+
     # 삭제 과정 모니터링
     for i in $(seq 1 60); do
         STATUS=$(kubectl get pod "$POD" -n "$NAMESPACE" -o jsonpath='{.status.phase}' 2>/dev/null || echo "NotFound")
-        
+
         if [[ "$STATUS" == "NotFound" ]]; then
             echo "Pod $POD terminated after ${i} seconds"
             break
         fi
-        
+
         echo "[$i] Pod status: $STATUS"
         sleep 1
     done
-    
+
     # 새 Pod가 Ready 상태가 될 때까지 대기
     kubectl wait --for=condition=Ready pod -l app="$APP_NAME" -n "$NAMESPACE" --timeout=60s
-    
+
     echo "Graceful shutdown test for $POD completed"
     echo "---"
 done
@@ -403,18 +405,18 @@ echo "Monitoring graceful shutdown metrics for: $APP_NAME"
 
 while true; do
     TIMESTAMP=$(date '+%H:%M:%S')
-    
+
     # 활성 연결 수
     ACTIVE_CONN=$(curl -s "$PROMETHEUS_URL/api/v1/query?query=sum(envoy_http_downstream_cx_active{app=\"$APP_NAME\"})" | jq -r '.data.result[0].value[1] // "0"')
-    
+
     # 초당 요청 수
     RPS=$(curl -s "$PROMETHEUS_URL/api/v1/query?query=sum(rate(envoy_cluster_upstream_rq_total{app=\"$APP_NAME\"}[1m]))" | jq -r '.data.result[0].value[1] // "0"')
-    
+
     # 에러율
     ERROR_RATE=$(curl -s "$PROMETHEUS_URL/api/v1/query?query=sum(rate(envoy_cluster_upstream_rq_xx{envoy_response_code=~\"5..\",app=\"$APP_NAME\"}[1m]))" | jq -r '.data.result[0].value[1] // "0"')
-    
+
     printf "[%s] Connections: %s, RPS: %.2f, Errors/s: %.2f, " "$TIMESTAMP" "$ACTIVE_CONN" "$RPS" "$ERROR_RATE"
-    
+
     sleep 5
 done
 ```
@@ -442,7 +444,7 @@ spec:
           failureThreshold: 3
         livenessProbe:
           httpGet:
-            path: /alive     # 애플리케이션 생존 상태  
+            path: /alive     # 애플리케이션 생존 상태
             port: 8080
           initialDelaySeconds: 60
           periodSeconds: 10
@@ -522,7 +524,7 @@ groups:
 ### 2. 다층 방어 전략
 
 - **Application 레벨**: PreStop hook + Health check endpoint
-- **Service Mesh 레벨**: Connection pool + Outlier detection  
+- **Service Mesh 레벨**: Connection pool + Outlier detection
 - **Load Balancer 레벨**: Connection draining + 빠른 health check
 
 ### 3. 실시간 검증

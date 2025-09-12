@@ -71,6 +71,8 @@ ELF Structure:
 # Python 확장 모듈의 심볼 확인
 nm -D /opt/python/lib/python3.9/site-packages/numpy/core/_multiarray_umath.cpython-39-x86_64-linux-gnu.so
 
+```
+
 ```text
 # 출력 예시:
                  U __cxa_finalize@GLIBC_2.2.5
@@ -95,6 +97,7 @@ nm -D /opt/python/lib/python3.9/site-packages/numpy/core/_multiarray_umath.cpyth
 ```bash
 # Python C API 함수 사용 현황
 nm -D mymodule.so | grep -E "^[[:space:]]*U.*Py" | sort
+```
 
 ```text
 # 출력 예시:
@@ -112,6 +115,8 @@ nm -D mymodule.so | grep -E "^[[:space:]]*U.*Py" | sort
 # GLIBC 버전 의존성 확인
 nm -D mymodule.so | grep GLIBC | awk -F'@' '{print $2}' | sort -V | uniq
 
+```
+
 ```text
 # 출력:
 GLIBC_2.2.5
@@ -119,9 +124,10 @@ GLIBC_2.3.4
 GLIBC_2.14
 ```
 
+```bash
 # 수학 라이브러리 의존성
-
 nm -D mymodule.so | grep -E "(sin|cos|exp|log)"
+```
 
 ## 정의된 함수 목록 (API 분석)
 
@@ -205,13 +211,14 @@ nm -D "$MODULE_SO" | grep GLIBC | awk -F'@' '{print $2}' | sort -V | uniq | sed 
 3. Exported Functions:
   PyInit__multiarray_umath
   array_function_dispatch
-  
+
 4. Python C API Usage:
   Uses 127 Python C API functions
 
 5. GLIBC Version Requirements:
   GLIBC_2.2.5
   GLIBC_2.14
+
 ```
 
 ## Production 문제 해결 시나리오
@@ -221,7 +228,7 @@ nm -D "$MODULE_SO" | grep GLIBC | awk -F'@' '{print $2}' | sort -V | uniq | sed 
 ```python
 # 에러 발생
 >>> import mypackage
-ImportError: /opt/python/lib/python3.9/site-packages/mypackage/core.cpython-39-x86_64-linux-gnu.so: 
+ImportError: /opt/python/lib/python3.9/site-packages/mypackage/core.cpython-39-x86_64-linux-gnu.so:
 undefined symbol: _ZN4BLAS4gemm...
 ```
 
@@ -313,24 +320,24 @@ import importlib.util
 
 def check_native_dependencies(module_path):
     """SO 파일의 의존성을 검증"""
-    result = subprocess.run(['ldd', module_path], 
+    result = subprocess.run(['ldd', module_path],
                           capture_output=True, text=True)
-    
+
     if result.returncode != 0:
         print(f"❌ ldd failed for {module_path}")
         return False
-        
+
     missing_deps = []
     for line in result.stdout.split(', '):
         if 'not found' in line:
             missing_deps.append(line.strip())
-    
+
     if missing_deps:
         print(f"❌ Missing dependencies in {module_path}:")
         for dep in missing_deps:
             print(f"   {dep}")
         return False
-    
+
     print(f"✅ All dependencies satisfied for {module_path}")
     return True
 
@@ -340,33 +347,33 @@ def validate_python_module(module_name):
         # 모듈 임포트 시도
         module = importlib.import_module(module_name)
         print(f"✅ Successfully imported {module_name}")
-        
+
         # 모듈 경로에서 SO 파일 찾기
         module_dir = os.path.dirname(module.__file__)
         so_files = []
-        
+
         for root, dirs, files in os.walk(module_dir):
             for file in files:
                 if file.endswith('.so'):
                     so_files.append(os.path.join(root, file))
-        
+
         # 각 SO 파일의 의존성 검증
         all_valid = True
         for so_file in so_files:
             if not check_native_dependencies(so_file):
                 all_valid = False
-        
+
         return all_valid
-        
+
     except ImportError as e:
         print(f"❌ Failed to import {module_name}: {e}")
         return False
 
 if __name__ == "__main__":
     modules_to_check = ['numpy', 'scipy', 'pandas', 'tensorflow', 'torch']
-    
+
     print("=== Python Native Dependency Validation ===")
-    
+
     for module in modules_to_check:
         print(f"Checking {module}...")
         validate_python_module(module)
@@ -413,23 +420,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Build wheel
       run: |
         pip install build
         python -m build --wheel
-    
+
     - name: Extract and analyze SO files
       run: |
         wheel_file=$(ls dist/*.whl | head -n1)
         unzip "$wheel_file" -d extracted/
-        
+
         find extracted/ -name "*.so" | while read so_file; do
           echo "Analyzing: $so_file"
           nm -D "$so_file" | grep GLIBC | awk -F'@' '{print $2}' | sort -V | uniq
           ldd "$so_file" | grep "not found" && exit 1 || true
         done
-    
+
     - name: Test import
       run: |
         pip install dist/*.whl

@@ -54,13 +54,13 @@ graph TB
     subgraph "Original Pod"
         A[nginx container]
     end
-    
+
     subgraph "Istio-injected Pod"
         B[istio-init] --> C[nginx container]
         C -.-> D[istio-proxy]
         D --> C
     end
-    
+
     B --> E[iptables rules setup]
     E --> F[Traffic redirection to Envoy]
 ```
@@ -79,7 +79,7 @@ initContainers:
   - istio-iptables
   - -p
   - "15001"    # Envoy outbound port
-  - -z  
+  - -z
   - "15006"    # Envoy inbound port
   - -u
   - "1337"     # Envoy user ID (bypass proxy)
@@ -209,7 +209,7 @@ struct sockaddr_in original_dest;
 socklen_t socklen = sizeof(original_dest);
 
 // SO_ORIGINAL_DST로 원본 주소 획득
-if (getsockopt(fd, SOL_IP, SO_ORIGINAL_DST, 
+if (getsockopt(fd, SOL_IP, SO_ORIGINAL_DST,
                &original_dest, &socklen) == 0) {
     // 원본 목적지: 10.96.0.1:80
     // 현재 수신: 15006
@@ -456,14 +456,14 @@ kubectl exec -it client-pod -- \
 curl-format.txt:
 
 ```text
-     time_namelookup:  %{time_namelookup}, 
-        time_connect:  %{time_connect}, 
-     time_appconnect:  %{time_appconnect}, 
-    time_pretransfer:  %{time_pretransfer}, 
-       time_redirect:  %{time_redirect}, 
-  time_starttransfer:  %{time_starttransfer}, 
-                     ----------, 
-          time_total:  %{time_total}, 
+     time_namelookup:  %{time_namelookup},
+        time_connect:  %{time_connect},
+     time_appconnect:  %{time_appconnect},
+    time_pretransfer:  %{time_pretransfer},
+       time_redirect:  %{time_redirect},
+  time_starttransfer:  %{time_starttransfer},
+                     ----------,
+          time_total:  %{time_total},
 ```
 
 ## 정리
