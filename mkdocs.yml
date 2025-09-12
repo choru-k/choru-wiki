@@ -273,7 +273,13 @@ nav:
               - "11-3: Memory Optimization": cs/guide/chapter-11-performance-optimization/03-memory-optimization.md
               - "11-4: I/O Optimization": cs/guide/chapter-11-performance-optimization/04-io-optimization.md
               - "11-5: System Tuning": cs/guide/chapter-11-performance-optimization/05-system-tuning.md
-          - "Chapter 12: Observability & Debugging": cs/guide/chapter-12-observability-debugging.md
+          - "Chapter 12: Container & Kubernetes":
+              - "Overview": cs/guide/chapter-12-container-kubernetes/index.md
+              - "12-1: Container Internals": cs/guide/chapter-12-container-kubernetes/01-container-internals.md
+              - "12-2: Docker Orchestration": cs/guide/chapter-12-container-kubernetes/02-docker-orchestration.md
+              - "12-3: Kubernetes Fundamentals": cs/guide/chapter-12-container-kubernetes/03-kubernetes-fundamentals.md
+              - "12-4: Kubernetes Advanced": cs/guide/chapter-12-container-kubernetes/04-kubernetes-advanced.md
+              - "12-5: Kubernetes Operations": cs/guide/chapter-12-container-kubernetes/05-kubernetes-operations.md
           - "Chapter 13: Distributed Systems": cs/guide/chapter-13-distributed-systems.md
           - "Chapter 14: Security Engineering":
               - "Overview": cs/guide/chapter-14-security-engineering/index.md
