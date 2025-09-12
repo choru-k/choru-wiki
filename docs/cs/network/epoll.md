@@ -27,16 +27,16 @@ int main() {
     fd_set readfds;
     int max_fd = 0;
     struct timeval timeout = {1, 0};  // 1초 timeout
-    
+
     // 매번 fd_set을 초기화해야 함
     FD_ZERO(&readfds);
     FD_SET(STDIN_FILENO, &readfds);
     FD_SET(sockfd, &readfds);
     max_fd = (sockfd > STDIN_FILENO) ? sockfd : STDIN_FILENO;
-    
+
     // O(n) 스캔 필요
     int ready = select(max_fd + 1, &readfds, NULL, NULL, &timeout);
-    
+
     if (ready > 0) {
         // 모든 fd를 체크해야 함 - O(n) 복잡도
         for (int i = 0; i <= max_fd; i++) {
@@ -64,16 +64,16 @@ int main() {
 int main() {
     struct pollfd fds[MAX_CONNECTIONS];
     int nfds = 0;
-    
+
     // 초기 설정
     fds[0].fd = server_sock;
     fds[0].events = POLLIN;
     nfds = 1;
-    
+
     while (1) {
         // 여전히 O(n) 스캔
         int ready = poll(fds, nfds, 1000);  // 1초 timeout
-        
+
         if (ready > 0) {
             // 모든 pollfd 확인 필요
             for (int i = 0; i < nfds; i++) {
@@ -118,7 +118,7 @@ int epoll_create1(int flags);
 int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
 
 // 3. 이벤트 대기
-int epoll_wait(int epfd, struct epoll_event *events, 
+int epoll_wait(int epfd, struct epoll_event *events,
                int maxevents, int timeout);
 ```
 
@@ -152,76 +152,76 @@ int main() {
         perror("socket");
         exit(1);
     }
-    
+
     // SO_REUSEADDR 설정
     int reuse = 1;
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-    
+
     // 논블로킹 설정
     set_nonblocking(server_fd);
-    
+
     // 바인드 및 리슨
     struct sockaddr_in addr = {0};
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(PORT);
-    
+
     if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
         perror("bind");
         exit(1);
     }
-    
+
     if (listen(server_fd, SOMAXCONN) == -1) {
         perror("listen");
         exit(1);
     }
-    
+
     // 2. epoll 인스턴스 생성
     int epfd = epoll_create1(EPOLL_CLOEXEC);
     if (epfd == -1) {
         perror("epoll_create1");
         exit(1);
     }
-    
+
     // 3. 서버 소켓을 epoll에 추가 (Level-triggered)
     struct epoll_event event;
     event.events = EPOLLIN;  // 읽기 이벤트
     event.data.fd = server_fd;
-    
+
     if (epoll_ctl(epfd, EPOLL_CTL_ADD, server_fd, &event) == -1) {
         perror("epoll_ctl: server_fd");
         exit(1);
     }
-    
-    printf("Server listening on port %d\n", PORT);
-    
+
+    printf("Server listening on port %d, ", PORT);
+
     // 4. 이벤트 루프
     struct epoll_event events[MAX_EVENTS];
-    
+
     while (1) {
         // 이벤트 대기 - O(1) 복잡도!
         int nready = epoll_wait(epfd, events, MAX_EVENTS, -1);
-        
+
         if (nready == -1) {
             if (errno == EINTR) continue;  // 시그널 인터럽트
             perror("epoll_wait");
             break;
         }
-        
+
         // 준비된 이벤트만 처리 - O(k) 복잡도 (k = ready events)
         for (int i = 0; i < nready; i++) {
             int fd = events[i].data.fd;
-            
+
             if (fd == server_fd) {
                 // 새 연결 수락
                 while (1) {
                     struct sockaddr_in client_addr;
                     socklen_t client_len = sizeof(client_addr);
-                    
-                    int client_fd = accept(server_fd, 
-                                          (struct sockaddr*)&client_addr, 
+
+                    int client_fd = accept(server_fd,
+                                          (struct sockaddr*)&client_addr,
                                           &client_len);
-                    
+
                     if (client_fd == -1) {
                         if (errno == EAGAIN || errno == EWOULDBLOCK) {
                             // 더 이상 대기 중인 연결 없음
@@ -230,30 +230,30 @@ int main() {
                         perror("accept");
                         break;
                     }
-                    
+
                     // 클라이언트 소켓을 논블로킹으로 설정
                     set_nonblocking(client_fd);
-                    
+
                     // epoll에 추가
                     event.events = EPOLLIN | EPOLLET;  // Edge-triggered
                     event.data.fd = client_fd;
-                    
+
                     if (epoll_ctl(epfd, EPOLL_CTL_ADD, client_fd, &event) == -1) {
                         perror("epoll_ctl: client_fd");
                         close(client_fd);
                         continue;
                     }
-                    
-                    printf("New client connected: fd=%d\n", client_fd);
+
+                    printf("New client connected: fd=%d, ", client_fd);
                 }
             } else {
                 // 클라이언트 데이터 처리
                 if (events[i].events & EPOLLIN) {
                     char buffer[8192];
-                    
+
                     while (1) {
                         ssize_t bytes = read(fd, buffer, sizeof(buffer));
-                        
+
                         if (bytes == -1) {
                             if (errno == EAGAIN || errno == EWOULDBLOCK) {
                                 // 더 이상 읽을 데이터 없음 (Edge-triggered)
@@ -264,24 +264,24 @@ int main() {
                             goto close_client;
                         } else if (bytes == 0) {
                             // 클라이언트 연결 종료
-                            printf("Client disconnected: fd=%d\n", fd);
+                            printf("Client disconnected: fd=%d, ", fd);
                             goto close_client;
                         }
-                        
+
                         // Echo back (간단한 예제)
                         write(fd, buffer, bytes);
                     }
                 } else if (events[i].events & (EPOLLHUP | EPOLLERR)) {
                     // 연결 오류 또는 종료
                     close_client:
-                    printf("Closing client: fd=%d\n", fd);
+                    printf("Closing client: fd=%d, ", fd);
                     epoll_ctl(epfd, EPOLL_CTL_DEL, fd, NULL);
                     close(fd);
                 }
             }
         }
     }
-    
+
     close(epfd);
     close(server_fd);
     return 0;
@@ -299,12 +299,12 @@ event.events = EPOLLIN;  // LT 모드 (기본값)
 // 데이터가 있는 한 계속 이벤트 발생
 while (1) {
     int nready = epoll_wait(epfd, events, MAX_EVENTS, -1);
-    
+
     for (int i = 0; i < nready; i++) {
         if (events[i].events & EPOLLIN) {
             char buf[1024];
             int bytes = read(events[i].data.fd, buf, 1024);
-            
+
             if (bytes > 0) {
                 // 만약 더 많은 데이터가 남아있다면
                 // 다음 epoll_wait에서도 이벤트 발생
@@ -331,14 +331,14 @@ set_nonblocking(client_fd);
 
 while (1) {
     int nready = epoll_wait(epfd, events, MAX_EVENTS, -1);
-    
+
     for (int i = 0; i < nready; i++) {
         if (events[i].events & EPOLLIN) {
             // ET 모드에서는 한 번의 이벤트로 모든 데이터 읽어야 함
             while (1) {
                 char buf[8192];
                 int bytes = read(events[i].data.fd, buf, sizeof(buf));
-                
+
                 if (bytes == -1) {
                     if (errno == EAGAIN || errno == EWOULDBLOCK) {
                         // 모든 데이터를 읽었음
@@ -350,7 +350,7 @@ while (1) {
                     // 연결 종료
                     break;
                 }
-                
+
                 // 데이터 처리
                 process_data(buf, bytes);
             }
@@ -393,34 +393,34 @@ struct epitem {
 
 ### 성능 최적화 메커니즘
 
-```
+```text
 epoll 아키텍처:
 
                     User Space                    |        Kernel Space
-                                                 |
-    ┌─────────────────────┐                     |    ┌─────────────────────┐
-    │  epoll_wait()       │                     |    │   eventpoll         │
-    │                     │                     |    │                     │
-    │  ready_events[]     │ ←─── copy_to_user ─────  │  ┌─────────────────┐ │
-    └─────────────────────┘                     |    │  │   Ready List    │ │
-                                                 |    │  │  (linked list)  │ │
-    ┌─────────────────────┐                     |    │  └─────────────────┘ │
-    │  epoll_ctl()        │                     |    │                     │
-    │  - ADD/MOD/DEL      │ ──── system call ──────► │  ┌─────────────────┐ │
-    └─────────────────────┘                     |    │  │  Red-Black Tree │ │
-                                                 |    │  │  (all watched   │ │
-                                                 |    │  │   file desc.)   │ │
-                                                 |    │  └─────────────────┘ │
-                                                 |    └─────────────────────┘
-                                                 |              │
-                                                 |              │ callback
-                                                 |              ▼
-                                                 |    ┌─────────────────────┐
-                                                 |    │  Network/File I/O   │
-                                                 |    │  Subsystem          │
-                                                 |    │                     │
-                                                 |    │  ep_poll_callback() │
-                                                 |    └─────────────────────┘
+                                                  |
+    ┌─────────────────────┐                       |    ┌─────────────────────┐
+    │  epoll_wait()       │                       |    │   eventpoll         │
+    │                     │                       |    │                     │
+    │  ready_events[]     │ ←─── copy_to_user ─────    │  ┌─────────────────┐│
+    └─────────────────────┘                       |    │  │   Ready List    ││
+                                                  |    │  │  (linked list)  ││
+    ┌─────────────────────┐                       |    │  └─────────────────┘│
+    │  epoll_ctl()        │                       |    │                     │
+    │  - ADD/MOD/DEL      │ ──── system call ──────►   │  ┌─────────────────┐│
+    └─────────────────────┘                       |    │  │  Red-Black Tree ││
+                                                  |    │  │  (all watched   ││
+                                                  |    │  │   file desc.)   ││
+                                                  |    │  └─────────────────┘│
+                                                  |    └─────────────────────┘
+                                                  |              │
+                                                  |              │ callback
+                                                  |              ▼
+                                                  |    ┌─────────────────────┐
+                                                  |    │  Network/File I/O   │
+                                                  |    │  Subsystem          │
+                                                  |    │                     │
+                                                  |    │  ep_poll_callback() │
+                                                  |    └─────────────────────┘
 ```
 
 ### 콜백 기반 이벤트 처리
@@ -431,16 +431,16 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode,
                            int sync, void *key) {
     struct epitem *epi = ep_item_from_wait(wait);
     struct eventpoll *ep = epi->ep;
-    
+
     // Ready List에 추가 (중복 확인)
     if (!ep_is_linked(&epi->rdllink)) {
         list_add_tail(&epi->rdllink, &ep->rdllist);
     }
-    
+
     // 대기 중인 epoll_wait 깨우기
     if (waitqueue_active(&ep->wq))
         wake_up_locked(&ep->wq);
-        
+
     return 1;
 }
 ```
@@ -457,13 +457,13 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode,
 double measure_time(void (*func)(), int iterations) {
     struct timespec start, end;
     clock_gettime(CLOCK_MONOTONIC, &start);
-    
+
     for (int i = 0; i < iterations; i++) {
         func();
     }
-    
+
     clock_gettime(CLOCK_MONOTONIC, &end);
-    return (end.tv_sec - start.tv_sec) + 
+    return (end.tv_sec - start.tv_sec) +
            (end.tv_nsec - start.tv_nsec) / 1e9;
 }
 
@@ -471,14 +471,14 @@ double measure_time(void (*func)(), int iterations) {
 void test_select_server() {
     fd_set readfds, masterfds;
     int maxfd = 0;
-    
+
     FD_ZERO(&masterfds);
     // 1000개 소켓 설정...
-    
+
     while (test_running) {
         readfds = masterfds;
         select(maxfd + 1, &readfds, NULL, NULL, NULL);
-        
+
         // O(n) 스캔
         for (int i = 0; i <= maxfd; i++) {
             if (FD_ISSET(i, &readfds)) {
@@ -492,12 +492,12 @@ void test_select_server() {
 void test_epoll_server() {
     int epfd = epoll_create1(EPOLL_CLOEXEC);
     struct epoll_event events[1000];
-    
+
     // 1000개 소켓을 epoll에 추가...
-    
+
     while (test_running) {
         int nready = epoll_wait(epfd, events, 1000, -1);
-        
+
         // O(k) 처리 (k = ready events)
         for (int i = 0; i < nready; i++) {
             handle_fd(events[i].data.fd);
@@ -516,7 +516,7 @@ Connection Count: 1000
 Active Connections: 100 (10%)
 
 select():  avg 15.2ms, 99th 45ms
-poll():    avg 12.8ms, 99th 38ms  
+poll():    avg 12.8ms, 99th 38ms
 epoll():   avg  0.8ms, 99th  2ms
 
 Connection Count: 10000
@@ -541,16 +541,16 @@ epoll():   avg  8.5ms, 99th  25ms
 void analyze_memory_usage(int num_connections) {
     // select: O(n) 메모리, 매번 복사
     size_t select_memory = sizeof(fd_set) * 3;  // read, write, except
-    printf("select memory: %zu bytes\n", select_memory);
-    
+    printf("select memory: %zu bytes, ", select_memory);
+
     // poll: O(n) 메모리, 매번 복사
     size_t poll_memory = sizeof(struct pollfd) * num_connections;
-    printf("poll memory: %zu bytes\n", poll_memory);
-    
+    printf("poll memory: %zu bytes, ", poll_memory);
+
     // epoll: O(1) 메모리, 커널에서 관리
     size_t epoll_memory = sizeof(struct epoll_event) * num_connections;
-    printf("epoll user memory: %zu bytes\n", epoll_memory);
-    
+    printf("epoll user memory: %zu bytes, ", epoll_memory);
+
     // 결과:
     // 10,000 connections:
     // select: 384 bytes (but limited to 1024 fds)
@@ -677,7 +677,7 @@ static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
     // epoll_wait 호출
     retval = epoll_wait(state->epfd, state->events, eventLoop->setsize,
                        tvp ? (tvp->tv_sec*1000 + tvp->tv_usec/1000) : -1);
-    
+
     if (retval > 0) {
         numevents = retval;
         for (int j = 0; j < numevents; j++) {
@@ -727,12 +727,12 @@ if (ev & EPOLLERR) {
     int error;
     socklen_t len = sizeof(error);
     getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len);
-    printf("Socket error: %s\n", strerror(error));
+    printf("Socket error: %s, ", strerror(error));
     goto close_connection;
 }
 
 if (ev & EPOLLHUP) {
-    printf("Connection hung up\n");
+    printf("Connection hung up, ");
     goto close_connection;
 }
 
@@ -764,7 +764,7 @@ if (events[i].events & EPOLLIN) {
     while (1) {
         char buf[8192];
         ssize_t n = read(fd, buf, sizeof(buf));
-        
+
         if (n > 0) {
             // 데이터 처리
             process_data(buf, n);
@@ -791,10 +791,10 @@ if (events[i].events & EPOLLIN) {
 // 논블로킹 쓰기 처리
 int handle_write(int fd, const char *data, size_t len) {
     size_t total_sent = 0;
-    
+
     while (total_sent < len) {
         ssize_t sent = write(fd, data + total_sent, len - total_sent);
-        
+
         if (sent > 0) {
             total_sent += sent;
         } else if (sent == -1) {
@@ -804,7 +804,7 @@ int handle_write(int fd, const char *data, size_t len) {
                 ev.events = EPOLLIN | EPOLLOUT | EPOLLET;
                 ev.data.fd = fd;
                 epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &ev);
-                
+
                 // 나머지 데이터를 연결별 버퍼에 저장
                 save_pending_data(fd, data + total_sent, len - total_sent);
                 return 0;  // 부분 전송 완료
@@ -813,7 +813,7 @@ int handle_write(int fd, const char *data, size_t len) {
             }
         }
     }
-    
+
     return total_sent;  // 전체 전송 완료
 }
 ```
@@ -890,14 +890,14 @@ struct epoll_stats {
 void profile_epoll_performance() {
     struct epoll_stats stats = {0};
     struct timespec start, end;
-    
+
     while (running) {
         clock_gettime(CLOCK_MONOTONIC, &start);
-        
+
         int nready = epoll_wait(epfd, events, MAX_EVENTS, 1000);
-        
+
         clock_gettime(CLOCK_MONOTONIC, &end);
-        
+
         // 통계 수집
         if (nready > 0) {
             stats.total_events += nready;
@@ -907,15 +907,15 @@ void profile_epoll_performance() {
         } else if (nready == 0) {
             stats.empty_polls++;
         }
-        
+
         // 시간 누적
         stats.total_wait_time.tv_sec += (end.tv_sec - start.tv_sec);
         stats.total_wait_time.tv_nsec += (end.tv_nsec - start.tv_nsec);
-        
+
         // 주기적 리포트
         static int poll_count = 0;
         if (++poll_count % 10000 == 0) {
-            printf("Avg events/poll: %.2f, Max: %lu, Empty polls: %.2f%%\n",
+            printf("Avg events/poll: %.2f, Max: %lu, Empty polls: %.2f%%, ",
                    (double)stats.total_events / poll_count,
                    stats.max_ready_events,
                    (double)stats.empty_polls * 100 / poll_count);
@@ -972,11 +972,11 @@ void on_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf) {
         uv_write(req, stream, &wrbuf, 1, NULL);
     } else if (nread < 0) {
         if (nread != UV_EOF) {
-            fprintf(stderr, "Read error: %s\n", uv_strerror(nread));
+            fprintf(stderr, "Read error: %s, ", uv_strerror(nread));
         }
         uv_close((uv_handle_t*)stream, NULL);
     }
-    
+
     if (buf->base) {
         free(buf->base);
     }
@@ -989,13 +989,13 @@ void alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf) {
 
 void on_connection(uv_stream_t *server, int status) {
     if (status < 0) {
-        fprintf(stderr, "Connection error: %s\n", uv_strerror(status));
+        fprintf(stderr, "Connection error: %s, ", uv_strerror(status));
         return;
     }
 
     uv_tcp_t *client = malloc(sizeof(uv_tcp_t));
     uv_tcp_init(uv_default_loop(), client);
-    
+
     if (uv_accept(server, (uv_stream_t*)client) == 0) {
         uv_read_start((uv_stream_t*)client, alloc_buffer, on_read);
     } else {
@@ -1006,17 +1006,17 @@ void on_connection(uv_stream_t *server, int status) {
 int main() {
     uv_tcp_t server;
     uv_tcp_init(uv_default_loop(), &server);
-    
+
     struct sockaddr_in addr;
     uv_ip4_addr("0.0.0.0", 8080, &addr);
     uv_tcp_bind(&server, (const struct sockaddr*)&addr, 0);
-    
+
     int r = uv_listen((uv_stream_t*)&server, 128, on_connection);
     if (r) {
-        fprintf(stderr, "Listen error: %s\n", uv_strerror(r));
+        fprintf(stderr, "Listen error: %s, ", uv_strerror(r));
         return 1;
     }
-    
+
     // 이벤트 루프 실행 (내부적으로 epoll 사용)
     return uv_run(uv_default_loop(), UV_RUN_DEFAULT);
 }
@@ -1031,7 +1031,7 @@ int main() {
 int setup_io_uring(struct io_uring *ring) {
     struct io_uring_params params;
     memset(&params, 0, sizeof(params));
-    
+
     // SQ/CQ 크기 설정
     return io_uring_queue_init_params(4096, ring, &params);
 }
@@ -1040,18 +1040,18 @@ void handle_cqe(struct io_uring *ring) {
     struct io_uring_cqe *cqe;
     unsigned head;
     int count = 0;
-    
+
     // Completion Queue에서 이벤트 처리
     io_uring_for_each_cqe(ring, head, cqe) {
         // 완료된 I/O 작업 처리
         if (cqe->res < 0) {
-            fprintf(stderr, "I/O error: %s\n", strerror(-cqe->res));
+            fprintf(stderr, "I/O error: %s, ", strerror(-cqe->res));
         } else {
-            printf("I/O completed: %d bytes\n", cqe->res);
+            printf("I/O completed: %d bytes, ", cqe->res);
         }
         count++;
     }
-    
+
     io_uring_cq_advance(ring, count);
 }
 
@@ -1077,20 +1077,20 @@ typedef struct http_request {
 void handle_http_request(int fd) {
     char buffer[8192];
     ssize_t bytes = read(fd, buffer, sizeof(buffer) - 1);
-    
+
     if (bytes <= 0) return;
-    
+
     buffer[bytes] = '\0';
-    
+
     // 간단한 HTTP 응답
-    const char *response = 
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/plain\r\n"
-        "Content-Length: 13\r\n"
-        "Connection: close\r\n"
-        "\r\n"
+    const char *response =
+        "HTTP/1.1 200 OK\r, "
+        "Content-Type: text/plain\r, "
+        "Content-Length: 13\r, "
+        "Connection: close\r, "
+        "\r, "
         "Hello, World!";
-    
+
     write(fd, response, strlen(response));
 }
 
@@ -1098,14 +1098,14 @@ void handle_http_request(int fd) {
 void handle_websocket_frame(int fd, const char *data, size_t len) {
     // WebSocket 프레임 파싱
     if (len < 2) return;
-    
+
     uint8_t fin = (data[0] & 0x80) >> 7;
     uint8_t opcode = data[0] & 0x0F;
     uint8_t masked = (data[1] & 0x80) >> 7;
     uint8_t payload_len = data[1] & 0x7F;
-    
+
     size_t offset = 2;
-    
+
     if (payload_len == 126) {
         payload_len = (data[2] << 8) | data[3];
         offset = 4;
@@ -1113,18 +1113,18 @@ void handle_websocket_frame(int fd, const char *data, size_t len) {
         // 64-bit length handling
         offset = 10;
     }
-    
+
     if (masked) {
         // 마스크 해제
-        uint8_t mask[4] = {data[offset], data[offset+1], 
+        uint8_t mask[4] = {data[offset], data[offset+1],
                           data[offset+2], data[offset+3]};
         offset += 4;
-        
+
         for (size_t i = 0; i < payload_len; i++) {
             ((char*)data)[offset + i] ^= mask[i % 4];
         }
     }
-    
+
     // 메시지 처리 및 브로드캐스트
     broadcast_to_all_clients(data + offset, payload_len);
 }
@@ -1159,15 +1159,15 @@ backend_t* select_backend() {
     return backend;
 }
 
-void handle_proxy_data(int epfd, proxy_connection_t *conn, 
-                      int source_fd, int dest_fd, 
+void handle_proxy_data(int epfd, proxy_connection_t *conn,
+                      int source_fd, int dest_fd,
                       char *buffer, size_t *buffer_len) {
     while (1) {
         ssize_t bytes = read(source_fd, buffer, 8192 - *buffer_len);
-        
+
         if (bytes > 0) {
             *buffer_len += bytes;
-            
+
             // 목적지로 데이터 전송
             ssize_t sent = write(dest_fd, buffer, *buffer_len);
             if (sent > 0) {

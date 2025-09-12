@@ -91,7 +91,7 @@ void coroutine_function(void* arg) {
     // 어느 지점에서든 yield 가능
     co_yield();  // 전체 스택이 보존됨
     
-    printf("local_var is still %d\n", local_var);  // 42 출력
+    printf("local_var is still %d, ", local_var);  // 42 출력
 }
 
 void deep_function_call() {
@@ -321,7 +321,7 @@ auto operator co_await(std::future<T>& fut) {
 }
 
 task<void> async_workflow() {
-    std::cout << "Starting async workflow\n";
+    std::cout << "Starting async workflow, ";
     
     // 비동기 작업들을 병렬로 시작
     auto fut1 = std::async(std::launch::async, []() {
@@ -342,7 +342,7 @@ task<void> async_workflow() {
     std::string result2 = co_await fut2;
     std::cout << "Second result: " << result2 << std::endl;
     
-    std::cout << "Workflow completed\n";
+    std::cout << "Workflow completed, ";
 }
 ```
 
@@ -574,8 +574,8 @@ func demonstrateGoroutineScheduling() {
     numCPU := runtime.NumCPU()
     runtime.GOMAXPROCS(numCPU)
     
-    fmt.Printf("Number of CPUs: %d\n", numCPU)
-    fmt.Printf("Number of goroutines before: %d\n", runtime.NumGoroutine())
+    fmt.Printf("Number of CPUs: %d, ", numCPU)
+    fmt.Printf("Number of goroutines before: %d, ", runtime.NumGoroutine())
     
     var wg sync.WaitGroup
     
@@ -591,17 +591,17 @@ func demonstrateGoroutineScheduling() {
                 sum += j
             }
             
-            fmt.Printf("Goroutine %d finished with sum: %d\n", id, sum)
+            fmt.Printf("Goroutine %d finished with sum: %d, ", id, sum)
         }(i)
     }
     
-    fmt.Printf("Number of goroutines after creation: %d\n", runtime.NumGoroutine())
+    fmt.Printf("Number of goroutines after creation: %d, ", runtime.NumGoroutine())
     wg.Wait()
     
     // 가비지 컬렉터 실행 후 고루틴 수 확인
     runtime.GC()
     time.Sleep(100 * time.Millisecond)
-    fmt.Printf("Number of goroutines after completion: %d\n", runtime.NumGoroutine())
+    fmt.Printf("Number of goroutines after completion: %d, ", runtime.NumGoroutine())
 }
 ```
 
@@ -638,7 +638,7 @@ func producerConsumerExample() {
                 // 가끔 블로킹 I/O 시뮬레이션
                 if job%50 == 0 {
                     time.Sleep(10 * time.Millisecond)
-                    fmt.Printf("Worker %d processed job %d\n", workerID, job)
+                    fmt.Printf("Worker %d processed job %d, ", workerID, job)
                 }
             }
         }(w)
@@ -658,7 +658,7 @@ func producerConsumerExample() {
         count++
     }
     
-    fmt.Printf("Processed %d jobs with total sum: %d\n", count, sum)
+    fmt.Printf("Processed %d jobs with total sum: %d, ", count, sum)
 }
 
 // Select문을 이용한 다중 채널 처리
@@ -681,9 +681,9 @@ func selectExample() {
     for i := 0; i < 2; i++ {
         select {
         case msg1 := <-ch1:
-            fmt.Printf("Received: %s\n", msg1)
+            fmt.Printf("Received: %s, ", msg1)
         case msg2 := <-ch2:
-            fmt.Printf("Received: %s\n", msg2)
+            fmt.Printf("Received: %s, ", msg2)
         case <-timeout:
             fmt.Println("Timeout occurred")
             return
@@ -695,10 +695,10 @@ func main() {
     fmt.Println("=== Goroutine Scheduling Demo ===")
     demonstrateGoroutineScheduling()
     
-    fmt.Println("\n=== Producer-Consumer Demo ===")
+    fmt.Println(", === Producer-Consumer Demo ===")
     producerConsumerExample()
     
-    fmt.Println("\n=== Select Statement Demo ===")
+    fmt.Println(", === Select Statement Demo ===")
     selectExample()
 }
 ```
@@ -759,7 +759,7 @@ func (wp *WorkerPool) worker(id int) {
         case job := <-wp.jobQueue:
             // Rate limiting 적용
             if err := wp.limiter.Wait(wp.ctx); err != nil {
-                fmt.Printf("Worker %d: Rate limiter error: %v\n", id, err)
+                fmt.Printf("Worker %d: Rate limiter error: %v, ", id, err)
                 return
             }
             
@@ -767,11 +767,11 @@ func (wp *WorkerPool) worker(id int) {
             result := job.ProcessFunc(job.Data)
             duration := time.Since(start)
             
-            fmt.Printf("Worker %d processed job %d: %s (took %v)\n", 
+            fmt.Printf("Worker %d processed job %d: %s (took %v), ", 
                 id, job.ID, result, duration)
                 
         case <-wp.ctx.Done():
-            fmt.Printf("Worker %d shutting down\n", id)
+            fmt.Printf("Worker %d shutting down, ", id)
             return
         }
     }
@@ -817,7 +817,7 @@ func main() {
             }
             
             if err := pool.Submit(job); err != nil {
-                fmt.Printf("Failed to submit job %d: %v\n", i, err)
+                fmt.Printf("Failed to submit job %d: %v, ", i, err)
                 time.Sleep(100 * time.Millisecond) // 백오프
             }
         }
@@ -1282,9 +1282,9 @@ func benchmarkConcurrency() {
     wg.Wait()
     threadPoolDuration := time.Since(start)
     
-    fmt.Printf("Goroutines: %v\n", goroutineDuration)
-    fmt.Printf("Thread Pool: %v\n", threadPoolDuration)
-    fmt.Printf("Goroutines are %.2fx faster\n", 
+    fmt.Printf("Goroutines: %v, ", goroutineDuration)
+    fmt.Printf("Thread Pool: %v, ", threadPoolDuration)
+    fmt.Printf("Goroutines are %.2fx faster, ", 
         float64(threadPoolDuration)/float64(goroutineDuration))
 }
 ```
@@ -1367,7 +1367,7 @@ async def run_benchmarks():
     print(f"Sequential: {seq_duration:.2f}s, {seq_results} requests")
     print(f"Sequential RPS: {num_requests/seq_duration:.1f}")
     
-    print(f"\nAsync is {seq_duration/async_duration:.1f}x faster than sequential")
+    print(f", Async is {seq_duration/async_duration:.1f}x faster than sequential")
     print(f"Async is {thread_duration/async_duration:.1f}x faster than threads")
 
 if __name__ == "__main__":
@@ -1691,7 +1691,7 @@ class AsyncDataPipeline:
         """배치 단위로 출력 파일에 쓰기"""
         async with aiofiles.open(output_file, 'a') as file:
             for record in batch:
-                await file.write(json.dumps(record) + '\n')
+                await file.write(json.dumps(record) + ', ')
     
     async def process_pipeline(self, input_file: str, output_file: str, batch_size: int = 1000):
         """전체 데이터 파이프라인 실행"""
@@ -1853,7 +1853,7 @@ def cpu_heavy_function(n):
 async def memory_inefficient():
     async with aiofiles.open('huge_file.txt', 'r') as file:
         content = await file.read()  # 전체 파일을 메모리에!
-        lines = content.split('\n')
+        lines = content.split(', ')
         return [process_line(line) for line in lines]
 
 # 올바른 방법: 스트림 처리

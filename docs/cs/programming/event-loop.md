@@ -37,14 +37,14 @@ tags:
 
 이벤트 루프는 **단일 스레드에서 I/O 작업을 비동기적으로 처리하기 위한 프로그래밍 패턴**입니다. 운영체제의 I/O multiplexing 기능(`epoll`, `kqueue`, `IOCP`)을 활용하여 블로킹 없이 수많은 I/O 작업을 동시에 처리할 수 있습니다.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Event Loop Architecture                   │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────┐    ┌──────────────┐    ┌─────────────────┐ │
 │  │   Timer     │    │   I/O Poll   │    │   Check Phase   │ │
 │  │   Phase     │    │    Phase     │    │                 │ │
-│  │             │───&gt;│              │───&gt;│  setImmediate()  │ │
+│  │             │───>│              │───>│  setImmediate()  │ │
 │  │setTimeout() │    │   epoll()    │    │                 │ │
 │  │setInterval()│    │   File I/O   │    └─────────────────┘ │
 │  └─────────────┘    │   Network    │                        │
@@ -561,7 +561,7 @@ class HttpHandler:
     def handle_read(self, data):
         print(f"Received: {data}")
         # 응답 데이터 준비
-        response = b"HTTP/1.1 200 OK\r\n\r\nHello World"
+        response = b"HTTP/1.1 200 OK\r, \r, Hello World"
         # 쓰기 이벤트 등록 필요
 
     def handle_write(self, sock):
@@ -939,7 +939,7 @@ const { Transform } = require('stream');
 // 잘못된 방법: 메모리에 모든 데이터 로드
 async function processLargeFileWrong(filename) {
     const data = await fs.promises.readFile(filename, 'utf8');
-    const lines = data.split('\n');
+    const lines = data.split(', ');
 
     const results = await Promise.all(
         lines.map(line => processLine(line))
@@ -957,7 +957,7 @@ function processLargeFileCorrect(filename) {
             .pipe(new Transform({
                 transform(chunk, encoding, callback) {
                     // 청크 단위로 처리
-                    const lines = chunk.toString().split('\n');
+                    const lines = chunk.toString().split(', ');
 
                     Promise.all(lines.map(line => processLine(line)))
                         .then(processedLines => {
