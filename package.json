@@ -5,11 +5,15 @@
   "scripts": {
     "lint": "markdownlint 'docs/**/*.md' --fix",
     "lint:check": "markdownlint 'docs/**/*.md'",
+    "lint:mermaid": "node scripts/validate-mermaid.js",
+    "lint:all": "npm run lint:check && npm run lint:mermaid",
     "format": "prettier --write 'docs/**/*.md'",
     "format:check": "prettier --check 'docs/**/*.md'",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^10.9.1",
+    "glob": "^10.3.10",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.6",
     "markdownlint-cli": "^0.37.0",
