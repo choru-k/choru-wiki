@@ -44,7 +44,7 @@ sequenceDiagram
     L->>L: 라이브러리 로드
     L->>P: 제어권 전달
     P->>P: main() 실행
-```text
+```
 
 ### 1.2 실행 파일 검증
 
@@ -63,7 +63,7 @@ sequenceDiagram
 ├────────────────────────┤
 │ 종속성 확인            │ ← 필요한 라이브러리 존재?
 └────────────────────────┘
-```text
+```
 
 ### 1.3 프로세스 생성
 
@@ -82,14 +82,14 @@ Address Space"]
         SIG["시그널 핸들러"]
     end
 
-    K[커널"] --> PID
+    K["커널"] --> PID
     K --> PCT
     K --> AS
     K --> FD
     K --> SIG
 
     style AS fill:#4CAF50
-```text
+```
 
 ## 2. 메모리 공간 구성
 
@@ -123,7 +123,7 @@ Address Space"]
 ├─────────────────┤
 │    텍스트       │ (실행 코드)
 └─────────────────┘ 0x0000000000400000
-```text
+```
 
 ### 2.2 왜 가상 메모리인가?
 
@@ -138,14 +138,14 @@ Address Space"]
 ├─────────────────┤
 │  Program B      │ 0x1000: char* str = "hello";  // 충돌!
 └─────────────────┘
-```text
+```
 
 #### 문제 2: 보안 문제
 
 ```text
 악의적인 프로그램이 다른 프로그램의 메모리를 읽거나 수정 가능
 Program A의 비밀번호 → Program B가 훔쳐볼 수 있음
-```text
+```
 
 #### 해결: 가상 메모리
 
@@ -175,7 +175,7 @@ graph LR
     style VB1 fill:#81C784
     style PA fill:#FFB74D
     style PB fill:#FFB74D
-```text
+```
 
 같은 가상 주소 0x1000이 서로 다른 물리 주소로 매핑됩니다!
 
@@ -206,7 +206,7 @@ program.exe"]
 
     style VT fill:#E1F5FE
     style VD fill:#FFF3E0
-```text
+```
 
 메모리 매핑의 장점:
 
@@ -241,7 +241,7 @@ int main() {                    // .text
     int local = 10;             // stack
     return 0;
 }
-```text
+```
 
 메모리 배치:
 
@@ -265,7 +265,7 @@ int main() {                    // .text
 │   .text         │
 │ main() 코드     │
 └─────────────────┘ 낮은 주소
-```text
+```
 
 ## 4. 동적 링킹의 실제
 
@@ -289,7 +289,7 @@ sequenceDiagram
     DL->>DL: 재배치 수행
     DL->>DL: 심볼 해결
     DL->>P: main() 호출
-```text
+```
 
 ### 4.2 PLT와 GOT
 
@@ -313,7 +313,7 @@ sequenceDiagram
 └──────────────┘      └──────────────┘      └──────────────┘
                                                     ↓
                                              직접 printf 호출
-```text
+```
 
 이를 **Lazy Binding**이라고 합니다. 함수를 처음 호출할 때만 주소를 찾습니다.
 
@@ -332,7 +332,7 @@ printf@plt:
 ; printf@plt 엔트리 (두 번째 호출 이후)
 printf@plt:
     jmp    QWORD PTR [rip+0x2f92]  ; 직접 printf로 점프!
-```text
+```
 
 이러한 메커니즘으로:
 
@@ -370,7 +370,7 @@ graph TD
     VC -.매핑.-> LIBC
 
     style LIBC fill:#4CAF50
-```text
+```
 
 메모리 절약 효과:
 
@@ -401,7 +401,7 @@ graph TD
 ┌─────────────┐
 │    exit()   │ ← 정리 작업
 └─────────────┘
-```text
+```
 
 ### 5.2 C 런타임 초기화
 
@@ -437,7 +437,7 @@ void __libc_start_main() {
     // 9. 종료 처리
     exit(ret);
 }
-```text
+```
 
 ### 5.3 스택 초기화
 
@@ -465,7 +465,7 @@ main() 호출 전 스택 상태:
 ├─────────────────┤
 │  argc           │ 3
 └─────────────────┘
-```text
+```
 
 ## 6. 메모리 보호와 보안
 
@@ -483,7 +483,7 @@ main() 호출 전 스택 상태:
 ├─────────────────┤
 │   코드 (R-X)    │ ← 쓰기 불가! 코드 변조 방지
 └─────────────────┘
-```text
+```
 
 #### ASLR (Address Space Layout Randomization)
 
@@ -499,7 +499,7 @@ libc: 0x7f8899aabbcc
 스택: 0x7ffea9876543  ← 다름!
 힙:   0x5587fedcba00  ← 다름!
 libc: 0x7f1122334455  ← 다름!
-```text
+```
 
 ### 6.2 Copy-on-Write (CoW)
 
@@ -533,7 +533,7 @@ graph TD
 
     style PM fill:#FFE082
     style PM2 fill:#81C784
-```text
+```
 
 ## 7. 실전: 프로그램 로딩 분석
 
@@ -565,7 +565,7 @@ mmap(NULL, 8192, PROT_READ|PROT_WRITE, ...)  # 메모리 매핑
 access("/etc/ld.so.preload", R_OK)     # 프리로드 확인
 open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY)  # libc 열기
 mmap(NULL, 3936288, PROT_READ|PROT_EXEC, ...)      # libc 매핑
-```text
+```
 
 ### 7.2 성능 최적화
 
@@ -577,7 +577,7 @@ LD_PRELOAD=/path/to/mylib.so ./program
 
 # 시스템 전체 프리로드
 echo "/usr/lib/important.so" >> /etc/ld.so.preload
-```text
+```
 
 #### Prelinking (deprecated but instructive)
 
@@ -591,7 +591,7 @@ Prelinking:
 사전에 재배치 완료 → 프로그램 시작 → 즉시 실행
                                 ↑
                            시간 절약
-```text
+```
 
 ## 8. 특수한 로딩 시나리오
 
@@ -602,7 +602,7 @@ Prelinking:
 ```python
 #!/usr/bin/python3
 print("Hello, World!")
-```text
+```
 
 로딩 과정:
 
@@ -615,7 +615,7 @@ graph LR
     S2 --> E[실행]
 
     style I fill:#FFE082
-```text
+```
 
 ### 8.2 정적 링킹 프로그램
 
@@ -636,7 +636,7 @@ graph LR
 
 로딩 시간: 느림             로딩 시간: 빠름
 메모리: 효율적              메모리: 비효율적
-```text
+```
 
 ## 9. 정리: 로딩과 실행의 핵심
 

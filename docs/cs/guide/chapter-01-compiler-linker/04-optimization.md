@@ -40,18 +40,18 @@ Size"]
 Power"]
     O --> C["캐시
 Cache"]
-    
+
     S --> S1["실행 시간 단축"]
     M --> M1["바이너리 크기 감소"]
     P --> P1["전력 소비 감소"]
     C --> C1["캐시 미스 감소"]
-    
+
     style O fill:#FFE082
     style S fill:#81C784
     style M fill:#90CAF9
     style P fill:#CE93D8
     style C fill:#FFAB91
-```text
+```
 
 때로는 이 목표들이 충돌합니다:
 
@@ -79,7 +79,7 @@ int calculate_opt1(int x) {
 int calculate_wrong(int x) {
     return 0;  // 잘못된 최적화!
 }
-```text
+```
 
 ### 1.3 최적화 레벨
 
@@ -110,7 +110,7 @@ int get_buffer_size() {
 get_buffer_size:
     mov eax, 16777216  // 이미 계산된 값
     ret
-```text
+```
 
 더 복잡한 예:
 
@@ -126,7 +126,7 @@ double calculate() {
 double calculate() {
     return 62.83185307179586;  // 컴파일 시점에 계산
 }
-```text
+```
 
 ### 2.2 죽은 코드 제거 (Dead Code Elimination)
 
@@ -136,14 +136,14 @@ double calculate() {
 // 원본 코드
 int process(int x) {
     int unused = x * 100;     // 사용 안 됨
-    
+
     if (0) {                  // 절대 실행 안 됨
         printf("Never, ");
     }
-    
+
     int result = x + 1;
     result = x + 2;           // 이전 값 덮어씀
-    
+
     return result;
 }
 
@@ -151,7 +151,7 @@ int process(int x) {
 int process(int x) {
     return x + 2;
 }
-```text
+```
 
 ### 2.3 함수 인라이닝 (Function Inlining)
 
@@ -171,7 +171,7 @@ int calculate(int a, int b) {
 int calculate(int a, int b) {
     return (a * a) + (b * b);  // 함수 호출 오버헤드 제거
 }
-```text
+```
 
 인라이닝의 효과:
 
@@ -183,14 +183,14 @@ graph LR
         C1 -->|call| S2[square"]
         S2 -->|return| C1
     end
-    
+
     subgraph "인라이닝 후"
         C2["calculate
 직접 계산"]
     end
-    
+
     style C2 fill:#4CAF50
-```text
+```
 
 ### 2.4 루프 최적화
 
@@ -208,7 +208,7 @@ sum += array[1];
 sum += array[2];
 sum += array[3];
 // 루프 제어 오버헤드 제거
-```text
+```
 
 #### 루프 불변 코드 이동 (Loop-Invariant Code Motion)
 
@@ -224,7 +224,7 @@ int constant = x * y;  // 루프 밖으로 이동
 for (int i = 0; i < n; i++) {
     result[i] = array[i] + constant;
 }
-```text
+```
 
 #### 루프 융합 (Loop Fusion)
 
@@ -242,7 +242,7 @@ for (int i = 0; i < n; i++) {
     a[i] = b[i] + 1;
     c[i] = a[i] * 2;  // 캐시 지역성 향상
 }
-```text
+```
 
 ### 2.5 공통 부분식 제거 (Common Subexpression Elimination)
 
@@ -265,7 +265,7 @@ int calculate(int x, int y) {
     int c = temp / 2;
     return a + b + c;
 }
-```text
+```
 
 ## 3. 고급 최적화 기법
 
@@ -284,7 +284,7 @@ for (int i = 0; i < 1024; i += 4) {
     // 4개씩 동시 처리
     vector_add(c + i, a + i, b + i, 4);
 }
-```text
+```
 
 벡터화 효과:
 
@@ -296,13 +296,13 @@ graph TD
         A3["a[2]"] --> P3[+] --> C3["c[2]"]
         A4["a[3]"] --> P4[+] --> C4["c[3]"]
     end
-    
+
     subgraph "벡터 처리 (SIMD)"
         AV["a[0:3]"] --> PV["Vector +"] --> CV["c[0:3]"]
     end
-    
+
     style PV fill:#4CAF50
-```text
+```
 
 ### 3.2 분기 예측 최적화
 
@@ -321,7 +321,7 @@ for (int i = 0; i < n; i++) {
 // 컴파일러 힌트 사용
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
-```text
+```
 
 ### 3.3 테일 콜 최적화 (Tail Call Optimization)
 
@@ -342,7 +342,7 @@ int factorial(int n, int acc) {
     }
     return acc;
 }
-```text
+```
 
 스택 사용량 비교:
 
@@ -359,7 +359,7 @@ int factorial(int n, int acc) {
 ├──────────┤
 │factorial │ n=1
 └──────────┘
-```text
+```
 
 ## 4. 최적화 레벨별 차이
 
@@ -376,7 +376,7 @@ int sum_array(int* arr, int n) {
     }
     return sum;
 }
-```text
+```
 
 #### -O0 (최적화 없음)
 
@@ -400,7 +400,7 @@ sum_array:
     mov    eax, DWORD PTR [rbp-4]
     pop    rbp
     ret
-```text
+```
 
 #### -O2 (권장 최적화)
 
@@ -421,7 +421,7 @@ sum_array:
 .L4:
     xor    eax, eax          ; return 0
     ret
-```text
+```
 
 #### -O3 (공격적 최적화, 벡터화 포함)
 
@@ -432,7 +432,7 @@ sum_array:
     ; ... 4개씩 병렬 처리 ...
     vpaddd  xmm0, xmm0, XMMWORD PTR [rdi+rax*4]
     ; ... 나머지 처리 ...
-```text
+```
 
 ### 4.2 성능 비교
 
@@ -447,7 +447,7 @@ sum_array:
 │ -O3     │ 0.8ms      │ 5.2x        │
 │ -Os     │ 1.5ms      │ 2.8x        │
 └─────────┴────────────┴─────────────┘
-```text
+```
 
 ## 5. 최적화의 부작용
 
@@ -469,7 +469,7 @@ float calculate_opt(float a, float b, float c) {
 // 예: a = 1e30, b = -1e30, c = 1.0
 // (a + b) + c = 0.0 + 1.0 = 1.0
 // a + (b + c) = 1e30 + (-1e30 + 1.0) = 1e30 - 1e30 = 0.0
-```text
+```
 
 ### 5.2 Undefined Behavior
 
@@ -489,7 +489,7 @@ int dangerous(int x) {
 int dangerous_opt(int x) {
     return x + 1;  // 체크 제거! (UB는 없다고 가정)
 }
-```text
+```
 
 ### 5.3 메모리 재정렬
 
@@ -518,7 +518,7 @@ void writer_opt() {
     flag = 1;  // 순서 바뀜!
     data = 42;
 }
-```text
+```
 
 해결: 메모리 배리어와 Atomic Operations
 
@@ -547,7 +547,7 @@ void writer_traditional() {
     __sync_synchronize();  // full memory barrier
     flag = 1;
 }
-```text
+```
 
 **메모리 순서 보장 (Memory Ordering):**
 
@@ -589,7 +589,7 @@ void copy(int* restrict dst, const int* restrict src, int n) {
         dst[i] = src[i];
     }
 }
-```text
+```
 
 ### 6.2 프로파일 기반 최적화 (PGO)
 
@@ -604,7 +604,7 @@ gcc -fprofile-generate program.c -o program
 
 # 3단계: 프로파일 기반 재컴파일
 gcc -fprofile-use program.c -o program_optimized
-```text
+```
 
 PGO 효과:
 
@@ -613,16 +613,16 @@ graph LR
     subgraph "일반 최적화"
         C1["코드"] --> O1["정적 분석"] --> B1["바이너리"]
     end
-    
+
     subgraph "PGO"
         C2["코드"] --> P["프로파일
 실행"] --> O2["동적 분석"] --> B2["최적화된
 바이너리"]
     end
-    
+
     style P fill:#FFE082
     style B2 fill:#4CAF50
-```text
+```
 
 ## 7. 실전: 최적화 분석
 
@@ -642,7 +642,7 @@ gcc -S -O2 -fverbose-asm program.c
 
 # 최적화 통계
 gcc -O2 -fdump-statistics program.c
-```text
+```
 
 ### 7.2 최적화 전후 비교
 
@@ -661,7 +661,7 @@ void matrix_multiply(double* C, const double* A, const double* B, int n) {
         }
     }
 }
-```text
+```
 
 최적화 기법 적용:
 
@@ -669,7 +669,7 @@ void matrix_multiply(double* C, const double* A, const double* B, int n) {
 // 캐시 친화적 버전 (타일링)
 void matrix_multiply_tiled(double* C, const double* A, const double* B, int n) {
     const int TILE = 64;
-    
+
     for (int i0 = 0; i0 < n; i0 += TILE) {
         for (int j0 = 0; j0 < n; j0 += TILE) {
             for (int k0 = 0; k0 < n; k0 += TILE) {
@@ -687,7 +687,7 @@ void matrix_multiply_tiled(double* C, const double* A, const double* B, int n) {
         }
     }
 }
-```text
+```
 
 성능 차이:
 
@@ -702,7 +702,7 @@ void matrix_multiply_tiled(double* C, const double* A, const double* B, int n) {
 │ 타일링 (-O2) │ 340      │ 8M         │
 │ 타일링 (-O3) │ 280      │ 7M         │
 └──────────────┴──────────┴────────────┘
-```text
+```
 
 ## 8. 최적화 가이드라인
 
