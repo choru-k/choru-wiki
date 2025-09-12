@@ -23,10 +23,10 @@ tags:
 graph TD
     A[이벤트 발생] --> B{시그널 생성}
     
-    B --> C[SIGPIPE<br/>파이프 쓰기 실패]
-    B --> D[SIGTERM<br/>종료 요청]
-    B --> E[SIGINT<br/>Ctrl+C 인터럽트]
-    B --> F[SIGUSR1/2<br/>사용자 정의]
+    B --> C[SIGPIPE, 파이프 쓰기 실패]
+    B --> D[SIGTERM, 종료 요청]
+    B --> E[SIGINT, Ctrl+C 인터럽트]
+    B --> F[SIGUSR1/2, 사용자 정의]
     
     C --> C1{핸들러 등록?}
     D --> D1{핸들러 등록?}
@@ -44,7 +44,7 @@ graph TD
     C3 --> G[서비스 계속 실행]
     D3 --> H[정리 후 안전한 종료]
     E3 --> I[사용자 요청 처리]
-```
+```text
 
 ### 주요 시그널과 기본 동작
 
@@ -86,7 +86,7 @@ typedef struct {
     pthread_mutex_t mutex;
     FILE* log_file;
 } signal_monitor_t;
-```
+```text
 
 **설명**: 이 구조체들은 시그널 발생을 추적하고 통계를 수집하는 기본 틀을 제공합니다.
 
@@ -110,7 +110,7 @@ void log_signal(signal_monitor_t* monitor, int signum) {
     const char* sig_name = (signum < 32 && sig_names[signum]) ? 
                           sig_names[signum] : "UNKNOWN";
     
-    printf("[%s] PID %d received %s (%d)\n", 
+    printf("[%s] PID %d received %s (%d), ", 
            timestamp, monitor->pid, sig_name, signum);
     
     // 통계 업데이트
@@ -126,7 +126,7 @@ void log_signal(signal_monitor_t* monitor, int signum) {
     
     pthread_mutex_unlock(&monitor->mutex);
 }
-```
+```text
 
 **동작 원리**:
 
@@ -138,7 +138,7 @@ void log_signal(signal_monitor_t* monitor, int signum) {
 
 ```c
 void analyze_sigpipe_context(pid_t pid) {
-    printf("\n=== SIGPIPE 분석 ===\n");
+    printf(", === SIGPIPE 분석 ===, ");
     
     // 열린 파일 디스크립터 확인
     char fd_path[256];
@@ -147,9 +147,9 @@ void analyze_sigpipe_context(pid_t pid) {
     // ... (파일 디스크립터 분석 코드)
     // ... (네트워크 연결 상태 확인)
     
-    printf("권장사항: SIGPIPE 핸들러 등록 또는 MSG_NOSIGNAL 사용\n");
+    printf("권장사항: SIGPIPE 핸들러 등록 또는 MSG_NOSIGNAL 사용, ");
 }
-```
+```text
 
 **사용법**:
 
@@ -165,7 +165,7 @@ gcc -o signal_monitor signal_monitor.c -lpthread
 === SIGPIPE 분석 ===
 열린 소켓: 5개, 파이프: 2개
 권장사항: SIGPIPE 핸들러 등록 또는 MSG_NOSIGNAL 사용
-```
+```text
 
 ## 2. Robust 시그널 처리 라이브러리
 
@@ -190,7 +190,7 @@ int configure_signal(int signum, signal_action_t action);
 
 // 안전한 네트워크 전송
 ssize_t safe_send(int sockfd, const void* buf, size_t len, int flags);
-```
+```text
 
 ### 핵심 구현
 
@@ -253,7 +253,7 @@ ssize_t safe_send(int sockfd, const void* buf, size_t len, int flags) {
     // MSG_NOSIGNAL로 SIGPIPE 방지
     return send(sockfd, buf, len, flags | MSG_NOSIGNAL);
 }
-```
+```text
 
 **핵심 장점**:
 
@@ -311,7 +311,7 @@ int main() {
         if (client_fd < 0) continue;
         
         // 클라이언트 처리
-        char response[] = "HTTP/1.1 200 OK\r\n\r\nHello, World!";
+        char response[] = "HTTP/1.1 200 OK\r, \r, Hello, World!";
         
         // 안전한 전송 (SIGPIPE 방지)
         if (safe_send(client_fd, response, strlen(response), 0) == -1) {
@@ -325,7 +325,7 @@ int main() {
     
     return 0;
 }
-```
+```text
 
 **실행 결과**:
 
@@ -343,7 +343,7 @@ $ kill -TERM 1234
 Graceful shutdown initiated...
 Server shutting down...
 Server shutdown complete
-```
+```text
 
 ## 4. Python에서의 Robust 시그널 처리
 
@@ -428,7 +428,7 @@ def main():
         while True:
             with safe_socket_operation():
                 client, addr = server.accept()
-                response = b"HTTP/1.1 200 OK\r\n\r\nHello from Python!"
+                response = b"HTTP/1.1 200 OK\r, \r, Hello from Python!"
                 client.sendall(response)
                 client.close()
     except KeyboardInterrupt:
@@ -436,7 +436,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
+```text
 
 ## 5. 실무 적용 가이드
 
@@ -449,7 +449,7 @@ if __name__ == "__main__":
 signal(SIGPIPE, SIG_IGN);  // 또는
 // send()에서 MSG_NOSIGNAL 사용
 send(sockfd, data, len, MSG_NOSIGNAL);
-```
+```text
 
 #### 2단계: Graceful Shutdown 추가
 
@@ -463,23 +463,23 @@ void shutdown_handler(int sig) {
 
 signal(SIGTERM, shutdown_handler);
 signal(SIGINT, shutdown_handler);
-```
+```text
 
 #### 3단계: 로깅 및 모니터링
 
 ```c
 void log_signal(int sig) {
     time_t now = time(NULL);
-    printf("[%s] Signal %d received\n", ctime(&now), sig);
+    printf("[%s] Signal %d received, ", ctime(&now), sig);
 }
-```
+```text
 
 #### 4단계: 프로덕션 레벨 처리
 
 ```c
 // 시그널 마스킹, 통계 수집, 자동 복구 등
 // (위에서 구현한 robust_signal 라이브러리 사용)
-```
+```text
 
 ### ⚠️ 주의사항
 
@@ -514,7 +514,7 @@ strace -e signal -p PID
 kill -PIPE PID    # SIGPIPE 전송
 kill -TERM PID    # 정상 종료 테스트
 kill -USR1 PID    # 사용자 정의 시그널
-```
+```text
 
 ## 결론
 

@@ -39,7 +39,7 @@ graph TD
         L3[L3 캐시 공유]
         NUMA[NUMA 노드]
     end
-```
+```text
 
 ## 1. CPU 친화도 분석 도구
 
@@ -184,7 +184,7 @@ void collect_numa_info(cpu_stats_t* stats, int cpu_count) {
 
 // CPU 친화도 최적화 추천
 void recommend_cpu_affinity(cpu_topology_t* topo, cpu_stats_t* stats) {
-    printf("\n=== CPU 친화도 최적화 추천 ===\n");
+    printf(", === CPU 친화도 최적화 추천 ===, ");
     
     // 가장 성능이 좋은 CPU 찾기
     int best_cpu = 0;
@@ -197,12 +197,12 @@ void recommend_cpu_affinity(cpu_topology_t* topo, cpu_stats_t* stats) {
         }
     }
     
-    printf("최적 CPU: %d (평균 레이턴시: %.2f μs)\n", 
+    printf("최적 CPU: %d (평균 레이턴시: %.2f μs), ", 
            best_cpu, best_latency);
-    printf("NUMA 노드: %d\n", stats[best_cpu].numa_node);
+    printf("NUMA 노드: %d, ", stats[best_cpu].numa_node);
     
     // CPU 세트 추천
-    printf("\n추천 CPU 세트:\n");
+    printf(", 추천 CPU 세트:, ");
     
     // 같은 NUMA 노드의 CPU들
     printf("같은 NUMA 노드 CPU들: ");
@@ -211,18 +211,18 @@ void recommend_cpu_affinity(cpu_topology_t* topo, cpu_stats_t* stats) {
             printf("%d ", i);
         }
     }
-    printf("\n");
+    printf(", ");
     
     // taskset 명령어 생성
-    printf("\ntaskset 명령어:\n");
-    printf("taskset -c %d your_program\n", best_cpu);
-    printf("taskset -c %d-%d your_program  # NUMA 노드 전체\n", 
+    printf(", taskset 명령어:, ");
+    printf("taskset -c %d your_program, ", best_cpu);
+    printf("taskset -c %d-%d your_program  # NUMA 노드 전체, ", 
            best_cpu, best_cpu + (topo->cpu_count / topo->numa_nodes) - 1);
 }
 
 // 실시간 CPU 사용률 모니터링
 void monitor_cpu_usage(int target_pid, int duration) {
-    printf("\n=== 실시간 CPU 사용률 모니터링 ===\n");
+    printf(", === 실시간 CPU 사용률 모니터링 ===, ");
     
     for (int i = 0; i < duration; i++) {
         char stat_path[256];
@@ -239,7 +239,7 @@ void monitor_cpu_usage(int target_pid, int duration) {
             }
             fscanf(fp, "%ld", &processor);
             
-            printf("시간 %d초: CPU %ld에서 실행 중\n", i + 1, processor);
+            printf("시간 %d초: CPU %ld에서 실행 중, ", i + 1, processor);
             fclose(fp);
         }
         
@@ -249,15 +249,15 @@ void monitor_cpu_usage(int target_pid, int duration) {
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        printf("사용법: %s <PID> [모니터링_시간]\n", argv[0]);
+        printf("사용법: %s <PID> [모니터링_시간], ", argv[0]);
         return 1;
     }
     
     int target_pid = atoi(argv[1]);
     int monitor_duration = (argc > 2) ? atoi(argv[2]) : 10;
     
-    printf("=== CPU 친화도 분석기 ===\n");
-    printf("대상 PID: %d\n", target_pid);
+    printf("=== CPU 친화도 분석기 ===, ");
+    printf("대상 PID: %d, ", target_pid);
     
     // CPU 토폴로지 정보 수집
     cpu_topology_t* topo = get_cpu_topology();
@@ -265,31 +265,31 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    printf("CPU 코어 수: %d\n", topo->cpu_count);
-    printf("NUMA 노드 수: %d\n", topo->numa_nodes);
+    printf("CPU 코어 수: %d, ", topo->cpu_count);
+    printf("NUMA 노드 수: %d, ", topo->numa_nodes);
     
     // CPU 통계 초기화
     cpu_stats_t* stats = calloc(topo->cpu_count, sizeof(cpu_stats_t));
     
     // 현재 친화도 출력
-    printf("\n현재 CPU 친화도: ");
+    printf(", 현재 CPU 친화도: ");
     for (int i = 0; i < topo->cpu_count; i++) {
         if (CPU_ISSET(i, &topo->current_affinity)) {
             printf("%d ", i);
         }
     }
-    printf("\n");
+    printf(", ");
     
     // NUMA 정보 수집
     collect_numa_info(stats, topo->cpu_count);
     
     // 각 CPU에서 성능 측정
-    printf("\n=== CPU 성능 측정 중 ===\n");
+    printf(", === CPU 성능 측정 중 ===, ");
     for (int i = 0; i < topo->cpu_count; i++) {
         if (CPU_ISSET(i, &topo->current_affinity)) {
-            printf("CPU %d 측정 중...\n", i);
+            printf("CPU %d 측정 중..., ", i);
             measure_cache_performance(i, stats);
-            printf("CPU %d: 평균 레이턴시 %.2f μs, NUMA 노드 %d\n", 
+            printf("CPU %d: 평균 레이턴시 %.2f μs, NUMA 노드 %d, ", 
                    i, stats[i].avg_latency, stats[i].numa_node);
         }
     }
@@ -310,7 +310,7 @@ int main(int argc, char* argv[]) {
     
     return 0;
 }
-```
+```text
 
 ## 2. CPU 친화도 설정 스크립트
 
@@ -353,12 +353,12 @@ show_cpu_topology() {
     
     # NUMA 정보
     if command -v numactl &> /dev/null; then
-        echo -e "\n=== NUMA 토폴로지 ==="
+        echo -e ", === NUMA 토폴로지 ==="
         numactl --hardware
     fi
     
     # CPU 캐시 정보
-    echo -e "\n=== CPU 캐시 정보 ==="
+    echo -e ", === CPU 캐시 정보 ==="
     for cpu in /sys/devices/system/cpu/cpu*/cache/index*; do
         if [[ -d "$cpu" ]]; then
             cpu_num=$(echo "$cpu" | grep -o 'cpu[0-9]*' | head -1)
@@ -394,13 +394,13 @@ check_current_affinity() {
     
     # 프로세스 통계
     if [[ -f "/proc/$pid/status" ]]; then
-        echo -e "\n=== 프로세스 통계 ==="
+        echo -e ", === 프로세스 통계 ==="
         grep -E "(voluntary_ctxt_switches|nonvoluntary_ctxt_switches)" "/proc/$pid/status"
     fi
     
     # 스레드별 친화도 (멀티스레드 프로세스의 경우)
     if [[ -d "/proc/$pid/task" ]]; then
-        echo -e "\n=== 스레드별 CPU 친화도 ==="
+        echo -e ", === 스레드별 CPU 친화도 ==="
         for task in /proc/"$pid"/task/*; do
             local tid
             tid=$(basename "$task")
@@ -532,7 +532,7 @@ monitor_cpu_migration() {
     end_time=$(date +%s)
     local total_time=$((end_time - start_time))
     
-    echo -e "\n=== 마이그레이션 통계 ==="
+    echo -e ", === 마이그레이션 통계 ==="
     echo "총 모니터링 시간: ${total_time}초"
     echo "총 마이그레이션 횟수: $migration_count"
     echo "평균 마이그레이션/초: $(echo "scale=2; $migration_count / $total_time" | bc -l 2>/dev/null || echo "N/A")"
@@ -610,7 +610,7 @@ generate_recommendations() {
     fi
     
     # IRQ 밸런싱 확인
-    echo -e "\n🔧 추가 최적화 옵션:"
+    echo -e ", 🔧 추가 최적화 옵션:"
     echo "- IRQ 밸런싱 비활성화: echo 0 > /proc/sys/kernel/numa_balancing"
     echo "- CPU 거버너 변경: cpupower frequency-set -g performance"
     echo "- 스케줄러 튜닝: echo 1 > /proc/sys/kernel/sched_migration_cost_ns"
@@ -694,7 +694,7 @@ main() {
 
 # 스크립트 실행
 main "$@"
-```
+```text
 
 ## 3. Python 기반 고급 CPU 친화도 관리자
 
@@ -1122,16 +1122,16 @@ class CPUAffinityManager:
 """
         
         recommended_cpus = self.recommend_cpu_affinity(pid, workload_analysis)
-        report += f"- 권장 CPU 친화도: {recommended_cpus}\n"
+        report += f"- 권장 CPU 친화도: {recommended_cpus}, "
         
         if workload_analysis['migration_rate'] > 5:
-            report += "- 높은 마이그레이션 감지: CPU 친화도 고정 권장\n"
+            report += "- 높은 마이그레이션 감지: CPU 친화도 고정 권장, "
         
         if workload_analysis['cache_miss_ratio'] > 0.3:
-            report += "- 캐시 미스 많음: 같은 L3 캐시 공유 코어 사용 권장\n"
+            report += "- 캐시 미스 많음: 같은 L3 캐시 공유 코어 사용 권장, "
         
         if workload_analysis['avg_cpu_usage'] > 80:
-            report += "- CPU 집약적 워크로드: 전용 물리적 코어 할당 권장\n"
+            report += "- CPU 집약적 워크로드: 전용 물리적 코어 할당 권장, "
         
         return report
 
@@ -1183,7 +1183,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
+```text
 
 ## 4. 실시간 성능 시각화
 
@@ -1417,11 +1417,11 @@ def main():
     except ValueError as e:
         print(f"오류: {e}")
     except KeyboardInterrupt:
-        print("\n모니터링을 중단합니다.")
+        print(", 모니터링을 중단합니다.")
 
 if __name__ == "__main__":
     main()
-```
+```text
 
 ## 5. 사용 시나리오와 최적화 전략
 
@@ -1459,7 +1459,7 @@ graph TD
     K --> O
     K --> P
     K --> Q
-```
+```text
 
 ## 결론
 

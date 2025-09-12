@@ -33,7 +33,7 @@ chrome(1234)─┬─chrome(1235)  # GPU 프로세스
              ├─chrome(1238)  # 렌더러 (탭 1)
              ├─chrome(1239)  # 렌더러 (탭 2)
              └─...
-```
+```text
 
 각 탭이 독립 프로세스인 이유? **하나가 죽어도 나머지는 살아있기 때문입니다!** 이것이 바로 프로세스 격리의 힘이죠.
 
@@ -44,7 +44,7 @@ chrome(1234)─┬─chrome(1235)  # GPU 프로세스
 ```c
 // 100MB 메모리를 사용하는 프로세스에서
 fork();  // 실제 복사되는 메모리: 거의 0!
-```
+```text
 
 **Copy-on-Write**라는 마법 때문입니다. 부모와 자식이 메모리를 공유하다가, 누군가 수정하려고 할 때만 복사합니다. 마치 **시험지를 복사하지 않고 같이 보다가, 답을 쓸 때만 새 종이를 주는 것**과 같죠.
 
@@ -58,7 +58,7 @@ $ ps aux | grep defunct | wc -l
 
 $ kill -9 $(ps aux | grep defunct | awk '{print $2}')
 # 아무 일도 일어나지 않음... 좀비는 이미 죽어있으니까!
-```
+```text
 
 좀비는 kill -9로도 죽지 않습니다. 이미 죽어있으니까요! 부모 프로세스가 wait()를 호출해서 "장례"를 치러줘야만 사라집니다.
 
@@ -74,40 +74,35 @@ Node.js 서버를 운영하던 중, CPU 코어 하나만 100%를 치고 나머�
 // 전: 1개 프로세스, 1개 코어만 사용
 // 후: 8개 프로세스, 8개 코어 모두 사용
 // 처리량: 7.8배 증가! (오버헤드 때문에 8배는 안 됨)
-```
+```text
 
 ### 1.1 fork() 시스템 콜의 마법: 1이 2가 되는 순간
 
 ```mermaid
 graph TD
-    subgraph "fork() 전"
-        P1["Parent Process
-PID: 1000"]
+    subgraph FORK_BEFORE["fork() 전"]
+        P1[Parent Process PID 1000]
     end
     
-    subgraph "fork() 호출"
-        FORK[fork() 시스템 콜]
+    subgraph FORK_CALL["fork() 호출"]
+        FORK[fork 시스템 콜]
         P1 --> FORK
     end
     
-    subgraph "fork() 후"
-        P2["Parent Process
-PID: 1000
-returns: 1001"]
-        C1["Child Process
-PID: 1001
-returns: 0"]
+    subgraph FORK_AFTER["fork() 후"]
+        P2[Parent Process PID 1000 returns 1001]
+        C1[Child Process PID 1001 returns 0]
         
         FORK --> P2
         FORK --> C1
     end
     
-    P2 --> CONT1["부모 계속 실행]
-    C1 --> CONT2[자식 계속 실행"]
+    P2 --> CONT1[부모 계속 실행]
+    C1 --> CONT2[자식 계속 실행]
     
     style FORK fill:#4CAF50
     style C1 fill:#2196F3
-```
+```text
 
 ### 1.2 fork() 내부 구현: 커널의 복사 마술
 
@@ -145,7 +140,7 @@ pid_t do_fork(unsigned long clone_flags) {
 
 // 프로세스 복사 상세: 무엇을 복사하고 무엇을 공유하는가?
 int copy_process(struct task_struct *p, unsigned long clone_flags) {
-    printf("[fork 분석] 복사 시작...\n");
+    printf("[fork 분석] 복사 시작..., ");
     
     // 1. 프로세스 컨텍스트 복사
     *p = *current;  // 구조체 복사 (레지스터, 상태 등)
@@ -154,7 +149,7 @@ int copy_process(struct task_struct *p, unsigned long clone_flags) {
     // 실제로는 페이지 테이블만 복사하고 읽기 전용으로 표시
     // 진짜 복사는 누군가 쓰기를 시도할 때!
     if (copy_mm(clone_flags, p) < 0) {
-        printf("[fork 실패] 메모리 복사 실패 (보통 메모리 부족)\n");
+        printf("[fork 실패] 메모리 복사 실패 (보통 메모리 부족), ");
         goto bad_fork_cleanup_mm;
     }
     
@@ -180,7 +175,7 @@ bad_fork_cleanup_thread:
     // 에러 처리...
     return -ENOMEM;
 }
-```
+```text
 
 ### 1.3 실제 fork() 사용 예제: 실무에서 겪은 함정들
 
@@ -190,45 +185,69 @@ bad_fork_cleanup_thread:
 #include <sys/wait.h>
 
 void demonstrate_fork() {
-    printf("\n=== fork() 실험실 ===\n");
-    printf("Before fork - PID: %d\n", getpid());
-    printf("메모리 사용량: %ld KB\n", get_memory_usage());
+    printf(", === fork() 실험실 ===, ");
     
-    // fork() 호출
+    // fork() 호출 전 상태 출력 (비교 기준점 설정)
+    printf("Before fork - PID: %d, ", getpid());
+    printf("메모리 사용량: %ld KB, ", get_memory_usage());
+    
+    // ★ 핵심 순간: fork() 시스템 콜 호출
+    // 이 한 줄로 1개 프로세스가 2개가 된다!
     pid_t pid = fork();
     
+    // fork() 후: 세 가지 가능한 상황 분기
+    
     if (pid < 0) {
-        // fork 실패
+        // 1) fork() 실패 경우 (메모리 부족, 프로세스 한계 등)
         perror("fork failed");
+        printf("[오류] 원인: 메모리 부족 또는 프로세스 테이블 가득참, ");
         exit(1);
+        
     } else if (pid == 0) {
-        // 자식 프로세스 (fork()가 0을 반환한 세계)
-        printf("[자식] 안녕! 나는 복제인간 - PID: %d, 부모: %d\n", 
+        // 2) 자식 프로세스 실행 경로 (fork()가 0을 반환한 세계)
+        // 이 코드는 새로 생성된 프로세스에서만 실행됨
+        
+        printf("[자식] 안녕! 나는 복제인간 - PID: %d, 부모: %d, ", 
                getpid(), getppid());
-        printf("[자식] 메모리: 부모와 공유 중 (CoW)\n");
+        printf("[자식] 메모리: 부모와 공유 중 (Copy-on-Write), ");
         
-        // 자식만의 작업
+        // 자식 프로세스만의 독립적인 작업 수행
+        // 이 순간 메모리 수정 발생 시 CoW 트리거
         for (int i = 0; i < 3; i++) {
-            printf("Child working... %d\n", i);
-            sleep(1);
+            printf("[자식] 작업 중... %d (PID: %d), ", i, getpid());
+            sleep(1);  // 부모와 병렬로 실행되는 것을 보여주기 위한 지연
         }
         
-        exit(42);  // 종료 코드 42
+        // 자식 프로세스 종료 (종료 코드 42로 부모에게 결과 전달)
+        printf("[자식] 작업 완료, 종료합니다 (exit code: 42), ");
+        exit(42);  
+        
     } else {
-        // 부모 프로세스 (fork()가 자식 PID를 반환한 세계)
-        printf("[부모] 자식을 낳았다! - 내 PID: %d, 자식: %d\n",
+        // 3) 부모 프로세스 실행 경로 (fork()가 자식 PID를 반환한 세계)
+        // 이 코드는 기존 프로세스에서 계속 실행됨
+        
+        printf("[부모] 자식을 낳았다! - 내 PID: %d, 자식: %d, ",
                getpid(), pid);
-        printf("[부모] 자식을 기다리는 중...\n");
+        printf("[부모] 자식이 작업을 완료할 때까지 기다리는 중..., ");
         
-        // 자식 대기
+        // ★ 중요: wait() 호출로 좀비 프로세스 방지
+        // wait() 없으면 자식이 죽어도 좀비로 남아있음!
         int status;
-        pid_t terminated = wait(&status);
+        pid_t terminated = wait(&status);  // 블로킹 방식으로 자식 종료 대기
         
+        // 자식 프로세스의 종료 상태 분석
         if (WIFEXITED(status)) {
-            printf("Child %d exited with code %d\n",
+            printf("[부모] 자식 %d가 정상 종료 (exit code: %d), ",
                    terminated, WEXITSTATUS(status));
+        } else if (WIFSIGNALED(status)) {
+            printf("[부모] 자식 %d가 시그널 %d에 의해 종료, ",
+                   terminated, WTERMSIG(status));
         }
+        
+        printf("[부모] 모든 자식 프로세스 정리 완료, ");
     }
+    
+    printf("=== fork() 실험 종료 (PID: %d) ===, ", getpid());
 }
 
 // fork 폭탄 (절대 실행 금지! 실제 사고 사례)
@@ -243,37 +262,95 @@ void fork_bomb() {
 
 // 안전한 다중 프로세스 생성 (실제 웹서버 구현에서 발췌)
 void create_worker_processes(int num_workers) {
-    printf("\n=== Nginx처럼 워커 프로세스 생성하기 ===\n");
-    printf("CPU 코어 수: %d, 워커 수: %d\n", 
-           sysconf(_SC_NPROCESSORS_ONLN), num_workers);
-    pid_t workers[num_workers];
+    printf(", === Nginx처럼 워커 프로세스 생성하기 ===, ");
     
+    // 시스템 리소스 체크 및 최적 워커 수 결정
+    int cpu_count = sysconf(_SC_NPROCESSORS_ONLN);
+    printf("CPU 코어 수: %d, 워커 수: %d, ", cpu_count, num_workers);
+    
+    // 배열이 아닌 VLA 사용 (변수 길이 배열)
+    pid_t workers[num_workers];
+    int worker_status[num_workers];  // 워커 상태 추적
+    
+    printf("[마스터] 워커 프로세스 생성 시작..., ");
+    
+    // ★ 워커 프로세스 생성 루프
     for (int i = 0; i < num_workers; i++) {
+        printf("[마스터] 워커 #%d 생성 시도..., ", i);
+        
         pid_t pid = fork();
         
         if (pid == 0) {
-            // 워커 프로세스
-            printf("Worker %d started (PID: %d)\n", i, getpid());
+            // ★ 자식 프로세스 (워커) 실행 경로
+            // 이 코드는 새로 생성된 워커 프로세스만 실행
             
-            // 워커 작업
+            printf("[워커 #%d] 시작! PID: %d, 부모: %d, ", 
+                   i, getpid(), getppid());
+            
+            // CPU 친화도 설정 (선택적 - 성능 최적화)
+            // cpu_set_t cpuset;
+            // CPU_ZERO(&cpuset);
+            // CPU_SET(i % cpu_count, &cpuset);
+            // sched_setaffinity(0, sizeof(cpuset), &cpuset);
+            
+            // 워커별 다른 워크로드 수행
+            printf("[워커 #%d] 작업 시작 - HTTP 요청 처리 준비, ", i);
+            
+            // 실제 워커 작업 수행 (비블로킹 I/O, 이벤트 루프 등)
             do_worker_task(i);
             
-            exit(0);
+            printf("[워커 #%d] 작업 완료 - 정상 종료, ", i);
+            exit(0);  // 워커 프로세스 종료
+            
         } else if (pid > 0) {
+            // ★ 부모 프로세스 (마스터) 실행 경로
+            // 워커 PID 기록 및 상태 초기화
             workers[i] = pid;
+            worker_status[i] = 1;  // 1: 실행 중
+            
+            printf("[마스터] 워커 #%d 생성 성공 (PID: %d), ", i, pid);
+            
         } else {
-            perror("fork failed");
+            // fork() 실패 처리
+            perror("[오류] fork 실패");
+            printf("[마스터] 워커 #%d 생성 실패 - 전체 중단, ", i);
+            
+            // 이미 생성된 워커들 정리 (자원 누수 방지)
+            for (int j = 0; j < i; j++) {
+                kill(workers[j], SIGTERM);
+                waitpid(workers[j], NULL, 0);
+            }
+            return;
         }
     }
     
-    // 모든 워커 대기
+    printf("[마스터] 모든 워커 생성 완료 (%d개), ", num_workers);
+    printf("[마스터] 워커들의 작업 완료를 대기 중..., ");
+    
+    // ★ 중요: 모든 워커 프로세스의 종료를 대기
+    // wait() 없으면 워커들이 좀비가 된다!
     for (int i = 0; i < num_workers; i++) {
         int status;
-        waitpid(workers[i], &status, 0);
-        printf("Worker %d (PID: %d) finished\n", i, workers[i]);
+        printf("[마스터] 워커 #%d (PID: %d) 종료 대기..., ", i, workers[i]);
+        
+        pid_t terminated = waitpid(workers[i], &status, 0);
+        
+        // 워커 종료 상태 분석
+        if (WIFEXITED(status)) {
+            printf("[마스터] 워커 #%d (PID: %d) 정상 종료 (exit: %d), ", 
+                   i, terminated, WEXITSTATUS(status));
+        } else if (WIFSIGNALED(status)) {
+            printf("[마스터] 워커 #%d (PID: %d) 시그널로 종료 (signal: %d), ", 
+                   i, terminated, WTERMSIG(status));
+        }
+        
+        worker_status[i] = 0;  // 0: 종료됨
     }
+    
+    printf("[마스터] 모든 워커 프로세스 정리 완료!, ");
+    printf("[마스터] 웹서버 스타일 다중 프로세스 데모 종료, ");
 }
-```
+```text
 
 ## 2. exec() 패밀리: 완전한 변신의 기술
 
@@ -286,7 +363,7 @@ $ strace -f bash -c "ls"
 ...
 clone(...)  # fork()의 실제 시스템 콜
 execve("/bin/ls", ["ls"], ...)  # 변신!
-```
+```text
 
 **쉘은 자기 자신을 ls로 바꾸지 않습니다!** fork()로 자식을 만들고, 그 자식이 exec()로 ls가 되는 거죠. 그래서 ls가 끝나도 쉘은 살아있는 겁니다.
 
@@ -294,11 +371,10 @@ execve("/bin/ls", ["ls"], ...)  # 변신!
 
 ```mermaid
 sequenceDiagram
-    participant P as "Process
-"    participant K as "Kernel
-"    participant L as "Loader
-"    participant M as "Memory
-"    
+    participant P as "Process"
+    participant K as "Kernel"
+    participant L as "Loader"
+    participant M as "Memory"    
     P->>K: execve("/bin/ls", argv, envp)
     K->>K: 권한 확인
     K->>L: 새 프로그램 로드 요청
@@ -310,7 +386,7 @@ sequenceDiagram
     L->>K: 로드 완료
     K->>P: 새 프로그램 시작
     Note over P: 이제 완전히 다른 프로그램
-```
+```text
 
 ### 2.2 exec() 구현: 기억을 지우고 새로운 인격을 심는 과정
 
@@ -324,7 +400,7 @@ int do_execve(const char *filename,
     struct linux_binprm bprm;
     int retval;
     
-    printf("[exec] %d번 프로세스가 %s로 변신 시작!\n", 
+    printf("[exec] %d번 프로세스가 %s로 변신 시작!, ", 
            getpid(), filename);
     
     // 1. 바이너리 파라미터 초기화
@@ -360,7 +436,7 @@ int do_execve(const char *filename,
     
     // 이 줄은 영원히 실행되지 않음 - exec()의 마법!
     // 이미 다른 프로그램이 되어버렸으니까
-    printf("You will never see this!\n");
+    printf("You will never see this!, ");
     return 0;
     
 out:
@@ -372,7 +448,7 @@ out:
 void flush_old_exec(struct linux_binprm *bprm) {
     struct mm_struct *old_mm = current->mm;
     
-    printf("[exec] 과거를 지우는 중...\n");
+    printf("[exec] 과거를 지우는 중..., ");
     
     // 1. 새 메모리 공간 생성
     struct mm_struct *new_mm = mm_alloc();
@@ -393,7 +469,7 @@ void flush_old_exec(struct linux_binprm *bprm) {
     // 6. 파일 디스크립터 정리 (close-on-exec)
     flush_old_files(current->files);
 }
-```
+```text
 
 ### 2.3 exec() 패밀리 사용: 6형제의 차이점
 
@@ -405,18 +481,18 @@ exec() 패밀리를 처음 봤을 때 혼란스러웠던 기억이 납니다. �
 
 // exec 패밀리 함수들: 각자의 특기가 있다!
 void demonstrate_exec_family() {
-    printf("\n=== exec() 6형제 소개 ===\n\n");
+    printf(", === exec() 6형제 소개 ===, , ");
     
     // execl - List: 인자를 나열 (간단한 경우)
-    printf("1. execl: 인자를 직접 나열\n");
+    printf("1. execl: 인자를 직접 나열, ");
     execl("/bin/ls", "ls", "-l", "/home", NULL);
     
     // execlp - List + Path: PATH에서 찾기 (편리!)
-    printf("2. execlp: PATH에서 프로그램 찾기\n");
+    printf("2. execlp: PATH에서 프로그램 찾기, ");
     execlp("ls", "ls", "-l", "/home", NULL);  // /bin/ls 안 써도 됨!
     
     // execle - List + Environment: 깨끗한 환경
-    printf("3. execle: 커스텀 환경변수\n");
+    printf("3. execle: 커스텀 환경변수, ");
     char *envp[] = {"PATH=/bin", "USER=test", "LANG=C", NULL};
     execle("/bin/ls", "ls", "-l", NULL, envp);  // 보안에 좋음
     
@@ -431,12 +507,12 @@ void demonstrate_exec_family() {
     execve("/bin/ls", argv, envp);
     
     // exec 이후 코드는 실행되지 않음
-    printf("This will never be printed\n");
+    printf("This will never be printed, ");
 }
 
 // fork + exec 패턴: 쉘의 핵심 메커니즘
 void spawn_program(const char *program, char *const argv[]) {
-    printf("\n=== 쉘처럼 프로그램 실행하기 ===\n");
+    printf(", === 쉘처럼 프로그램 실행하기 ===, ");
     
     // 이것이 바로 system() 함수의 내부!
     pid_t pid = fork();
@@ -454,7 +530,7 @@ void spawn_program(const char *program, char *const argv[]) {
         waitpid(pid, &status, 0);
         
         if (WIFEXITED(status)) {
-            printf("%s exited with %d\n", 
+            printf("%s exited with %d, ", 
                    program, WEXITSTATUS(status));
         }
     } else {
@@ -464,7 +540,7 @@ void spawn_program(const char *program, char *const argv[]) {
 
 // 파이프라인 구현: 유닉스 철학의 정수
 void create_pipeline() {
-    printf("\n=== 파이프라인 마법: ls | grep '.txt' | wc -l ===\n");
+    printf(", === 파이프라인 마법: ls | grep '.txt' | wc -l ===, ");
     // 이렇게 3개 프로세스가 협력한다!
     int pipe1[2], pipe2[2];
     
@@ -512,7 +588,7 @@ void create_pipeline() {
     wait(NULL);
     wait(NULL);
 }
-```
+```text
 
 ## 3. 프로세스 종료: 디지털 장례식
 
@@ -529,7 +605,7 @@ $ ps aux | grep defunct
 원인: 부모 프로세스의 wait() 누락
 해결: 부모 프로세스 재시작
 교훈: SIGCHLD 핸들러는 필수!
-```
+```text
 
 ### 3.1 종료 메커니즘: 죽음의 여러 얼굴
 
@@ -564,7 +640,7 @@ graph TD
     style EXIT fill:#4CAF50
     style SIG fill:#FFC107
     style ZOMBIE fill:#FF5252
-```
+```text
 
 ### 3.2 exit() 구현: 유언 집행 절차
 
@@ -575,7 +651,7 @@ graph TD
 void do_exit(long code) {
     struct task_struct *tsk = current;
     
-    printf("[PID %d] 죽음의 의식 시작... (exit code: %ld)\n", 
+    printf("[PID %d] 죽음의 의식 시작... (exit code: %ld), ", 
            tsk->pid, code);
     
     // 1. 종료 코드 설정
@@ -611,7 +687,7 @@ void do_exit(long code) {
     
     // 11. 상태를 EXIT_ZOMBIE로 변경 (좀비 탄생!)
     tsk->state = EXIT_ZOMBIE;
-    printf("[PID %d] 이제 나는 좀비다... 부모를 기다린다...\n", tsk->pid);
+    printf("[PID %d] 이제 나는 좀비다... 부모를 기다린다..., ", tsk->pid);
     
     // 12. 스케줄러 호출 (다시 돌아오지 않음)
     schedule();
@@ -622,7 +698,7 @@ void do_exit(long code) {
 
 // 자식 프로세스 재부모화: 고아원(init)으로 보내기
 void forget_original_parent(struct task_struct *dying) {
-    printf("[PID %d] 내 자식들을 init에게 맡긴다...\n", dying->pid);
+    printf("[PID %d] 내 자식들을 init에게 맡긴다..., ", dying->pid);
     struct task_struct *child, *n;
     
     // 모든 자식을 init(PID 1)의 자식으로 만듦
@@ -636,7 +712,7 @@ void forget_original_parent(struct task_struct *dying) {
         }
     }
 }
-```
+```text
 
 ### 3.3 종료 처리 예제: 깨끗한 죽음 vs 더러운 죽음
 
@@ -647,18 +723,18 @@ void forget_original_parent(struct task_struct *dying) {
 
 // atexit 핸들러: 유언 집행자
 void cleanup_handler1() {
-    printf("[종료] 마지막 정리 1: 임시 파일 삭제\n");
+    printf("[종료] 마지막 정리 1: 임시 파일 삭제, ");
     unlink("/tmp/myapp.tmp");
 }
 
 void cleanup_handler2() {
-    printf("[종료] 마지막 정리 2: 로그 플러시\n");
+    printf("[종료] 마지막 정리 2: 로그 플러시, ");
     fflush(NULL);  // 모든 버퍼 비우기
 }
 
 // 시그널 핸들러
 void signal_handler(int sig) {
-    printf("Received signal %d\n", sig);
+    printf("Received signal %d, ", sig);
     
     // 정리 작업
     cleanup_resources();
@@ -701,7 +777,7 @@ void graceful_shutdown_example() {
         process_request();
     }
     
-    printf("Shutdown requested, cleaning up...\n");
+    printf("Shutdown requested, cleaning up..., ");
     
     // 진행 중인 작업 완료
     finish_pending_work();
@@ -715,10 +791,10 @@ void graceful_shutdown_example() {
     // 임시 파일 삭제
     cleanup_temp_files();
     
-    printf("Shutdown complete\n");
+    printf("Shutdown complete, ");
     exit(0);
 }
-```
+```text
 
 ## 4. 좀비와 고아 프로세스: 리눅스의 유령들 👻
 
@@ -730,7 +806,7 @@ void graceful_shutdown_example() {
 // 문제의 코드
 spawn('convert', args);  // wait() 없음!
 // 하루 10만 번 호출 = 10만 좀비 생성
-```
+```text
 
 결과: PID 고갈로 새 프로세스 생성 불가!
 
@@ -739,17 +815,17 @@ spawn('convert', args);  // wait() 없음!
 ```c
 // 좀비 프로세스 생성 예제 (교육용, 실전에선 금물!)
 void create_zombie() {
-    printf("\n=== 좀비 생성 실험 ===\n");
+    printf(", === 좀비 생성 실험 ===, ");
     pid_t pid = fork();
     
     if (pid == 0) {
         // 자식: 즉시 종료
-        printf("Child exiting...\n");
+        printf("Child exiting..., ");
         exit(42);
     } else {
         // 부모: wait() 호출하지 않음
-        printf("[부모] 자식을 방치... 좀비가 된다!\n");
-        printf("[부모] 다른 터미널에서 확인: ps aux | grep %d\n", pid);
+        printf("[부모] 자식을 방치... 좀비가 된다!, ");
+        printf("[부모] 다른 터미널에서 확인: ps aux | grep %d, ", pid);
         
         // 좀비 확인
         char command[256];
@@ -761,7 +837,7 @@ void create_zombie() {
         // 이제 좀비 수거
         int status;
         waitpid(pid, &status, 0);
-        printf("Zombie reaped, exit code: %d\n", 
+        printf("Zombie reaped, exit code: %d, ", 
                WEXITSTATUS(status));
     }
 }
@@ -801,7 +877,7 @@ void prevent_zombies_signal() {
 
 // 좀비 방지 패턴 2: 이중 fork (데몬의 정석)
 void prevent_zombies_double_fork() {
-    printf("\n=== 좀비 안 만들기: 이중 fork 기법 ===\n");
+    printf(", === 좀비 안 만들기: 이중 fork 기법 ===, ");
     pid_t pid = fork();
     
     if (pid == 0) {
@@ -825,37 +901,37 @@ void prevent_zombies_double_fork() {
         // 두 번째 자식은 init의 자식이 됨
     }
 }
-```
+```text
 
 ### 4.2 고아 프로세스: init의 양자들
 
 ```c
 // 고아 프로세스 생성: 의도적 고아 만들기
 void create_orphan() {
-    printf("\n=== 고아 프로세스 실험 ===\n");
+    printf(", === 고아 프로세스 실험 ===, ");
     pid_t pid = fork();
     
     if (pid == 0) {
         // 자식
-        printf("Child PID: %d, Parent: %d\n", 
+        printf("Child PID: %d, Parent: %d, ", 
                getpid(), getppid());
         
         sleep(5);  // 부모가 죽을 때까지 대기
         
         // 부모가 죽은 후
-        printf("[자식] 나는 이제 고아... 새 부모: %d (init/systemd)\n",
+        printf("[자식] 나는 이제 고아... 새 부모: %d (init/systemd), ",
                getppid());  // 1 또는 systemd의 PID
         
         // 고아가 되어도 계속 실행
         for (int i = 0; i < 10; i++) {
-            printf("Orphan still running... %d\n", i);
+            printf("Orphan still running... %d, ", i);
             sleep(1);
         }
         
         exit(0);
     } else {
         // 부모: 자식보다 먼저 종료
-        printf("Parent exiting, child becomes orphan\n");
+        printf("Parent exiting, child becomes orphan, ");
         exit(0);
     }
 }
@@ -867,7 +943,7 @@ void process_groups_and_sessions() {
     if (pid == 0) {
         // 새 세션 생성 (세션 리더가 됨)
         pid_t sid = setsid();
-        printf("New session ID: %d\n", sid);
+        printf("New session ID: %d, ", sid);
         
         // 새 프로세스 그룹 생성
         setpgid(0, 0);
@@ -883,7 +959,7 @@ void process_groups_and_sessions() {
         daemon_main();
     }
 }
-```
+```text
 
 ## 5. 프로세스 트리와 관계: 리눅스 가계도
 
@@ -899,7 +975,7 @@ systemd─┬─NetworkManager───2*[{NetworkManager}]
        │         └─10*[{dockerd}]
        └─chrome─┬─chrome───chrome───5*[{chrome}]
                 └─nacl_helper
-```
+```text
 
 **모든 프로세스가 연결되어 있다!** 리눅스는 거대한 가족입니다.
 
@@ -922,7 +998,7 @@ void print_process_tree(pid_t pid, int level) {
     // 프로세스 정보
     char name[256];
     get_process_name(pid, name);
-    printf("├─ %d %s\n", pid, name);
+    printf("├─ %d %s, ", pid, name);
     
     // 자식 프로세스들
     pid_t child;
@@ -951,7 +1027,7 @@ void get_process_name(pid_t pid, char *name) {
 void about_init_process() {
     // PID 1은 특별하다 - 리눅스의 아담
     if (getpid() == 1) {
-        printf("I am init!\n");
+        printf("I am init!, ");
         
         // init은 불사신! SIGKILL도 못 죽임
         signal(SIGTERM, SIG_IGN);
@@ -969,7 +1045,7 @@ void about_init_process() {
         }
     }
 }
-```
+```text
 
 ## 6. 프로세스 상태 전이: 삶의 단계들
 
@@ -983,7 +1059,7 @@ load average: 212.35, 198.67, 187.43  # CPU는 8개인데?!
 
 $ ps aux | grep " D "
 ... (수십 개의 D 상태 프로세스)
-```
+```text
 
 **D 상태(Uninterruptible Sleep)**의 프로세스들이 I/O를 기다리며 쌓여있었습니다. NFS 서버가 죽어서 모든 프로세스가 대기 중이었죠.
 
@@ -1002,14 +1078,14 @@ stateDiagram-v2
     
     RUNNING --> STOPPED: SIGSTOP
     STOPPED --> READY: SIGCONT
-```
+```text
 
 ### 6.2 상태 확인과 변경: 프로세스 진단하기
 
 ```c
 // 프로세스 상태 확인: 건강 검진
 void check_process_state(pid_t pid) {
-    printf("\n=== 프로세스 %d 상태 진단 ===\n", pid);
+    printf(", === 프로세스 %d 상태 진단 ===, ", pid);
     char path[256];
     sprintf(path, "/proc/%d/stat", pid);
     
@@ -1021,13 +1097,13 @@ void check_process_state(pid_t pid) {
     fclose(f);
     
     switch (state) {
-        case 'R': printf("🏃 Running (CPU 사용 중!)\n"); break;
-        case 'S': printf("😴 Sleeping (깨울 수 있음)\n"); break;
-        case 'D': printf("💀 Disk sleep (깨울 수 없음! 위험!)\n"); break;
-        case 'Z': printf("🧟 Zombie (죽었는데 안 죽음)\n"); break;
-        case 'T': printf("⏸️ Stopped (일시정지)\n"); break;
-        case 't': printf("🔍 Tracing stop (디버깅 중)\n"); break;
-        case 'X': printf("☠️ Dead (완전히 죽음)\n"); break;
+        case 'R': printf("🏃 Running (CPU 사용 중!), "); break;
+        case 'S': printf("😴 Sleeping (깨울 수 있음), "); break;
+        case 'D': printf("💀 Disk sleep (깨울 수 없음! 위험!), "); break;
+        case 'Z': printf("🧟 Zombie (죽었는데 안 죽음), "); break;
+        case 'T': printf("⏸️ Stopped (일시정지), "); break;
+        case 't': printf("🔍 Tracing stop (디버깅 중), "); break;
+        case 'X': printf("☠️ Dead (완전히 죽음), "); break;
     }
 }
 
@@ -1038,7 +1114,7 @@ void control_process() {
     if (pid == 0) {
         // 자식: 카운터
         for (int i = 0; i < 100; i++) {
-            printf("Count: %d\n", i);
+            printf("Count: %d, ", i);
             sleep(1);
         }
         exit(0);
@@ -1046,18 +1122,18 @@ void control_process() {
         // 부모: 제어
         sleep(3);
         
-        printf("Stopping child...\n");
+        printf("Stopping child..., ");
         kill(pid, SIGSTOP);
         
         sleep(3);
         
-        printf("Resuming child...\n");
+        printf("Resuming child..., ");
         kill(pid, SIGCONT);
         
         waitpid(pid, NULL, 0);
     }
 }
-```
+```text
 
 ## 7. 실전: 프로세스 관리 (프로덕션 레시피)
 
@@ -1065,12 +1141,12 @@ void control_process() {
 
 Apache 웹서버의 prefork 모드를 분석하면서 배운 프로세스 풀의 정수:
 
-```
+```text
 초기: 5개 프로세스 대기
 트래픽 증가 → 프로세스 10개로 증가
 트래픽 폭증 → 최대 256개까지
 트래픽 감소 → 천천히 감소 (급격한 변화 방지)
-```
+```text
 
 ### 7.1 프로세스 풀 구현: 미리 만들어 놓고 재사용
 
@@ -1084,7 +1160,7 @@ typedef struct {
 
 // 프로세스 풀 생성: Apache처럼 만들기
 process_pool_t* create_process_pool(int num_workers) {
-    printf("\n=== 프로세스 풀 생성 (워커: %d개) ===\n", num_workers);
+    printf(", === 프로세스 풀 생성 (워커: %d개) ===, ", num_workers);
     
     process_pool_t *pool = malloc(sizeof(process_pool_t));
     pool->num_workers = num_workers;
@@ -1148,7 +1224,7 @@ void distribute_work(process_pool_t *pool, task_t *tasks, int num_tasks) {
         process_result(&result);
     }
 }
-```
+```text
 
 ### 7.2 프로세스 모니터링: 나만의 htop 만들기
 
@@ -1208,13 +1284,13 @@ process_info_t* get_process_info(pid_t pid) {
 
 // 프로세스 모니터: 미니 htop
 void monitor_processes() {
-    printf("\n=== 실시간 프로세스 모니터 (Ctrl+C로 종료) ===\n");
+    printf(", === 실시간 프로세스 모니터 (Ctrl+C로 종료) ===, ");
     
     while (1) {
         system("clear");
-        printf("🖥️  프로세스 모니터 - %s\n", get_current_time());
-        printf("PID\tNAME\t\tMEM(KB)\tCPU%%\tSTATE\n");
-        printf("----------------------------------------\n");
+        printf("🖥️  프로세스 모니터 - %s, ", get_current_time());
+        printf("PID\tNAME\t\tMEM(KB)\tCPU%%\tSTATE, ");
+        printf("----------------------------------------, ");
         
         DIR *proc_dir = opendir("/proc");
         struct dirent *entry;
@@ -1226,7 +1302,7 @@ void monitor_processes() {
             pid_t pid = atoi(entry->d_name);
             process_info_t *info = get_process_info(pid);
             
-            printf("%d\t%-15s\t%ld\t%.1f\t%c\n",
+            printf("%d\t%-15s\t%ld\t%.1f\t%c, ",
                    info->pid, info->name, info->memory_kb,
                    info->cpu_percent, info->state);
             
@@ -1237,7 +1313,7 @@ void monitor_processes() {
         sleep(1);
     }
 }
-```
+```text
 
 ## 8. 정리: 프로세스 생성과 종료의 핵심
 
@@ -1272,22 +1348,22 @@ void monitor_processes() {
 
 ### 실전 팁: 바로 적용하기
 
-1. **좀비 방지 필수 코드**
+**좀비 방지 필수 코드**
 
-   ```c
-   signal(SIGCHLD, SIG_IGN);  // 간단한 방법
-   // 또는 핸들러 등록
-   ```
+```c
+signal(SIGCHLD, SIG_IGN);  // 간단한 방법
+// 또는 핸들러 등록
+```
 
-2. **fork() 최적화**
+**fork() 최적화**
 
-   ```c
-   // fork() 전에 불필요한 메모리 해제
-   free(large_buffer);
-   pid = fork();  // CoW 효과 극대화
-   ```
+```c
+// fork() 전에 불필요한 메모리 해제
+free(large_buffer);
+pid = fork();  // CoW 효과 극대화
+```
 
-3. **안전한 exec()**
+**안전한 exec()**
 
    ```c
    if (exec(...) == -1) {

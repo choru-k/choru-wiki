@@ -37,7 +37,7 @@ def withdraw(account, amount):
         # Thread 2: 잔액을 300원으로 설정 (덮어씀!)
         return True
     return False
-```
+```text
 
 이게 바로 동시성 프로그래밍의 무서운 점입니다. 99.99%는 정상 작동하다가, 0.01%의 타이밍에 모든 것이 무너질 수 있죠.
 
@@ -97,7 +97,7 @@ void benchmark_process_creation() {
     clock_gettime(CLOCK_MONOTONIC, &end);
     long ns = (end.tv_sec - start.tv_sec) * 1000000000 + 
               (end.tv_nsec - start.tv_nsec);
-    printf("프로세스 생성: %ld ns/개\n", ns / 1000);
+    printf("프로세스 생성: %ld ns/개, ", ns / 1000);
     // 결과: ~500,000 ns/개
 }
 
@@ -114,10 +114,10 @@ void benchmark_thread_creation() {
     clock_gettime(CLOCK_MONOTONIC, &end);
     long ns = (end.tv_sec - start.tv_sec) * 1000000000 + 
               (end.tv_nsec - start.tv_nsec);
-    printf("스레드 생성: %ld ns/개\n", ns / 1000);
+    printf("스레드 생성: %ld ns/개, ", ns / 1000);
     // 결과: ~25,000 ns/개
 }
-```
+```text
 
 **스레드가 프로세스보다 20배 빠릅니다!** 💨
 
@@ -155,7 +155,7 @@ graph TB
     style HEAP fill:#FFE082
     style DATA fill:#FFE082
     style CODE fill:#FFE082
-```
+```text
 
 ### 1.2 스레드 구현 (Linux): 커널의 비밀
 
@@ -210,7 +210,7 @@ int create_thread(void (*fn)(void*), void *arg) {
     
     return tid;
 }
-```
+```text
 
 ### 1.3 pthread 라이브러리: POSIX의 선물
 
@@ -236,12 +236,12 @@ typedef struct {
 void* thread_function(void *arg) {
     thread_data_t *data = (thread_data_t*)arg;
     
-    printf("Thread %d started: %s\n", 
+    printf("Thread %d started: %s, ", 
            data->thread_id, data->message);
     
     // 작업 수행
     for (int i = 0; i < 5; i++) {
-        printf("Thread %d working... %d\n", 
+        printf("Thread %d working... %d, ", 
                data->thread_id, i);
         sleep(1);
     }
@@ -277,7 +277,7 @@ void demonstrate_pthreads() {
         void *retval;
         pthread_join(threads[i], &retval);
         
-        printf("Thread %d finished with result: %d\n",
+        printf("Thread %d finished with result: %d, ",
                i, (int)(intptr_t)retval);
     }
 }
@@ -311,7 +311,7 @@ void configure_thread_attributes() {
     // 속성 정리
     pthread_attr_destroy(&attr);
 }
-```
+```text
 
 ## 2. 뮤텍스 (Mutex)
 
@@ -347,16 +347,15 @@ void send_message_safe(chat_room_t *room, message_t *msg) {
     room->messages[room->count++] = msg;
     pthread_mutex_unlock(&room->mutex);  // 문 열기
 }
-```
+```text
 
 ### 2.1 뮤텍스 원리: 하드웨어의 도움
 
 ```mermaid
 sequenceDiagram
-    participant T1 as "Thread 1
-"    participant M as "Mutex
-"    participant T2 as "Thread 2
-"    
+    participant T1 as "Thread 1"
+    participant M as "Mutex"
+    participant T2 as "Thread 2"    
     T1->>M: lock()
     M-->>T1: 획득 성공
     Note over T1: Critical Section
@@ -369,7 +368,7 @@ sequenceDiagram
     Note over T2: Critical Section
     
     T2->>M: unlock()
-```
+```text
 
 ### 2.2 뮤텍스 구현: Futex의 마법
 
@@ -390,7 +389,7 @@ void measure_syscall_cost() {
         normal_function();
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
-    printf("일반 함수: %ld ns\n", calculate_ns(start, end) / 1000000);
+    printf("일반 함수: %ld ns, ", calculate_ns(start, end) / 1000000);
     // 결과: ~2ns
     
     // 시스템 콜
@@ -399,10 +398,10 @@ void measure_syscall_cost() {
         getpid();  // 가장 간단한 시스템 콜
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
-    printf("시스템 콜: %ld ns\n", calculate_ns(start, end) / 1000000);
+    printf("시스템 콜: %ld ns, ", calculate_ns(start, end) / 1000000);
     // 결과: ~50ns (25배 느림!)
 }
-```
+```text
 
 Futex는 이렇게 동작합니다:
 
@@ -451,70 +450,133 @@ void mutex_lock_spin(mutex_internal_t *mutex) {
 }
 
 // 뮤텍스 잠금 (futex 버전, priority inheritance 포함)
+// 이 함수는 리눅스 커널의 futex 시스템을 활용한 고성능 뮤텍스 구현
 void mutex_lock_futex(mutex_internal_t *mutex) {
-    pid_t my_tid = gettid();
-    int my_priority = getpriority(PRIO_PROCESS, 0);
+    // 현재 스레드 정보 수집 (디버깅 및 ownership 추적용)
+    pid_t my_tid = gettid();  // 현재 스레드 ID
+    int my_priority = getpriority(PRIO_PROCESS, 0);  // 현재 우선순위
     
-    // Fast path: 경쟁 없음
-    int expected = 0;
+    printf("[뮤텍스] 스레드 %d (우선순위: %d)가 락 요청, ", my_tid, my_priority);
+    
+    // ★ FAST PATH: 경쟁이 없는 경우의 최적화된 경로
+    // atomic_compare_exchange_strong = CPU의 CAS(Compare-And-Swap) 명령어 사용
+    // 이 경로는 시스템 콜 없이 유저 공간에서만 동작 (매우 빠름!)
+    int expected = 0;  // 기대값: 0 (unlocked)
     if (atomic_compare_exchange_strong(&mutex->futex_word, &expected, 1)) {
+        // 성공! 뮤텍스를 성공적으로 획득
+        // 이 경우 시스템 콜 오버헤드 없음 (~2ns)
         mutex->owner = my_tid;
         mutex->original_priority = my_priority;
+        printf("[뮤텍스] 스레드 %d: Fast Path 성공 - 즉시 획득, ", my_tid);
         return;
     }
     
-    // Slow path: 경쟁 있음
+    printf("[뮤텍스] 스레드 %d: Fast Path 실패 - Slow Path 진입, ", my_tid);
+    
+    // ★ PRIORITY INHERITANCE: 우선순위 역전 문제 해결
+    // 낮은 우선순위 스레드가 뮤텍스를 가지고 있을 때,
+    // 높은 우선순위 스레드가 대기하면 소유자의 우선순위를 일시적으로 높여줌
     if (mutex->pi_enabled && mutex->owner != 0) {
-        // Priority Inheritance: 소유자 우선순위 상승
         int owner_priority = getpriority(PRIO_PROCESS, mutex->owner);
-        if (my_priority < owner_priority) {  // 높은 우선순위 (작은 숫자)
+        
+        printf("[PI] 소유자 %d 우선순위: %d, 요청자 %d 우선순위: %d, ", 
+               mutex->owner, owner_priority, my_tid, my_priority);
+        
+        // 리눅스에서 우선순위는 작은 숫자가 높은 우선순위
+        if (my_priority < owner_priority) {
+            printf("[PI] 우선순위 상속 실행: %d -> %d, ", owner_priority, my_priority);
             setpriority(PRIO_PROCESS, mutex->owner, my_priority);
         }
     }
     
-    // 대기자 표시
+    // ★ SLOW PATH: 경쟁이 있는 경우 - 커널의 도움이 필요
+    // futex_word를 2로 설정: "대기자가 있음"을 표시
+    // 이렇게 하면 unlock 시 깨워야 할 스레드가 있다는 것을 알 수 있음
     int c = atomic_exchange(&mutex->futex_word, 2);
     
+    // 뮤텍스가 해제될 때까지 대기 루프
     while (c != 0) {
-        // 커널에서 대기
-        syscall(SYS_futex, &mutex->futex_word,
-                FUTEX_WAIT_PRIVATE, 2, NULL, NULL, 0);
+        printf("[뮤텍스] 스레드 %d: 커널에서 대기 시작... (futex_word: %d), ", my_tid, c);
         
+        // ★ 핵심: futex 시스템 콜로 커널에서 효율적 대기
+        // FUTEX_WAIT_PRIVATE: 현재 프로세스 내 스레드들만 사용하는 futex
+        // 이 시점에서 스레드는 잠들고 CPU를 다른 스레드에게 양보
+        int result = syscall(SYS_futex, &mutex->futex_word,
+                            FUTEX_WAIT_PRIVATE, 2, NULL, NULL, 0);
+        
+        if (result == -1 && errno != EAGAIN) {
+            printf("[뮤텍스] 스레드 %d: futex 대기 중 오류 (errno: %d), ", my_tid, errno);
+        }
+        
+        // 깨어난 후 다시 획득 시도
+        // 다른 스레드가 먼저 획득할 수 있으므로 루프 필요
         c = atomic_exchange(&mutex->futex_word, 2);
+        
+        printf("[뮤텍스] 스레드 %d: 깨어남, 다시 시도 (futex_word: %d), ", my_tid, c);
     }
     
+    // ★ 성공: 뮤텍스 획득 완료
     mutex->owner = my_tid;
     mutex->original_priority = my_priority;
+    printf("[뮤텍스] 스레드 %d: Slow Path 성공 - 뮤텍스 획득, ", my_tid);
 }
 
 // 뮤텍스 해제 (priority inheritance 복구 포함)
+// unlock은 lock보다 단순하지만 대기자 처리가 중요
 void mutex_unlock_futex(mutex_internal_t *mutex) {
     pid_t my_tid = gettid();
     
-    // 소유자 확인
+    printf("[뮤텍스] 스레드 %d: unlock 시도, ", my_tid);
+    
+    // ★ 보안 체크: ownership 확인
+    // 뮤텍스를 소유하지 않은 스레드가 unlock을 시도하면 오류
     if (mutex->owner != my_tid) {
-        errno = EPERM;
+        printf("[뮤텍스 오류] 스레드 %d가 소유하지 않은 뮤텍스 unlock 시도 (owner: %d), ", 
+               my_tid, mutex->owner);
+        errno = EPERM;  // "Operation not permitted"
         return;
     }
     
-    // Priority Inheritance 복구
-    if (mutex->pi_enabled && mutex->original_priority != getpriority(PRIO_PROCESS, 0)) {
+    // ★ PRIORITY INHERITANCE 복구: 우선순위를 원래대로 되돌리기
+    // lock 시 다른 스레드 때문에 우선순위가 올라갔다면 이제 원복
+    int current_priority = getpriority(PRIO_PROCESS, 0);
+    if (mutex->pi_enabled && mutex->original_priority != current_priority) {
+        printf("[PI 복구] 스레드 %d 우선순위 복구: %d -> %d, ", 
+               my_tid, current_priority, mutex->original_priority);
         setpriority(PRIO_PROCESS, my_tid, mutex->original_priority);
     }
     
+    // ★ ownership 해제
     mutex->owner = 0;
+    printf("[뮤텍스] 스레드 %d: ownership 해제, ", my_tid);
     
-    // Fast path: 대기자 없음
-    if (atomic_fetch_sub(&mutex->futex_word, 1) != 1) {
-        // Slow path: 대기자 있음
+    // ★ FAST PATH: 대기자가 없는 경우의 최적화
+    // atomic_fetch_sub: futex_word에서 1을 빼고 이전 값 반환
+    // 이전 값이 1이었다면 대기자 없음 (1 -> 0)
+    int prev_value = atomic_fetch_sub(&mutex->futex_word, 1);
+    
+    if (prev_value != 1) {
+        printf("[뮤텍스] 스레드 %d: Slow Path - 대기자 있음 (prev: %d), ", my_tid, prev_value);
+        
+        // ★ SLOW PATH: 대기자가 있는 경우
+        // futex_word를 0으로 설정 (완전히 해제됨 표시)
         atomic_store(&mutex->futex_word, 0);
         
-        // 가장 높은 우선순위 대기자 깨우기
-        syscall(SYS_futex, &mutex->futex_word,
-                FUTEX_WAKE_PRIVATE, 1, NULL, NULL, 0);
+        // ★ 핵심: 대기 중인 스레드 중 하나를 깨우기
+        // FUTEX_WAKE_PRIVATE: 가장 높은 우선순위의 대기자 하나만 깨우기
+        // 여러 대기자가 있어도 하나만 깨워서 thundering herd 방지
+        int woken = syscall(SYS_futex, &mutex->futex_word,
+                           FUTEX_WAKE_PRIVATE, 1, NULL, NULL, 0);
+        
+        printf("[뮤텍스] 스레드 %d: %d개 스레드 깨우기 완료, ", my_tid, woken);
+        
+    } else {
+        printf("[뮤텍스] 스레드 %d: Fast Path - 대기자 없음, ", my_tid);
     }
+    
+    printf("[뮤텍스] 스레드 %d: unlock 완료, ", my_tid);
 }
-```
+```text
 
 ### 2.3 뮤텍스 사용 예제: 데드락 지옥에서 살아남기
 
@@ -601,7 +663,7 @@ void demonstrate_recursive_mutex() {
     
     pthread_mutexattr_destroy(&attr);
 }
-```
+```text
 
 ## 3. 세마포어 (Semaphore)
 
@@ -632,7 +694,7 @@ void book_ticket(cinema_t *cinema) {
     // 만약 취소하면
     // sem_post(&cinema->available_seats);  // 좌석 반납
 }
-```
+```text
 
 ### 3.1 세마포어 원리: 다익스트라의 선물
 
@@ -664,7 +726,7 @@ value++"]
     end
     
     style CS fill:#4CAF50
-```
+```text
 
 ### 3.2 세마포어 구현: 생산자-소비자의 춤
 
@@ -739,43 +801,111 @@ typedef struct {
     pthread_mutex_t mutex;
 } producer_consumer_t;
 
+// 생산자 스레드: 데이터를 생성하여 뺄퍼에 넣는 역할
+// 실제 예: 로그 수집기, 네트워크 패킷 받기, 웹 크롤링 등
 void* producer(void *arg) {
     producer_consumer_t *pc = (producer_consumer_t*)arg;
+    pthread_t my_thread = pthread_self();
+    
+    printf("[생산자 %ld] 시작 - 100개 아이템 생산 예정, ", my_thread);
     
     for (int i = 0; i < 100; i++) {
-        int item = produce_item();
+        // ★ 1단계: 새로운 데이터 생산 (예: 네트워크에서 데이터 수신)
+        int item = produce_item();  // 예: i*i 같은 값 또는 실제 로그 데이터
         
-        sem_wait(&pc->empty);  // 빈 슬롯 대기
+        printf("[생산자 %ld] 아이템 %d 생산 완료 (%d/100), ", my_thread, item, i+1);
+        
+        // ★ 2단계: 빈 슬롯 대기 (P 연산)
+        // 뺄퍼가 가득 차면 여기서 블록! 소비자가 아이템을 가져갈 때까지 대기
+        printf("[생산자 %ld] 빈 슬롯 대기 중... (empty: %d), ", 
+               my_thread, get_semaphore_value(&pc->empty));
+        
+        sem_wait(&pc->empty);  // 빈 슬롯 수 감소 (BUFFER_SIZE -> BUFFER_SIZE-1 -> ...)
+        
+        // ★ 3단계: 임계 구역 진입 (뮤텍스 잠금)
+        // buffer 배열에 대한 동시 접근 방지
+        // 여러 생산자가 동시에 in 인덱스를 변경하면 데이터 손상!
         pthread_mutex_lock(&pc->mutex);
+        printf("[생산자 %ld] 임계구역 진입 - 버퍼 인덱스: %d, ", my_thread, pc->in);
         
-        // 아이템 추가
+        // ★ 4단계: 실제 데이터 저장 (원형 뺄퍼 로직)
         pc->buffer[pc->in] = item;
+        printf("[생산자 %ld] 아이템 %d를 뺄퍼[%d]에 저장, ", 
+               my_thread, item, pc->in);
+        
+        // 원형 뺄퍼: 끝에 도달하면 처음으로 (모듈로 연산 사용)
         pc->in = (pc->in + 1) % BUFFER_SIZE;
         
+        // ★ 5단계: 임계 구역 탈출 (뮤텍스 해제)
         pthread_mutex_unlock(&pc->mutex);
-        sem_post(&pc->full);   // 찬 슬롯 증가
+        printf("[생산자 %ld] 임계구역 탈출, ", my_thread);
+        
+        // ★ 6단계: 찬 슬롯 수 증가 알림 (V 연산)
+        // 소비자에게 "새 데이터가 있어!"라고 알리기
+        sem_post(&pc->full);   // 찬 슬롯 수 증가 (0 -> 1 -> 2 -> ...)
+        
+        printf("[생산자 %ld] 소비자에게 신호 전송 (full: %d), ", 
+               my_thread, get_semaphore_value(&pc->full));
+        
+        // 생산 속도 조절 (선택적) - 실제 시스템에서는 네트워크 I/O 대기 등
+        // usleep(10000);  // 10ms 대기
     }
     
+    printf("[생산자 %ld] 모든 작업 완료 - 100개 아이템 생산 완료, ", my_thread);
     return NULL;
 }
 
+// 소비자 스레드: 뺄퍼에서 데이터를 가져와서 처리하는 역할
+// 실제 예: 로그 파일 저장, 데이터베이스 입력, 네트워크 전송 등
 void* consumer(void *arg) {
     producer_consumer_t *pc = (producer_consumer_t*)arg;
+    pthread_t my_thread = pthread_self();
+    
+    printf("[소비자 %ld] 시작 - 100개 아이템 소비 예정, ", my_thread);
     
     for (int i = 0; i < 100; i++) {
-        sem_wait(&pc->full);   // 찬 슬롯 대기
-        pthread_mutex_lock(&pc->mutex);
+        // ★ 1단계: 찬 슬롯 대기 (P 연산)
+        // 뺄퍼가 비어있으면 여기서 블록! 생산자가 데이터를 넣을 때까지 대기
+        printf("[소비자 %ld] 데이터 대기 중... (full: %d), ", 
+               my_thread, get_semaphore_value(&pc->full));
         
-        // 아이템 제거
+        sem_wait(&pc->full);   // 찬 슬롯 수 감소 (n -> n-1 -> ... -> 0)
+        
+        // ★ 2단계: 임계 구역 진입 (뮤텍스 잠금)
+        // buffer 배열에 대한 동시 접근 방지
+        // 여러 소비자가 동시에 out 인덱스를 변경하면 데이터 손상!
+        pthread_mutex_lock(&pc->mutex);
+        printf("[소비자 %ld] 임계구역 진입 - 버퍼 인덱스: %d, ", my_thread, pc->out);
+        
+        // ★ 3단계: 실제 데이터 추출 (원형 뺄퍼 로직)
         int item = pc->buffer[pc->out];
+        printf("[소비자 %ld] 버퍼[%d]에서 아이템 %d 추출, ", 
+               my_thread, pc->out, item);
+        
+        // 원형 뺄퍼: 끝에 도달하면 처음으로 (모듈로 연산 사용)
         pc->out = (pc->out + 1) % BUFFER_SIZE;
         
+        // ★ 4단계: 임계 구역 탈출 (뮤텍스 해제)
         pthread_mutex_unlock(&pc->mutex);
-        sem_post(&pc->empty);  // 빈 슬롯 증가
+        printf("[소비자 %ld] 임계구역 탈출, ", my_thread);
         
-        consume_item(item);
+        // ★ 5단계: 빈 슬롯 수 증가 알림 (V 연산)
+        // 생산자에게 "자리가 비었어!"라고 알리기
+        sem_post(&pc->empty);  // 빈 슬롯 수 증가 (0 -> 1 -> ... -> BUFFER_SIZE)
+        
+        printf("[소비자 %ld] 생산자에게 신호 전송 (empty: %d), ", 
+               my_thread, get_semaphore_value(&pc->empty));
+        
+        // ★ 6단계: 실제 데이터 처리 (뺄퍼 바깥에서!)
+        // 이 부분은 뺄퍼 바깥에서 실행되므로 뺄퍼 접근과 동기화 불필요
+        printf("[소비자 %ld] 아이템 %d 처리 시작 (%d/100), ", my_thread, item, i+1);
+        consume_item(item);  // 예: 로그 파일 쓰기, 데이터베이스 저장 등
+        
+        // 처리 속도 조절 (선택적) - 실제 시스템에서는 디스크 I/O 대기 등
+        // usleep(20000);  // 20ms 대기 (생산보다 느림)
     }
     
+    printf("[소비자 %ld] 모든 작업 완료 - 100개 아이템 소비 완료, ", my_thread);
     return NULL;
 }
 
@@ -787,7 +917,7 @@ void init_producer_consumer(producer_consumer_t *pc) {
     sem_init(&pc->full, 0, 0);             // 초기값: 0
     pthread_mutex_init(&pc->mutex, NULL);
 }
-```
+```text
 
 ## 4. 조건 변수 (Condition Variable)
 
@@ -803,7 +933,7 @@ while (!data_ready) {
     // 1초에 백만 번 확인... CPU 100%!
 }
 process_data();
-```
+```text
 
 **조건 변수 방식:**
 
@@ -816,7 +946,7 @@ while (!data_ready) {
 }
 process_data();
 pthread_mutex_unlock(&mutex);
-```
+```text
 
 실제로 제가 실시간 주식 거래 시스템을 만들 때, 폴링에서 조건 변수로 바꾸니 **CPU 사용률이 100%에서 2%로 떨어졌습니다!**
 
@@ -837,7 +967,7 @@ while (!condition) {  // 항상 while!
     pthread_cond_wait(&cond, &mutex);
     // 깨어났어도 조건 재확인
 }
-```
+```text
 
 ```c
 // 조건 변수 사용 패턴
@@ -876,7 +1006,7 @@ void* signaler_thread(void *arg) {
     pthread_mutex_unlock(&mutex);
     return NULL;
 }
-```
+```text
 
 ### 4.2 조건 변수 활용: 스레드 풀의 비밀
 
@@ -909,34 +1039,77 @@ typedef struct {
     int shutdown;
 } thread_pool_t;
 
-// 워커 스레드
+// 워커 스레드: 스레드 풀의 핵심 - 작업을 대기하며 반복 수행
+// 실제 예: Nginx 워커, Apache MPM, Node.js 워커 스레드 등
 void* worker_thread(void *arg) {
     thread_pool_t *pool = (thread_pool_t*)arg;
+    pthread_t my_thread = pthread_self();
     
+    printf("[워커 %ld] 시작 - 작업 대기 상태로 진입, ", my_thread);
+    
+    // ★ 무한 루프: 생명주기 동안 작업 반복 수행
     while (1) {
+        printf("[워커 %ld] 작업 큐 접근 시도..., ", my_thread);
+        
+        // ★ 1단계: 작업 큐에 대한 배타적 접근 보장 (뮤텍스 잠금)
+        // 여러 워커 스레드가 동시에 대기열에 접근해도 안전
         pthread_mutex_lock(&pool->queue_mutex);
         
-        // 작업 대기
+        // ★ 2단계: 작업이 없는 동안 대기 (Consumer Pattern)
+        // 중요: while 루프 사용로 spurious wakeup 방지
+        // shutdown 플래그도 함께 체크하여 우아한 종료 지원
         while (pool->task_queue == NULL && !pool->shutdown) {
+            printf("[워커 %ld] 작업 없음 - 조건 변수로 대기 중..., ", my_thread);
+            
+            // ★ 핵심: 조건 변수 대기
+            // pthread_cond_wait는 자동으로:
+            // 1) 뮤텍스 해제 후 잠들기 (atomic 연산)
+            // 2) 깨어나면 뮤텍스 재획득
+            // 이로 인해 작업 추가와 작업 수행 사이에 레이스 컨디션 없음!
             pthread_cond_wait(&pool->queue_cond, &pool->queue_mutex);
+            
+            printf("[워커 %ld] 깨어남! 조건 재확인 중..., ", my_thread);
         }
         
+        // ★ 3단계: 종료 신호 처리 (우아한 종료)
         if (pool->shutdown) {
-            pthread_mutex_unlock(&pool->queue_mutex);
-            break;
+            printf("[워커 %ld] 종료 신호 수신 - 워커 스레드 종료, ", my_thread);
+            pthread_mutex_unlock(&pool->queue_mutex);  // 뮤텍스 해제 중요!
+            break;  // 루프 탈출
         }
         
-        // 작업 가져오기
+        // ★ 4단계: 작업 대기열에서 작업 추출 (FIFO - First In, First Out)
+        // 연결 리스트의 첫 번째 노드를 제거하고 참조 업데이트
         struct task *task = pool->task_queue;
+        printf("[워커 %ld] 작업 추출: 함수 %p, 인수 %p, ", 
+               my_thread, (void*)task->func, task->arg);
+        
+        // 대기열 포인터 업데이트 (다음 작업으로 이동)
         pool->task_queue = task->next;
         
+        // ★ 5단계: 뮤텍스 해제 (작업 수행은 뺄퍼 밖에서)
+        // 이제 다른 워커가 작업 큐에 접근 가능
         pthread_mutex_unlock(&pool->queue_mutex);
         
-        // 작업 실행
+        printf("[워커 %ld] 대기열 잠금 해제 - 작업 수행 시작, ", my_thread);
+        
+        // ★ 6단계: 실제 작업 수행 (비동기 실행)
+        // 이 부분은 다른 워커들과 동시에 실행될 수 있음 (CPU 코어 활용)
+        // 예: HTTP 요청 처리, 데이터베이스 쿼리, 파일 I/O 등
+        printf("[워커 %ld] 작업 실행 중..., ", my_thread);
+        
+        // 사용자 정의 작업 함수 호출
         task->func(task->arg);
+        
+        printf("[워커 %ld] 작업 완료 - 메모리 정리, ", my_thread);
+        
+        // ★ 7단계: 작업 노드 메모리 정리 (메모리 누수 방지)
         free(task);
+        
+        printf("[워커 %ld] 다음 작업 대기 모드로 전환, ", my_thread);
     }
     
+    printf("[워커 %ld] 스레드 종료 - 정리 대기, ", my_thread);
     return NULL;
 }
 
@@ -966,7 +1139,7 @@ void thread_pool_add_task(thread_pool_t *pool,
     
     pthread_mutex_unlock(&pool->queue_mutex);
 }
-```
+```text
 
 ## 5. 읽기-쓰기 락 (RWLock)
 
@@ -988,7 +1161,7 @@ RWLock을 이해하는 최고의 비유는 도서관입니다:
 // 성능 측정 결과
 Mutex:   1,000 reads/sec (직렬화 때문에)
 RWLock: 950,000 reads/sec (거의 동시 실행!)
-```
+```text
 
 **950배 차이!** 😱
 
@@ -1013,7 +1186,7 @@ graph TD
     
     style RLOCKED fill:#4CAF50
     style WLOCKED fill:#FF5252
-```
+```text
 
 ### 5.2 RWLock 구현과 사용: Redis의 비밀
 
@@ -1130,7 +1303,7 @@ void cache_put(cache_t *cache, const char *key, void *value) {
     
     pthread_rwlock_unlock(&cache->lock);
 }
-```
+```text
 
 ## 6. Lock-Free 프로그래밍
 
@@ -1160,7 +1333,7 @@ bool CAS(int *ptr, int expected, int new_value) {
     }
     return false;
 }
-```
+```text
 
 이 간단한 연산으로 어떻게 복잡한 자료구조를 만들까요?
 
@@ -1171,7 +1344,7 @@ bool CAS(int *ptr, int expected, int new_value) {
 Mutex Stack:     2,500ms
 Spinlock Stack:    800ms  
 Lock-free Stack:   150ms  // 16배 빠름!
-```
+```text
 
 하지만 주의! Lock-free는 **ABA 문제**라는 함정이 있습니다:
 
@@ -1290,7 +1463,7 @@ void enqueue(lock_free_queue_t *queue, int data) {
                                 (uintptr_t*)&tail,
                                 (uintptr_t)new_node);
 }
-```
+```text
 
 ## 7. 스레드 로컬 스토리지 (TLS)
 
@@ -1310,7 +1483,7 @@ TLS는 각 스레드가 자신만의 백팩을 갖는 것과 같습니다. 공�
 int* __errno_location() {
     return &(current_thread->errno);
 }
-```
+```text
 
 천재적이죠? 전역 변수처럼 보이지만 실제로는 TLS!
 
@@ -1335,7 +1508,7 @@ void handle_request_fast() {
 }
 
 // 결과: 30% 처리량 증가! 🚀
-```
+```text
 
 ```c
 // TLS 변수 선언
@@ -1357,7 +1530,7 @@ void* thread_with_tls(void *arg) {
     
     // TLS 데이터 사용
     int *retrieved = (int*)pthread_getspecific(tls_key);
-    printf("Thread %lu: TLS data = %d\n", 
+    printf("Thread %lu: TLS data = %d, ", 
            pthread_self(), *retrieved);
     
     return NULL;
@@ -1373,7 +1546,7 @@ void* thread_errno_example(void *arg) {
     errno = 0;  // 이 스레드의 errno만 변경
     
     if (some_function() < 0) {
-        printf("Thread %lu: Error %d\n", 
+        printf("Thread %lu: Error %d, ", 
                pthread_self(), errno);
     }
     
@@ -1388,7 +1561,7 @@ typedef struct {
     int errno_location;
     // ... 기타 TLS 변수들
 } tls_layout_t;
-```
+```text
 
 ## 8. 고급 동기화 패턴
 
@@ -1418,7 +1591,7 @@ void parallel_image_filter(image_t *img) {
 // 결과:
 // 순차 처리: 1600ms (400ms × 4)
 // 병렬 처리: 400ms (4배 향상!)
-```
+```text
 
 ```c
 // 배리어: 모든 스레드가 도착할 때까지 대기
@@ -1472,7 +1645,7 @@ void* parallel_computation(void *arg) {
     
     return NULL;
 }
-```
+```text
 
 ### 8.2 스핀락 (Spinlock): 회전문의 지혜
 
@@ -1506,7 +1679,7 @@ void benchmark_locks() {
     
     // 교훈: Critical section이 100ns 미만일 때만 spinlock 고려
 }
-```
+```text
 
 **교훈: 스핀락은 정말 짧은 구간에만!**
 
@@ -1558,7 +1731,7 @@ void adaptive_lock(adaptive_spinlock_t *lock) {
         }
     }
 }
-```
+```text
 
 ## 9. 실전: 동기화 디버깅
 
@@ -1582,7 +1755,7 @@ void weekly_backup() {
     lock(user_mutex);     // 1번 나중에! 💥 데드락!
     // ...
 }
-```
+```text
 
 **해결책: Lock Ordering**
 
@@ -1604,7 +1777,7 @@ void safe_lock(mutex_t *m, int order) {
     pthread_mutex_lock(m);
     thread_local_last_order = order;
 }
-```
+```text
 
 ```c
 // 데드락 감지기
@@ -1637,7 +1810,7 @@ void track_unlock(pthread_mutex_t *mutex) {
 
 // ThreadSanitizer 사용
 // gcc -fsanitize=thread -g program.c
-```
+```text
 
 ### 9.2 성능 모니터링: 보이지 않는 적 찾기
 
@@ -1666,7 +1839,7 @@ struct good_design {
 };
 
 // 결과: 3배 성능 향상! 🚀
-```
+```text
 
 ```c
 // 락 경쟁 측정
@@ -1706,14 +1879,14 @@ void instrumented_unlock(instrumented_mutex_t *m) {
 
 // 통계 출력
 void print_lock_stats(instrumented_mutex_t *m) {
-    printf("Lock Statistics:\n");
-    printf("  Contentions: %d\n", m->contention_count);
-    printf("  Avg wait time: %ld ns\n", 
+    printf("Lock Statistics:, ");
+    printf("  Contentions: %d, ", m->contention_count);
+    printf("  Avg wait time: %ld ns, ", 
            m->wait_time / (m->contention_count + 1));
-    printf("  Avg hold time: %ld ns\n",
+    printf("  Avg hold time: %ld ns, ",
            m->hold_time / (m->contention_count + 1));
 }
-```
+```text
 
 ## 10. 정리: 스레드와 동기화의 핵심
 
@@ -1748,7 +1921,7 @@ void print_lock_stats(instrumented_mutex_t *m) {
 
 #### 2. **동기화 선택 가이드**
 
-```
+```text
 경쟁 없음 → TLS
 읽기 많음 → RWLock  
 짧은 구간 → Spinlock
@@ -1756,7 +1929,7 @@ void print_lock_stats(instrumented_mutex_t *m) {
 자원 카운팅 → Semaphore
 조건 대기 → Condition Variable
 최고 성능 → Lock-free (단, 전문가만)
-```
+```text
 
 #### 3. **데드락 방지 체크리스트**
 

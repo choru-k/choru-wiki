@@ -48,7 +48,7 @@ void main() {
         // kill -9만이 유일한 희망...
     }
 }
-```
+```text
 
 선배가 한마디: **"SIGKILL과 SIGSTOP만 못 막아. 그게 커널의 법칙이야."**
 
@@ -67,7 +67,7 @@ Netflix 서버는 매일 수천 번 재시작됩니다. 어떻게 사용자가 �
 ```c
 // Netflix 스타일 graceful shutdown
 void sigterm_handler(int sig) {
-    printf("SIGTERM received, starting graceful shutdown...\n");
+    printf("SIGTERM received, starting graceful shutdown..., ");
     
     // 1. 새 연결 거부
     stop_accepting_connections();
@@ -83,7 +83,7 @@ void sigterm_handler(int sig) {
 }
 
 // 결과: 사용자는 재시작을 눈치채지 못함!
-```
+```text
 
 ### 1.1 시그널의 본질: 커널의 택배
 
@@ -120,7 +120,7 @@ graph TD
     
     style PENDING fill:#FFC107
     style HANDLER fill:#4CAF50
-```
+```text
 
 ### 1.2 시그널 구현: 실수하기 쉬운 함정들
 
@@ -129,17 +129,17 @@ graph TD
 ```c
 // 🚫 위험한 코드 (signal)
 void bad_handler(int sig) {
-    printf("Signal %d\n", sig);  // printf는 async-signal-safe 아님!
+    printf("Signal %d, ", sig);  // printf는 async-signal-safe 아님!
     malloc(100);  // 더 위험!
 }
 signal(SIGINT, bad_handler);
 
 // ✅ 안전한 코드 (sigaction)
 void safe_handler(int sig) {
-    const char msg[] = "Signal!\n";
+    const char msg[] = "Signal!, ";
     write(STDOUT_FILENO, msg, sizeof(msg));  // write는 안전!
 }
-```
+```text
 
 **함정 2: 시그널 핸들러에서 할 수 있는 것**
 
@@ -153,7 +153,7 @@ void sigchld_handler(int sig) {
     cleanup_child();
     mutex_unlock(&global_mutex);
 }
-```
+```text
 
 ```c
 // 시그널 정의 (일부)
@@ -181,7 +181,7 @@ void sigchld_handler(int sig) {
 void simple_signal_handler() {
     // 시그널 핸들러
     void sigint_handler(int sig) {
-        printf("\nReceived SIGINT (Ctrl+C)\n");
+        printf(", Received SIGINT (Ctrl+C), ");
         // 정리 작업
         cleanup();
         exit(0);
@@ -203,9 +203,9 @@ void advanced_signal_handler() {
     
     // 핸들러 함수
     void signal_handler(int sig, siginfo_t *info, void *context) {
-        printf("Signal %d received\n", sig);
-        printf("  From PID: %d\n", info->si_pid);
-        printf("  Value: %d\n", info->si_value.sival_int);
+        printf("Signal %d received, ", sig);
+        printf("  From PID: %d, ", info->si_pid);
+        printf("  Value: %d, ", info->si_value.sival_int);
         
         // 시그널별 처리
         switch (sig) {
@@ -259,10 +259,10 @@ void signal_masking_example() {
     sigpending(&pending);
     
     if (sigismember(&pending, SIGINT)) {
-        printf("SIGINT was pending\n");
+        printf("SIGINT was pending, ");
     }
 }
-```
+```text
 
 ### 1.3 실시간 시그널: 큐잉의 마법
 
@@ -281,7 +281,7 @@ for (int i = 0; i < 10; i++) {
     sigqueue(pid, SIGRTMIN, value);  // 데이터와 함께!
 }
 // 결과: 10번 모두 받음 + 순서 보장! ✅
-```
+```text
 
 **실제 활용: 비디오 인코딩 진행률**
 
@@ -297,7 +297,7 @@ void progress_handler(int sig, siginfo_t *info, void *ctx) {
     int percent = info->si_value.sival_int;
     draw_progress_bar(percent);  // ████░░░ 57%
 }
-```
+```text
 
 ```c
 // 실시간 시그널 (SIGRTMIN ~ SIGRTMAX)
@@ -311,8 +311,8 @@ void realtime_signal_example() {
     
     // 수신측 핸들러
     void rt_handler(int sig, siginfo_t *info, void *context) {
-        printf("RT Signal %d\n", sig);
-        printf("Data: %d\n", info->si_value.sival_int);
+        printf("RT Signal %d, ", sig);
+        printf("Data: %d, ", info->si_value.sival_int);
         
         // 실시간 시그널은 순서 보장
         static int last_value = 0;
@@ -332,7 +332,7 @@ void signal_fd_example() {
     sigset_t mask;
     int sfd;
     
-    printf("[signalfd 장점 데모] 전통적 시그널 vs signalfd\n");
+    printf("[signalfd 장점 데모] 전통적 시그널 vs signalfd, ");
     
     // 시그널 마스크 설정
     sigemptyset(&mask);
@@ -351,7 +351,7 @@ void signal_fd_example() {
         ssize_t s = read(sfd, &si, sizeof(si));
         
         if (s == sizeof(si)) {
-            printf("Signal %d from PID %d\n", 
+            printf("Signal %d from PID %d, ", 
                    si.ssi_signo, si.ssi_pid);
             
             if (si.ssi_signo == SIGINT) {
@@ -362,7 +362,7 @@ void signal_fd_example() {
     
     close(sfd);
 }
-```
+```text
 
 ## 2. 파이프 (Pipe)
 
@@ -383,14 +383,14 @@ struct pipe_inode_info {
 };
 
 // 단방향인 이유: head와 tail이 하나씩뿐!
-```
+```text
 
 **실제 사용 예: `ls | grep | wc`**
 
 ```bash
 $ ls -la | grep ".txt" | wc -l
 # 42
-```
+```text
 
 이 명령어가 어떻게 동작하는지 아세요?
 
@@ -416,7 +416,7 @@ void basic_pipe_example() {
         
         ssize_t n = read(pipefd[0], buffer, sizeof(buffer));
         buffer[n] = '\0';
-        printf("Child received: %s\n", buffer);
+        printf("Child received: %s, ", buffer);
         
         close(pipefd[0]);
         exit(0);
@@ -432,46 +432,143 @@ void basic_pipe_example() {
     }
 }
 
-// 양방향 통신
+// 양방향 통신: 두 개의 파이프로 풀 듀플렉스 통신 구현
+// 실제 예: 웹서버와 CGI 스크립트, 데이터베이스 클라이언트-서버 통신
 void bidirectional_pipe() {
-    int pipe1[2], pipe2[2];  // 두 개의 파이프
+    printf(", === 양방향 파이프 통신 데모 ===, ");
     
-    pipe(pipe1);  // 부모 -> 자식
-    pipe(pipe2);  // 자식 -> 부모
+    // ★ 두 개의 파이프 선언: 양방향 통신을 위해 필요
+    // 파이프는 단방향이므로 양방향에는 2개 필요!
+    int pipe1[2], pipe2[2];  // pipe1: 부모->자식, pipe2: 자식->부모
     
+    printf("[Setup] 두 개의 파이프 생성 시도..., ");
+    
+    // ★ 1단계: 두 개의 파이프 생성
+    if (pipe(pipe1) == -1) {  // 부모 -> 자식 방향
+        perror("pipe1 생성 실패");
+        exit(1);
+    }
+    
+    if (pipe(pipe2) == -1) {  // 자식 -> 부모 방향  
+        perror("pipe2 생성 실패");
+        exit(1);
+    }
+    
+    printf("[Setup] 파이프 생성 성공 - pipe1: %d,%d, pipe2: %d,%d, ",
+           pipe1[0], pipe1[1], pipe2[0], pipe2[1]);
+    
+    // ★ 2단계: 프로세스 분기 (fork)
     pid_t pid = fork();
     
     if (pid == 0) {
-        // 자식
-        close(pipe1[1]);  // pipe1 쓰기 닫기
-        close(pipe2[0]);  // pipe2 읽기 닫기
+        // ★ 자식 프로세스 실행 경로
+        printf("[자식 %d] 시작 - 요청 및 응답 처리기, ", getpid());
         
+        // ★ 3단계: 사용하지 않을 파이프 끝 닫기 (자식 정리)
+        // 자식은 pipe1에서 읽고, pipe2에 쓸 예정
+        close(pipe1[1]);  // pipe1 쓰기 끝 닫기 (부모가 사용)
+        close(pipe2[0]);  // pipe2 읽기 끝 닫기 (부모가 사용)
+        
+        printf("[자식] 불필요한 파이프 끝 닫기 완료, ");
+        
+        // ★ 4단계: 부모로부터 요청 수신 (pipe1에서 읽기)
         char request[256];
-        read(pipe1[0], request, sizeof(request));
+        printf("[자식] 부모의 요청 대기 중..., ");
         
-        // 처리
+        ssize_t bytes_read = read(pipe1[0], request, sizeof(request) - 1);
+        if (bytes_read > 0) {
+            request[bytes_read] = '\0';  // NULL 종료 문자 추가
+            printf("[자식] 요청 수신: '%s' (%zd bytes), ", request, bytes_read);
+        } else {
+            printf("[자식] 요청 수신 실패 또는 EOF, ");
+        }
+        
+        // ★ 5단계: 요청 처리 (비즈니스 로직)
+        // 실제 예: 데이터 베이스 쿼리, 파일 처리, 웹 요청 처리 등
+        printf("[자식] 요청 처리 시작..., ");
+        
         char response[256];
-        sprintf(response, "Processed: %s", request);
+        snprintf(response, sizeof(response), "Processed: %s [by child %d]", request, getpid());
         
-        write(pipe2[1], response, strlen(response));
+        // 시비의 처리 지연 (실제 작업 시뮬레이션)
+        sleep(1);  // 1초 처리 시간
+        printf("[자식] 처리 완료: '%s', ", response);
         
-        close(pipe1[0]);
-        close(pipe2[1]);
+        // ★ 6단계: 부모에게 응답 전송 (pipe2에 쓰기)
+        printf("[자식] 부모에게 응답 전송..., ");
+        
+        ssize_t bytes_written = write(pipe2[1], response, strlen(response));
+        if (bytes_written > 0) {
+            printf("[자식] 응답 전송 성공: %zd bytes, ", bytes_written);
+        } else {
+            perror("[자식] 응답 전송 실패");
+        }
+        
+        // ★ 7단계: 자식 정리 작업
+        close(pipe1[0]);  // 읽기용 파이프 닫기
+        close(pipe2[1]);  // 쓰기용 파이프 닫기
+        
+        printf("[자식] 모든 작업 완료 - 종료, ");
         exit(0);
-    } else {
-        // 부모
-        close(pipe1[0]);  // pipe1 읽기 닫기
-        close(pipe2[1]);  // pipe2 쓰기 닫기
         
-        write(pipe1[1], "Request", 7);
+    } else if (pid > 0) {
+        // ★ 부모 프로세스 실행 경로
+        printf("[부모 %d] 시작 - 자식 %d와 통신, ", getpid(), pid);
         
+        // ★ 8단계: 사용하지 않을 파이프 끝 닫기 (부모 정리)
+        // 부모는 pipe1에 쓰고, pipe2에서 읽을 예정
+        close(pipe1[0]);  // pipe1 읽기 끝 닫기 (자식이 사용)
+        close(pipe2[1]);  // pipe2 쓰기 끝 닫기 (자식이 사용)
+        
+        printf("[부모] 불필요한 파이프 끝 닫기 완료, ");
+        
+        // ★ 9단계: 자식에게 요청 전송 (pipe1에 쓰기)
+        const char *request = "Database Query: SELECT * FROM users";
+        printf("[부모] 자식에게 요청 전송: '%s', ", request);
+        
+        ssize_t bytes_written = write(pipe1[1], request, strlen(request));
+        if (bytes_written > 0) {
+            printf("[부모] 요청 전송 성공: %zd bytes, ", bytes_written);
+        } else {
+            perror("[부모] 요청 전송 실패");
+        }
+        
+        // ★ 10단계: 자식으로부터 응답 수신 (pipe2에서 읽기)
         char response[256];
-        read(pipe2[0], response, sizeof(response));
-        printf("Got response: %s\n", response);
+        printf("[부모] 자식의 응답 대기 중..., ");
         
-        close(pipe1[1]);
-        close(pipe2[0]);
-        wait(NULL);
+        ssize_t bytes_read = read(pipe2[0], response, sizeof(response) - 1);
+        if (bytes_read > 0) {
+            response[bytes_read] = '\0';  // NULL 종료 문자 추가
+            printf("[부모] 응답 수신: '%s' (%zd bytes), ", response, bytes_read);
+        } else {
+            printf("[부모] 응답 수신 실패 또는 EOF, ");
+        }
+        
+        // ★ 11단계: 부모 정리 작업
+        close(pipe1[1]);  // 쓰기용 파이프 닫기
+        close(pipe2[0]);  // 읽기용 파이프 닫기
+        
+        // ★ 12단계: 자식 프로세스 종료 대기
+        int status;
+        pid_t terminated = wait(&status);
+        
+        if (WIFEXITED(status)) {
+            printf("[부모] 자식 %d 정상 종료 (exit code: %d), ", 
+                   terminated, WEXITSTATUS(status));
+        } else {
+            printf("[부모] 자식 %d 비정상 종료, ", terminated);
+        }
+        
+    } else {
+        // fork 실패 처리
+        perror("fork 실패");
+        close(pipe1[0]); close(pipe1[1]);
+        close(pipe2[0]); close(pipe2[1]);
+        exit(1);
+    }
+    
+    printf(", === 양방향 파이프 통신 완료 ===, ");
     }
 }
 
@@ -522,7 +619,7 @@ void create_pipeline(char *cmds[], int n) {
         wait(NULL);
     }
 }
-```
+```text
 
 ### 2.2 명명된 파이프 (FIFO): 우체함 같은 공유 통로
 
@@ -555,7 +652,7 @@ void video_player() {
 }
 
 // 결과: 다운로드와 재생이 동시에! 🎥
-```
+```text
 
 **FIFO의 함정: Blocking**
 
@@ -566,7 +663,7 @@ int fd = open("/tmp/myfifo", O_WRONLY);
 
 // 해결책: Non-blocking 모드
 int fd = open("/tmp/myfifo", O_WRONLY | O_NONBLOCK);
-```
+```text
 
 ```c
 // FIFO 생성과 사용
@@ -593,7 +690,7 @@ void named_pipe_example() {
             if (n <= 0) break;
             
             buffer[n] = '\0';
-            printf("Received: %s\n", buffer);
+            printf("Received: %s, ", buffer);
         }
         
         close(fd);
@@ -631,12 +728,12 @@ void nonblocking_fifo() {
         
         if (n > 0) {
             buffer[n] = '\0';
-            printf("Data: %s\n", buffer);
+            printf("Data: %s, ", buffer);
         } else if (n == 0) {
-            printf("No writers\n");
+            printf("No writers, ");
             break;
         } else if (errno == EAGAIN) {
-            printf("No data available\n");
+            printf("No data available, ");
             usleep(100000);  // 100ms 대기
         } else {
             perror("read");
@@ -647,7 +744,7 @@ void nonblocking_fifo() {
     close(fd);
     unlink(fifo_path);
 }
-```
+```text
 
 ## 3. 메시지 큐
 
@@ -680,13 +777,13 @@ void log_collector() {
         write_to_file(msg.mtext);
     }
 }
-```
+```text
 
 **메시지 큐 vs 파이프**
 
 실제 측정 결과:
 
-```
+```text
 파이프: 순차적, FIFO, 64KB 제한
 메시지 큐: 우선순위, 타입별, 8KB/메시지
 
@@ -695,7 +792,7 @@ void log_collector() {
 메시지 큐: 890ms (70% 느림)
 
 대신 메시지 큐는 선택적 수신 가능!
-```
+```text
 
 ### 3.1 System V 메시지 큐: 레거시의 힘
 
@@ -726,7 +823,7 @@ void sysv_message_queue() {
                 break;
             }
             
-            printf("Received [Type %ld]: %s\n", 
+            printf("Received [Type %ld]: %s, ", 
                    msg.mtype, msg.mtext);
             
             if (strcmp(msg.mtext, "quit") == 0) {
@@ -779,13 +876,13 @@ void priority_message_queue() {
     for (int i = 0; i < 3; i++) {
         // 가장 낮은 타입부터 수신
         msgrcv(msgid, &msg, sizeof(msg.mtext), 0, 0);
-        printf("Received: %s (Type %ld)\n", 
+        printf("Received: %s (Type %ld), ", 
                msg.mtext, msg.mtype);
     }
     
     msgctl(msgid, IPC_RMID, NULL);
 }
-```
+```text
 
 ### 3.2 POSIX 메시지 큐: 현대적인 대안
 
@@ -799,7 +896,7 @@ int msgid = msgget(0x1234, IPC_CREAT);
 // POSIX: 이름 기반
 mqd_t mq = mq_open("/my_queue", O_CREAT);
 // 명확하고 충돌 없음! ✅
-```
+```text
 
 **실제 활용: 마이크로서비스 통신**
 
@@ -831,7 +928,7 @@ void payment_service() {
         process_payment(&order);
     }
 }
-```
+```text
 
 ```c
 #include <mqueue.h>
@@ -863,7 +960,7 @@ void posix_message_queue() {
             ssize_t n = mq_receive(mq, buffer, 256, &prio);
             if (n > 0) {
                 buffer[n] = '\0';
-                printf("Received (prio %u): %s\n", prio, buffer);
+                printf("Received (prio %u): %s, ", prio, buffer);
                 
                 if (strcmp(buffer, "quit") == 0) {
                     break;
@@ -910,9 +1007,9 @@ void nonblocking_mqueue() {
         ssize_t n = mq_receive(mq, buffer, 256, &prio);
         
         if (n > 0) {
-            printf("Message: %s\n", buffer);
+            printf("Message: %s, ", buffer);
         } else if (errno == EAGAIN) {
-            printf("No messages available\n");
+            printf("No messages available, ");
             sleep(1);
         } else {
             break;
@@ -921,7 +1018,7 @@ void nonblocking_mqueue() {
     
     mq_close(mq);
 }
-```
+```text
 
 ## 4. 공유 메모리
 
@@ -947,16 +1044,16 @@ void redis_fork_snapshot() {
     
     // 결과: 100GB 복사 없이 스냅샷! 🎉
 }
-```
+```text
 
 **성능 비교 (1GB 데이터 전송)**
 
-```
+```text
 파이프: 2,100ms
 메시지 큐: 3,500ms
 TCP 소켓: 1,800ms
 공유 메모리: 0.5ms 🚀 (4000배 빠름!)
-```
+```text
 
 ### 4.1 System V 공유 메모리: 위험한 속도광
 
@@ -976,7 +1073,7 @@ int* counter = (int*)shared;
 (*counter)++;  // counter = 1 또는 2? 🎲
 
 // 결과: Race Condition!
-```
+```text
 
 **해결책: 프로세스 간 뮤텍스**
 
@@ -985,7 +1082,7 @@ pthread_mutexattr_t attr;
 pthread_mutexattr_init(&attr);
 pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
 pthread_mutex_init(&shared->mutex, &attr);
-```
+```text
 
 ```c
 // 공유 메모리 구조체
@@ -995,61 +1092,97 @@ typedef struct {
     char data[1024];
 } shared_data_t;
 
-// System V 공유 메모리
+// System V 공유 메모리: 고성능 IPC의 핵심
+// 실제 예: 데이터베이스 버퍼 풀, 멀티프로세스 웹서버 세션 공유
 void sysv_shared_memory() {
+    // ⭐ 1단계: IPC 키 생성 - 프로세스간 고유 식별자
+    // ftok()는 파일 경로와 ID로 고유 키를 생성 (여러 프로세스가 같은 키 사용 가능)
     key_t key = ftok("/tmp/shm", 65);
     
-    // 공유 메모리 생성
+    // ⭐ 2단계: System V 공유 메모리 세그먼트 생성/접근
+    // shmget(): 커널에 공유 메모리 세그먼트 요청
+    // IPC_CREAT: 없으면 생성, 있으면 기존 것 반환
+    // 0666: 읽기/쓰기 권한 (rw-rw-rw-)
     int shmid = shmget(key, sizeof(shared_data_t), 
                       IPC_CREAT | 0666);
     
-    // 연결
+    // ⭐ 3단계: 공유 메모리를 프로세스 주소 공간에 매핑
+    // shmat(): 물리 메모리를 가상 주소에 연결 (mmap과 유사)
+    // NULL: 커널이 적절한 주소 선택, 0: 읽기/쓰기 모드
     shared_data_t *shared = shmat(shmid, NULL, 0);
     
-    // 뮤텍스 초기화 (프로세스 간 공유)
+    // ⭐ 4단계: 프로세스 간 공유 뮤텍스 초기화
+    // 주의: 일반 뮤텍스는 스레드간만 동작, 프로세스간은 특별 설정 필요
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
+    
+    // PTHREAD_PROCESS_SHARED: 프로세스 경계를 넘어 뮤텍스 공유 활성화
+    // 내부적으로 futex 시스템콜 사용하여 커널 레벨 동기화 수행
     pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
     pthread_mutex_init(&shared->mutex, &attr);
     
+    // ⭐ 5단계: 프로세스 생성으로 동시성 테스트 시작
     pid_t pid = fork();
     
     if (pid == 0) {
-        // 자식: 쓰기
+        // === 자식 프로세스: 데이터 생산자 역할 ===
         for (int i = 0; i < 10; i++) {
+            // ⭐ 6단계: 크리티컬 섹션 진입 - 뮤텍스로 race condition 방지
+            // 다른 프로세스가 동시에 shared 데이터 수정하는 것을 차단
             pthread_mutex_lock(&shared->mutex);
             
-            shared->counter++;
+            // 공유 데이터 안전하게 수정 (atomic operation 보장)
+            shared->counter++;  // 전역 카운터 증가
             sprintf(shared->data, "Message %d from child", i);
-            printf("Child wrote: %s\n", shared->data);
+            printf("Child wrote: %s, ", shared->data);
             
+            // ⭐ 7단계: 크리티컬 섹션 종료 - 다른 프로세스가 접근 가능하도록 해제
             pthread_mutex_unlock(&shared->mutex);
+            
+            // 100ms 대기로 부모 프로세스가 읽을 시간 제공
             usleep(100000);
         }
         
+        // ⭐ 8단계: 자식 프로세스 정리 - 공유 메모리 연결 해제
+        // shmdt(): 현재 프로세스에서만 매핑 해제, 메모리는 유지
         shmdt(shared);
         exit(0);
     } else {
-        // 부모: 읽기
+        // === 부모 프로세스: 데이터 소비자 역할 ===
         for (int i = 0; i < 10; i++) {
+            // ⭐ 9단계: 부모도 같은 뮤텍스로 동기화
+            // 자식이 쓰는 동안 읽지 않도록 상호 배제 보장
             pthread_mutex_lock(&shared->mutex);
             
-            printf("Parent read: %s (counter: %d)\n", 
+            // 공유 데이터 안전하게 읽기
+            printf("Parent read: %s (counter: %d), ", 
                    shared->data, shared->counter);
             
+            // 크리티컬 섹션 종료
             pthread_mutex_unlock(&shared->mutex);
+            
+            // 자식보다 느리게 읽어서 데이터 누적 효과 확인
             usleep(150000);
         }
         
+        // ⭐ 10단계: 자식 프로세스 완료 대기
+        // 좀비 프로세스 방지 및 모든 작업 완료 보장
         wait(NULL);
         
-        // 정리
+        // ⭐ 11단계: 완전한 리소스 정리 수행
+        // 뮤텍스 파괴 (프로세스 간 공유 뮤텍스도 정리 필요)
         pthread_mutex_destroy(&shared->mutex);
+        
+        // 현재 프로세스에서 공유 메모리 매핑 해제
         shmdt(shared);
+        
+        // ⭐ 12단계: System V 공유 메모리 세그먼트 완전 삭제
+        // IPC_RMID: 커널에서 공유 메모리 세그먼트 완전 제거
+        // 이것을 하지 않으면 시스템 재부팅까지 메모리가 남아있음!
         shmctl(shmid, IPC_RMID, NULL);
     }
 }
-```
+```text
 
 ### 4.2 POSIX 공유 메모리: mmap의 마법
 
@@ -1073,7 +1206,7 @@ video_editor();   // 편집
 effect_renderer(); // 효과
 audio_processor(); // 오디오
 // 모두 같은 메모리 보기!
-```
+```text
 
 **링 버퍼 구현: Lock-free 큐**
 
@@ -1099,7 +1232,7 @@ void produce(ring_buffer_t* ring, const char* msg) {
 }
 
 // 성능: 초당 100만 메시지 처리! 🚀
-```
+```text
 
 ```c
 // POSIX 공유 메모리
@@ -1145,7 +1278,7 @@ void posix_shared_memory() {
             sem_wait(sem);
             
             if (shared->counter != last) {
-                printf("Consumed: %s\n", shared->data);
+                printf("Consumed: %s, ", shared->data);
                 last = shared->counter;
             }
             
@@ -1209,7 +1342,7 @@ void shared_ring_buffer() {
             
             // 데이터 있는지 확인
             if (tail != atomic_load(&ring->head)) {
-                printf("Consumed: %s\n", ring->buffer[tail]);
+                printf("Consumed: %s, ", ring->buffer[tail]);
                 atomic_store(&ring->tail, (tail + 1) % 1024);
                 count++;
             } else {
@@ -1224,7 +1357,7 @@ void shared_ring_buffer() {
         shm_unlink("/ring");
     }
 }
-```
+```text
 
 ## 5. 소켓 (Socket)
 
@@ -1240,7 +1373,7 @@ Unix Socket: 610ms (2배 빠름!)
 // 왜?
 // TCP: 네트워크 스택 전체 거침
 // Unix: 커널 내부에서만 처리
-```
+```text
 
 **실제 활용: Docker의 비밀**
 
@@ -1258,9 +1391,9 @@ void docker_client() {
     connect(sock, (struct sockaddr*)&addr, sizeof(addr));
     
     // HTTP API 호출
-    write(sock, "GET /containers/json HTTP/1.1\r\n", ...);
+    write(sock, "GET /containers/json HTTP/1.1\r, ", ...);
 }
-```
+```text
 
 **파일 디스크립터 전달의 마법**
 
@@ -1280,7 +1413,7 @@ void send_file_handle(int sock, int file_fd) {
     sendmsg(sock, &msg, 0);
     // 이제 다른 프로세스도 같은 파일 사용 가능!
 }
-```
+```text
 
 ```c
 // Unix 도메인 소켓 서버
@@ -1314,7 +1447,7 @@ void unix_socket_server() {
         
         if (n > 0) {
             buffer[n] = '\0';
-            printf("Received: %s\n", buffer);
+            printf("Received: %s, ", buffer);
             
             // 응답
             write(client_fd, "ACK", 3);
@@ -1349,7 +1482,7 @@ void unix_socket_client() {
     // 응답 수신
     char buffer[256];
     read(client_fd, buffer, sizeof(buffer));
-    printf("Response: %s\n", buffer);
+    printf("Response: %s, ", buffer);
     
     close(client_fd);
 }
@@ -1398,7 +1531,7 @@ int receive_fd_over_socket(int socket) {
     cmsg = CMSG_FIRSTHDR(&msg);
     return *((int*)CMSG_DATA(cmsg));
 }
-```
+```text
 
 ### 5.2 네트워크 소켓: 인터넷의 기초
 
@@ -1420,7 +1553,7 @@ void game_networking() {
     // 순서 보장 안 함
     // 대신 빠름!
 }
-```
+```text
 
 **실제 측정: 지연 비교**
 
@@ -1431,7 +1564,7 @@ UDP: 26ms (거의 차이 없음)
 TCP: 78ms (3-way handshake + ACK)
 
 // 게임에서 50ms 차이 = 승패 결정!
-```
+```text
 
 **SO_REUSEADDR의 비밀**
 
@@ -1444,7 +1577,7 @@ bind(sock, ...);  // "Address already in use" 😱
 int opt = 1;
 setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 bind(sock, ...);  // 성공! ✅
-```
+```text
 
 ```c
 // TCP 서버
@@ -1471,7 +1604,7 @@ void tcp_server() {
     // 리슨
     listen(server_fd, 10);
     
-    printf("Server listening on port 8080\n");
+    printf("Server listening on port 8080, ");
     
     while (1) {
         struct sockaddr_in client_addr;
@@ -1481,7 +1614,7 @@ void tcp_server() {
                               (struct sockaddr*)&client_addr,
                               &client_len);
         
-        printf("Client connected from %s:%d\n",
+        printf("Client connected from %s:%d, ",
                inet_ntoa(client_addr.sin_addr),
                ntohs(client_addr.sin_port));
         
@@ -1520,7 +1653,7 @@ void udp_example() {
                            0, (struct sockaddr*)&cliaddr, &len);
         
         buffer[n] = '\0';
-        printf("Received: %s\n", buffer);
+        printf("Received: %s, ", buffer);
         
         // 응답
         sendto(sockfd, "ACK", 3, 0,
@@ -1529,7 +1662,7 @@ void udp_example() {
     
     close(sockfd);
 }
-```
+```text
 
 ## 6. 이벤트 기반 IPC
 
@@ -1558,7 +1691,7 @@ while (1) {
     }
 }
 // 결과: 1개 스레드로 100만 연결! 🚀
-```
+```text
 
 **select vs poll vs epoll**
 
@@ -1576,7 +1709,7 @@ poll(fds, 10000, -1);
 // epoll: O(1), 제한 없음
 epoll_wait(epfd, events, MAX_EVENTS, -1);
 // 100만개 연결: 10ms! 🎉
-```
+```text
 
 ```c
 // epoll로 여러 IPC 모니터링
@@ -1626,7 +1759,7 @@ void multiplex_ipc() {
     
     close(epfd);
 }
-```
+```text
 
 ## 7. IPC 성능 비교
 
@@ -1636,29 +1769,29 @@ void multiplex_ipc() {
 
 ```c
 void benchmark_all_ipc() {
-    printf("=== IPC Performance Test ===\n");
-    printf("1KB message * 1,000,000 times\n\n");
+    printf("=== IPC Performance Test ===, ");
+    printf("1KB message * 1,000,000 times, , ");
     
     // 결과:
-    printf("🏆 Shared Memory: 45ms (22GB/s)\n");
-    printf("🥈 Pipe: 523ms (1.9GB/s)\n");
-    printf("🥉 Unix Socket: 612ms (1.6GB/s)\n");
-    printf("4️⃣ Message Queue: 892ms (1.1GB/s)\n");
-    printf("5️⃣ TCP Socket: 1250ms (0.8GB/s)\n");
+    printf("🏆 Shared Memory: 45ms (22GB/s), ");
+    printf("🥈 Pipe: 523ms (1.9GB/s), ");
+    printf("🥉 Unix Socket: 612ms (1.6GB/s), ");
+    printf("4️⃣ Message Queue: 892ms (1.1GB/s), ");
+    printf("5️⃣ TCP Socket: 1250ms (0.8GB/s), ");
     
-    printf("\n💡 공유 메모리가 TCP보다 27배 빠름!\n");
+    printf(", 💡 공유 메모리가 TCP보다 27배 빠름!, ");
 }
-```
+```text
 
 **언제 무엇을 사용할까?**
 
-```
+```text
 공유 메모리: 대용량 + 초고속 (비디오, DB)
 파이프: 단순 + 명령어 연결 (shell)
 메시지 큐: 우선순위 + 타입 (로깅)
 Unix 소켓: 로컬 + 신뢰성 (Docker)
 TCP 소켓: 네트워크 + 호환성 (API)
-```
+```text
 
 ```c
 // IPC 성능 측정
@@ -1671,25 +1804,25 @@ void benchmark_ipc() {
     clock_gettime(CLOCK_MONOTONIC, &start);
     benchmark_pipe(iterations, data_size);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    printf("Pipe: %.3f ms\n", time_diff_ms(&start, &end));
+    printf("Pipe: %.3f ms, ", time_diff_ms(&start, &end));
     
     // 메시지 큐
     clock_gettime(CLOCK_MONOTONIC, &start);
     benchmark_msgqueue(iterations, data_size);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    printf("Message Queue: %.3f ms\n", time_diff_ms(&start, &end));
+    printf("Message Queue: %.3f ms, ", time_diff_ms(&start, &end));
     
     // 공유 메모리
     clock_gettime(CLOCK_MONOTONIC, &start);
     benchmark_shmem(iterations, data_size);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    printf("Shared Memory: %.3f ms\n", time_diff_ms(&start, &end));
+    printf("Shared Memory: %.3f ms, ", time_diff_ms(&start, &end));
     
     // Unix 소켓
     clock_gettime(CLOCK_MONOTONIC, &start);
     benchmark_unix_socket(iterations, data_size);
     clock_gettime(CLOCK_MONOTONIC, &end);
-    printf("Unix Socket: %.3f ms\n", time_diff_ms(&start, &end));
+    printf("Unix Socket: %.3f ms, ", time_diff_ms(&start, &end));
 }
 
 // 결과 예시:
@@ -1697,7 +1830,7 @@ void benchmark_ipc() {
 // Message Queue: 892.1 ms
 // Shared Memory: 45.2 ms
 // Unix Socket: 612.3 ms
-```
+```text
 
 ## 8. 정리: 시그널과 IPC의 핵심
 
@@ -1728,14 +1861,14 @@ void benchmark_ipc() {
 
 #### 2. **IPC 선택 가이드**
 
-```
+```text
 단순 명령 연결 → 파이프
 우선순위/타입 필요 → 메시지 큐
 초고속 대용량 → 공유 메모리
 로컬 통신 → Unix 소켓
 네트워크 통신 → TCP/UDP 소켓
 비동기 이벤트 → 시그널
-```
+```text
 
 #### 3. **실수하기 쉬운 함정들**
 
@@ -1746,13 +1879,13 @@ void benchmark_ipc() {
 
 #### 4. **성능 수치 기억하기**
 
-```
+```text
 공유 메모리: ~50μs/KB
 파이프: ~500μs/KB
 Unix 소켓: ~600μs/KB
 메시지 큐: ~900μs/KB
 TCP (localhost): ~1200μs/KB
-```
+```text
 
 #### 5. **실제 사용 예시**
 

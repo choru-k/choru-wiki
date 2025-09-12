@@ -62,7 +62,7 @@ stateDiagram-v2
         종료됐지만 정리 안됨
         부모 프로세스 대기 중
     }
-```
+```text
 
 ### 프로세스 상태 이상이 시스템에 미치는 영향
 
@@ -88,7 +88,7 @@ graph LR
     
     style DPROC fill:#ffcccb
     style HANG fill:#ff6b6b
-```
+```text
 
 ## 1. 프로세스 상태 완전 분석
 
@@ -107,7 +107,7 @@ $ ps axo pid,ppid,state,comm | head -20
 # Z - Zombie (좀비 프로세스) ⚠️
 # X - Dead (죽음, ps에서 보이지 않음)
 # I - Idle (유휴 상태, 커널 스레드)
-```
+```text
 
 ### 1.2 /proc/[pid]/stat 상세 분석
 
@@ -164,91 +164,104 @@ const char* state_description(char state) {
     }
 }
 
+// /proc/[pid]/stat 파서 - Linux 프로세스 상태 분석의 핵심
+// 실제 사용: htop, ps, top 등 모든 시스템 모니터링 도구가 사용하는 인터페이스
 int parse_proc_stat(int pid, proc_stat_t *stat_info) {
     char path[256];
     snprintf(path, sizeof(path), "/proc/%d/stat", pid);
     
+    // ⭐ 1단계: /proc/[pid]/stat 파일 열기
+    // 이 파일은 커널이 실시간으로 생성하는 가상 파일
+    // 프로세스가 사라지면 파일도 즉시 사라짐
     FILE *f = fopen(path, "r");
     if (!f) {
+        // 프로세스가 이미 종료되었거나 권한이 없는 경우
         return -1;
     }
     
-    // /proc/pid/stat 파싱 (comm에 공백이 있을 수 있으므로 주의)
+    // ⭐ 2단계: 복잡한 /proc/[pid]/stat 형식 파싱
+    // 주의사항: comm 필드는 괄호로 둘러싸이며 공백/특수문자 포함 가능
+    // 예: "1234 (hello world) S 1 ..." 형태
+    // %255[^)]: 닫는 괄호가 아닌 문자를 최대 255개까지 읽기
     int ret = fscanf(f, "%d (%255[^)]) %c %d %d %d %d %d %lu %lu %lu %lu %lu %lu %lu %ld %ld %ld %ld %ld %ld %llu %lu %ld %lu",
-        &stat_info->pid,
-        stat_info->comm,
-        &stat_info->state,
-        &stat_info->ppid,
-        &stat_info->pgrp,
-        &stat_info->session,
-        &stat_info->tty_nr,
-        &stat_info->tpgid,
-        &stat_info->flags,
-        &stat_info->minflt,
-        &stat_info->cminflt,
-        &stat_info->majflt,
-        &stat_info->cmajflt,
-        &stat_info->utime,
-        &stat_info->stime,
-        &stat_info->cutime,
-        &stat_info->cstime,
-        &stat_info->priority,
-        &stat_info->nice,
-        &stat_info->num_threads,
-        &stat_info->itrealvalue,
-        &stat_info->starttime,
-        &stat_info->vsize,
-        &stat_info->rss,
-        &stat_info->rsslim
+        &stat_info->pid,          // [1] 프로세스 ID
+        stat_info->comm,          // [2] 실행 파일명 (괄호 안)
+        &stat_info->state,        // [3] 프로세스 상태 (R,S,D,Z,T,t,X,I)
+        &stat_info->ppid,         // [4] 부모 프로세스 ID
+        &stat_info->pgrp,         // [5] 프로세스 그룹 ID
+        &stat_info->session,      // [6] 세션 ID
+        &stat_info->tty_nr,       // [7] 터미널 번호
+        &stat_info->tpgid,        // [8] 터미널 프로세스 그룹 ID
+        &stat_info->flags,        // [9] 커널 플래그 (PF_*)
+        &stat_info->minflt,       // [10] 마이너 페이지 폴트 수 (디스크 I/O 없음)
+        &stat_info->cminflt,      // [11] 자식 프로세스들의 마이너 폴트 합계
+        &stat_info->majflt,       // [12] ⭐ 메이저 페이지 폴트 (디스크 I/O 발생)
+        &stat_info->cmajflt,      // [13] 자식 프로세스들의 메이저 폴트 합계
+        &stat_info->utime,        // [14] ⭐ 사용자 모드 CPU 시간 (jiffies)
+        &stat_info->stime,        // [15] ⭐ 커널 모드 CPU 시간 (jiffies)
+        &stat_info->cutime,       // [16] 자식들의 사용자 모드 시간
+        &stat_info->cstime,       // [17] 자식들의 커널 모드 시간
+        &stat_info->priority,     // [18] ⭐ 스케줄링 우선순위
+        &stat_info->nice,         // [19] ⭐ Nice 값 (-20~19)
+        &stat_info->num_threads,  // [20] ⭐ 스레드 개수
+        &stat_info->itrealvalue,  // [21] 사용되지 않음 (0)
+        &stat_info->starttime,    // [22] 부팅 후 프로세스 시작 시간
+        &stat_info->vsize,        // [23] ⭐ 가상 메모리 크기 (바이트)
+        &stat_info->rss,          // [24] ⭐ 실제 사용 메모리 (페이지 수)
+        &stat_info->rsslim        // [25] RSS 제한값
     );
     
     fclose(f);
+    
+    // ⭐ 3단계: 파싱 결과 검증
+    // 25개 필드가 모두 올바르게 읽혔는지 확인
+    // /proc/[pid]/stat 형식이 커널 버전마다 다를 수 있으므로 중요
     return (ret == 25) ? 0 : -1;
 }
 
 void print_process_analysis(const proc_stat_t *stat) {
-    printf("=== 프로세스 상태 분석 ===\n");
-    printf("PID: %d\n", stat->pid);
-    printf("명령어: %s\n", stat->comm);
-    printf("상태: %c (%s)\n", stat->state, state_description(stat->state));
-    printf("부모 PID: %d\n", stat->ppid);
-    printf("스레드 수: %ld\n", stat->num_threads);
-    printf("우선순위: %ld (nice: %ld)\n", stat->priority, stat->nice);
+    printf("=== 프로세스 상태 분석 ===, ");
+    printf("PID: %d, ", stat->pid);
+    printf("명령어: %s, ", stat->comm);
+    printf("상태: %c (%s), ", stat->state, state_description(stat->state));
+    printf("부모 PID: %d, ", stat->ppid);
+    printf("스레드 수: %ld, ", stat->num_threads);
+    printf("우선순위: %ld (nice: %ld), ", stat->priority, stat->nice);
     
     // 메모리 정보
-    printf("\n=== 메모리 정보 ===\n");
-    printf("가상 메모리: %.1f MB\n", stat->vsize / 1024.0 / 1024.0);
-    printf("물리 메모리: %.1f MB\n", stat->rss * 4 / 1024.0);  // 페이지 크기 4KB 가정
+    printf(", === 메모리 정보 ===, ");
+    printf("가상 메모리: %.1f MB, ", stat->vsize / 1024.0 / 1024.0);
+    printf("물리 메모리: %.1f MB, ", stat->rss * 4 / 1024.0);  // 페이지 크기 4KB 가정
     
     // 페이지 폴트 정보
-    printf("\n=== 페이지 폴트 통계 ===\n");
-    printf("Minor faults: %lu\n", stat->minflt);
-    printf("Major faults: %lu\n", stat->majflt);
-    printf("자식 minor faults: %lu\n", stat->cminflt);
-    printf("자식 major faults: %lu\n", stat->cmajflt);
+    printf(", === 페이지 폴트 통계 ===, ");
+    printf("Minor faults: %lu, ", stat->minflt);
+    printf("Major faults: %lu, ", stat->majflt);
+    printf("자식 minor faults: %lu, ", stat->cminflt);
+    printf("자식 major faults: %lu, ", stat->cmajflt);
     
     // CPU 시간 정보
     long hz = sysconf(_SC_CLK_TCK);
-    printf("\n=== CPU 시간 정보 ===\n");
-    printf("사용자 모드: %.2f초\n", (double)stat->utime / hz);
-    printf("커널 모드: %.2f초\n", (double)stat->stime / hz);
-    printf("총 CPU 시간: %.2f초\n", (double)(stat->utime + stat->stime) / hz);
+    printf(", === CPU 시간 정보 ===, ");
+    printf("사용자 모드: %.2f초, ", (double)stat->utime / hz);
+    printf("커널 모드: %.2f초, ", (double)stat->stime / hz);
+    printf("총 CPU 시간: %.2f초, ", (double)(stat->utime + stat->stime) / hz);
     
     // 경고 메시지
     if (stat->state == 'D') {
-        printf("\n⚠️  경고: 프로세스가 D state입니다!\n");
-        printf("   - I/O 작업을 기다리고 있습니다.\n");
-        printf("   - 신호로 종료할 수 없습니다.\n");
-        printf("   - 시스템 성능에 영향을 줄 수 있습니다.\n");
+        printf(", ⚠️  경고: 프로세스가 D state입니다!, ");
+        printf("   - I/O 작업을 기다리고 있습니다., ");
+        printf("   - 신호로 종료할 수 없습니다., ");
+        printf("   - 시스템 성능에 영향을 줄 수 있습니다., ");
     } else if (stat->state == 'Z') {
-        printf("\n⚠️  경고: 좀비 프로세스입니다!\n");
-        printf("   - 부모 프로세스가 wait()를 호출하지 않았습니다.\n");
-        printf("   - 프로세스 테이블 엔트리를 차지하고 있습니다.\n");
+        printf(", ⚠️  경고: 좀비 프로세스입니다!, ");
+        printf("   - 부모 프로세스가 wait()를 호출하지 않았습니다., ");
+        printf("   - 프로세스 테이블 엔트리를 차지하고 있습니다., ");
     }
 }
 
 void monitor_process_state(int pid, int duration) {
-    printf("프로세스 %d 상태 모니터링 시작 (%d초간)...\n", pid, duration);
+    printf("프로세스 %d 상태 모니터링 시작 (%d초간)..., ", pid, duration);
     
     time_t start_time = time(NULL);
     char last_state = 0;
@@ -257,7 +270,7 @@ void monitor_process_state(int pid, int duration) {
         proc_stat_t stat;
         if (parse_proc_stat(pid, &stat) == 0) {
             if (stat.state != last_state) {
-                printf("[%s] 상태 변화: %c (%s)\n", 
+                printf("[%s] 상태 변화: %c (%s), ", 
                        ctime(&(time_t){time(NULL)}),
                        stat.state, 
                        state_description(stat.state));
@@ -265,11 +278,11 @@ void monitor_process_state(int pid, int duration) {
                 
                 // 위험한 상태 감지
                 if (stat.state == 'D') {
-                    printf("⚠️  D state 감지! I/O 대기 중...\n");
+                    printf("⚠️  D state 감지! I/O 대기 중..., ");
                 }
             }
         } else {
-            printf("프로세스 %d가 종료되었습니다.\n", pid);
+            printf("프로세스 %d가 종료되었습니다., ", pid);
             break;
         }
         
@@ -279,9 +292,9 @@ void monitor_process_state(int pid, int duration) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        printf("사용법: %s <pid> [monitor_duration]\n", argv[0]);
-        printf("예시: %s 1234\n", argv[0]);
-        printf("예시: %s 1234 60  # 60초간 모니터링\n", argv[0]);
+        printf("사용법: %s <pid> [monitor_duration], ", argv[0]);
+        printf("예시: %s 1234, ", argv[0]);
+        printf("예시: %s 1234 60  # 60초간 모니터링, ", argv[0]);
         return 1;
     }
     
@@ -293,7 +306,7 @@ int main(int argc, char *argv[]) {
         if (parse_proc_stat(pid, &stat) == 0) {
             print_process_analysis(&stat);
         } else {
-            printf("프로세스 %d의 정보를 읽을 수 없습니다.\n", pid);
+            printf("프로세스 %d의 정보를 읽을 수 없습니다., ", pid);
             return 1;
         }
     } else {
@@ -304,7 +317,7 @@ int main(int argc, char *argv[]) {
     
     return 0;
 }
-```
+```text
 
 ### 1.3 /proc/[pid]/status 정보 활용
 
@@ -330,15 +343,15 @@ analyze_process_status() {
     grep -E "^(Name|State|Pid|PPid|Tgid|Threads)" "$status_file"
     
     # 메모리 정보
-    echo -e "\n== 메모리 정보 =="
+    echo -e ", == 메모리 정보 =="
     grep -E "^(VmPeak|VmSize|VmLck|VmPin|VmHWM|VmRSS|VmData|VmStk|VmExe|VmLib|VmPTE|VmSwap)" "$status_file"
     
     # 신호 정보
-    echo -e "\n== 신호 정보 =="
+    echo -e ", == 신호 정보 =="
     grep -E "^(SigQ|SigPnd|ShdPnd|SigBlk|SigIgn|SigCgt)" "$status_file"
     
     # 권한 정보
-    echo -e "\n== 권한 정보 =="
+    echo -e ", == 권한 정보 =="
     grep -E "^(Uid|Gid|Groups)" "$status_file"
     
     # 상태별 분석
@@ -346,29 +359,29 @@ analyze_process_status() {
     
     case $state in
         "D")
-            echo -e "\n⚠️  D STATE 감지!"
+            echo -e ", ⚠️  D STATE 감지!"
             echo "현재 프로세스가 I/O 작업을 기다리고 있습니다."
             echo "관련 정보를 확인해보겠습니다..."
             
             # 열린 파일 확인
-            echo -e "\n열린 파일들:"
+            echo -e ", 열린 파일들:"
             lsof -p "$pid" 2>/dev/null | head -10
             
             # I/O 통계
             if [ -f "/proc/$pid/io" ]; then
-                echo -e "\nI/O 통계:"
+                echo -e ", I/O 통계:"
                 cat "/proc/$pid/io"
             fi
             
             # 스택 트레이스 (root 권한 필요)
             if [ -f "/proc/$pid/stack" ] && [ -r "/proc/$pid/stack" ]; then
-                echo -e "\n커널 스택 트레이스:"
+                echo -e ", 커널 스택 트레이스:"
                 cat "/proc/$pid/stack"
             fi
             ;;
             
         "Z")
-            echo -e "\n⚠️  ZOMBIE 프로세스 감지!"
+            echo -e ", ⚠️  ZOMBIE 프로세스 감지!"
             echo "부모 프로세스 정보:"
             local ppid=$(grep "^PPid:" "$status_file" | awk '{print $2}')
             if [ -f "/proc/$ppid/comm" ]; then
@@ -378,7 +391,7 @@ analyze_process_status() {
             ;;
             
         "T")
-            echo -e "\n⚠️  정지된 프로세스 감지!"
+            echo -e ", ⚠️  정지된 프로세스 감지!"
             echo "SIGCONT 신호로 재시작할 수 있습니다: kill -CONT $pid"
             ;;
     esac
@@ -403,7 +416,7 @@ system_process_summary() {
     done
     
     # 문제가 있는 프로세스들 상세 분석
-    echo -e "\n=== 문제 프로세스 분석 ==="
+    echo -e ", === 문제 프로세스 분석 ==="
     
     # D state 프로세스들
     local d_processes=$(ps axo pid,state,comm | awk '$2 ~ /^D/ {print $1}')
@@ -441,7 +454,7 @@ if [ "$1" = "summary" ]; then
 else
     analyze_process_status "$1"
 fi
-```
+```text
 
 ## 2. D State 프로세스 심층 분석
 
@@ -474,7 +487,7 @@ graph TD
     style IO_WAIT fill:#ffcccb
     style KERNEL_LOCK fill:#ffe0b2
     style DEVICE fill:#f3e5f5
-```
+```text
 
 ### 2.2 D State 프로세스 디버깅 도구
 
@@ -607,12 +620,12 @@ class DStateDebugger:
             dstate_pids = self.find_dstate_processes()
             
             if dstate_pids:
-                print(f"\n[{time.strftime('%H:%M:%S')}] D state 프로세스 감지: {len(dstate_pids)}개")
+                print(f", [{time.strftime('%H:%M:%S')}] D state 프로세스 감지: {len(dstate_pids)}개")
                 
                 for pid in dstate_pids:
                     info = self.analyze_dstate_process(pid)
                     if info:
-                        print(f"\n⚠️  PID {pid}: {info['name']}")
+                        print(f", ⚠️  PID {pid}: {info['name']}")
                         print(f"   명령어: {info['cmdline'][:80]}...")
                         print(f"   실행 시간: {time.time() - info['create_time']:.1f}초")
                         
@@ -629,7 +642,7 @@ class DStateDebugger:
                         
                         # 커널 스택 일부 표시
                         if info['kernel_stack']:
-                            stack_lines = info['kernel_stack'].split('\n')[:3]
+                            stack_lines = info['kernel_stack'].split(', ')[:3]
                             print(f"   커널 스택:")
                             for line in stack_lines:
                                 print(f"     {line}")
@@ -673,7 +686,7 @@ def check_system_io_health():
     print("=== 시스템 I/O 상태 점검 ===")
     
     # 디스크 I/O 통계
-    print("\n1. 디스크 I/O 통계:")
+    print(", 1. 디스크 I/O 통계:")
     try:
         result = subprocess.run(['iostat', '-x', '1', '1'], 
                               capture_output=True, text=True, timeout=10)
@@ -682,7 +695,7 @@ def check_system_io_health():
         print("iostat을 사용할 수 없습니다.")
     
     # NFS 마운트 상태
-    print("\n2. NFS 마운트 상태:")
+    print(", 2. NFS 마운트 상태:")
     try:
         with open('/proc/mounts', 'r') as f:
             for line in f:
@@ -692,7 +705,7 @@ def check_system_io_health():
         print("NFS 마운트 정보를 읽을 수 없습니다.")
     
     # 메모리 압박 상태
-    print("\n3. 메모리 상태:")
+    print(", 3. 메모리 상태:")
     mem = psutil.virtual_memory()
     print(f"   사용률: {mem.percent:.1f}%")
     print(f"   사용 가능: {mem.available / 1024 / 1024 / 1024:.1f}GB")
@@ -711,8 +724,8 @@ if __name__ == "__main__":
         try:
             debugger.monitor_dstate_processes(duration=300, interval=10)
         except KeyboardInterrupt:
-            print("\n모니터링 중단됨")
-```
+            print(", 모니터링 중단됨")
+```text
 
 ## 3. Zombie 프로세스 처리
 
@@ -738,7 +751,7 @@ sequenceDiagram
         Note over Kernel: Zombie 프로세스 계속 남아있음 ⚠️
         Note over Kernel: 프로세스 테이블 엔트리 낭비
     end
-```
+```text
 
 ### 3.2 Zombie 프로세스 청소 도구
 
@@ -767,7 +780,7 @@ find_zombies() {
 
 # 부모 프로세스별 Zombie 그룹화
 analyze_zombie_parents() {
-    echo -e "\n=== 부모 프로세스별 Zombie 분석 ==="
+    echo -e ", === 부모 프로세스별 Zombie 분석 ==="
     
     ps axo pid,ppid,state,comm | awk '$3 ~ /^Z/' | while read pid ppid state comm; do
         echo "Zombie PID $pid (부모: $ppid, 명령어: $comm)"
@@ -829,7 +842,7 @@ cleanup_zombies() {
         fi
     done
     
-    echo -e "\n정리 결과: 성공 $cleaned개, 실패 $failed개"
+    echo -e ", 정리 결과: 성공 $cleaned개, 실패 $failed개"
     
     if [ $failed -gt 0 ]; then
         echo "정리되지 않은 Zombie가 있습니다. 다음 방법을 시도해보세요:"
@@ -929,7 +942,7 @@ case $choice in
         exit 1
         ;;
 esac
-```
+```text
 
 ## 4. Process Accounting 활용
 
@@ -1001,16 +1014,16 @@ analyze_accounting() {
     echo "1. 명령어 사용 빈도 (상위 10개):"
     lastcomm | awk '{print $1}' | sort | uniq -c | sort -nr | head -10
     
-    echo -e "\n2. 사용자별 프로세스 실행 수:"
+    echo -e ", 2. 사용자별 프로세스 실행 수:"
     lastcomm | awk '{print $2}' | sort | uniq -c | sort -nr
     
-    echo -e "\n3. 최근 종료된 프로세스들:"
+    echo -e ", 3. 최근 종료된 프로세스들:"
     lastcomm | head -20
     
-    echo -e "\n4. 시스템 리소스 사용량이 높은 프로세스들:"
+    echo -e ", 4. 시스템 리소스 사용량이 높은 프로세스들:"
     sa -a | head -10
     
-    echo -e "\n5. 사용자별 CPU 시간 요약:"
+    echo -e ", 5. 사용자별 CPU 시간 요약:"
     sa -u | head -10
 }
 
@@ -1029,11 +1042,11 @@ track_process() {
     echo "실행 횟수: $count"
     
     # 최근 실행 기록
-    echo -e "\n최근 실행 기록:"
+    echo -e ", 최근 실행 기록:"
     lastcomm "$process_name" | head -10
     
     # 리소스 사용량
-    echo -e "\n리소스 사용량 요약:"
+    echo -e ", 리소스 사용량 요약:"
     sa -c | grep "$process_name"
 }
 
@@ -1072,7 +1085,7 @@ case $choice in
         echo "잘못된 선택입니다."
         ;;
 esac
-```
+```text
 
 ## 5. 프로세스 상태 모니터링 시스템
 
@@ -1247,7 +1260,7 @@ class ProcessStateMonitor:
             print("수집된 알림이 없습니다.")
             return
         
-        print("\n" + "="*60)
+        print(", " + "="*60)
         print("프로세스 상태 모니터링 리포트")
         print("="*60)
         
@@ -1261,13 +1274,13 @@ class ProcessStateMonitor:
             print(f"  {alert_type}: {count}회")
         
         # 최근 알림들
-        print(f"\n최근 알림 {min(10, len(self.alerts))}개:")
+        print(f", 최근 알림 {min(10, len(self.alerts))}개:")
         for alert in list(self.alerts)[-10:]:
             print(f"  {alert.alert_type}: PID {alert.pid} ({alert.name}) "
                   f"- {alert.duration:.1f}초")
         
         # 권장사항
-        print("\n권장사항:")
+        print(", 권장사항:")
         if alert_counts['dstate_duration'] > 0:
             print("  • D state 프로세스: I/O 성능 및 스토리지 상태 점검")
         if alert_counts['zombie_count'] > 0:
@@ -1350,9 +1363,9 @@ if __name__ == "__main__":
     try:
         monitor.monitor(duration=1800, interval=15)  # 30분간 15초 간격
     except KeyboardInterrupt:
-        print("\n모니터링 중단됨")
+        print(", 모니터링 중단됨")
         monitor.stop()
-```
+```text
 
 ## 6. 정리와 실무 가이드
 
@@ -1380,17 +1393,17 @@ if __name__ == "__main__":
 graph TD
     DETECT[프로세스 상태 이상 감지] --> CLASSIFY{상태 분류}
     
-    CLASSIFY -->|D State| DSTATE_RESPONSE[I/O 분석<br/>스토리지 점검<br/>네트워크 확인]
-    CLASSIFY -->|Zombie| ZOMBIE_RESPONSE[부모 프로세스 확인<br/>SIGCHLD 전송<br/>필요시 재시작]
-    CLASSIFY -->|Stopped| STOPPED_RESPONSE[SIGCONT 전송<br/>디버거 상태 확인<br/>프로세스 재시작]
+    CLASSIFY -->|D State| DSTATE_RESPONSE[I/O 분석, 스토리지 점검, 네트워크 확인]
+    CLASSIFY -->|Zombie| ZOMBIE_RESPONSE[부모 프로세스 확인, SIGCHLD 전송, 필요시 재시작]
+    CLASSIFY -->|Stopped| STOPPED_RESPONSE[SIGCONT 전송, 디버거 상태 확인, 프로세스 재시작]
     
     DSTATE_RESPONSE --> ESCALATE{해결됨?}
     ZOMBIE_RESPONSE --> ESCALATE
     STOPPED_RESPONSE --> ESCALATE
     
-    ESCALATE -->|No| ADVANCED[고급 디버깅<br/>커널 스택 분석<br/>시스템 재시작 고려]
+    ESCALATE -->|No| ADVANCED[고급 디버깅, 커널 스택 분석, 시스템 재시작 고려]
     ESCALATE -->|Yes| MONITOR[지속 모니터링]
-```
+```text
 
 다음 섹션에서는 스레드 동기화 디버깅을 다뤄보겠습니다.
 

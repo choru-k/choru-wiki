@@ -38,7 +38,7 @@ tags:
 graph TB
     subgraph "Linux Task Model"
         TASK[task_struct]
-        TGID[Thread Group ID<br/>= Process ID]
+        TGID[Thread Group ID, = Process ID]
         TID[Thread ID]
         
         TASK --> TGID
@@ -46,9 +46,9 @@ graph TB
     end
     
     subgraph "Resource Sharing"
-        MM[메모리 공간<br/>mm_struct]
-        FILES[파일 테이블<br/>files_struct]
-        SIG[시그널 핸들러<br/>signal_struct]
+        MM[메모리 공간, mm_struct]
+        FILES[파일 테이블, files_struct]
+        SIG[시그널 핸들러, signal_struct]
         
         TASK --> MM
         TASK --> FILES
@@ -80,7 +80,7 @@ graph TB
     style TASK fill:#FFE082
     style CFS fill:#81C784
     style SHM fill:#64B5F6
-```
+```text
 
 ## 이 장의 구성
 
@@ -184,7 +184,7 @@ $ strace -p <pid>          # 시스템 콜 추적
 # 성능 분석
 $ perf sched               # 스케줄링 이벤트 분석
 $ perf lock                # 락 경합 분석
-```
+```text
 
 ## 이 장을 읽고 나면
 
@@ -197,68 +197,47 @@ $ perf lock                # 락 경합 분석
 ## 핵심 개념 미리보기
 
 ```mermaid
-mindmap
-  root((프로세스와 스레드))
-    프로세스 관리
-      생성
-        fork()
-        vfork()
-        clone()
-        exec()
-      종료
-        exit()
-        wait()
-        좀비 프로세스
-        고아 프로세스
-      자원
-        메모리 공간
-        파일 디스크립터
-        시그널 핸들러
-    스레드
-      pthread
-        pthread_create()
-        pthread_join()
-        pthread_detach()
-      동기화
-        뮤텍스
-        세마포어
-        조건 변수
-        배리어
-      TLS
-        Thread Local Storage
-        __thread 키워드
-    스케줄링
-      정책
-        SCHED_NORMAL (CFS)
-        SCHED_FIFO
-        SCHED_RR
-        SCHED_BATCH
-        SCHED_IDLE
-      우선순위
-        Nice 값
-        실시간 우선순위
-        CPU 어피니티
-      성능
-        컨텍스트 스위칭
-        캐시 친화성
-        NUMA 최적화
-    IPC
-      시그널
-        표준 시그널
-        실시간 시그널
-        시그널 핸들러
-      파이프
-        익명 파이프
-        명명된 파이프 (FIFO)
-      System V IPC
-        공유 메모리
-        메시지 큐
-        세마포어
-      POSIX IPC
-        mmap
-        POSIX 메시지 큐
-        POSIX 세마포어
-```
+graph TD
+    ROOT[프로세스와 스레드]
+    
+    subgraph PROCESS["프로세스 관리"]
+        CREATION[생성]
+        FORK[fork함수]
+        VFORK[vfork함수]
+        CLONE[clone함수]
+        EXEC[exec함수]
+        
+        TERMINATION[종료]
+        EXIT[exit함수]
+        WAIT[wait함수]
+        ZOMBIE[좀비 프로세스]
+        ORPHAN[고아 프로세스]
+        
+        RESOURCE[자원]
+        MEMORY[메모리 공간]
+        FD[파일 디스크립터]
+        SIGNAL_HANDLER[시그널 핸들러]
+    end
+    
+    subgraph THREAD["스레드"]
+        PTHREAD[pthread]
+        PTHREAD_CREATE[pthread_create함수]
+        PTHREAD_JOIN[pthread_join함수]
+        PTHREAD_DETACH[pthread_detach함수]
+        
+        SYNC[동기화]
+        MUTEX[뮤텍스]
+        SEMAPHORE[세마포어]
+        CONDVAR[조건 변수]
+        BARRIER[배리어]
+        
+        TLS[Thread Local Storage]
+        THREAD_KEYWORD[thread 키워드]
+    end
+    
+    ROOT --> PROCESS
+    ROOT --> THREAD
+```text
 
 ## 프로세스/스레드 선택 플로우차트
 
@@ -267,7 +246,7 @@ graph TD
     Start[동시성 필요] --> Isolation{격리 필요?}
     
     Isolation -->|Yes| Process[프로세스 사용]
-    Process --> Fork[fork() 또는 spawn]
+    Process --> Fork[fork함수 또는 spawn]
     
     Isolation -->|No| Share{데이터 공유?}
     Share -->|많음| Thread[스레드 사용]
@@ -284,7 +263,7 @@ graph TD
     Process --> IPC{통신 필요?}
     IPC -->|Yes| IPCMethod[IPC 방법 선택]
     IPC -->|No| Independent[독립 실행]
-```
+```text
 
 ## 관련 문서
 

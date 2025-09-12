@@ -48,9 +48,9 @@ sequenceDiagram
     T2->>M1: lock(A) ⏳ 대기...
     
     Note over T1,T2: 💀 서로 영원히 대기
-```
+```text
 
-Page fault 하나가 전체 애플리케이션을 수만 배 느리게 만들 수 있습니다.
+데드락 하나가 전체 애플리케이션을 무한정 멈추게 만들 수 있습니다.
 
 ### 스레드 동기화 문제 분류
 
@@ -74,7 +74,7 @@ mindmap
       낮은 우선순위가 차단
       실시간 시스템 문제
       스케줄링 이상
-```
+```text
 
 ## 1. 데드락 진단과 해결
 
@@ -94,7 +94,7 @@ check_hanging_processes() {
     ps -eo pid,state,comm | awk '$2 == "D" {print "  PID " $1 ": " $3}'
     
     # 높은 CPU 사용 스레드들 (라이브락 가능성)
-    echo -e "\n높은 CPU 사용 스레드들 (라이브락 의심):"
+    echo -e ", 높은 CPU 사용 스레드들 (라이브락 의심):"
     ps -eLo pid,tid,pcpu,comm --sort=-pcpu | head -6 | tail -5
 }
 
@@ -117,7 +117,7 @@ analyze_specific_process() {
     fi
     
     # 스레드 목록과 상태
-    echo -e "\n스레드 목록:"
+    echo -e ", 스레드 목록:"
     ls /proc/$pid/task/ | while read tid; do
         if [ -f "/proc/$pid/task/$tid/stat" ]; then
             thread_state=$(awk '{print $3}' "/proc/$pid/task/$tid/stat" 2>/dev/null)
@@ -126,7 +126,7 @@ analyze_specific_process() {
     done
     
     # 각 스레드의 스택 정보 (중요한 부분만)
-    echo -e "\n주요 스레드 스택 정보:"
+    echo -e ", 주요 스레드 스택 정보:"
     ls /proc/$pid/task/ | head -3 | while read tid; do
         echo "--- TID $tid ---"
         if [ -f "/proc/$pid/task/$tid/stack" ]; then
@@ -152,14 +152,14 @@ case $choice in
     3) echo "종료합니다." ;;
     *) echo "잘못된 선택입니다." ;;
 esac
-```
+```text
 
 **사용법**:
 
 ```bash
 chmod +x deadlock_check.sh
 ./deadlock_check.sh
-```
+```text
 
 ### 1.2 핵심 데드락 감지 로직
 
@@ -210,7 +210,7 @@ int detect_deadlock_cycle() {
 }
 
 // ... (추가 구현 생략)
-```
+```text
 
 **핵심 아이디어**:
 
@@ -234,7 +234,7 @@ $ valgrind --tool=helgrind \
     --track-lockorders=yes \
     --check-stack-refs=yes \
     ./your_program
-```
+```text
 
 ### 2.2 경쟁 상태 샘플 코드와 분석
 
@@ -278,13 +278,17 @@ int main() {
     printf("최종 카운터: %d (예상: 2000)\n", shared_counter);
     return 0;
 }
-```
+```text
 
 **컴파일 및 분석**:
 
 ```bash
 $ gcc -g -pthread race_condition_sample.c -o race_test
 $ valgrind --tool=helgrind ./race_test
+```text
+
+**Helgrind 출력 해석**:
+
 ```bash
 
 **Helgrind 출력 해석**:
@@ -297,7 +301,7 @@ $ valgrind --tool=helgrind ./race_test
 ==1234== This conflicts with a previous write of size 4 by thread #1
 ==1234== Locks held: none
 ==1234==    at 0x4007A3: unsafe_increment (race_condition_sample.c:8)
-```
+```text
 
 **💡 핵심 정보**:
 
@@ -333,12 +337,12 @@ analyze_with_helgrind() {
     echo "잠금 순서 위반: $lock_order_count개"
     
     if [ $data_race_count -gt 0 ]; then
-        echo -e "\n상세 분석 (처음 3개):"
+        echo -e ", 상세 분석 (처음 3개):"
         grep -A 3 "Possible data race" "$output_file" | head -12
     fi
     
     # 권장사항
-    echo -e "\n권장사항:"
+    echo -e ", 권장사항:"
     if [ $data_race_count -gt 0 ]; then
         echo "• 공유 변수에 뮤텍스 또는 원자적 연산 추가"
     fi
@@ -351,7 +355,7 @@ analyze_with_helgrind() {
 
 read -p "분석할 프로그램 경로: " program
 analyze_with_helgrind "$program"
-```
+```text
 
 ## 3. 시스템 레벨 동기화 분석
 
@@ -373,7 +377,7 @@ monitor_futex_performance() {
     timeout "$duration" strace -p "$pid" -e futex -c 2>&1 | \
     tail -10 | head -5
     
-    echo -e "\n해석:"
+    echo -e ", 해석:"
     echo "• calls: futex 호출 횟수"
     echo "• time: 총 소요 시간"
     echo "• avg: 평균 호출 시간"
@@ -383,7 +387,7 @@ monitor_futex_performance() {
 read -p "모니터링할 프로세스 PID: " pid
 read -p "모니터링 시간 (초, 기본 10): " duration
 monitor_futex_performance "$pid" "${duration:-10}"
-```
+```text
 
 ### 3.2 뮤텍스 타입별 성능 비교
 
@@ -434,7 +438,7 @@ int main() {
     
     return 0;
 }
-```
+```text
 
 **실행 결과 예시**:
 
@@ -446,7 +450,7 @@ $ ./mutex_test
 NORMAL: 0.018초 (180.0 ns/op)
 RECURSIVE: 0.024초 (240.0 ns/op)
 ERRORCHECK: 0.031초 (310.0 ns/op)
-```
+```text
 
 **💡 성능 팁**:
 
@@ -477,7 +481,7 @@ flowchart TD
     OPTIMIZE --> VERIFY[수정 검증]
     FIX_DEADLOCK --> VERIFY
     FIX_RACE --> VERIFY
-```
+```text
 
 ### 4.2 동기화 최적화 체크리스트
 
@@ -513,7 +517,7 @@ read_file();           // 긴 I/O 작업
 process_data();        // 긴 CPU 작업  
 write_result();        // 또 다른 I/O 작업
 pthread_mutex_unlock(&mutex);
-```
+```text
 
 **✅ 해결책: 임계 구간 분할**
 
@@ -526,7 +530,7 @@ process_shared_data(); // 공유 데이터만 보호
 pthread_mutex_unlock(&mutex);
 
 write_result();        // I/O는 다시 외부에서
-```
+```text
 
 **❌ 안티패턴 2: 일관되지 않은 잠금 순서**
 
@@ -538,7 +542,7 @@ pthread_mutex_lock(&mutex_b);
 // Thread 2: B → A 순서 (데드락 위험!)
 pthread_mutex_lock(&mutex_b);  
 pthread_mutex_lock(&mutex_a);
-```
+```text
 
 **✅ 해결책: 전역 잠금 순서**
 
@@ -549,7 +553,7 @@ void acquire_both_locks() {
     pthread_mutex_lock(&mutex_a);
     pthread_mutex_lock(&mutex_b);
 }
-```
+```text
 
 ## 5. 성능 모니터링과 알림
 
@@ -573,10 +577,10 @@ monitor_sync_performance() {
     fi
     
     # 3. 시스템 전체 동기화 관련 통계
-    echo -e "\n=== 시스템 동기화 부하 ==="
+    echo -e ", === 시스템 동기화 부하 ==="
     vmstat 1 3 | tail -2
     
-    echo -e "\n해석:"
+    echo -e ", 해석:"
     echo "• voluntary_ctxt_switches: 자발적 컨텍스트 스위치 (정상)"
     echo "• nonvoluntary_ctxt_switches: 비자발적 스위치 (경합 의심)"  
     echo "• 높은 비자발적 스위치 = 동기화 문제 가능성"
@@ -584,7 +588,7 @@ monitor_sync_performance() {
 
 read -p "모니터링할 프로세스 PID: " pid
 monitor_sync_performance "$pid"
-```
+```text
 
 ### 5.2 자동 경고 시스템
 
@@ -603,7 +607,7 @@ def check_sync_issues():
                           capture_output=True, text=True)
     
     d_state_count = 0
-    for line in result.stdout.split('\n'):
+    for line in result.stdout.split(', '):
         if ' D ' in line:
             d_state_count += 1
             issues.append(f"D state 프로세스 감지: {line.strip()}")
@@ -638,8 +642,8 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n모니터링 종료")
-```
+        print(", 모니터링 종료")
+```text
 
 ## 6. 정리와 Best Practices
 
@@ -660,7 +664,7 @@ graph LR
     RACE[경쟁 상태] --> SYNC[동기화 추가]
     SLOW[성능 저하] --> OPTIMIZE[임계 구간 최적화]
     HANG[프로그램 멈춤] --> TIMEOUT[타임아웃 설정]
-```
+```text
 
 ### 다음 단계
 
