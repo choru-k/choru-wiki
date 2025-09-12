@@ -16,10 +16,10 @@ Maxwell's equations:
 
 \[
 \begin{align}
-\nabla \cdot \vec{E} &= \frac{\rho}{\epsilon_0} \\
-\nabla \cdot \vec{B} &= 0 \\
-\nabla \times \vec{E} &= -\frac{\partial \vec{B}}{\partial t} \\
-\nabla \times \vec{B} &= \mu_0 \vec{J} + \mu_0 \epsilon_0 \frac{\partial \vec{E}}{\partial t}
+, abla \cdot \vec{E} &= \frac{\rho}{\epsilon_0} \\
+, abla \cdot \vec{B} &= 0 \\
+, abla \times \vec{E} &= -\frac{\partial \vec{B}}{\partial t} \\
+, abla \times \vec{B} &= \mu_0 \vec{J} + \mu_0 \epsilon_0 \frac{\partial \vec{E}}{\partial t}
 \end{align}
 \]
 
@@ -116,13 +116,14 @@ def allocate_memory(size: int) -> bytes:
 
 ## Tabbed Content
 
+<!-- markdownlint-disable MD046 -->
 === "C"
 
     ```c
     #include <stdio.h>
     
     int main() {
-        printf("Hello, World!\n");
+        printf("Hello, World!, ");
         return 0;
     }
     ```
@@ -144,6 +145,7 @@ def allocate_memory(size: int) -> bytes:
         fmt.Println("Hello, World!")
     }
     ```
+<!-- markdownlint-enable MD046 -->
 
 ## Admonitions
 
@@ -156,11 +158,13 @@ def allocate_memory(size: int) -> bytes:
 !!! tip "Performance Tip"
     Use `mmap()` for large file operations instead of reading entire file into memory.
 
+<!-- markdownlint-disable MD046 -->
 ??? question "Collapsible Question"
     Why does Linux use virtual memory?
 
     **Answer**: Virtual memory provides process isolation, enables memory sharing, 
     and allows the system to use more memory than physically available through paging.
+<!-- markdownlint-enable MD046 -->
 
 !!! danger "Critical"
     Never run `rm -rf /` on a production system!
