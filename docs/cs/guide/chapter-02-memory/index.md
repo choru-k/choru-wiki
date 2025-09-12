@@ -36,7 +36,7 @@ tags:
 ```mermaid
 graph TB
     subgraph "물리 메모리"
-        PM[Physical Memory<br/>실제 RAM]
+        PM[Physical Memory, 실제 RAM]
     end
     
     subgraph "가상 메모리"
@@ -68,7 +68,7 @@ graph TB
     style A1 fill:#FFCDD2
     style A3 fill:#C8E6C9
     style A6 fill:#BBDEFB
-```
+```text
 
 ## 이 장의 구성
 
@@ -164,7 +164,7 @@ $ strace ./program       # 시스템 콜 추적
 $ gcc -g -fsanitize=address  # AddressSanitizer
 $ gcc -fstack-protector       # 스택 보호
 $ gcc -fPIC                   # Position Independent Code
-```
+```text
 
 ## 이 장을 읽고 나면
 
@@ -215,7 +215,7 @@ mindmap
       IPC
         공유 메모리
         메시지 큐
-```
+```text
 
 ## 메모리 문제 진단 플로우차트
 
@@ -238,7 +238,7 @@ graph TD
     Type -->|OOM| OOM[Out of Memory]
     OOM --> Usage[메모리 사용 패턴 분석]
     Usage --> Limit[리소스 제한 확인]
-```
+```text
 
 ## 다음 단계
 

@@ -42,25 +42,25 @@ tags:
 
 int add(int a, int b) {
     int sum = a + b;
-    printf("add: a=%d, b=%d, sum=%d\n", a, b, sum);
-    printf("     &a=%p, &b=%p, &sum=%p\n", &a, &b, &sum);
+    printf("add: a=%d, b=%d, sum=%d, ", a, b, sum);
+    printf("     &a=%p, &b=%p, &sum=%p, ", &a, &b, &sum);
     return sum;
 }
 
 int multiply(int x, int y) {
     int product = x * y;
     int doubled = add(product, product);  // add 호출
-    printf("multiply: product=%d, doubled=%d\n", product, doubled);
+    printf("multiply: product=%d, doubled=%d, ", product, doubled);
     return doubled;
 }
 
 int main() {
-    printf("=== 함수 호출의 춤 ===\n");
+    printf("=== 함수 호출의 춤 ===, ");
     int result = multiply(3, 4);
-    printf("Final result: %d\n", result);
+    printf("Final result: %d, ", result);
     return 0;
 }
-```
+```text
 
 실행하면 무엇을 볼 수 있을까요?
 
@@ -70,7 +70,7 @@ add: a=12, b=12, sum=24
      &a=0x7ffe5c3b7a2c, &b=0x7ffe5c3b7a28, &sum=0x7ffe5c3b7a24
 multiply: product=12, doubled=24
 Final result: 24
-```
+```text
 
 주소를 보세요! `add` 함수의 지역 변수들이 낮은 주소에 있습니다. 이것은 스택이 높은 주소에서 낮은 주소로 "자라기" 때문입니다.
 
@@ -104,7 +104,7 @@ multiply(3, 4) 호출 시 스택 상태:
 │  (미사용 공간)          │
 ↓                         ↓
 낮은 주소 (스택이 자라는 방향)
-```
+```text
 
 이 구조의 천재성은 무엇일까요? **rbp(Base Pointer)**를 기준으로 모든 변수의 위치를 알 수 있다는 것입니다!
 
@@ -137,16 +137,16 @@ int test_stack(int a, int b, int c, int d, int e, int f, int g, int h) {
 // 어셈블리로 직접 확인
 void examine_assembly() {
     __asm__ volatile(
-        "mov $1, %%edi\n"    // 첫 번째 인자
-        "mov $2, %%esi\n"    // 두 번째 인자
-        "mov $3, %%edx\n"    // 세 번째 인자
-        "mov $4, %%ecx\n"    // 네 번째 인자
-        "mov $5, %%r8d\n"    // 다섯 번째 인자
-        "mov $6, %%r9d\n"    // 여섯 번째 인자
+        "mov $1, %%edi, "    // 첫 번째 인자
+        "mov $2, %%esi, "    // 두 번째 인자
+        "mov $3, %%edx, "    // 세 번째 인자
+        "mov $4, %%ecx, "    // 네 번째 인자
+        "mov $5, %%r8d, "    // 다섯 번째 인자
+        "mov $6, %%r9d, "    // 여섯 번째 인자
         ::: "edi", "esi", "edx", "ecx", "r8", "r9"
     );
 }
-```
+```text
 
 왜 이렇게 복잡한 규칙이 필요할까요? 바로 **성능** 때문입니다! 레지스터는 메모리보다 100배 이상 빠릅니다. 자주 사용되는 처음 몇 개의 인자를 레지스터에 전달하면 성능이 크게 향상됩니다.
 
@@ -173,7 +173,7 @@ void stack_allocation_test() {
     
     clock_t end = clock();
     double time_spent = ((double)(end - start)) / CLOCKS_PER_SEC;
-    printf("스택 할당: %.3f초 (%.0f ns/할당)\n", 
+    printf("스택 할당: %.3f초 (%.0f ns/할당), ", 
            time_spent, time_spent * 1e9 / ITERATIONS);
 }
 
@@ -188,7 +188,7 @@ void show_stack_assembly() {
     int array[10];
     array[0] = 42;
 }
-```
+```text
 
 스택 할당이 빠른 이유:
 
@@ -210,40 +210,40 @@ void show_stack_assembly() {
 #include <unistd.h>
 
 void trace_malloc_journey() {
-    printf("=== malloc의 여정 ===\n");
+    printf("=== malloc의 여정 ===, ");
     
     // 1단계: 작은 할당
-    printf("\n1. 작은 메모리 요청 (100 bytes)\n");
+    printf(", 1. 작은 메모리 요청 (100 bytes), ");
     void* initial_brk = sbrk(0);
-    printf("   힙 끝 주소: %p\n", initial_brk);
+    printf("   힙 끝 주소: %p, ", initial_brk);
     
     char* small = malloc(100);
-    printf("   할당된 주소: %p\n", small);
+    printf("   할당된 주소: %p, ", small);
     
     void* new_brk = sbrk(0);
-    printf("   새 힙 끝: %p\n", new_brk);
-    printf("   힙 증가량: %ld bytes\n", (char*)new_brk - (char*)initial_brk);
+    printf("   새 힙 끝: %p, ", new_brk);
+    printf("   힙 증가량: %ld bytes, ", (char*)new_brk - (char*)initial_brk);
     
     // 2단계: 또 다른 작은 할당
-    printf("\n2. 또 다른 작은 요청 (200 bytes)\n");
+    printf(", 2. 또 다른 작은 요청 (200 bytes), ");
     char* small2 = malloc(200);
-    printf("   할당된 주소: %p\n", small2);
-    printf("   이전 할당과의 거리: %ld bytes\n", small2 - small);
+    printf("   할당된 주소: %p, ", small2);
+    printf("   이전 할당과의 거리: %ld bytes, ", small2 - small);
     
     void* brk_after_second = sbrk(0);
     if (brk_after_second == new_brk) {
-        printf("   힙 끝 변화 없음 - 기존 공간 재사용!\n");
+        printf("   힙 끝 변화 없음 - 기존 공간 재사용!, ");
     }
     
     // 3단계: 큰 할당
-    printf("\n3. 큰 메모리 요청 (10MB)\n");
+    printf(", 3. 큰 메모리 요청 (10MB), ");
     char* large = malloc(10 * 1024 * 1024);
-    printf("   할당된 주소: %p\n", large);
+    printf("   할당된 주소: %p, ", large);
     
     void* brk_after_large = sbrk(0);
     if (brk_after_large == brk_after_second) {
-        printf("   힙 끝 변화 없음 - mmap 사용!\n");
-        printf("   주소 차이: %ld MB\n", 
+        printf("   힙 끝 변화 없음 - mmap 사용!, ");
+        printf("   주소 차이: %ld MB, ", 
                labs((long)large - (long)small2) / (1024*1024));
     }
     
@@ -251,7 +251,7 @@ void trace_malloc_journey() {
     free(small2);
     free(large);
 }
-```
+```text
 
 실행 결과:
 
@@ -273,7 +273,7 @@ void trace_malloc_journey() {
    할당된 주소: 0x7f8a12345000
    힙 끝 변화 없음 - mmap 사용!
    주소 차이: 32156 MB
-```
+```text
 
 놀랍지 않나요? malloc은:
 
@@ -308,7 +308,7 @@ struct malloc_chunk {
 };
 
 void examine_chunk() {
-    printf("=== 메모리 청크 해부 ===\n");
+    printf("=== 메모리 청크 해부 ===, ");
     
     // 할당
     int* ptr = malloc(sizeof(int) * 10);  // 40 bytes 요청
@@ -316,20 +316,20 @@ void examine_chunk() {
     // 청크 헤더 접근 (위험! 실제로는 하지 마세요)
     size_t* chunk = (size_t*)((char*)ptr - sizeof(size_t) * 2);
     
-    printf("요청한 크기: 40 bytes\n");
-    printf("청크 헤더 주소: %p\n", chunk);
-    printf("사용자 포인터: %p\n", ptr);
-    printf("실제 청크 크기: %zu bytes\n", chunk[1] & ~0x7);
+    printf("요청한 크기: 40 bytes, ");
+    printf("청크 헤더 주소: %p, ", chunk);
+    printf("사용자 포인터: %p, ", ptr);
+    printf("실제 청크 크기: %zu bytes, ", chunk[1] & ~0x7);
     
     // 왜 요청한 것보다 클까?
-    printf("\n왜 크기가 다를까?\n");
-    printf("1. 헤더 오버헤드: 16 bytes\n");
-    printf("2. 정렬 요구사항: 16 bytes 단위\n");
-    printf("3. 최소 크기: 32 bytes\n");
+    printf(", 왜 크기가 다를까?, ");
+    printf("1. 헤더 오버헤드: 16 bytes, ");
+    printf("2. 정렬 요구사항: 16 bytes 단위, ");
+    printf("3. 최소 크기: 32 bytes, ");
     
     free(ptr);
 }
-```
+```text
 
 청크 구조의 영리함:
 
@@ -347,42 +347,42 @@ void examine_chunk() {
 #include <stdlib.h>
 
 void visualize_free_list() {
-    printf("=== Free List 시각화 ===\n\n");
+    printf("=== Free List 시각화 ===, , ");
     
     // 1. 여러 블록 할당
-    printf("1단계: 4개 블록 할당\n");
+    printf("1단계: 4개 블록 할당, ");
     void* a = malloc(64);
     void* b = malloc(64);
     void* c = malloc(64);
     void* d = malloc(64);
     
-    printf("A: %p\nB: %p\nC: %p\nD: %p\n", a, b, c, d);
-    printf("메모리 상태: [A][B][C][D]\n\n");
+    printf("A: %p, B: %p, C: %p, D: %p, ", a, b, c, d);
+    printf("메모리 상태: [A][B][C][D], , ");
     
     // 2. 중간 블록들 해제
-    printf("2단계: B와 C 해제\n");
+    printf("2단계: B와 C 해제, ");
     free(b);
     free(c);
-    printf("메모리 상태: [A][빈][빈][D]\n");
-    printf("Free List: C -> B -> NULL\n\n");
+    printf("메모리 상태: [A][빈][빈][D], ");
+    printf("Free List: C -> B -> NULL, , ");
     
     // 3. 새로운 할당 요청
-    printf("3단계: 64 bytes 요청\n");
+    printf("3단계: 64 bytes 요청, ");
     void* e = malloc(64);
     printf("E: %p (", e);
-    if (e == c) printf("C 자리 재사용!)\n");
-    else if (e == b) printf("B 자리 재사용!)\n");
-    printf("Free List: B -> NULL\n\n");
+    if (e == c) printf("C 자리 재사용!), ");
+    else if (e == b) printf("B 자리 재사용!), ");
+    printf("Free List: B -> NULL, , ");
     
     // 4. 작은 할당 요청
-    printf("4단계: 32 bytes 요청\n");
+    printf("4단계: 32 bytes 요청, ");
     void* f = malloc(32);
-    printf("F: %p\n", f);
-    printf("남은 Free List의 64 bytes 블록을 분할했을 수 있음\n");
+    printf("F: %p, ", f);
+    printf("남은 Free List의 64 bytes 블록을 분할했을 수 있음, ");
     
     free(a); free(d); free(e); free(f);
 }
-```
+```text
 
 Free List의 전략들:
 
@@ -391,21 +391,21 @@ Free List의 전략들:
 ```text
 Free List: [100B] -> [50B] -> [200B] -> [80B]
 60B 요청 → [100B] 선택 (첫 번째로 충분한 크기)
-```
+```text
 
 **2. Best Fit (가장 적합한 것)**
 
 ```text
 Free List: [100B] -> [50B] -> [200B] -> [80B]
 60B 요청 → [80B] 선택 (가장 낭비가 적음)
-```
+```text
 
 **3. Worst Fit (가장 큰 것)**
 
 ```text
 Free List: [100B] -> [50B] -> [200B] -> [80B]
 60B 요청 → [200B] 선택 (큰 블록 유지)
-```
+```text
 
 ### 2.4 메모리 단편화: 힙의 고질병
 
@@ -418,7 +418,7 @@ Free List: [100B] -> [50B] -> [200B] -> [80B]
 #include <string.h>
 
 void demonstrate_fragmentation() {
-    printf("=== 메모리 단편화 시연 ===\n\n");
+    printf("=== 메모리 단편화 시연 ===, , ");
     
     // 시나리오: 채팅 서버의 메시지 버퍼
     typedef struct {
@@ -429,28 +429,28 @@ void demonstrate_fragmentation() {
     #define NUM_MESSAGES 1000
     Message messages[NUM_MESSAGES];
     
-    printf("1. 다양한 크기의 메시지 할당\n");
+    printf("1. 다양한 크기의 메시지 할당, ");
     for (int i = 0; i < NUM_MESSAGES; i++) {
         // 10 ~ 1000 bytes의 랜덤 크기
         size_t size = 10 + (rand() % 991);
         messages[i].buffer = malloc(size);
         messages[i].size = size;
     }
-    printf("   %d개 메시지 할당 완료\n\n", NUM_MESSAGES);
+    printf("   %d개 메시지 할당 완료, , ", NUM_MESSAGES);
     
-    printf("2. 홀수 번째 메시지 해제 (체크보드 패턴)\n");
+    printf("2. 홀수 번째 메시지 해제 (체크보드 패턴), ");
     for (int i = 1; i < NUM_MESSAGES; i += 2) {
         free(messages[i].buffer);
         messages[i].buffer = NULL;
     }
-    printf("   500개 메시지 해제\n");
-    printf("   현재 메모리: [사용][빈][사용][빈]...\n\n");
+    printf("   500개 메시지 해제, ");
+    printf("   현재 메모리: [사용][빈][사용][빈]..., , ");
     
-    printf("3. 큰 메시지 할당 시도\n");
+    printf("3. 큰 메시지 할당 시도, ");
     char* large_msg = malloc(5000);  // 5KB
     if (large_msg) {
-        printf("   성공! 하지만 새로운 영역에 할당되었을 것\n");
-        printf("   기존의 작은 빈 공간들은 사용 불가\n");
+        printf("   성공! 하지만 새로운 영역에 할당되었을 것, ");
+        printf("   기존의 작은 빈 공간들은 사용 불가, ");
         free(large_msg);
     }
     
@@ -459,9 +459,9 @@ void demonstrate_fragmentation() {
         free(messages[i].buffer);
     }
     
-    printf("\n교훈: 단편화는 메모리가 있어도 사용할 수 없게 만듭니다!\n");
+    printf(", 교훈: 단편화는 메모리가 있어도 사용할 수 없게 만듭니다!, ");
 }
-```
+```text
 
 단편화를 줄이는 방법:
 
@@ -537,25 +537,25 @@ double benchmark_pool() {
 }
 
 int main() {
-    printf("=== 메모리 할당 성능 대결 ===\n");
-    printf("테스트: %d회 반복, %d bytes 할당\n\n", ITERATIONS, ALLOC_SIZE);
+    printf("=== 메모리 할당 성능 대결 ===, ");
+    printf("테스트: %d회 반복, %d bytes 할당, , ", ITERATIONS, ALLOC_SIZE);
     
     double stack_time = benchmark_stack();
     double heap_time = benchmark_heap();
     double pool_time = benchmark_pool();
     
-    printf("스택 할당: %.3f초\n", stack_time);
-    printf("힙 할당:   %.3f초 (%.1fx 느림)\n", heap_time, heap_time/stack_time);
-    printf("메모리 풀: %.3f초 (%.1fx 느림)\n", pool_time, pool_time/stack_time);
+    printf("스택 할당: %.3f초, ", stack_time);
+    printf("힙 할당:   %.3f초 (%.1fx 느림), ", heap_time, heap_time/stack_time);
+    printf("메모리 풀: %.3f초 (%.1fx 느림), ", pool_time, pool_time/stack_time);
     
-    printf("\n할당당 소요 시간:\n");
-    printf("스택: %.1f ns\n", stack_time * 1e9 / ITERATIONS);
-    printf("힙:   %.1f ns\n", heap_time * 1e9 / ITERATIONS);
-    printf("풀:   %.1f ns\n", pool_time * 1e9 / ITERATIONS);
+    printf(", 할당당 소요 시간:, ");
+    printf("스택: %.1f ns, ", stack_time * 1e9 / ITERATIONS);
+    printf("힙:   %.1f ns, ", heap_time * 1e9 / ITERATIONS);
+    printf("풀:   %.1f ns, ", pool_time * 1e9 / ITERATIONS);
     
     return 0;
 }
-```
+```text
 
 전형적인 결과:
 
@@ -571,7 +571,7 @@ int main() {
 스택: 12.4 ns
 힙:   386.7 ns
 풀:   15.6 ns
-```
+```text
 
 ### 3.2 왜 이런 차이가 날까?
 
@@ -589,7 +589,7 @@ int main() {
 5. 메타데이터 업데이트
 6. 스레드 동기화 (멀티스레드)
 7. 시스템 콜 (brk/mmap) 가능성
-```
+```text
 
 캐시 효과도 중요합니다:
 
@@ -609,7 +609,7 @@ void demonstrate_cache_effects() {
         *heap_ptrs[i] = i;  // 캐시 미스 가능성 높음
     }
 }
-```
+```text
 
 ## 4. 메모리 버그: 프로그래머의 악몽
 
@@ -645,7 +645,7 @@ void buffer_overflow_demo() {
     // 공격자가 16자 이상 입력하면?
     // input 오버플로우 → authorized 덮어쓰기 가능!
     if (authorized) {
-        printf("Access granted!\n");
+        printf("Access granted!, ");
     }
 }
 
@@ -658,15 +658,15 @@ int* get_local_pointer() {
 void use_dangling_pointer() {
     int* ptr = get_local_pointer();
     // ptr은 이미 해제된 스택 메모리를 가리킴
-    printf("Value: %d\n", *ptr);  // 정의되지 않은 동작!
+    printf("Value: %d, ", *ptr);  // 정의되지 않은 동작!
     
     // 다른 함수 호출로 스택 덮어쓰기
     int other_function();
     other_function();
     
-    printf("Value now: %d\n", *ptr);  // 완전히 다른 값!
+    printf("Value now: %d, ", *ptr);  // 완전히 다른 값!
 }
-```
+```text
 
 ### 4.2 힙 버그들: 더 교묘하고 위험한
 
@@ -746,16 +746,16 @@ void heap_overflow_demo() {
     char* buf1 = malloc(16);
     char* buf2 = malloc(16);
     
-    printf("buf1: %p\n", buf1);
-    printf("buf2: %p\n", buf2);
+    printf("buf1: %p, ", buf1);
+    printf("buf2: %p, ", buf2);
     
     // buf1에 16바이트 이상 쓰기
     strcpy(buf1, "This is way too long for 16 bytes!");
     
     // buf2의 메타데이터나 내용 손상!
-    printf("buf2 content: %s\n", buf2);  // 쓰레기값 또는 충돌
+    printf("buf2 content: %s, ", buf2);  // 쓰레기값 또는 충돌
 }
-```
+```text
 
 ### 4.3 디버깅 도구: 버그 사냥꾼의 무기
 
@@ -777,7 +777,7 @@ $ watch -n 1 'ps -p [PID] -o pid,rss,vsz,comm'
 # cgroup 메모리 제한 확인 (컨테이너 환경)
 $ cat /sys/fs/cgroup/memory/memory.limit_in_bytes
 $ cat /sys/fs/cgroup/memory/memory.usage_in_bytes
-```
+```text
 
 **Valgrind로 메모리 누수 찾기:**
 
@@ -797,7 +797,7 @@ int main() {
     }
     return 0;
 }
-```
+```text
 
 ```bash
 $ gcc -g leak_example.c -o leak_example
@@ -811,7 +811,7 @@ $ valgrind --leak-check=full --show-leak-kinds=all ./leak_example
 ==12345==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/...)
 ==12345==    by 0x400537: leaky_function (leak_example.c:4)
 ==12345==    by 0x400557: main (leak_example.c:10)
-```
+```text
 
 **AddressSanitizer로 Use-After-Free 찾기:**
 
@@ -830,7 +830,7 @@ WRITE of size 1 at 0x60200000eff0 thread T0
 freed by thread T0 here:
     #0 0x7f8a23456789 in free (/usr/lib/x86_64-linux-gnu/libasan.so.5+0x234567)
     #1 0x400a12 in use_after_free_demo use_after_free.c:12
-```
+```text
 
 ## 5. 고급 메모리 관리 기법
 
@@ -881,7 +881,7 @@ MemoryPool* pool_create(size_t block_size, size_t block_count) {
         pool->free_list = block;
     }
     
-    printf("메모리 풀 생성: %zu blocks × %zu bytes = %zu bytes\n",
+    printf("메모리 풀 생성: %zu blocks × %zu bytes = %zu bytes, ",
            block_count, block_size, block_count * block_size);
     
     return pool;
@@ -889,7 +889,7 @@ MemoryPool* pool_create(size_t block_size, size_t block_count) {
 
 void* pool_alloc(MemoryPool* pool) {
     if (!pool->free_list) {
-        printf("풀이 가득 참! (%zu/%zu 사용중)\n", 
+        printf("풀이 가득 참! (%zu/%zu 사용중), ", 
                pool->used_blocks, pool->total_blocks);
         return NULL;
     }
@@ -916,7 +916,7 @@ typedef struct {
 } Bullet;
 
 void game_bullet_system() {
-    printf("\n=== 게임 총알 시스템 ===\n");
+    printf(", === 게임 총알 시스템 ===, ");
     
     // 최대 1000개 총알을 위한 풀
     MemoryPool* bullet_pool = pool_create(sizeof(Bullet), 1000);
@@ -951,12 +951,12 @@ void game_bullet_system() {
     }
     clock_t malloc_time = clock() - start;
     
-    printf("풀 사용: %ld ms\n", pool_time * 1000 / CLOCKS_PER_SEC);
-    printf("malloc 사용: %ld ms (%.1fx 느림)\n", 
+    printf("풀 사용: %ld ms, ", pool_time * 1000 / CLOCKS_PER_SEC);
+    printf("malloc 사용: %ld ms (%.1fx 느림), ", 
            malloc_time * 1000 / CLOCKS_PER_SEC,
            (double)malloc_time / pool_time);
 }
-```
+```text
 
 ### 5.2 Arena 할당자: 한 번에 정리하기
 
@@ -1010,7 +1010,7 @@ void handle_http_request() {
     arena_reset(request_arena);
     // 다음 요청을 위해 재사용 가능
 }
-```
+```text
 
 ## 6. 실전 팁: 언제 무엇을 사용할까?
 
@@ -1028,7 +1028,7 @@ void handle_http_request() {
           함수 종료 후에도 필요한가?
             ├─ YES → 힙 사용 (수명 연장)
             └─ NO → 스택 사용! ✓
-```
+```text
 
 ### 6.2 실제 시나리오별 권장사항
 
@@ -1087,7 +1087,7 @@ void tricky_cases() {
     }
     // recursive(10000);  // 스택 오버플로우!
 }
-```
+```text
 
 ## 7. 정리: 스택과 힙의 조화
 

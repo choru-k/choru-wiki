@@ -26,10 +26,10 @@ tags:
 ```mermaid
 graph TD
     subgraph "스택 메모리의 특징"
-        FAST["⚡ 빠른 할당/해제<br/>단순한 포인터 이동"]
-        AUTO["🔄 자동 관리<br/>함수 종료 시 자동 정리"]
-        LIMITED["⚠️ 크기 제한<br/>보통 8MB로 제한"]
-        OVERFLOW["💥 오버플로우<br/>세그멘테이션 폴트"]
+        FAST["⚡ 빠른 할당/해제, 단순한 포인터 이동"]
+        AUTO["🔄 자동 관리, 함수 종료 시 자동 정리"]
+        LIMITED["⚠️ 크기 제한, 보통 8MB로 제한"]
+        OVERFLOW["💥 오버플로우, 세그멘테이션 폴트"]
     end
     
     FAST --> AUTO
@@ -38,7 +38,7 @@ graph TD
     
     style LIMITED fill:#fff3e0
     style OVERFLOW fill:#ffcccb
-```
+```text
 
 스택 문제는 **예측하기 어렵고**, **디버깅하기 까다로우며**, **보안 취약점**으로 이어질 수 있습니다.
 
@@ -61,7 +61,7 @@ mindmap
     라이브러리 스택
       깊은 콜스택
       서드파티 라이브러리
-```
+```text
 
 각 원인을 체계적으로 진단하고 해결하는 방법을 배워보겠습니다.
 
@@ -92,7 +92,7 @@ cpu time               (seconds, -t) unlimited
 max user processes              (-u) 127663
 virtual memory          (kbytes, -v) unlimited
 file locks                      (-x) unlimited
-```
+```text
 
 ### 1.2 프로그램별 스택 사용량 측정
 
@@ -108,7 +108,7 @@ void print_stack_usage() {
     getrusage(RUSAGE_SELF, &usage);
     
     // 스택 관련 정보 출력 (Linux에서는 제한적)
-    printf("최대 RSS: %ld KB\n", usage.ru_maxrss);
+    printf("최대 RSS: %ld KB, ", usage.ru_maxrss);
     
     // /proc/self/status에서 스택 정보 읽기
     FILE *status = fopen("/proc/self/status", "r");
@@ -129,7 +129,7 @@ void print_stack_usage() {
 void test_large_stack_allocation(int size_kb) {
     char large_array[size_kb * 1024];  // VLA 사용
     
-    printf("스택에 %dKB 할당 시도...\n", size_kb);
+    printf("스택에 %dKB 할당 시도..., ", size_kb);
     
     // 배열 초기화 (실제 메모리 사용 확보)
     for (int i = 0; i < size_kb * 1024; i++) {
@@ -138,23 +138,23 @@ void test_large_stack_allocation(int size_kb) {
     
     print_stack_usage();
     
-    printf("%dKB 할당 성공!\n", size_kb);
+    printf("%dKB 할당 성공!, ", size_kb);
 }
 
 int main() {
-    printf("=== 스택 사용량 테스트 ===\n");
+    printf("=== 스택 사용량 테스트 ===, ");
     
     print_stack_usage();
     
     // 점진적으로 큰 스택 할당 테스트
     for (int size = 1024; size <= 8192; size += 1024) {
-        printf("\n--- %dKB 테스트 ---\n", size);
+        printf(", --- %dKB 테스트 ---, ", size);
         test_large_stack_allocation(size);
     }
     
     return 0;
 }
-```
+```text
 
 **컴파일 및 실행**:
 
@@ -174,7 +174,7 @@ $ ./stack_test
 --- 7168KB 테스트 ---  
 스택에 7168KB 할당 시도...
 Segmentation fault (core dumped)  # 스택 오버플로우!
-```
+```text
 
 ### 1.3 안전한 스택 크기 설정
 
@@ -194,27 +194,27 @@ $ bash -c 'ulimit -s 16384; ./my_program'
 # systemd 서비스에서 스택 크기 설정
 [Service]
 LimitSTACK=16384000    # 16MB (바이트 단위)
-```
+```text
 
 **적절한 스택 크기 선택 기준**:
 
 ```mermaid
 graph TD
-    WORKLOAD{워크로드 타입} --> WEB[웹 서버]
-    WORKLOAD --> DB[데이터베이스]
-    WORKLOAD --> RECURSIVE[재귀 알고리즘]
-    WORKLOAD --> EMBEDDED[임베디드]
+    WORKLOAD{"워크로드 타입"} --> WEB["웹 서버"]
+    WORKLOAD --> DB["데이터베이스"]
+    WORKLOAD --> RECURSIVE["재귀 알고리즘"]
+    WORKLOAD --> EMBEDDED["임베디드"]
     
-    WEB --> SIZE1[8MB (기본값)<br/>일반적으로 충분]
-    DB --> SIZE2[16MB<br/>복잡한 쿼리 처리]
-    RECURSIVE --> SIZE3[32MB+<br/>깊은 재귀 필요]
-    EMBEDDED --> SIZE4[64KB-1MB<br/>메모리 제약]
+    WEB --> SIZE1["8MB (기본값), 일반적으로 충분"]
+    DB --> SIZE2["16MB, 복잡한 쿼리 처리"]
+    RECURSIVE --> SIZE3["32MB+, 깊은 재귀 필요"]
+    EMBEDDED --> SIZE4["64KB-1MB, 메모리 제약"]
     
     style SIZE1 fill:#c8e6c9
     style SIZE2 fill:#fff3e0  
     style SIZE3 fill:#ffcccb
     style SIZE4 fill:#e1f5fe
-```
+```text
 
 ## 2. Stack Guard Page 이해
 
@@ -225,10 +225,10 @@ Linux는 스택 오버플로우를 감지하기 위해 **guard page**를 사용�
 ```mermaid
 graph TD
     subgraph "스택 메모리 레이아웃"
-        HIGH["높은 주소<br/>스택 시작점"]
-        STACK["스택 영역<br/>8MB"]
-        GUARD["Guard Page<br/>4KB (읽기 불가)"]
-        LOW["낮은 주소<br/>힙 방향"]
+        HIGH["높은 주소, 스택 시작점"]
+        STACK["스택 영역, 8MB"]
+        GUARD["Guard Page, 4KB (읽기 불가)"]
+        LOW["낮은 주소, 힙 방향"]
     end
     
     HIGH --> STACK
@@ -236,13 +236,13 @@ graph TD
     GUARD --> LOW
     
     subgraph "오버플로우 감지"
-        OVERFLOW["스택 오버플로우<br/>발생"] --> ACCESS["Guard Page<br/>접근 시도"]
-        ACCESS --> SEGFAULT["SIGSEGV 발생<br/>프로그램 종료"]
+        OVERFLOW["스택 오버플로우, 발생"] --> ACCESS["Guard Page, 접근 시도"]
+        ACCESS --> SEGFAULT["SIGSEGV 발생, 프로그램 종료"]
     end
     
     style GUARD fill:#ffcccb
     style SEGFAULT fill:#ffcccb
-```
+```text
 
 **Guard Page 확인**:
 
@@ -255,7 +255,7 @@ $ cat /proc/self/maps | grep stack
 # (실제로는 커널이 자동으로 관리하므로 /proc/maps에 직접 표시되지 않음)
 
 # mprotect로 수동 guard page 만들기 예제
-```
+```text
 
 ### 2.2 커스텀 스택 오버플로우 검출
 
@@ -288,11 +288,11 @@ size_t get_stack_usage() {
 int safe_recursive_function(int n, size_t max_stack_usage) {
     size_t current_usage = get_stack_usage();
     
-    printf("재귀 깊이: %d, 스택 사용량: %zu KB\n", 
+    printf("재귀 깊이: %d, 스택 사용량: %zu KB, ", 
            n, current_usage / 1024);
     
     if (current_usage > max_stack_usage) {
-        printf("스택 사용량이 임계값을 초과했습니다! (%zu KB)\n", 
+        printf("스택 사용량이 임계값을 초과했습니다! (%zu KB), ", 
                max_stack_usage / 1024);
         return -1;  // 안전한 종료
     }
@@ -313,13 +313,13 @@ void setup_stack_monitoring() {
     stack_start = &stack_var;
     stack_size = 8 * 1024 * 1024;  // 8MB 가정
     
-    printf("스택 모니터링 시작: %p\n", stack_start);
+    printf("스택 모니터링 시작: %p, ", stack_start);
 }
 
 int main() {
     setup_stack_monitoring();
     
-    printf("=== 안전한 재귀 함수 테스트 ===\n");
+    printf("=== 안전한 재귀 함수 테스트 ===, ");
     
     // 최대 6MB까지만 스택 사용 허용
     size_t max_usage = 6 * 1024 * 1024;
@@ -327,14 +327,14 @@ int main() {
     int result = safe_recursive_function(10000, max_usage);
     
     if (result == -1) {
-        printf("스택 오버플로우 방지를 위해 안전하게 종료되었습니다.\n");
+        printf("스택 오버플로우 방지를 위해 안전하게 종료되었습니다., ");
     } else {
-        printf("재귀 함수가 정상 완료되었습니다.\n");
+        printf("재귀 함수가 정상 완료되었습니다., ");
     }
     
     return 0;
 }
-```
+```text
 
 ## 3. 위험한 스택 사용 패턴과 대안
 
@@ -357,11 +357,11 @@ void dangerous_alloca_usage() {
     // 사용자 입력을 검증하지 않음! 매우 위험!
     char *buffer = alloca(size);
     
-    printf("%d 바이트 할당 성공\n", size);
+    printf("%d 바이트 할당 성공, ", size);
     memset(buffer, 'A', size - 1);
     buffer[size - 1] = '\0';
     
-    printf("Buffer: %.100s...\n", buffer);
+    printf("Buffer: %.100s..., ", buffer);
 }
 
 // 안전한 대안
@@ -372,37 +372,37 @@ void safe_dynamic_allocation() {
     
     // 1. 크기 검증
     if (size <= 0 || size > 1024 * 1024) {  // 1MB 제한
-        printf("잘못된 크기입니다: %d\n", size);
+        printf("잘못된 크기입니다: %d, ", size);
         return;
     }
     
     // 2. 힙에 할당 (안전)
     char *buffer = malloc(size);
     if (!buffer) {
-        printf("메모리 할당 실패\n");
+        printf("메모리 할당 실패, ");
         return;
     }
     
-    printf("%d 바이트 할당 성공\n", size);
+    printf("%d 바이트 할당 성공, ", size);
     memset(buffer, 'A', size - 1);
     buffer[size - 1] = '\0';
     
-    printf("Buffer: %.100s...\n", buffer);
+    printf("Buffer: %.100s..., ", buffer);
     
     // 3. 반드시 해제
     free(buffer);
 }
 
 int main() {
-    printf("=== alloca 위험성 데모 ===\n");
-    printf("큰 값(예: 10000000)을 입력하면 스택 오버플로우 발생!\n");
+    printf("=== alloca 위험성 데모 ===, ");
+    printf("큰 값(예: 10000000)을 입력하면 스택 오버플로우 발생!, ");
     
     // dangerous_alloca_usage();  // 위험하므로 주석 처리
     safe_dynamic_allocation();
     
     return 0;
 }
-```
+```text
 
 ### 3.2 Variable Length Arrays (VLA) 문제
 
@@ -415,7 +415,7 @@ C99의 VLA도 비슷한 위험성을 가집니다:
 
 // 위험한 VLA 사용
 void dangerous_vla(int n) {
-    printf("VLA 크기: %d\n", n);
+    printf("VLA 크기: %d, ", n);
     
     // n이 클 경우 스택 오버플로우 발생!
     char vla_array[n];
@@ -425,7 +425,7 @@ void dangerous_vla(int n) {
         vla_array[i] = 'A' + (i % 26);
     }
     
-    printf("VLA 할당 성공\n");
+    printf("VLA 할당 성공, ");
 }
 
 // 안전한 VLA 사용
@@ -434,11 +434,11 @@ void safe_vla(int n) {
     const int MAX_VLA_SIZE = 4096;  // 4KB 제한
     
     if (n <= 0 || n > MAX_VLA_SIZE) {
-        printf("VLA 크기가 허용 범위를 벗어났습니다: %d\n", n);
+        printf("VLA 크기가 허용 범위를 벗어났습니다: %d, ", n);
         return;
     }
     
-    printf("안전한 VLA 크기: %d\n", n);
+    printf("안전한 VLA 크기: %d, ", n);
     char vla_array[n];  // 이제 안전
     
     // 배열 사용
@@ -446,7 +446,7 @@ void safe_vla(int n) {
         vla_array[i] = 'A' + (i % 26);
     }
     
-    printf("안전한 VLA 할당 성공\n");
+    printf("안전한 VLA 할당 성공, ");
 }
 
 // 더 안전한 대안: 고정 크기 + 동적 할당
@@ -459,15 +459,15 @@ void safest_alternative(int n) {
     if (n <= STACK_BUFFER_SIZE) {
         // 작은 크기는 스택 사용
         buffer = stack_buffer;
-        printf("스택 버퍼 사용: %d 바이트\n", n);
+        printf("스택 버퍼 사용: %d 바이트, ", n);
     } else {
         // 큰 크기는 힙 사용
         buffer = malloc(n);
         if (!buffer) {
-            printf("힙 할당 실패: %d 바이트\n", n);
+            printf("힙 할당 실패: %d 바이트, ", n);
             return;
         }
-        printf("힙 버퍼 사용: %d 바이트\n", n);
+        printf("힙 버퍼 사용: %d 바이트, ", n);
     }
     
     // 버퍼 사용
@@ -480,25 +480,25 @@ void safest_alternative(int n) {
         free(buffer);
     }
     
-    printf("하이브리드 할당 성공\n");
+    printf("하이브리드 할당 성공, ");
 }
 
 int main() {
-    printf("=== VLA 문제점과 대안 ===\n");
+    printf("=== VLA 문제점과 대안 ===, ");
     
     // 작은 크기 테스트
-    printf("\n1. 작은 크기 (1000):\n");
+    printf(", 1. 작은 크기 (1000):, ");
     safe_vla(1000);
     safest_alternative(1000);
     
     // 큰 크기 테스트  
-    printf("\n2. 큰 크기 (1000000):\n");
+    printf(", 2. 큰 크기 (1000000):, ");
     safe_vla(1000000);    // 실패할 것
     safest_alternative(1000000);  // 힙 사용으로 성공
     
     return 0;
 }
-```
+```text
 
 ## 4. 재귀 함수 스택 오버플로우 방지
 
@@ -518,7 +518,7 @@ long dangerous_factorial(int n) {
 // 깊이 제한이 있는 안전한 재귀
 long safe_factorial(int n, int depth, int max_depth) {
     if (depth > max_depth) {
-        printf("재귀 깊이 제한 초과: %d\n", depth);
+        printf("재귀 깊이 제한 초과: %d, ", depth);
         return -1;  // 오류 반환
     }
     
@@ -576,42 +576,42 @@ long trampoline_factorial(int n) {
 }
 
 int main() {
-    printf("=== 재귀 함수 스택 오버플로우 방지 ===\n");
+    printf("=== 재귀 함수 스택 오버플로우 방지 ===, ");
     
     int n = 20;  // 테스트 값
     
-    printf("1. 위험한 재귀: factorial(%d) = %ld\n", 
+    printf("1. 위험한 재귀: factorial(%d) = %ld, ", 
            n, dangerous_factorial(n));
     
-    printf("2. 안전한 재귀: factorial(%d) = %ld\n", 
+    printf("2. 안전한 재귀: factorial(%d) = %ld, ", 
            n, safe_factorial(n, 0, 1000));
     
-    printf("3. 반복문 버전: factorial(%d) = %ld\n", 
+    printf("3. 반복문 버전: factorial(%d) = %ld, ", 
            n, iterative_factorial(n));
     
-    printf("4. 꼬리 재귀: factorial(%d) = %ld\n", 
+    printf("4. 꼬리 재귀: factorial(%d) = %ld, ", 
            n, tail_recursive_factorial(n, 1));
     
-    printf("5. 트램펄린: factorial(%d) = %ld\n", 
+    printf("5. 트램펄린: factorial(%d) = %ld, ", 
            n, trampoline_factorial(n));
     
     // 큰 값으로 스택 오버플로우 테스트
-    printf("\n=== 큰 값(100000) 테스트 ===\n");
+    printf(", === 큰 값(100000) 테스트 ===, ");
     n = 100000;
     
     // dangerous_factorial(n);  // 스택 오버플로우로 주석 처리
     
-    printf("안전한 재귀 (실패 예상): factorial(%d) = %ld\n", 
+    printf("안전한 재귀 (실패 예상): factorial(%d) = %ld, ", 
            n, safe_factorial(n, 0, 1000));
     
     // iterative_factorial(n);  // 결과가 너무 커서 주석 처리
     
-    printf("트램펄린: factorial(%d) = %ld\n", 
+    printf("트램펄린: factorial(%d) = %ld, ", 
            n, trampoline_factorial(n));  // 성공 (하지만 결과는 오버플로우)
     
     return 0;
 }
-```
+```text
 
 ### 4.2 스택 기반 시뮬레이션
 
@@ -688,38 +688,38 @@ void free_tree(TreeNode *node) {
 }
 
 int main() {
-    printf("=== 재귀 vs 명시적 스택 ===\n");
+    printf("=== 재귀 vs 명시적 스택 ===, ");
     
     // 보통 깊이의 트리 (둘 다 성공)
-    printf("1. 얕은 트리 (깊이 10):\n");
+    printf("1. 얕은 트리 (깊이 10):, ");
     TreeNode *shallow_tree = create_deep_tree(10);
     
     printf("재귀 방식: ");
     recursive_tree_traversal(shallow_tree);
-    printf("\n");
+    printf(", ");
     
     printf("스택 방식: ");
     stack_based_tree_traversal(shallow_tree);
-    printf("\n");
+    printf(", ");
     
     free_tree(shallow_tree);
     
     // 매우 깊은 트리 (재귀는 스택 오버플로우, 스택 방식은 성공)
-    printf("\n2. 깊은 트리 (깊이 100000):\n");
+    printf(", 2. 깊은 트리 (깊이 100000):, ");
     TreeNode *deep_tree = create_deep_tree(100000);
     
-    printf("재귀 방식: 스택 오버플로우 위험으로 생략\n");
+    printf("재귀 방식: 스택 오버플로우 위험으로 생략, ");
     // recursive_tree_traversal(deep_tree);  // 위험해서 주석 처리
     
     printf("스택 방식: ");
     stack_based_tree_traversal(deep_tree);
-    printf("... (첫 10개만 표시)\n");
+    printf("... (첫 10개만 표시), ");
     
     // free_tree(deep_tree);  // 이것도 재귀라서 스택 오버플로우 위험
     
     return 0;
 }
-```
+```text
 
 ## 5. 실시간 스택 모니터링
 
@@ -776,7 +776,7 @@ class StackProfiler:
         
         stack_sizes = [s['stack_kb'] for s in self.samples]
         
-        print(f"\n=== 스택 사용량 분석 결과 ===")
+        print(f", === 스택 사용량 분석 결과 ===")
         print(f"샘플 수: {len(stack_sizes)}")
         print(f"최소값: {min(stack_sizes)} KB")
         print(f"최대값: {max(stack_sizes)} KB")
@@ -788,7 +788,7 @@ class StackProfiler:
             bucket = (size // 100) * 100  # 100KB 단위로 그룹화
             buckets[bucket] += 1
         
-        print(f"\n스택 사용량 분포:")
+        print(f", 스택 사용량 분포:")
         for bucket in sorted(buckets.keys()):
             bar = '█' * (buckets[bucket] * 50 // len(stack_sizes))
             print(f"{bucket:4d}-{bucket+99:4d}KB: {buckets[bucket]:3d} {bar}")
@@ -797,7 +797,7 @@ class StackProfiler:
         self.running = False
 
 def signal_handler(signum, frame):
-    print("\n프로파일링 중단됨")
+    print(", 프로파일링 중단됨")
     profiler.stop()
 
 if __name__ == '__main__':
@@ -815,7 +815,7 @@ if __name__ == '__main__':
         profiler.profile(duration=300, interval=1)  # 5분간 모니터링
     finally:
         profiler.analyze()
-```
+```text
 
 ### 5.2 스택 오버플로우 조기 감지 시스템
 
@@ -866,7 +866,7 @@ monitor_process() {
                 echo " STACK OVERFLOW WARNING: PID $pid" >> /var/log/stack_warnings.log
             fi
             
-            printf "\n"
+            printf ", "
         fi
         
         sleep 2
@@ -879,7 +879,7 @@ if [ $# -ne 1 ]; then
 fi
 
 monitor_process $1
-```
+```text
 
 ## 6. 정리와 스택 안전 가이드라인
 
@@ -927,7 +927,7 @@ graph TD
     DETECT --> MONITOR[실시간 모니터링]
     DETECT --> LIMIT[재귀 깊이 제한]
     DETECT --> SIGNAL[시그널 핸들링]
-```
+```text
 
 다음 장에서는 가상 메모리와 페이징 시스템의 고급 기법들을 다뤄보겠습니다.
 

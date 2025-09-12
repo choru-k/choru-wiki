@@ -40,7 +40,7 @@ graph LR
         L4 --> L5[4시간 후: 💀 OOM Killed]
         style L5 fill:#ffcccb
     end
-```
+```text
 
 메모리 누수는 **조용한 살인자**입니다. 처음엔 별 문제 없어 보이다가 시간이 지나면서 서서히 시스템을 죽입니다.
 
@@ -64,7 +64,7 @@ mindmap
       메모리 풀 설정 오류
       GC 설정 문제
       컨테이너 제한 무시
-```
+```text
 
 각각을 체계적으로 찾고 해결하는 방법을 배워보겠습니다.
 
@@ -83,17 +83,17 @@ $ watch -n 1 'free -h && echo "---" && ps aux --sort=-rss | head -10'
 
 # 3. 특정 프로세스의 상세 메모리 정보
 $ watch -n 1 'cat /proc/<PID>/status | grep -E "(VmSize|VmRSS|VmHWM|VmData)"'
-```
+```text
 
 **메모리 지표 해석**:
 
 ```mermaid
 graph TD
     subgraph "메모리 지표 이해"
-        VSZ["VSZ (Virtual Size)<br/>가상 메모리 총 크기"] 
-        RSS["RSS (Resident Set Size)<br/>실제 물리 메모리 사용량"]
-        PSS["PSS (Proportional Set Size)<br/>공유 메모리 포함한 실제 사용량"]
-        USS["USS (Unique Set Size)<br/>해당 프로세스만 사용하는 메모리"]
+        VSZ["VSZ (Virtual Size), 가상 메모리 총 크기"] 
+        RSS["RSS (Resident Set Size), 실제 물리 메모리 사용량"]
+        PSS["PSS (Proportional Set Size), 공유 메모리 포함한 실제 사용량"]
+        USS["USS (Unique Set Size), 해당 프로세스만 사용하는 메모리"]
     end
     
     subgraph "누수 패턴"
@@ -106,7 +106,7 @@ graph TD
     
     style NORMAL fill:#c8e6c9
     style LEAK fill:#ffcccb
-```
+```text
 
 ### 1.2 메모리 사용 패턴 분석
 
@@ -118,7 +118,7 @@ while true; do
     echo "$(date): $(ps -p $1 -o pid,vsz,rss --no-headers)" >> memory_usage.log
     sleep 60
 done
-```
+```text
 
 **패턴 분석 예시**:
 
@@ -129,7 +129,7 @@ $ tail -f memory_usage.log
 2024-01-01 10:01: 1234  52100 45100   # 100KB 증가
 2024-01-01 10:02: 1234  52200 45200   # 계속 증가 중 (누수 의심!)
 2024-01-01 10:03: 1234  52150 45150   # 약간 감소 (정상 변동)
-```
+```text
 
 ## 2. Valgrind로 메모리 누수 잡기
 
@@ -149,17 +149,17 @@ $ valgrind \
     --verbose \
     --log-file=valgrind.log \
     ./program
-```
+```text
 
 **Valgrind 출력 해석**:
 
 ```mermaid
 graph TD
     subgraph "Valgrind 누수 분류"
-        DEF["Definitely lost<br/>확실한 누수"]
-        IND["Indirectly lost<br/>간접 누수"]
-        POS["Possibly lost<br/>가능한 누수"]
-        REACH["Still reachable<br/>도달 가능"]
+        DEF["Definitely lost, 확실한 누수"]
+        IND["Indirectly lost, 간접 누수"]
+        POS["Possibly lost, 가능한 누수"]
+        REACH["Still reachable, 도달 가능"]
     end
     
     DEF --> CRITICAL["🚨 즉시 수정 필요"]
@@ -170,7 +170,7 @@ graph TD
     style CRITICAL fill:#ffcccb
     style CHECK fill:#fff3e0
     style NORMAL fill:#c8e6c9
-```
+```text
 
 ### 2.2 실제 누수 사례와 해결
 
@@ -186,7 +186,7 @@ void process_data() {
     process(buffer);
     free(buffer);
 }
-```
+```text
 
 Valgrind 출력:
 
@@ -195,7 +195,7 @@ Valgrind 출력:
 ==1234==    at malloc (vg_replace_malloc.c:309)
 ==1234==    by process_data (leak.c:5)
 ==1234==    by main (leak.c:15)
-```
+```text
 
 **해결책**:
 
@@ -210,7 +210,7 @@ void process_data() {
     process(buffer);
     free(buffer);
 }
-```
+```text
 
 **사례 2: C++ 순환 참조 누수**
 
@@ -228,7 +228,7 @@ void create_cycle() {
     a->next = b;
     b->parent = a;  // weak_ptr이므로 순환 참조 방지됨
 }
-```
+```text
 
 ### 2.3 Valgrind 고급 기법
 
@@ -243,7 +243,7 @@ $ ms_print massif.out.1234
 # 캐시 미스 분석 (성능 관련)
 $ valgrind --tool=cachegrind ./program
 $ cg_annotate cachegrind.out.1234
-```
+```text
 
 ## 3. AddressSanitizer (ASan) 활용
 
@@ -269,7 +269,7 @@ graph LR
     
     A1 --> DEV
     V1 --> QA
-```
+```text
 
 ### 3.2 ASan 사용법
 
@@ -280,7 +280,7 @@ $ gcc -fsanitize=address -g -o program program.c
 # 런타임 옵션 설정
 $ export ASAN_OPTIONS="detect_leaks=1:abort_on_error=1:detect_stack_use_after_return=1"
 $ ./program
-```
+```text
 
 **ASan 출력 예시**:
 
@@ -294,7 +294,7 @@ Direct leak of 1024 byte(s) in 1 object(s) allocated from:
     #2 0x400856 in main program.c:15
 
 SUMMARY: AddressSanitizer: 1024 byte(s) leaked in 1 allocation(s).
-```
+```text
 
 ## 4. 시스템 레벨 메모리 분석
 
@@ -303,14 +303,14 @@ SUMMARY: AddressSanitizer: 1024 byte(s) leaked in 1 allocation(s).
 ```bash
 # 프로세스 메모리 맵 확인
 $ cat /proc/1234/maps
-```
+```text
 
 **출력 해석**:
 
 ```bash
 주소 범위                 권한 오프셋   디바이스  inode 경로
 7f8b4c000000-7f8b4c021000 r-xp 00000000 08:01 131 /lib64/ld-linux-x86-64.so.2
-```
+```text
 
 ```mermaid
 graph TD
@@ -328,7 +328,7 @@ graph TD
         HEAP["rw-p: 힙 영역"]
         STACK["rw-p: 스택 영역"]
     end
-```
+```text
 
 ### 4.2 /proc/[pid]/smaps 상세 분석
 
@@ -338,7 +338,7 @@ $ cat /proc/1234/smaps | head -20
 
 # 힙 영역만 추출
 $ cat /proc/1234/smaps | grep -A 15 "\[heap\]"
-```
+```text
 
 **중요한 지표들**:
 
@@ -350,7 +350,7 @@ Shared_Clean:         64 kB  # 공유된 깨끗한 페이지
 Shared_Dirty:         32 kB  # 공유된 더러운 페이지
 Private_Clean:       128 kB  # 프라이빗 깨끗한 페이지
 Private_Dirty:       288 kB  # 프라이빗 더러운 페이지
-```
+```text
 
 ## 5. 실무 메모리 디버깅 워크플로우
 
@@ -369,7 +369,7 @@ flowchart TD
     
     OTHER --> PROFILE[성능 프로파일링]
     PROFILE --> OPTIMIZE[최적화]
-```
+```text
 
 ### 5.2 메모리 누수 방지 체크리스트
 
@@ -411,7 +411,7 @@ void* debug_malloc(size_t size) {
         *(size_t*)ptr = size;
         allocated_bytes += size;
         allocation_count++;
-        printf("ALLOC: %zu bytes at %p (total: %zu bytes, count: %d)\n", 
+        printf("ALLOC: %zu bytes at %p (total: %zu bytes, count: %d), ", 
                size, (char*)ptr + sizeof(size_t), allocated_bytes, allocation_count);
         return (char*)ptr + sizeof(size_t);
     }
@@ -424,7 +424,7 @@ void debug_free(void* ptr) {
         size_t size = *(size_t*)real_ptr;
         allocated_bytes -= size;
         allocation_count--;
-        printf("FREE: %zu bytes at %p (total: %zu bytes, count: %d)\n", 
+        printf("FREE: %zu bytes at %p (total: %zu bytes, count: %d), ", 
                size, ptr, allocated_bytes, allocation_count);
         free(real_ptr);
     }
@@ -433,7 +433,7 @@ void debug_free(void* ptr) {
 #define malloc(size) debug_malloc(size)
 #define free(ptr) debug_free(ptr)
 #endif
-```
+```text
 
 ### 6.2 메모리 사용 패턴 시각화
 
@@ -483,7 +483,7 @@ if __name__ == '__main__':
     
     timestamps, rss_values = parse_memory_log(sys.argv[1])
     plot_memory_usage(timestamps, rss_values)
-```
+```text
 
 ## 7. 정리와 다음 단계
 

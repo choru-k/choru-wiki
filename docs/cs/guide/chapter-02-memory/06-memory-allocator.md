@@ -33,7 +33,7 @@ sequenceDiagram
     
     App->>Malloc: malloc(1024)
     Malloc->>Heap: 적절한 블록 찾기
-    Note over Heap: 빈 블록 검색<br/>분할 또는 합병<br/>메타데이터 업데이트
+    Note over Heap: 빈 블록 검색, 분할 또는 합병, 메타데이터 업데이트
     Heap-->>Malloc: 메모리 블록 반환
     
     alt 힙에 공간 부족
@@ -43,7 +43,7 @@ sequenceDiagram
     end
     
     Malloc-->>App: 메모리 포인터
-```
+```text
 
 이 과정에서 **성능 병목**이 생기는 이유:
 
@@ -61,14 +61,14 @@ Linux의 기본 malloc 구현체인 ptmalloc2의 내부를 살펴봅시다:
 ```mermaid
 graph TD
     subgraph "ptmalloc2 구조"
-        MAIN_ARENA[Main Arena<br/>메인 스레드용]
-        THREAD_ARENA[Thread Arena<br/>스레드별 힙]
+        MAIN_ARENA["Main Arena, 메인 스레드용"]
+        THREAD_ARENA["Thread Arena, 스레드별 힙"]
         
         subgraph "Arena 내부"
-            FASTBINS[Fast Bins<br/>작은 크기 (16-80바이트)]
-            SMALLBINS[Small Bins<br/>중간 크기 (<512바이트)]  
-            LARGEBINS[Large Bins<br/>큰 크기 (>=512바이트)]
-            UNSORTED[Unsorted Bin<br/>임시 저장소]
+            FASTBINS["Fast Bins, 작은 크기 (16-80바이트)"]
+            SMALLBINS["Small Bins, 중간 크기 (<512바이트)"]  
+            LARGEBINS["Large Bins, 큰 크기 (>=512바이트)"]
+            UNSORTED["Unsorted Bin, 임시 저장소"]
         end
         
         MAIN_ARENA --> FASTBINS
@@ -76,12 +76,12 @@ graph TD
     end
     
     subgraph "메모리 요청 처리"
-        REQ[메모리 요청] --> SIZE{크기 확인}
+        REQ["메모리 요청"] --> SIZE{"크기 확인"}
         SIZE -->|작음| FASTBINS
         SIZE -->|중간| SMALLBINS  
         SIZE -->|큼| LARGEBINS
     end
-```
+```text
 
 **각 구조의 특징**:
 
@@ -96,10 +96,10 @@ graph TD
 ```mermaid
 graph LR
     subgraph "단편화 발생 과정"
-        INIT["초기 상태<br/>[        8KB 빈 공간        ]"]
-        ALLOC1["1KB씩 8개 할당<br/>[1][2][3][4][5][6][7][8]"]
-        FREE["홀수 번째 해제<br/>[X][2][X][4][X][6][X][8]"]
-        FRAG["단편화 발생<br/>4KB 빈 공간, 하지만<br/>2KB 할당 요청 실패!"]
+        INIT["초기 상태, [        8KB 빈 공간        ]"]
+        ALLOC1["1KB씩 8개 할당, [1][2][3][4][5][6][7][8]"]
+        FREE["홀수 번째 해제, [X][2][X][4][X][6][X][8]"]
+        FRAG["단편화 발생, 4KB 빈 공간, 하지만, 2KB 할당 요청 실패!"]
     end
     
     INIT --> ALLOC1
@@ -107,7 +107,7 @@ graph LR
     FREE --> FRAG
     
     style FRAG fill:#ffcccb
-```
+```text
 
 **단편화 측정 방법**:
 
@@ -116,8 +116,8 @@ graph LR
 $ cat /proc/buddyinfo
 
 # 프로세스별 메모리 단편화
-$ cat /proc/PID/smaps | awk '/Size:/{total+=$2} /Rss:/{rss+=$2} END{printf "내부 단편화: %.1f%%\n", (total-rss)/total*100}'
-```
+$ cat /proc/PID/smaps | awk '/Size:/{total+=$2} /Rss:/{rss+=$2} END{printf "내부 단편화: %.1f%%, ", (total-rss)/total*100}'
+```text
 
 ## 2. 대안 메모리 할당자들
 
@@ -128,13 +128,13 @@ Google이 개발한 고성능 메모리 할당자입니다:
 ```mermaid
 graph TD
     subgraph "tcmalloc 아키텍처"
-        FRONTEND[Frontend<br/>스레드 로컬 캐시]
-        CENTRAL[Central Heap<br/>공유 자원]
-        BACKEND[Backend<br/>운영체제]
+        FRONTEND["Frontend, 스레드 로컬 캐시"]
+        CENTRAL["Central Heap, 공유 자원"]
+        BACKEND["Backend, 운영체제"]
         
         subgraph "스레드별 캐시"
-            SMALL_CACHE[Small Object Cache<br/>(<32KB)]
-            LARGE_CACHE[Large Object Cache<br/>(>32KB)]
+            SMALL_CACHE["Small Object Cache, (<32KB)"]
+            LARGE_CACHE["Large Object Cache, (>32KB)"]
         end
         
         FRONTEND --> SMALL_CACHE
@@ -146,7 +146,7 @@ graph TD
     
     style FRONTEND fill:#c8e6c9
     style CENTRAL fill:#fff3e0
-```
+```text
 
 **tcmalloc 설치 및 사용**:
 
@@ -164,7 +164,7 @@ $ gcc -ltcmalloc program.c -o program
 $ LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_and_profiler.so.4 \
   CPUPROFILE=profile.prof ./program
 $ pprof --text ./program profile.prof
-```
+```text
 
 ### 2.2 jemalloc
 
@@ -180,7 +180,7 @@ $ LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2 ./program
 # 통계 확인
 $ export MALLOC_CONF="stats_print:true"
 $ ./program
-```
+```text
 
 **jemalloc의 핵심 특징**:
 
@@ -223,14 +223,14 @@ int main() {
     }
     double free_time = get_time() - start;
     
-    printf("Allocation: %.3f seconds\n", alloc_time);
-    printf("Deallocation: %.3f seconds\n", free_time);
-    printf("Total: %.3f seconds\n", alloc_time + free_time);
+    printf("Allocation: %.3f seconds, ", alloc_time);
+    printf("Deallocation: %.3f seconds, ", free_time);
+    printf("Total: %.3f seconds, ", alloc_time + free_time);
     
     free(ptrs);
     return 0;
 }
-```
+```text
 
 **벤치마크 실행**:
 
@@ -254,7 +254,7 @@ $ LD_PRELOAD=/usr/lib/libjemalloc.so.2 ./benchmark
 Allocation: 0.112 seconds  
 Deallocation: 0.073 seconds
 Total: 0.185 seconds  # 2.1배 빠름!
-```
+```text
 
 ## 3. 메모리 할당 패턴 최적화
 
@@ -282,14 +282,14 @@ void* malloc_hook(size_t size, const void *caller) {
     else if (size <= 1024) medium_allocs++;
     else large_allocs++;
     
-    printf("ALLOC: %zu bytes from %p\n", size, caller);
+    printf("ALLOC: %zu bytes from %p, ", size, caller);
     in_hook = 0;
     return result;
 }
 
 // 훅 등록
 __malloc_hook = malloc_hook;
-```
+```text
 
 ### 3.2 메모리 풀 패턴
 
@@ -342,7 +342,7 @@ void pool_free(memory_pool_t *pool, void *ptr) {
     block->next = pool->free_list;
     pool->free_list = block;
 }
-```
+```text
 
 **메모리 풀의 장점**:
 
@@ -364,7 +364,7 @@ export MALLOC_TRIM_THRESHOLD_=131072   # trim 임계값 128KB
 #include <malloc.h>
 mallopt(M_ARENA_MAX, 2);         # 최대 아레나 수
 mallopt(M_MMAP_THRESHOLD, 1024*1024);  # mmap 임계값
-```
+```text
 
 ### 4.2 tcmalloc 튜닝
 
@@ -373,7 +373,7 @@ mallopt(M_MMAP_THRESHOLD, 1024*1024);  # mmap 임계값
 export TCMALLOC_SAMPLE_PARAMETER=1048576  # 샘플링 간격
 export TCMALLOC_MAX_TOTAL_THREAD_CACHE_BYTES=33554432  # 스레드 캐시 크기
 export TCMALLOC_CENTRAL_CACHE_DEFAULT_TO_SPAN=true
-```
+```text
 
 ### 4.3 jemalloc 튜닝
 
@@ -383,7 +383,7 @@ export MALLOC_CONF="dirty_decay_ms:10000,muzzy_decay_ms:10000"
 
 # 런타일임 튜닝
 echo "background_thread:true" > /etc/malloc.conf
-```
+```text
 
 ## 5. 메모리 할당 모니터링
 
@@ -396,13 +396,13 @@ echo "background_thread:true" > /etc/malloc.conf
 
 void print_malloc_stats() {
     struct mallinfo info = mallinfo();
-    printf("Total allocated: %d bytes\n", info.uordblks);
-    printf("Total free: %d bytes\n", info.fordblks);
-    printf("Number of chunks: %d\n", info.ordblks);
+    printf("Total allocated: %d bytes, ", info.uordblks);
+    printf("Total free: %d bytes, ", info.fordblks);
+    printf("Number of chunks: %d, ", info.ordblks);
     
     malloc_stats();  // 상세 통계 출력
 }
-```
+```text
 
 **tcmalloc**:
 
@@ -410,7 +410,7 @@ void print_malloc_stats() {
 # 힙 프로파일 생성
 $ HEAPPROFILE=/tmp/heap ./program
 $ pprof --text ./program /tmp/heap.0001.heap
-```
+```text
 
 **jemalloc**:
 
@@ -418,7 +418,7 @@ $ pprof --text ./program /tmp/heap.0001.heap
 # 통계 출력 활성화
 $ export MALLOC_CONF="stats_print:true"
 $ ./program
-```
+```text
 
 ### 5.2 실시간 메모리 모니터링
 
@@ -472,7 +472,7 @@ if __name__ == '__main__':
         sys.exit(1)
     
     monitor_process(int(sys.argv[1]))
-```
+```text
 
 ## 6. 실무 할당자 선택 가이드
 
@@ -485,11 +485,11 @@ graph TD
     WORKLOAD --> GAME[게임 서버]
     WORKLOAD --> HPC[고성능 컴퓨팅]
     
-    WEB --> JEMALLOC[jemalloc<br/>균형잡힌 성능]
-    DB --> TCMALLOC[tcmalloc<br/>큰 메모리 효율적]
-    GAME --> CUSTOM[커스텀 풀<br/>예측 가능한 패턴]
-    HPC --> GLIBC[glibc malloc<br/>안정성 중시]
-```
+    WEB --> JEMALLOC[jemalloc, 균형잡힌 성능]
+    DB --> TCMALLOC[tcmalloc, 큰 메모리 효율적]
+    GAME --> CUSTOM[커스텀 풀, 예측 가능한 패턴]
+    HPC --> GLIBC[glibc malloc, 안정성 중시]
+```text
 
 ### 6.2 할당자 교체 시 고려사항
 
@@ -515,14 +515,14 @@ echo "Results:"
 echo "glibc: ${GLIBC_TIME}s"
 echo "tcmalloc: ${TCMALLOC_TIME}s" 
 echo "jemalloc: ${JEMALLOC_TIME}s"
-```
+```text
 
 **메모리 사용량 비교**:
 
 ```bash
 # 최대 메모리 사용량 측정
 $ /usr/bin/time -v ./program 2>&1 | grep "Maximum resident set size"
-```
+```text
 
 ## 7. 정리와 실무 적용
 

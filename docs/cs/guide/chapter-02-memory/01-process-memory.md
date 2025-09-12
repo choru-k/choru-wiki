@@ -58,7 +58,7 @@ tags:
 │    Text 섹션        │ ← 우리가 작성한 코드가 기계어로 변환되어 있는 곳
 └─────────────────────┘ 0x0000000000400000
 낮은 주소 (0x0000000000000000)
-```
+```text
 
 ### 1.2 왜 이렇게 복잡하게 나누는가?
 
@@ -72,7 +72,7 @@ int data = 42;
 void function() { /* ... */ }
 int another_data = 100;
 void another_function() { /* ... */ }
-```
+```text
 
 해커가 `data` 변수를 조작해서 악성 코드를 넣고, 프로그램이 이를 실행하게 만들 수 있습니다. 이것이 바로 코드 인젝션 공격입니다.
 
@@ -121,7 +121,7 @@ graph TD
         T --> T1["컴파일된 기계어 코드
         main(), printf() 등"]
         D --> D1["int global = 42;
-        static char msg[] = \"Hello\";"]
+        static char msg[] = 'Hello';"]
         B --> B1["int uninitialized;
         char buffer[1024];"]
         H --> H1["malloc(100)
@@ -139,7 +139,7 @@ graph TD
     style H fill:#E8F5E9
     style S fill:#FFEBEE
     style M fill:#E0F2F1
-```
+```text
 
 이제 각 영역을 자세히 살펴보겠습니다.
 
@@ -154,14 +154,14 @@ Text 섹션은 우리가 작성한 C 코드가 컴파일되어 기계어로 변�
 #include <stdio.h>
 
 void greet(const char* name) {
-    printf("Hello, %s!\n", name);
+    printf("Hello, %s!, ", name);
 }
 
 int main() {
     greet("World");
     return 0;
 }
-```
+```text
 
 이 코드를 컴파일하면 어떻게 될까요? `objdump` 명령어로 살펴봅시다:
 
@@ -176,13 +176,13 @@ $ objdump -d example | grep -A10 "<greet>:"
   40112e: 48 89 7d f8           mov    %rdi,-0x8(%rbp)  # 매개변수 저장
   401132: 48 8b 45 f8           mov    -0x8(%rbp),%rax
   401136: 48 89 c6              mov    %rax,%rsi
-  401139: 48 8d 3d c4 0e 00 00  lea    0xec4(%rip),%rdi  # "Hello, %s!\n" 주소
+  401139: 48 8d 3d c4 0e 00 00  lea    0xec4(%rip),%rdi  # "Hello, %s!, " 주소
   401140: b8 00 00 00 00        mov    $0x0,%eax
   401145: e8 e6 fe ff ff        call   401030 <printf@plt>
   40114a: 90                    nop
   40114b: c9                    leave
   40114c: c3                    ret
-```
+```text
 
 우리가 작성한 간단한 `greet` 함수가 13개의 기계어 명령어로 변환되었습니다! 각 명령어는 Text 섹션의 특정 주소(0x401126부터)에 저장됩니다.
 
@@ -197,7 +197,7 @@ void malicious_function() {
     unsigned char* greet_addr = (unsigned char*)greet;
     greet_addr[0] = 0xc3;  // Segmentation Fault!
 }
-```
+```text
 
 만약 이것이 가능하다면:
 
@@ -240,7 +240,7 @@ graph LR
     P3 --> PM
     
     style PM fill:#81C784,stroke:#4CAF50,stroke-width:2px
-```
+```text
 
 세 개의 터미널을 열었을 때, bash의 코드는 물리 메모리에 단 한 번만 로드됩니다! 각 프로세스는 자신만의 가상 주소를 가지지만, 실제로는 같은 물리 메모리를 가리킵니다. 이것이 Copy-on-Write(COW)의 기본 원리입니다.
 
@@ -261,7 +261,7 @@ void calculate() {
     counter++;
     // counter는 함수가 끝나도 사라지지 않습니다
 }
-```
+```text
 
 왜 `static int counter`가 스택이 아닌 Data 섹션에 저장될까요? `static` 키워드는 "이 변수를 프로그램이 끝날 때까지 유지하라"는 의미입니다. 함수가 끝나면 스택 프레임은 사라지므로, 영구적인 저장소가 필요합니다.
 
@@ -277,7 +277,7 @@ int huge_array[1000000] = {1, 2, 3};  // 나머지는 0으로 초기화
 
 // program_b.c  
 int huge_array[1000000];              // 모두 0으로 초기화
-```
+```text
 
 두 프로그램을 컴파일하고 크기를 비교하면:
 
@@ -287,7 +287,7 @@ $ gcc program_b.c -o program_b
 $ ls -lh program_*
 -rwxr-xr-x 1 user user 4.0M program_a  # 4MB!
 -rwxr-xr-x 1 user user 8.5K program_b  # 8.5KB!
-```
+```text
 
 왜 이런 차이가 날까요?
 
@@ -311,20 +311,20 @@ int main() {
     static int static_init = 789;    // Data 섹션
     static int static_uninit;        // BSS 섹션
     
-    printf("Data section:\n");
-    printf("  initialized at %p = %d\n", &initialized, initialized);
-    printf("  static_init at %p = %d\n", &static_init, static_init);
+    printf("Data section:, ");
+    printf("  initialized at %p = %d, ", &initialized, initialized);
+    printf("  static_init at %p = %d, ", &static_init, static_init);
     
-    printf("\nBSS section:\n");
-    printf("  uninitialized at %p = %d\n", &uninitialized, uninitialized);
-    printf("  static_uninit at %p = %d\n", &static_uninit, static_uninit);
+    printf(", BSS section:, ");
+    printf("  uninitialized at %p = %d, ", &uninitialized, uninitialized);
+    printf("  static_uninit at %p = %d, ", &static_uninit, static_uninit);
     
-    printf("\nRodata section:\n");
-    printf("  constant at %p = %d\n", &constant, constant);
+    printf(", Rodata section:, ");
+    printf("  constant at %p = %d, ", &constant, constant);
     
     return 0;
 }
-```
+```text
 
 실행하면 주소를 통해 각 섹션의 위치를 확인할 수 있습니다:
 
@@ -339,7 +339,7 @@ BSS section:
 
 Rodata section:
   constant at 0x402008 = 456
-```
+```text
 
 주소를 보면 Rodata(0x402xxx) < Data(0x404030-0x404037) < BSS(0x404040-) 순서로 배치되어 있음을 알 수 있습니다.
 
@@ -352,11 +352,11 @@ Rodata section:
 함수 호출을 생각해보세요:
 
 ```c
-void c() { printf("C\n"); }
+void c() { printf("C, "); }
 void b() { c(); }
 void a() { b(); }
 int main() { a(); return 0; }
-```
+```text
 
 실행 순서는 main → a → b → c지만, 리턴 순서는 정확히 반대입니다: c → b → a → main. 마지막에 호출된 함수가 가장 먼저 끝나야 합니다. 이것이 바로 스택 구조가 완벽한 이유입니다!
 
@@ -378,14 +378,14 @@ int main() {
     int x = 10;
     int y = 20;
     int z = calculate(x, y);
-    printf("Result: %d\n", z);
+    printf("Result: %d, ", z);
     return 0;
 }
-```
+```text
 
 `calculate(10, 20)`이 호출되는 순간의 스택:
 
-```
+```text
 높은 주소
 ┌─────────────────────┐
 │  main의 리턴 주소   │ ← main이 끝나면 어디로 갈지
@@ -409,7 +409,7 @@ int main() {
 │  (사용 가능 공간)   │
 ↓                     ↓
 낮은 주소
-```
+```text
 
 각 함수는 자신만의 '방'(스택 프레임)을 가지며, 그 안에 지역 변수와 매개변수를 저장합니다. 함수가 끝나면 이 방은 완전히 사라집니다.
 
@@ -425,7 +425,7 @@ int main() {
 // 위험: 무한 재귀
 void infinite_recursion(int depth) {
     char local_array[1024];  // 1KB 스택 사용
-    printf("Depth: %d, Stack address: %p\n", depth, &local_array);
+    printf("Depth: %d, Stack address: %p, ", depth, &local_array);
     infinite_recursion(depth + 1);  // 재귀 호출
 }
 
@@ -437,12 +437,12 @@ void huge_local_variable() {
 
 int main() {
     // 현재 스택 크기 확인
-    printf("Starting recursion...\n");
+    printf("Starting recursion..., ");
     infinite_recursion(0);
     // 약 8000번 후 크래시 (8MB / 1KB = 8192)
     return 0;
 }
-```
+```text
 
 실행 결과:
 
@@ -455,7 +455,7 @@ Depth: 2, Stack address: 0x7ffd5a7c5b20
 Depth: 8189, Stack address: 0x7ffd5a5c6340
 Depth: 8190, Stack address: 0x7ffd5a5c5f30
 Segmentation fault (core dumped)
-```
+```text
 
 주소가 점점 낮아지다가(스택은 아래로 자람) 한계에 도달하면 크래시가 발생합니다!
 
@@ -469,7 +469,7 @@ void vulnerable_function(char* input) {
     char buffer[64];
     strcpy(buffer, input);  // 위험! 크기 검사 없음
 }
-```
+```text
 
 만약 공격자가 64바이트보다 긴 입력을 주면?
 
@@ -491,7 +491,7 @@ void vulnerable_function(char* input) {
 ├─────────────────┤
 │  AAAAAAA...     │ ← 오버플로우된 데이터
 └─────────────────┘
-```
+```text
 
 이를 방지하기 위해 현대 컴파일러는 **Stack Canary**를 사용합니다:
 
@@ -507,7 +507,7 @@ void vulnerable_function_protected(char* input) {
         __stack_chk_fail();  // 스택이 손상됨! 프로그램 중단
     }
 }
-```
+```text
 
 카나리(canary)라는 이름은 탄광에서 유독가스를 감지하기 위해 카나리아 새를 데려갔던 것에서 유래했습니다. 카나리아가 죽으면 위험을 알 수 있듯이, 스택 카나리 값이 변경되면 스택 오버플로우를 감지할 수 있습니다.
 
@@ -556,7 +556,7 @@ Image* create_image(int w, int h) {
     img->pixels = malloc(w * h * 3);  // RGB
     return img;
 }
-```
+```text
 
 ### 5.2 힙의 성장: brk와 mmap
 
@@ -570,20 +570,20 @@ Image* create_image(int w, int h) {
 
 void observe_heap_growth() {
     void* initial_brk = sbrk(0);
-    printf("Initial heap end: %p\n", initial_brk);
+    printf("Initial heap end: %p, ", initial_brk);
     
     char* small1 = malloc(100);
-    printf("After malloc(100): %p\n", sbrk(0));
+    printf("After malloc(100): %p, ", sbrk(0));
     // brk가 조금 증가 (실제로는 더 많이 할당)
     
     char* small2 = malloc(100);
-    printf("After another malloc(100): %p\n", sbrk(0));
+    printf("After another malloc(100): %p, ", sbrk(0));
     // brk 변화 없음 (이미 할당된 공간 재사용)
     
     free(small1);
     free(small2);
 }
-```
+```text
 
 **2. mmap 시스템 콜**: 큰 할당에 사용
 
@@ -596,14 +596,14 @@ void large_allocation() {
     
     void* after_brk = sbrk(0);
     if (initial_brk == after_brk) {
-        printf("brk didn't change - used mmap!\n");
+        printf("brk didn't change - used mmap!, ");
     }
     
     // /proc/self/maps를 보면 별도 영역에 할당됨
     system("cat /proc/self/maps | grep heap");
     system("cat /proc/self/maps | tail -5");
 }
-```
+```text
 
 일반적으로 128KB(시스템마다 다름)를 기준으로:
 
@@ -623,29 +623,29 @@ void demonstrate_fragmentation() {
     char* block3 = malloc(1000);  // 1KB
     char* block4 = malloc(1000);  // 1KB
     
-    printf("Allocated 4 blocks\n");
-    printf("block1: %p\n", block1);
-    printf("block2: %p\n", block2);
-    printf("block3: %p\n", block3);
-    printf("block4: %p\n", block4);
+    printf("Allocated 4 blocks, ");
+    printf("block1: %p, ", block1);
+    printf("block2: %p, ", block2);
+    printf("block3: %p, ", block3);
+    printf("block4: %p, ", block4);
     
     // 2. 중간 블록들 해제
     free(block2);
     free(block3);
     
-    printf("\nFreed block2 and block3\n");
+    printf(", Freed block2 and block3, ");
     
     // 3. 큰 블록 할당 시도
     char* big = malloc(2000);  // 2KB
-    printf("Big block: %p\n", big);
+    printf("Big block: %p, ", big);
     // block2와 block3 자리에는 못 들어감 (불연속)
     // 새로운 위치에 할당됨
 }
-```
+```text
 
 힙의 상태:
 
-```
+```text
 초기: [block1][block2][block3][block4]
 해제: [block1][빈공간][빈공간][block4]
         1KB     1KB     1KB     1KB
@@ -653,7 +653,7 @@ void demonstrate_fragmentation() {
 2KB 요청 → 연속된 2KB가 없음!
 결과: [block1][빈공간][빈공간][block4]............[big_block]
                                                       2KB
-```
+```text
 
 이것이 바로 **외부 단편화**입니다. 전체 빈 공간은 2KB지만 연속되지 않아 사용할 수 없습니다.
 
@@ -701,7 +701,7 @@ void* my_malloc(size_t size) {
     
     return (char*)new_block + sizeof(block_t);
 }
-```
+```text
 
 실제 할당자들은 훨씬 복잡한 전략을 사용합니다:
 
@@ -737,7 +737,7 @@ graph TD
     style FL fill:#B2DFDB
     style AL fill:#80CBC4
     style SL fill:#4DB6AC
-```
+```text
 
 ### 6.2 파일을 메모리처럼 사용하기
 
@@ -762,7 +762,7 @@ void process_huge_file(const char* filename) {
     // 파일을 배열처럼 사용
     for (size_t i = 0; i < st.st_size; i++) {
         if (file_content[i] == 'X') {
-            printf("Found X at position %zu\n", i);
+            printf("Found X at position %zu, ", i);
         }
     }
     
@@ -772,7 +772,7 @@ void process_huge_file(const char* filename) {
     munmap(file_content, st.st_size);
     close(fd);
 }
-```
+```text
 
 이 코드의 놀라운 점:
 
@@ -815,7 +815,7 @@ void consumer() {
         printf("%d ", shared_data[i]);
     }
 }
-```
+```text
 
 파이프나 소켓과 달리 데이터 복사가 없어 매우 빠릅니다!
 
@@ -845,20 +845,20 @@ int main() {
     int* heap_var = malloc(sizeof(int));
     *heap_var = 200;
     
-    printf("=== Memory Layout ===\n");
-    printf("Code  (main)      : %p\n", main);
-    printf("Data  (global)    : %p\n", &global_init);
-    printf("BSS   (uninit)    : %p\n", &global_uninit);
-    printf("Heap  (malloc)    : %p\n", heap_var);
-    printf("Stack (local)     : %p\n", &stack_var);
+    printf("=== Memory Layout ===, ");
+    printf("Code  (main)      : %p, ", main);
+    printf("Data  (global)    : %p, ", &global_init);
+    printf("BSS   (uninit)    : %p, ", &global_uninit);
+    printf("Heap  (malloc)    : %p, ", heap_var);
+    printf("Stack (local)     : %p, ", &stack_var);
     
-    printf("\n=== Process Memory Map ===\n");
+    printf(", === Process Memory Map ===, ");
     print_maps();
     
     free(heap_var);
     return 0;
 }
-```
+```text
 
 ### 7.2 메모리 누수 찾기
 
@@ -889,7 +889,7 @@ int main() {
     }
     return 0;
 }
-```
+```text
 
 Valgrind로 검사:
 
@@ -905,7 +905,7 @@ $ valgrind --leak-check=full ./memory_leak
 ==12345==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/...)
 ==12345==    by 0x4005B2: leaky_function (memory_leak.c:9)
 ==12345==    by 0x4005F8: main (memory_leak.c:18)
-```
+```text
 
 ### 7.3 스택 오버플로우 디버깅
 
@@ -931,7 +931,7 @@ Stack level 0, frame at 0x7fffff5ff8:
  rip = 0x400567 in infinite_recursion; saved rip = 0x400589
  called by frame at 0x7fffff6408
  Arglist at 0x7fffff5fe8, args: depth=8191
-```
+```text
 
 ## 8. 메모리 보안: 현대적 방어 기법
 
@@ -955,7 +955,7 @@ $ docker run --security-opt no-new-privileges:true \
 # 메모리 보호 상태 확인
 $ cat /proc/[pid]/personality
 $ grep -E "(NX|DEP)" /proc/cpuinfo
-```
+```text
 
 **Intel CET (Control-flow Enforcement Technology) 지원:**
 
@@ -970,7 +970,7 @@ void protected_function() {
     _mm_sfence();  // Store fence
 }
 #endif
-```
+```text
 
 ```c
 // aslr_demo.c
@@ -978,14 +978,14 @@ int main() {
     int stack_var;
     void* heap_var = malloc(100);
     
-    printf("Stack: %p\n", &stack_var);
-    printf("Heap:  %p\n", heap_var);
-    printf("Code:  %p\n", main);
+    printf("Stack: %p, ", &stack_var);
+    printf("Heap:  %p, ", heap_var);
+    printf("Code:  %p, ", main);
     
     free(heap_var);
     return 0;
 }
-```
+```text
 
 ASLR 효과:
 
@@ -999,7 +999,7 @@ $ ./aslr_demo  # 다시 실행
 Stack: 0x7ffe3d9b167c  # 다른 주소!
 Heap:  0x55f5c9b262a0  # 다른 주소!
 Code:  0x55f5c88e7149  # 다른 주소!
-```
+```text
 
 이렇게 하면 공격자가 특정 주소를 알고 있어야 하는 공격(Return-to-libc, ROP 등)을 어렵게 만듭니다.
 
@@ -1030,7 +1030,7 @@ void test_dep() {
     func = exec_mem;
     func();  // 이제는 작동! (PROT_EXEC 때문)
 }
-```
+```text
 
 ## 9. 정리: 메모리 구조 마스터하기
 

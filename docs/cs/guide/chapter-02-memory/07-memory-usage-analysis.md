@@ -27,24 +27,24 @@ tags:
 ```mermaid
 graph LR
     subgraph "메모리 지표의 혼란"
-        FREE["free 명령어<br/>사용률: 80%"]
-        TOP["top 명령어<br/>합계: 30%"]
-        DOCKER["docker stats<br/>컨테이너: 50%"]
-        HTOP["htop<br/>또 다른 수치..."]
+        FREE["free 명령어, 사용률: 80%"]
+        TOP["top 명령어, 합계: 30%"]
+        DOCKER["docker stats, 컨테이너: 50%"]
+        HTOP["htop, 또 다른 수치..."]
     end
     
     subgraph "왜 다를까?"
-        SHARED["공유 메모리<br/>중복 계산"]
-        KERNEL["커널 메모리<br/>숨겨진 사용량"]
-        CACHE["페이지 캐시<br/>실제 vs 사용 가능"]
-        OVERCOMMIT["Memory Overcommit<br/>약속된 메모리"]
+        SHARED["공유 메모리, 중복 계산"]
+        KERNEL["커널 메모리, 숨겨진 사용량"]
+        CACHE["페이지 캐시, 실제 vs 사용 가능"]
+        OVERCOMMIT["Memory Overcommit, 약속된 메모리"]
     end
     
     FREE -.-> SHARED
     TOP -.-> KERNEL
     DOCKER -.-> CACHE
     HTOP -.-> OVERCOMMIT
-```
+```text
 
 각 수치의 정확한 의미를 알아야 시스템을 제대로 모니터링하고 최적화할 수 있습니다.
 
@@ -55,10 +55,10 @@ graph LR
 ```mermaid
 graph TD
     subgraph "프로세스 메모리 지표"
-        VSZ["VSZ (Virtual Size)<br/>가상 메모리 총 크기<br/>실제 사용과 무관"]
-        RSS["RSS (Resident Set Size)<br/>물리 메모리 사용량<br/>공유 메모리 중복 포함"]
-        PSS["PSS (Proportional Set Size)<br/>공유 메모리 비례 분할<br/>가장 정확한 지표"]
-        USS["USS (Unique Set Size)<br/>해당 프로세스만 사용<br/>프로세스 종료 시 해제량"]
+        VSZ["VSZ (Virtual Size), 가상 메모리 총 크기, 실제 사용과 무관"]
+        RSS["RSS (Resident Set Size), 물리 메모리 사용량, 공유 메모리 중복 포함"]
+        PSS["PSS (Proportional Set Size), 공유 메모리 비례 분할, 가장 정확한 지표"]
+        USS["USS (Unique Set Size), 해당 프로세스만 사용, 프로세스 종료 시 해제량"]
     end
     
     subgraph "관계"
@@ -70,7 +70,7 @@ graph TD
     
     style PSS fill:#c8e6c9
     style USS fill:#e1f5fe
-```
+```text
 
 **실제 예시로 이해하기**:
 
@@ -81,7 +81,7 @@ USER   PID  %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 user  1234   5.2  3.1 2048000 128000 ?     Sl   10:00   0:30 /opt/google/chrome
 user  1235   2.1  2.5 1536000 102400 ?     S    10:00   0:15 /opt/google/chrome --type=renderer
 user  1236   1.8  1.9 1280000  76800 ?     S    10:00   0:10 /opt/google/chrome --type=renderer
-```
+```text
 
 이 경우:
 
@@ -102,27 +102,27 @@ Shared_Clean:      43521 kB    # 공유된 읽기 전용 페이지
 Shared_Dirty:       8912 kB    # 공유된 수정 페이지  
 Private_Clean:     12345 kB    # 프라이빗 읽기 전용 페이지
 Private_Dirty:     66294 kB    # 프라이빗 수정 페이지
-```
+```text
 
 **각 지표의 실무 의미**:
 
 ```mermaid
 graph LR
     subgraph "Clean vs Dirty"
-        CLEAN["Clean Pages<br/>디스크에서 읽기만<br/>메모리 부족 시 바로 해제"]
-        DIRTY["Dirty Pages<br/>수정된 메모리<br/>스왑 또는 저장 후 해제"]
+        CLEAN["Clean Pages, 디스크에서 읽기만, 메모리 부족 시 바로 해제"]
+        DIRTY["Dirty Pages, 수정된 메모리, 스왑 또는 저장 후 해제"]
     end
     
     subgraph "Shared vs Private"
-        SHARED["Shared<br/>여러 프로세스가 공유<br/>라이브러리, 공유 메모리"]
-        PRIVATE["Private<br/>해당 프로세스만 사용<br/>힙, 스택, 데이터"]
+        SHARED["Shared, 여러 프로세스가 공유, 라이브러리, 공유 메모리"]
+        PRIVATE["Private, 해당 프로세스만 사용, 힙, 스택, 데이터"]
     end
     
     CLEAN --> FAST[빠른 해제 가능]
     DIRTY --> SLOW[느린 해제]
     SHARED --> EFFICIENT[메모리 효율적]
     PRIVATE --> EXACT[정확한 사용량]
-```
+```text
 
 ## 2. 공유 메모리 계산의 복잡성
 
@@ -140,7 +140,7 @@ graph LR
 실제 물리 메모리 사용: 2MB
 
 잘못된 계산으로 4MB 과대 추정!
-```
+```text
 
 **정확한 시스템 메모리 사용량 계산법**:
 
@@ -154,7 +154,7 @@ echo "=== 시스템 메모리 정확한 분석 ==="
 free -h | head -2
 
 # 2. PSS 기준 실제 사용량 (공유 메모리 비례 분할)
-echo -e "\n=== PSS 기준 프로세스별 사용량 ==="
+echo -e ", === PSS 기준 프로세스별 사용량 ==="
 for pid in $(ps -eo pid --no-headers | head -10); do
     if [ -f /proc/$pid/smaps_rollup ]; then
         pss=$(grep "^Pss:" /proc/$pid/smaps_rollup | awk '{print $2}')
@@ -166,9 +166,9 @@ for pid in $(ps -eo pid --no-headers | head -10); do
 done
 
 # 3. USS 기준 순수 사용량
-echo -e "\n=== USS 기준 순수 사용량 ==="
+echo -e ", === USS 기준 순수 사용량 ==="
 smem -t -k | tail -5
-```
+```text
 
 ### 2.2 공유 메모리 세그먼트 분석
 
@@ -202,7 +202,7 @@ def analyze_shared_memory():
                 content = f.read()
                 
             # 공유 메모리 영역 찾기
-            for match in re.finditer(r'(\w+-\w+).*\n(?:.*\n)*?Shared_Clean:\s+(\d+)', content):
+            for match in re.finditer(r'(\w+-\w+).*, (?:.*, )*?Shared_Clean:\s+(\d+)', content):
                 addr_range = match.group(1)
                 shared_size = int(match.group(2))
                 if shared_size > 0:
@@ -221,7 +221,7 @@ if __name__ == '__main__':
 EOF
 
 $ python3 shared_memory_analysis.py
-```
+```text
 
 ## 3. Memory Overcommit 이해
 
@@ -246,7 +246,7 @@ sequenceDiagram
         Kernel->>Kernel: OOM Killer 발동
         Kernel->>App: 프로세스 강제 종료 💀
     end
-```
+```text
 
 **Overcommit 설정 확인 및 변경**:
 
@@ -266,7 +266,7 @@ Committed_AS:    4567890 kB    # 현재 커밋된 양
 # Overcommit 비율 계산
 $ echo "scale=1; $(grep Committed_AS /proc/meminfo | awk '{print $2}') * 100 / $(grep CommitLimit /proc/meminfo | awk '{print $2}')" | bc
 56.1    # 56.1% 오버커밋 상태
-```
+```text
 
 ### 3.2 Overcommit의 실무 영향
 
@@ -288,7 +288,7 @@ echo 80 > /proc/sys/vm/overcommit_ratio     # 80% 이하로 제한
 # /etc/sysctl.conf에 영구 설정
 vm.overcommit_memory = 2
 vm.overcommit_ratio = 80
-```
+```text
 
 ## 4. Transparent Huge Pages (THP) 영향 분석
 
@@ -316,7 +316,7 @@ graph LR
     
     style TLBHUGE fill:#c8e6c9
     style TLB512 fill:#ffcccb
-```
+```text
 
 **THP 상태 확인**:
 
@@ -333,7 +333,7 @@ $ grep -E "AnonHugePages|HugePages" /proc/meminfo
 AnonHugePages:    204800 kB    # 익명 huge pages (100개)
 HugePages_Total:        0      # 예약된 huge pages
 HugePages_Free:         0
-```
+```text
 
 ### 4.2 THP 성능 영향 측정
 
@@ -356,7 +356,7 @@ int main() {
     char *buffer = malloc(SIZE);
     double start, end;
     
-    printf("메모리 할당 완료: %d MB\n", SIZE/1024/1024);
+    printf("메모리 할당 완료: %d MB, ", SIZE/1024/1024);
     
     // 순차 접근 테스트
     start = get_time();
@@ -364,7 +364,7 @@ int main() {
         buffer[i] = 1;
     }
     end = get_time();
-    printf("순차 접근: %.3f 초\n", end - start);
+    printf("순차 접근: %.3f 초, ", end - start);
     
     // 랜덤 접근 테스트  
     start = get_time();
@@ -373,12 +373,12 @@ int main() {
         buffer[idx] = 1;
     }
     end = get_time();
-    printf("랜덤 접근: %.3f 초\n", end - start);
+    printf("랜덤 접근: %.3f 초, ", end - start);
     
     free(buffer);
     return 0;
 }
-```
+```text
 
 **THP 효과 비교**:
 
@@ -394,7 +394,7 @@ $ echo always > /sys/kernel/mm/transparent_hugepage/enabled
 $ ./thp_benchmark
 순차 접근: 0.187 초    # 24% 향상!
 랜덤 접근: 0.098 초    # 20% 향상!
-```
+```text
 
 **THP 부작용**:
 
@@ -423,7 +423,7 @@ Mem:           7.8G        2.1G        3.2G        145M        2.5G        5.4G
 # 정확한 메모리 제한 확인
 $ docker exec myapp cat /sys/fs/cgroup/memory/memory.limit_in_bytes
 536870912    # 512MB
-```
+```text
 
 **문제점**: 컨테이너 내부 프로세스들이 호스트 메모리 정보를 보게 됨!
 
@@ -449,7 +449,7 @@ pgmajfault 234         # 메이저 페이지 폴트
 # 메모리 압박 상황
 $ cat $CGROUP_PATH/memory.pressure_level
 low    # low/medium/critical
-```
+```text
 
 **정확한 컨테이너 메모리 모니터링**:
 
@@ -513,7 +513,7 @@ if __name__ == '__main__':
         sys.exit(1)
     
     monitor_container(sys.argv[1])
-```
+```text
 
 ## 6. 메모리 사용량 최적화 전략
 
@@ -568,7 +568,7 @@ while true; do
     echo ""
     sleep 10
 done
-```
+```text
 
 ## 7. 정리와 모니터링 가이드
 
@@ -600,7 +600,7 @@ graph TD
     CONTAINER --> CGROUP[cgroup 직접 분석]
     CONTAINER --> LIMIT[제한값 대비 사용률]
     CONTAINER --> PRESSURE[메모리 압박 수준]
-```
+```text
 
 다음 섹션에서는 스택 관련 문제와 디버깅 기법을 다뤄보겠습니다.
 
