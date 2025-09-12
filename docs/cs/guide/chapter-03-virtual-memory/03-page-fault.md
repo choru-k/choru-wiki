@@ -62,7 +62,7 @@ graph TD
     style MINOR fill:#4CAF50
     style MAJOR fill:#FFC107
     style INVALID fill:#F44336
-```
+```text
 
 ### 1.2 페이지 폴트 핸들러: OS의 응급실
 
@@ -81,7 +81,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
         flags |= FAULT_FLAG_USER;  // 사용자 프로그램의 폴트
     } else {
         // 커널이 페이지 폴트? 이건 정말 위험!
-        printf("[PANIC] 커널이 잘못된 메모리 접근!\n");
+        printf("[PANIC] 커널이 잘못된 메모리 접근!, ");
         if (handle_kernel_fault(address, error_code))
             return;
     }
@@ -90,8 +90,8 @@ void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
     vma = find_vma(mm, address);
     if (!vma || vma->vm_start > address) {
         // 할당받지 않은 메모리 접근!
-        printf("[SEGFAULT] 잘못된 포인터: %p\n", address);
-        printf("당신이 가장 싫어하는 메시지를 보게 됩니다...\n");
+        printf("[SEGFAULT] 잘못된 포인터: %p, ", address);
+        printf("당신이 가장 싫어하는 메시지를 보게 됩니다..., ");
         bad_area(regs, error_code, address);  // → "Segmentation fault"
         return;
     }
@@ -111,13 +111,13 @@ void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
     
     if (ret & VM_FAULT_MAJOR) {
         current->maj_flt++;  // Major fault: 디스크에서 읽어옴 (느림)
-        printf("[MAJOR] 디스크 I/O 발생 - %d ms 소요\n", io_time);
+        printf("[MAJOR] 디스크 I/O 발생 - %d ms 소요, ", io_time);
     } else {
         current->min_flt++;  // Minor fault: 메모리만 연결 (빠름)
         // 이건 너무 자주 발생해서 로그도 안 남김
     }
 }
-```
+```text
 
 ### 1.3 Minor vs Major Fault: 천국과 지옥의 차이
 
@@ -134,18 +134,18 @@ void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
 
 // Minor Fault: 빠른 폴트의 예
 void demonstrate_minor_fault() {
-    printf("=== Minor Fault 실험 ===\n");
+    printf("=== Minor Fault 실험 ===, ");
     
     // 1. 메모리 할당 (이 순간은 '약속'만)
     size_t size = 100 * 1024 * 1024;  // 100MB
     char *memory = malloc(size);
-    printf("100MB 할당 완료! (사실 아직 메모리 사용 안 함)\n");
+    printf("100MB 할당 완료! (사실 아직 메모리 사용 안 함), ");
     
     struct rusage before, after;
     getrusage(RUSAGE_SELF, &before);
     
     // 2. 첫 접근 - Minor Fault 폭풍!
-    printf("메모리 접근 시작...\n");
+    printf("메모리 접근 시작..., ");
     for (size_t i = 0; i < size; i += 4096) {
         memory[i] = 'A';  // 각 페이지 첫 접근 → Minor Fault!
         // 커널: "아, 이제 진짜로 메모리가 필요하구나!"
@@ -154,18 +154,18 @@ void demonstrate_minor_fault() {
     getrusage(RUSAGE_SELF, &after);
     
     long minor_faults = after.ru_minflt - before.ru_minflt;
-    printf("\n결과:\n");
-    printf("  Minor faults: %ld회\n", minor_faults);
-    printf("  예상: %zu회 (100MB / 4KB 페이지)\n", size / 4096);
-    printf("  각 폴트 처리 시간: ~0.001ms\n");
-    printf("  총 오버헤드: ~%ldms (거의 무시 가능!)\n", minor_faults / 1000);
+    printf(", 결과:, ");
+    printf("  Minor faults: %ld회, ", minor_faults);
+    printf("  예상: %zu회 (100MB / 4KB 페이지), ", size / 4096);
+    printf("  각 폴트 처리 시간: ~0.001ms, ");
+    printf("  총 오버헤드: ~%ldms (거의 무시 가능!), ", minor_faults / 1000);
     
     free(memory);
 }
 
 // Major Fault: 느린 폴트의 악몽
 void demonstrate_major_fault() {
-    printf("\n=== Major Fault 실험 (커피 한 잔 준비하세요) ===\n");
+    printf(", === Major Fault 실험 (커피 한 잔 준비하세요) ===, ");
     // 1. 파일 매핑
     int fd = open("large_file.dat", O_RDONLY);
     struct stat st;
@@ -175,36 +175,36 @@ void demonstrate_major_fault() {
                          MAP_PRIVATE, fd, 0);
     
     // 2. 최악의 상황 만들기
-    printf("페이지 캐시 삭제 중... (메모리를 텅 비웁니다)\n");
+    printf("페이지 캐시 삭제 중... (메모리를 텅 비웁니다), ");
     system("echo 3 > /proc/sys/vm/drop_caches");  // 캐시 전부 삭제!
-    printf("이제 모든 파일 접근이 디스크를 거쳐야 합니다...\n");
+    printf("이제 모든 파일 접근이 디스크를 거쳐야 합니다..., ");
     
     struct rusage before, after;
     getrusage(RUSAGE_SELF, &before);
     
     // 3. 파일 접근 - Major Fault 지옥
-    printf("파일 읽기 시작 (SSD라도 느립니다!)\n");
+    printf("파일 읽기 시작 (SSD라도 느립니다!), ");
     volatile char sum = 0;
     for (size_t i = 0; i < st.st_size; i += 4096) {
         sum += file_map[i];  // 각 접근마다 디스크 I/O!
         if (i % (10 * 1024 * 1024) == 0) {
-            printf("  %zu MB 처리... (디스크가 울고 있어요)\n", i / (1024*1024));
+            printf("  %zu MB 처리... (디스크가 울고 있어요), ", i / (1024*1024));
         }
     }
     
     getrusage(RUSAGE_SELF, &after);
     
     long major_faults = after.ru_majflt - before.ru_majflt;
-    printf("\n충격적인 결과:\n");
-    printf("  Major faults: %ld회\n", major_faults);
-    printf("  각 폴트 처리 시간: ~5ms (SSD 기준)\n");
-    printf("  총 오버헤드: ~%ldms\n", major_faults * 5);
-    printf("  Minor Fault보다 5000배 느림!\n");
+    printf(", 충격적인 결과:, ");
+    printf("  Major faults: %ld회, ", major_faults);
+    printf("  각 폴트 처리 시간: ~5ms (SSD 기준), ");
+    printf("  총 오버헤드: ~%ldms, ", major_faults * 5);
+    printf("  Minor Fault보다 5000배 느림!, ");
     
     munmap(file_map, st.st_size);
     close(fd);
 }
-```
+```text
 
 ## 2. Copy-on-Write (CoW): fork()가 빠른 이유
 
@@ -221,10 +221,8 @@ sequenceDiagram
     participant Child
     
     Parent->>Kernel: fork()
-    Kernel->>Kernel: 페이지 테이블 복사
-(물리 페이지 공유)
-    Kernel->>Kernel: 모든 페이지를
-읽기 전용으로 표시
+    Kernel->>Kernel: 페이지 테이블 복사 (물리 페이지 공유)
+    Kernel->>Kernel: 모든 페이지를 읽기 전용으로 표시
     Kernel->>Child: 자식 프로세스 생성
     
     Note over Parent,Child: 메모리 공유 중
@@ -236,7 +234,7 @@ sequenceDiagram
     Kernel->>Child: 쓰기 허용
     
     Note over Child: 독립된 복사본 소유
-```
+```text
 
 ### 2.2 CoW 구현: 마법이 일어나는 순간
 
@@ -249,7 +247,7 @@ CoW의 천재적인 아이디어: "복사한 척만 하고, 진짜로 수정할 
 #include <sys/mman.h>
 
 void demonstrate_cow() {
-    printf("=== Copy-on-Write 마법쇼 ===\n");
+    printf("=== Copy-on-Write 마법쇼 ===, ");
     
     // 1. 거대한 메모리 준비
     size_t size = 100 * 1024 * 1024;  // 100MB
@@ -260,35 +258,35 @@ void demonstrate_cow() {
     
     // 2. 데이터로 가득 채우기
     memset(shared_memory, 'P', size);
-    printf("부모: 100MB 메모리를 'P'로 채웠습니다\n");
+    printf("부모: 100MB 메모리를 'P'로 채웠습니다, ");
     
-    printf("부모: 메모리 주소 = %p\n", shared_memory);
+    printf("부모: 메모리 주소 = %p, ", shared_memory);
     long rss_before = get_rss_kb();
-    printf("부모: fork() 전 메모리 사용량 = %ld MB\n\n", rss_before / 1024);
+    printf("부모: fork() 전 메모리 사용량 = %ld MB, , ", rss_before / 1024);
     
     // 3. fork() - 여기서 마법이 시작됩니다!
-    printf("🎩 fork() 호출! (100MB를 복사하는 척...)\n");
+    printf("🎩 fork() 호출! (100MB를 복사하는 척...), ");
     pid_t pid = fork();
     
     if (pid == 0) {
         // 자식 프로세스
-        printf("자식: 똑같은 주소 = %p (가상 주소는 동일!)\n", shared_memory);
+        printf("자식: 똑같은 주소 = %p (가상 주소는 동일!), ", shared_memory);
         long child_rss = get_rss_kb();
-        printf("자식: fork() 직후 메모리 = %ld MB\n", child_rss / 1024);
-        printf("자식: 어? 메모리가 늘지 않았네요? (CoW 덕분!)\n\n");
+        printf("자식: fork() 직후 메모리 = %ld MB, ", child_rss / 1024);
+        printf("자식: 어? 메모리가 늘지 않았네요? (CoW 덕분!), , ");
         
         // 4. 일부만 수정 - 이제 진짜 복사가 일어남!
-        printf("자식: 10개 페이지만 수정합니다...\n");
+        printf("자식: 10개 페이지만 수정합니다..., ");
         for (int i = 0; i < 10; i++) {
             shared_memory[i * 4096] = 'C';  // 수정 → Page Fault → 복사!
-            printf("  페이지 %d 수정 → CoW 발생!\n", i);
+            printf("  페이지 %d 수정 → CoW 발생!, ", i);
         }
         
         long child_rss_after = get_rss_kb();
-        printf("\n자식: 수정 후 메모리 = %ld MB\n", child_rss_after / 1024);
-        printf("자식: 증가량 = %ld KB (10 페이지 * 4KB = 40KB)\n", 
+        printf(", 자식: 수정 후 메모리 = %ld MB, ", child_rss_after / 1024);
+        printf("자식: 증가량 = %ld KB (10 페이지 * 4KB = 40KB), ", 
                child_rss_after - child_rss);
-        printf("자식: 나머지 99.96MB는 여전히 부모와 공유!\n");
+        printf("자식: 나머지 99.96MB는 여전히 부모와 공유!, ");
         
         exit(0);
     } else {
@@ -296,13 +294,13 @@ void demonstrate_cow() {
         wait(NULL);
         
         // 부모의 메모리는 그대로!
-        printf("\n부모: 첫 글자 확인 = '%c' (여전히 'P'!)\n", shared_memory[0]);
-        printf("부모: 자식이 수정했지만 내 메모리는 안전합니다\n");
-        printf("부모: 메모리 사용량 = %ld MB (변화 없음)\n", get_rss_kb() / 1024);
+        printf(", 부모: 첫 글자 확인 = '%c' (여전히 'P'!), ", shared_memory[0]);
+        printf("부모: 자식이 수정했지만 내 메모리는 안전합니다, ");
+        printf("부모: 메모리 사용량 = %ld MB (변화 없음), ", get_rss_kb() / 1024);
         
-        printf("\n🎉 CoW 마법 성공!\n");
-        printf("fork()로 100MB 복사 → 실제로는 40KB만 복사\n");
-        printf("메모리 절약: 99.96%%\n");
+        printf(", 🎉 CoW 마법 성공!, ");
+        printf("fork()로 100MB 복사 → 실제로는 40KB만 복사, ");
+        printf("메모리 절약: 99.96%%, ");
     }
     
     munmap(shared_memory, size);
@@ -323,7 +321,7 @@ long get_rss_kb() {
     fclose(f);
     return 0;
 }
-```
+```text
 
 ### 2.3 CoW의 실제 활용: 현업에서의 마법
 
@@ -332,8 +330,8 @@ CoW는 우리가 매일 사용하는 프로그램들의 비밀 무기입니다:
 ```c
 // Redis의 백그라운드 저장: 100GB를 1초 만에 "복사"
 void redis_bgsave_example() {
-    printf("=== Redis BGSAVE: CoW의 실전 활용 ===\n");
-    printf("현재 메모리: 100GB 데이터베이스\n");
+    printf("=== Redis BGSAVE: CoW의 실전 활용 ===, ");
+    printf("현재 메모리: 100GB 데이터베이스, ");
     
     // Redis는 fork()를 사용해 스냅샷 생성
     
@@ -341,15 +339,15 @@ void redis_bgsave_example() {
     
     if (pid == 0) {
         // 자식: 스냅샷 저장 (100GB를 디스크에)
-        printf("[자식] 100GB 스냅샷 저장 시작\n");
-        printf("[자식] 부모가 데이터를 수정해도 내 스냅샷은 안전!\n");
+        printf("[자식] 100GB 스냅샷 저장 시작, ");
+        printf("[자식] 부모가 데이터를 수정해도 내 스냅샷은 안전!, ");
         save_memory_to_disk();  // 몇 분 걸림
         exit(0);
     } else {
         // 부모: 클라이언트 요청 계속 처리
-        printf("[부모] fork() 완료! (1초도 안 걸림)\n");
-        printf("[부모] 계속 서비스 중... 수정된 페이지만 복사됨\n");
-        printf("[부모] 메모리 오버헤드: 수정된 데이터만큼만 (보통 <10%%)\n");
+        printf("[부모] fork() 완료! (1초도 안 걸림), ");
+        printf("[부모] 계속 서비스 중... 수정된 페이지만 복사됨, ");
+        printf("[부모] 메모리 오버헤드: 수정된 데이터만큼만 (보통 <10%%), ");
         continue_serving_requests();
     }
 }
@@ -373,7 +371,7 @@ void efficient_process_creation() {
     // 메모리 사용량: 500MB + α (수정된 부분만)
     // CoW 없이: 500MB * 11 = 5.5GB
 }
-```
+```text
 
 ## 3. Demand Paging: 게으른 메모리 할당의 미학
 
@@ -404,7 +402,7 @@ graph TD
     style MALLOC fill:#E3F2FD
     style PF fill:#FFC107
     style ALLOC fill:#4CAF50
-```
+```text
 
 ### 3.2 Demand Paging 구현: 거짓말의 현장
 
@@ -416,12 +414,12 @@ malloc()의 거짓말을 직접 확인해봅시다:
 #include <time.h>
 
 void demonstrate_demand_paging() {
-    printf("=== Demand Paging: OS의 거짓말 실험 ===\n\n");
+    printf("=== Demand Paging: OS의 거짓말 실험 ===, , ");
     
     size_t size = 1ULL << 30;  // 1GB (기가바이트!)
     
     // 1. 1GB "할당" (거짓말의 시작)
-    printf("[Step 1] 1GB 메모리 할당 요청...\n");
+    printf("[Step 1] 1GB 메모리 할당 요청..., ");
     clock_t start = clock();
     char *huge_array = mmap(NULL, size,
                            PROT_READ | PROT_WRITE,
@@ -429,39 +427,39 @@ void demonstrate_demand_paging() {
                            -1, 0);
     clock_t alloc_time = clock() - start;
     
-    printf("✓ 할당 완료! 소요 시간: %.3f ms\n",
+    printf("✓ 할당 완료! 소요 시간: %.3f ms, ",
            (double)alloc_time * 1000 / CLOCKS_PER_SEC);
-    printf("😏 OS: \"1GB 드렸습니다\" (사실 0 바이트)\n");
+    printf("😏 OS: \"1GB 드렸습니다\" (사실 0 바이트), ");
     
     long rss_after_alloc = get_rss_kb();
-    printf("실제 메모리 사용량: %ld MB\n", rss_after_alloc / 1024);
-    printf("👀 어? 메모리가 늘지 않았네요?\n\n");
+    printf("실제 메모리 사용량: %ld MB, ", rss_after_alloc / 1024);
+    printf("👀 어? 메모리가 늘지 않았네요?, , ");
     
     // 2. 실제 사용 (진실의 순간)
-    printf("[Step 2] 이제 진짜로 메모리를 사용해봅시다...\n");
+    printf("[Step 2] 이제 진짜로 메모리를 사용해봅시다..., ");
     start = clock();
     size_t pages_to_touch = 1000;
     
     for (size_t i = 0; i < pages_to_touch; i++) {
         huge_array[i * 4096] = 'A';  // 페이지 터치 → Page Fault → 진짜 할당!
         if (i % 100 == 0) {
-            printf("  %zu 페이지 사용 중... (Page Fault 발생!)\n", i);
+            printf("  %zu 페이지 사용 중... (Page Fault 발생!), ", i);
         }
     }
     clock_t use_time = clock() - start;
     
-    printf("\n[Step 3] 결과 분석\n");
-    printf("접근한 페이지: %zu개\n", pages_to_touch);
-    printf("소요 시간: %.3f ms (Page Fault 처리 포함)\n",
+    printf(", [Step 3] 결과 분석, ");
+    printf("접근한 페이지: %zu개, ", pages_to_touch);
+    printf("소요 시간: %.3f ms (Page Fault 처리 포함), ",
            (double)use_time * 1000 / CLOCKS_PER_SEC);
     
     long rss_after_use = get_rss_kb();
-    printf("\n💡 진실이 밝혀졌습니다!\n");
-    printf("  할당 요청: 1024 MB\n");
-    printf("  실제 사용: %ld MB\n", (rss_after_use - rss_after_alloc) / 1024);
-    printf("  OS의 거짓말: %.1f%%\n", 
+    printf(", 💡 진실이 밝혀졌습니다!, ");
+    printf("  할당 요청: 1024 MB, ");
+    printf("  실제 사용: %ld MB, ", (rss_after_use - rss_after_alloc) / 1024);
+    printf("  OS의 거짓말: %.1f%%, ", 
            (1 - (double)(rss_after_use - rss_after_alloc) / (1024 * 1024)) * 100);
-    printf("\n😎 이것이 Demand Paging의 마법입니다!\n");
+    printf(", 😎 이것이 Demand Paging의 마법입니다!, ");
     
     munmap(huge_array, size);
 }
@@ -477,10 +475,10 @@ void trace_page_faults() {
     
     getrusage(RUSAGE_SELF, &usage_after);
     
-    printf("Page faults for %zu MB:\n", size / (1024*1024));
-    printf("  Minor: %ld\n", 
+    printf("Page faults for %zu MB:, ", size / (1024*1024));
+    printf("  Minor: %ld, ", 
            usage_after.ru_minflt - usage_before.ru_minflt);
-    printf("  Major: %ld\n",
+    printf("  Major: %ld, ",
            usage_after.ru_majflt - usage_before.ru_majflt);
     
     // calloc은 모든 페이지를 터치함
@@ -488,7 +486,7 @@ void trace_page_faults() {
     
     free(mem);
 }
-```
+```text
 
 ### 3.3 Prefaulting 최적화: 거짓말 없는 할당
 
@@ -507,7 +505,7 @@ void optimize_with_prefaulting() {
     memset(normal, 0, size);
     
     clock_t normal_time = clock() - start;
-    printf("Normal allocation + use: %.3f ms\n",
+    printf("Normal allocation + use: %.3f ms, ",
            (double)normal_time * 1000 / CLOCKS_PER_SEC);
     
     // 2. MAP_POPULATE로 프리폴팅
@@ -523,15 +521,15 @@ void optimize_with_prefaulting() {
     memset(prefault, 0, size);
     clock_t prefault_use = clock() - start;
     
-    printf("Prefault allocation: %.3f ms\n",
+    printf("Prefault allocation: %.3f ms, ",
            (double)prefault_alloc * 1000 / CLOCKS_PER_SEC);
-    printf("Prefault use: %.3f ms (faster!)\n",
+    printf("Prefault use: %.3f ms (faster!), ",
            (double)prefault_use * 1000 / CLOCKS_PER_SEC);
     
     free(normal);
     munmap(prefault, size);
 }
-```
+```text
 
 ## 4. 스왑과 메모리 압박: 컴퓨터의 숨막히는 순간
 
@@ -568,7 +566,7 @@ graph TD
     style MEM fill:#FF5252
     style SWAP fill:#FFC107
     style RESTORE fill:#4CAF50
-```
+```text
 
 ### 4.2 스왑 구현과 관리: 지옥으로 가는 길
 
@@ -579,24 +577,24 @@ graph TD
 #include <sys/sysinfo.h>
 
 void demonstrate_swap_behavior() {
-    printf("=== 스왑 지옥 시뮬레이션 ===\n");
-    printf("⚠️  경고: 시스템이 느려질 수 있습니다!\n\n");
+    printf("=== 스왑 지옥 시뮬레이션 ===, ");
+    printf("⚠️  경고: 시스템이 느려질 수 있습니다!, , ");
     
     struct sysinfo info;
     sysinfo(&info);
     
-    printf("[현재 시스템 상태]\n");
-    printf("  RAM: %lu / %lu MB (%.1f%% 사용중)\n", 
+    printf("[현재 시스템 상태], ");
+    printf("  RAM: %lu / %lu MB (%.1f%% 사용중), ", 
            (info.totalram - info.freeram) / 1024 / 1024,
            info.totalram / 1024 / 1024,
            (1.0 - (double)info.freeram / info.totalram) * 100);
-    printf("  Swap: %lu / %lu MB\n", 
+    printf("  Swap: %lu / %lu MB, ", 
            (info.totalswap - info.freeswap) / 1024 / 1024,
            info.totalswap / 1024 / 1024);
     
     if (info.totalswap - info.freeswap > 0) {
-        printf("\n😱 이미 스왑을 사용 중입니다!\n");
-        printf("   시스템이 느린 이유를 찾았네요...\n");
+        printf(", 😱 이미 스왑을 사용 중입니다!, ");
+        printf("   시스템이 느린 이유를 찾았네요..., ");
     }
     
     // 메모리 압박 생성
@@ -616,11 +614,11 @@ void demonstrate_swap_behavior() {
         
         // 스왑 사용 감지
         if (info.freeswap < info.totalswap * 0.9) {
-            printf("\n🚨 스왑 발생! (청크 %d에서)\n", allocated);
-            printf("  스왑 사용량: %lu MB\n", 
+            printf(", 🚨 스왑 발생! (청크 %d에서), ", allocated);
+            printf("  스왑 사용량: %lu MB, ", 
                    (info.totalswap - info.freeswap) / 1024 / 1024);
-            printf("  시스템 반응 속도: 🐌 (매우 느림)\n");
-            printf("  디스크 LED: 📍 (미친듯이 깜빡임)\n");
+            printf("  시스템 반응 속도: 🐌 (매우 느림), ");
+            printf("  디스크 LED: 📍 (미친듯이 깜빡임), ");
             break;  // 더 이상은 위험!
         }
     }
@@ -634,7 +632,7 @@ void demonstrate_swap_behavior() {
 
 // 스왑 성능 영향: RAM vs 디스크의 잔인한 차이
 void measure_swap_impact() {
-    printf("\n=== 스왑 성능 테스트: 천국 vs 지옥 ===\n");
+    printf(", === 스왑 성능 테스트: 천국 vs 지옥 ===, ");
     size_t test_size = 10 * 1024 * 1024;  // 10MB
     char *test_memory = malloc(test_size);
     
@@ -662,15 +660,15 @@ void measure_swap_impact() {
     double mem_ms = (double)memory_time * 1000 / CLOCKS_PER_SEC;
     double swap_ms = (double)swap_time * 1000 / CLOCKS_PER_SEC;
     
-    printf("\n📊 충격적인 결과:\n");
-    printf("  RAM 접근: %.3f ms ⚡\n", mem_ms);
-    printf("  Swap 접근: %.3f ms 🐌\n", swap_ms);
-    printf("  속도 차이: %.1f배 느림!\n", swap_ms / mem_ms);
-    printf("\n💡 교훈: 스왑이 시작되면 RAM을 추가하세요!\n");
+    printf(", 📊 충격적인 결과:, ");
+    printf("  RAM 접근: %.3f ms ⚡, ", mem_ms);
+    printf("  Swap 접근: %.3f ms 🐌, ", swap_ms);
+    printf("  속도 차이: %.1f배 느림!, ", swap_ms / mem_ms);
+    printf(", 💡 교훈: 스왑이 시작되면 RAM을 추가하세요!, ");
     
     free(test_memory);
 }
-```
+```text
 
 ### 4.3 Swappiness 제어: 스왑 민감도 조절
 
@@ -685,7 +683,7 @@ void control_swappiness() {
     fscanf(f, "%d", &swappiness);
     fclose(f);
     
-    printf("Current swappiness: %d\n", swappiness);
+    printf("Current swappiness: %d, ", swappiness);
     // 0: 스왑 최소화
     // 60: 기본값
     // 100: 적극적 스왑
@@ -696,7 +694,7 @@ void control_swappiness() {
     
     // 메모리 잠금 - 스왑 방지
     if (mlock(critical_data, critical_size) == 0) {
-        printf("Critical data locked in memory\n");
+        printf("Critical data locked in memory, ");
     } else {
         perror("mlock failed");
     }
@@ -705,7 +703,7 @@ void control_swappiness() {
     munlock(critical_data, critical_size);
     free(critical_data);
 }
-```
+```text
 
 ## 5. 메모리 회수 메커니즘: OS의 청소부
 
@@ -744,7 +742,7 @@ graph TD
     style ACTIVE fill:#4CAF50
     style INACTIVE fill:#FFC107
     style FREE fill:#2196F3
-```
+```text
 
 ### 5.2 메모리 회수 구현: kswapd 데몬의 일상
 
@@ -810,7 +808,7 @@ void page_reclaim_scanner(struct lru_lists *lru) {
         if (nr_reclaimed >= 32) break;
     }
     
-    printf("Scanned: %d, Reclaimed: %d pages\n", 
+    printf("Scanned: %d, Reclaimed: %d pages, ", 
            nr_scanned, nr_reclaimed);
 }
 
@@ -828,12 +826,12 @@ void memory_pressure_monitor() {
         double pressure = 1.0 - (double)available / total;
         
         if (pressure > 0.9) {
-            printf("CRITICAL: Memory pressure %.1f%%\n", 
+            printf("CRITICAL: Memory pressure %.1f%%, ", 
                    pressure * 100);
             // 적극적 회수 시작
             aggressive_reclaim();
         } else if (pressure > 0.75) {
-            printf("WARNING: Memory pressure %.1f%%\n",
+            printf("WARNING: Memory pressure %.1f%%, ",
                    pressure * 100);
             // 백그라운드 회수
             background_reclaim();
@@ -842,7 +840,7 @@ void memory_pressure_monitor() {
         sleep(1);
     }
 }
-```
+```text
 
 ## 6. OOM Killer: 누가 죽을 것인가?
 
@@ -857,11 +855,11 @@ void memory_pressure_monitor() {
 int calculate_oom_score(struct task_struct *task) {
     int points = 0;
     
-    printf("[OOM Score 계산] %s (PID: %d)\n", task->comm, task->pid);
+    printf("[OOM Score 계산] %s (PID: %d), ", task->comm, task->pid);
     
     // 1. 메모리 사용량 (죄목 1: 욕심)
     points = task->mm->total_vm;
-    printf("  메모리 사용: %d MB (점수: %d)\n", points / 256, points);
+    printf("  메모리 사용: %d MB (점수: %d), ", points / 256, points);
     
     // 2. 조정 요소들
     
@@ -875,22 +873,22 @@ int calculate_oom_score(struct task_struct *task) {
     int runtime = (jiffies - task->start_time) / HZ;
     if (runtime > 3600) {  // 1시간 이상
         points /= 2;
-        printf("  오래된 프로세스 보호 (-%d점)\n", points);
+        printf("  오래된 프로세스 보호 (-%d점), ", points);
     }
     
     // Root 프로세스 (VIP 대우)
     if (task->uid == 0) {
         points /= 4;
-        printf("  Root 프로세스 특별 보호 (점수 1/4로)\n");
+        printf("  Root 프로세스 특별 보호 (점수 1/4로), ");
     }
     
     // oom_score_adj (면죄부 또는 사형 선고)
     int adj = task->signal->oom_score_adj;
     if (adj == -1000) {
-        printf("  💀 면제! (oom_score_adj = -1000)\n");
+        printf("  💀 면제! (oom_score_adj = -1000), ");
         return 0;  // 절대 죽지 않음
     } else if (adj == 1000) {
-        printf("  ☠️  첫 번째 희생자 지정됨! (oom_score_adj = 1000)\n");
+        printf("  ☠️  첫 번째 희생자 지정됨! (oom_score_adj = 1000), ");
     }
     points += points * adj / 1000;
     
@@ -899,8 +897,8 @@ int calculate_oom_score(struct task_struct *task) {
 
 // OOM Killer 실행: 생사를 가르는 순간
 void oom_killer_select_victim() {
-    printf("\n🔪 OOM Killer 가동!\n");
-    printf("메모리가 없습니다. 누군가는 죽어야 합니다...\n\n");
+    printf(", 🔪 OOM Killer 가동!, ");
+    printf("메모리가 없습니다. 누군가는 죽어야 합니다..., , ");
     struct task_struct *victim = NULL;
     int max_score = 0;
     
@@ -918,17 +916,17 @@ void oom_killer_select_victim() {
     }
     
     if (victim) {
-        printf("\n⚰️  선택된 희생자:\n");
-        printf("  프로세스: %s (PID: %d)\n", victim->comm, victim->pid);
-        printf("  죽음의 점수: %d\n", max_score);
-        printf("  마지막 메시지: \"Killed\"\n");
+        printf(", ⚰️  선택된 희생자:, ");
+        printf("  프로세스: %s (PID: %d), ", victim->comm, victim->pid);
+        printf("  죽음의 점수: %d, ", max_score);
+        printf("  마지막 메시지: \"Killed\", ");
         
         send_sig(SIGKILL, victim, 1);  // 즉시 처형
         
-        printf("\n시스템이 살아났습니다... %s의 희생으로.\n", victim->comm);
+        printf(", 시스템이 살아났습니다... %s의 희생으로., ", victim->comm);
     }
 }
-```
+```text
 
 ### 6.2 OOM 방지 전략: 죽음을 피하는 방법
 
@@ -940,17 +938,17 @@ void configure_oom_prevention() {
     // 1. 프로세스 보호
     int oom_score_adj = -1000;  // OOM Kill 면제
     FILE *f = fopen("/proc/self/oom_score_adj", "w");
-    fprintf(f, "%d\n", oom_score_adj);
+    fprintf(f, "%d, ", oom_score_adj);
     fclose(f);
     
     // 2. 메모리 제한 설정 (cgroup v2)
     FILE *mem_max = fopen("/sys/fs/cgroup/memory.max", "w");
-    fprintf(mem_max, "%lu\n", 1ULL << 30);  // 1GB 제한
+    fprintf(mem_max, "%lu, ", 1ULL << 30);  // 1GB 제한
     fclose(mem_max);
     
     // 3. 메모리 예약
     FILE *mem_min = fopen("/sys/fs/cgroup/memory.min", "w");
-    fprintf(mem_min, "%lu\n", 256ULL << 20);  // 256MB 보장
+    fprintf(mem_min, "%lu, ", 256ULL << 20);  // 256MB 보장
     fclose(mem_min);
 }
 
@@ -967,7 +965,7 @@ void monitor_memory_usage() {
         double usage_percent = (double)rss_mb / limit_mb * 100;
         
         if (usage_percent > 90) {
-            printf("WARNING: Memory usage critical: %.1f%%\n",
+            printf("WARNING: Memory usage critical: %.1f%%, ",
                    usage_percent);
             // 메모리 정리 시도
             malloc_trim(0);
@@ -979,7 +977,7 @@ void monitor_memory_usage() {
         sleep(10);
     }
 }
-```
+```text
 
 ## 7. 실전: 페이지 폴트 최적화 노하우
 
@@ -996,7 +994,7 @@ $ perf stat -e page-faults,major-faults -I 1000
 # 특정 함수의 페이지 폴트
 $ perf probe -a 'do_page_fault'
 $ perf record -e probe:do_page_fault ./myapp
-```
+```text
 
 ### 7.2 최적화 기법: 페이지 폴트와의 전쟁
 
@@ -1050,13 +1048,13 @@ void measure_fault_cost() {
     double warm_time = (end.tv_sec - start.tv_sec) * 1000.0 +
                       (end.tv_nsec - start.tv_nsec) / 1000000.0;
     
-    printf("Cold start: %.2f ms\n", cold_time);
-    printf("Warm start: %.2f ms\n", warm_time);
-    printf("Page fault overhead: %.2f ms\n", cold_time - warm_time);
+    printf("Cold start: %.2f ms, ", cold_time);
+    printf("Warm start: %.2f ms, ", warm_time);
+    printf("Page fault overhead: %.2f ms, ", cold_time - warm_time);
     
     free(mem1);
 }
-```
+```text
 
 ## 8. 정리: 페이지 폴트와 메모리 관리의 핵심 정리
 

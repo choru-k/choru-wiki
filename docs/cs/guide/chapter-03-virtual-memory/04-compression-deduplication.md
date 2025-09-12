@@ -31,7 +31,7 @@ Swap:          2.0G        0.8G        1.2G
 $ zramctl
 NAME       ALGORITHM DISKSIZE   DATA  COMPR TOTAL STREAMS MOUNTPOINT
 /dev/zram0 lz4           2G   1.8G  612M  640M       2 [SWAP]
-```
+```text
 
 **zRAM의 마법이었습니다!** 1.8GB의 데이터가 612MB로 압축되어 RAM에 저장되고 있었죠. 실제로는 4GB RAM에서 6GB를 사용하는 것처럼 보였지만, 압축 덕분에 가능했던 겁니다.
 
@@ -48,7 +48,7 @@ $ cat /sys/kernel/mm/ksm/pages_sharing
 
 $ cat /sys/kernel/mm/ksm/pages_shared  
 42819   # 실제로는 167MB만 사용
-```
+```text
 
 모든 VM이 동일한 Ubuntu 이미지를 사용하고 있었고, OS 코드와 라이브러리들이 대부분 동일했기 때문에 KSM이 이들을 하나로 병합했던 겁니다. **100개의 복사본이 1개로 줄어든 마법입니다!**
 
@@ -86,7 +86,7 @@ $ echo lz4 > /sys/block/zram0/comp_algorithm
 $ echo 2G > /sys/block/zram0/disksize
 $ time mkswap /dev/zram0
 real    0m0.003s  # 메모리 연산만!
-```
+```text
 
 **100배 이상 빨랐습니다!** 디스크 I/O가 없으니 당연한 결과였죠.
 
@@ -114,7 +114,7 @@ RAM에 저장"]
     style ZRAM fill:#4CAF50
     style MEM fill:#2196F3
     style DISK fill:#FF5252
-```
+```text
 
 ### 1.2 zRAM 구현: 압축의 마법을 직접 보자
 
@@ -155,7 +155,7 @@ zram_device_t* zram_create(size_t size) {
     zram->pages = calloc(zram->num_pages, sizeof(zram_page_t));
     pthread_mutex_init(&zram->lock, NULL);
     
-    printf("zRAM device created: %zu MB\n", size / (1024*1024));
+    printf("zRAM device created: %zu MB, ", size / (1024*1024));
     return zram;
 }
 
@@ -198,7 +198,7 @@ int zram_write_page(zram_device_t *zram, int page_num, void *data) {
     
     // 압축률 계산
     double ratio = (double)PAGE_SIZE / compressed_size;
-    printf("Page %d compressed: %d -> %d bytes (%.1fx)\n",
+    printf("Page %d compressed: %d -> %d bytes (%.1fx), ",
            page_num, PAGE_SIZE, compressed_size, ratio);
     
     pthread_mutex_unlock(&zram->lock);
@@ -242,19 +242,19 @@ void zram_print_stats(zram_device_t *zram) {
     double compression_ratio = 
         (double)zram->uncompressed_total / zram->compressed_total;
     
-    printf("\n=== zRAM Statistics ===\n");
-    printf("Uncompressed: %zu MB\n", 
+    printf(", === zRAM Statistics ===, ");
+    printf("Uncompressed: %zu MB, ", 
            zram->uncompressed_total / (1024*1024));
-    printf("Compressed: %zu MB\n",
+    printf("Compressed: %zu MB, ",
            zram->compressed_total / (1024*1024));
-    printf("Compression ratio: %.2fx\n", compression_ratio);
-    printf("Memory saved: %zu MB\n",
+    printf("Compression ratio: %.2fx, ", compression_ratio);
+    printf("Memory saved: %zu MB, ",
            (zram->uncompressed_total - zram->compressed_total) / (1024*1024));
-    printf("Reads: %lu, Writes: %lu\n", zram->reads, zram->writes);
+    printf("Reads: %lu, Writes: %lu, ", zram->reads, zram->writes);
     
     pthread_mutex_unlock(&zram->lock);
 }
-```
+```text
 
 ### 1.3 zswap vs zRAM: 스왑계의 캐시 vs 순수 압축
 
@@ -274,7 +274,7 @@ $ echo 20 > /sys/module/zswap/parameters/max_pool_percent
 $ echo lz4 > /sys/module/zswap/parameters/compressor
 
 Redis latency: 평균 52ms, 스파이크 시 200ms  # 10배 개선!
-```
+```text
 
 **zRAM vs zswap, 뭐가 다른가?**
 
@@ -329,7 +329,7 @@ int zswap_store(zswap_t *zswap, void *page, int swap_offset) {
 void compare_compression_methods() {
     size_t test_size = 100 * 1024 * 1024;  // 100MB
     
-    printf("=== Memory Compression Comparison ===\n");
+    printf("=== Memory Compression Comparison ===, ");
     
     // 1. 일반 스왑 (디스크)
     clock_t start = clock();
@@ -355,13 +355,13 @@ void compare_compression_methods() {
     }
     double zswap_time = (double)(clock() - start) / CLOCKS_PER_SEC;
     
-    printf("Normal swap: %.3f seconds\n", swap_time);
-    printf("zRAM: %.3f seconds (%.1fx faster)\n", 
+    printf("Normal swap: %.3f seconds, ", swap_time);
+    printf("zRAM: %.3f seconds (%.1fx faster), ", 
            zram_time, swap_time / zram_time);
-    printf("zswap: %.3f seconds (%.1fx faster)\n",
+    printf("zswap: %.3f seconds (%.1fx faster), ",
            zswap_time, swap_time / zswap_time);
 }
-```
+```text
 
 ## 2. 메모리 중복 제거 (KSM): 복사본의 저주를 풀다
 
@@ -380,7 +380,7 @@ app-50      195MB       512MB
 $ free -m
               total        used
 Mem:         16384        3247  # 10GB가 아니라 3GB?!
-```
+```text
 
 비밀은 **KSM**이었습니다. 모든 컨테이너가 동일한 Node.js 런타임, 동일한 라이브러리를 메모리에 로드하고 있었는데, KSM이 이를 감지하고 하나로 합쳐버린 거죠!
 
@@ -426,7 +426,7 @@ Page A"]
     
     style MERGE fill:#4CAF50
     style SAVE fill:#2196F3
-```
+```text
 
 ### 2.2 KSM 구현: 중복 페이지 사냥꾼
 
@@ -494,7 +494,7 @@ int ksm_merge_page(ksm_t *ksm, void *page) {
                 // CoW 설정 (실제로는 페이지 테이블 수정)
                 make_page_cow(page, current->addr);
                 
-                printf("Page merged! Total sharing: %zu\n", 
+                printf("Page merged! Total sharing: %zu, ", 
                        ksm->pages_sharing);
                 
                 pthread_mutex_unlock(&ksm->lock);
@@ -526,9 +526,9 @@ void* ksm_scanner_thread(void *arg) {
         scan_mergeable_pages(ksm);
         
         // 통계 출력
-        printf("KSM Stats - Scanned: %zu, Shared: %zu, Sharing: %zu\n",
+        printf("KSM Stats - Scanned: %zu, Shared: %zu, Sharing: %zu, ",
                ksm->pages_scanned, ksm->pages_shared, ksm->pages_sharing);
-        printf("Memory saved: %zu MB\n",
+        printf("Memory saved: %zu MB, ",
                (ksm->pages_sharing * PAGE_SIZE) / (1024*1024));
         
         // 주기적 스캔 (기본 20초)
@@ -538,7 +538,7 @@ void* ksm_scanner_thread(void *arg) {
 
 // 실제 사용 예제: VM 팜의 메모리 마법
 void demonstrate_ksm() {
-    printf("\n=== KSM 실전: 4개 VM을 1.5개 가격에! ===\n");
+    printf(", === KSM 실전: 4개 VM을 1.5개 가격에! ===, ");
     
     // KVM/QEMU 가상머신 시나리오
     size_t vm_memory = 1024 * 1024 * 1024;  // 1GB per VM
@@ -569,13 +569,13 @@ void demonstrate_ksm() {
     pthread_create(&scanner, NULL, ksm_scanner_thread, ksm);
     
     // 놀라운 결과!
-    printf("\n[KSM 마법의 결과]\n");
-    printf("예상 메모리 사용: 4GB (1GB × 4 VMs)\n");
-    printf("실제 메모리 사용: ~1.5GB\n");
-    printf("절약된 메모리: 2.5GB (62.5%% 절약!)\n");
-    printf("\n동일한 Ubuntu 이미지 부분이 모두 공유됩니다!\n");
+    printf(", [KSM 마법의 결과], ");
+    printf("예상 메모리 사용: 4GB (1GB × 4 VMs), ");
+    printf("실제 메모리 사용: ~1.5GB, ");
+    printf("절약된 메모리: 2.5GB (62.5%% 절약!), ");
+    printf(", 동일한 Ubuntu 이미지 부분이 모두 공유됩니다!, ");
 }
-```
+```text
 
 ### 2.3 UKSM (Ultra KSM): KSM의 터보 버전
 
@@ -585,14 +585,14 @@ void demonstrate_ksm() {
 
 실제 벤치마크 결과:
 
-```
+```text
 KSM:  20초마다 2000페이지 스캔 → 하루에 8.6M 페이지
 UKSM: 적응형 스캔 → 하루에 200M+ 페이지 (23배!)
 
 메모리 절약:
 KSM:  15-20%
 UKSM: 30-40%  
-```
+```text
 
 UKSM은 마치 **터보 엔진을 단 청소기**처럼, 필요할 때는 전속력으로, 여유로울 때는 천천히 스캔합니다:
 
@@ -620,11 +620,11 @@ void uksm_adaptive_scan(uksm_t *uksm) {
     if (memory_pressure > 0.8) {
         // 메모리 압박 - 스캔 가속
         uksm->scan_boost = 200;  // 200% 속도
-        printf("UKSM: Boosting scan rate due to memory pressure\n");
+        printf("UKSM: Boosting scan rate due to memory pressure, ");
     } else if (cpu_usage < 0.3) {
         // CPU 여유 - 스캔 증가
         uksm->scan_boost = 150;
-        printf("UKSM: Increasing scan rate, CPU idle\n");
+        printf("UKSM: Increasing scan rate, CPU idle, ");
     } else {
         // 정상 속도
         uksm->scan_boost = 100;
@@ -651,7 +651,7 @@ void uksm_partial_scan(uksm_t *uksm) {
     
     uksm->partial_scans++;
 }
-```
+```text
 
 ## 3. 투명 메모리 압축: 앱이 모르게 압축하기
 
@@ -663,19 +663,19 @@ void uksm_partial_scan(uksm_t *uksm) {
 # macOS Activity Monitor
 Memory Pressure: Yellow  # 노란색인데도 잘 돌아감
 Compressed: 3.2 GB       # 비밀이 여기 있다!
-```
+```text
 
 **macOS는 메모리를 실시간으로 압축합니다!** 앱은 전혀 모른 채로요. 이것이 바로 Transparent Memory Compression입니다.
 
 실제 테스트:
 
-```
+```text
 8GB 맥북에서:
 - 실제 물리 메모리: 8GB
 - 앱이 사용 중인 메모리: 12GB
 - 압축된 메모리: 4GB → 1.3GB로 압축
 - 실효 메모리: 11.3GB
-```
+```text
 
 ### 3.1 Transparent Memory Compression: 투명 망토를 입은 압축
 
@@ -750,7 +750,7 @@ void adaptive_compression(transparent_compression_t *tc, void *page) {
         }
     }
 }
-```
+```text
 
 ### 3.2 압축 알고리즘 비교: 속도 vs 압축률의 전쟁
 
@@ -766,9 +766,9 @@ void benchmark_compression_algorithms() {
     size_t data_size = 1024 * 1024;  // 1MB
     void *test_data = generate_test_data(data_size);
     
-    printf("=== 압축 알고리즘 격투기: 누가 챔피언? ===\n");
-    printf("원본 크기: %zu bytes\n", data_size);
-    printf("테스트 데이터: 게임 서버 메모리 덤프\n\n");
+    printf("=== 압축 알고리즘 격투기: 누가 챔피언? ===, ");
+    printf("원본 크기: %zu bytes, ", data_size);
+    printf("테스트 데이터: 게임 서버 메모리 덤프, , ");
     
     // LZ4
     clock_t start = clock();
@@ -784,12 +784,12 @@ void benchmark_compression_algorithms() {
                        lz4_size, data_size);
     double lz4_decompress_time = (double)(clock() - start) / CLOCKS_PER_SEC;
     
-    printf("🏃 LZ4 (스피드 러너):\n");
-    printf("  Compressed size: %zu (%.1f%%)\n", 
+    printf("🏃 LZ4 (스피드 러너):, ");
+    printf("  Compressed size: %zu (%.1f%%), ", 
            lz4_size, (double)lz4_size / data_size * 100);
-    printf("  Compress time: %.3f ms\n", lz4_compress_time * 1000);
-    printf("  Decompress time: %.3f ms\n", lz4_decompress_time * 1000);
-    printf("  Throughput: %.1f MB/s\n\n", 
+    printf("  Compress time: %.3f ms, ", lz4_compress_time * 1000);
+    printf("  Decompress time: %.3f ms, ", lz4_decompress_time * 1000);
+    printf("  Throughput: %.1f MB/s, , ", 
            data_size / lz4_compress_time / (1024*1024));
     
     // LZO
@@ -802,10 +802,10 @@ void benchmark_compression_algorithms() {
                      &lzo_size, wrkmem);
     double lzo_compress_time = (double)(clock() - start) / CLOCKS_PER_SEC;
     
-    printf("\n⚡ LZO (밸런스 파이터):\n");
-    printf("  Compressed size: %lu (%.1f%%)\n",
+    printf(", ⚡ LZO (밸런스 파이터):, ");
+    printf("  Compressed size: %lu (%.1f%%), ",
            lzo_size, (double)lzo_size / data_size * 100);
-    printf("  Compress time: %.3f ms\n", lzo_compress_time * 1000);
+    printf("  Compress time: %.3f ms, ", lzo_compress_time * 1000);
     
     // ZSTD
     size_t zstd_size = ZSTD_compressBound(data_size);
@@ -816,15 +816,15 @@ void benchmark_compression_algorithms() {
                               test_data, data_size, 3);  // level 3
     double zstd_compress_time = (double)(clock() - start) / CLOCKS_PER_SEC;
     
-    printf("\n💪 ZSTD (헤비급 챔피언):\n");
-    printf("  Compressed size: %zu (%.1f%%)\n",
+    printf(", 💪 ZSTD (헤비급 챔피언):, ");
+    printf("  Compressed size: %zu (%.1f%%), ",
            zstd_size, (double)zstd_size / data_size * 100);
-    printf("  Compress time: %.3f ms\n", zstd_compress_time * 1000);
+    printf("  Compress time: %.3f ms, ", zstd_compress_time * 1000);
     
-    printf("\n🏆 승자 판정:\n");
-    printf("- 실시간 게임 서버: LZ4 (속도가 생명!)\n");
-    printf("- 웹 서버: LZO (균형잡힌 선택)\n");
-    printf("- 빅데이터 처리: ZSTD (압축률이 곧 돈)\n\n");
+    printf(", 🏆 승자 판정:, ");
+    printf("- 실시간 게임 서버: LZ4 (속도가 생명!), ");
+    printf("- 웹 서버: LZO (균형잡힌 선택), ");
+    printf("- 빅데이터 처리: ZSTD (압축률이 곧 돈), , ");
     
     // 정리
     free(test_data);
@@ -834,7 +834,7 @@ void benchmark_compression_algorithms() {
     free(wrkmem);
     free(zstd_compressed);
 }
-```
+```text
 
 ## 4. 메모리 밸룬 (Memory Balloon): VM의 풍선 놀이
 
@@ -851,7 +851,7 @@ VM 메모리 밸루닝을 처음 봤을 때, 저는 깜짝 놀랐습니다. VMwa
 $ vm-stats
 VM1: Allocated: 8GB, Active: 3GB, Ballooned: 5GB
 VM2: Allocated: 8GB, Active: 7GB, Ballooned: 1GB
-```
+```text
 
 **Balloon Driver가 5GB를 "빌려간" 겁니다!**
 
@@ -896,7 +896,7 @@ to Guest"]
     style BALLOON fill:#4CAF50
     style INF fill:#FFC107
     style DEF fill:#2196F3
-```
+```text
 
 ### 4.2 Balloon Driver 구현: 메모리 풍선 조종사
 
@@ -934,7 +934,7 @@ balloon_device_t* balloon_init() {
 void balloon_inflate(balloon_device_t *balloon, size_t num_pages) {
     pthread_mutex_lock(&balloon->lock);
     
-    printf("Inflating balloon by %zu pages\n", num_pages);
+    printf("Inflating balloon by %zu pages, ", num_pages);
     
     for (size_t i = 0; i < num_pages; i++) {
         if (balloon->current_pages >= MAX_BALLOON_PAGES) {
@@ -944,7 +944,7 @@ void balloon_inflate(balloon_device_t *balloon, size_t num_pages) {
         // 페이지 할당 (게스트에서 제거)
         void *page = malloc(PAGE_SIZE);
         if (!page) {
-            printf("Failed to inflate: out of memory\n");
+            printf("Failed to inflate: out of memory, ");
             break;
         }
         
@@ -955,7 +955,7 @@ void balloon_inflate(balloon_device_t *balloon, size_t num_pages) {
         balloon->total_inflated++;
     }
     
-    printf("Balloon size: %zu pages (%zu MB)\n",
+    printf("Balloon size: %zu pages (%zu MB), ",
            balloon->current_pages,
            balloon->current_pages * PAGE_SIZE / (1024*1024));
     
@@ -966,7 +966,7 @@ void balloon_inflate(balloon_device_t *balloon, size_t num_pages) {
 void balloon_deflate(balloon_device_t *balloon, size_t num_pages) {
     pthread_mutex_lock(&balloon->lock);
     
-    printf("Deflating balloon by %zu pages\n", num_pages);
+    printf("Deflating balloon by %zu pages, ", num_pages);
     
     size_t deflated = 0;
     while (deflated < num_pages && balloon->current_pages > 0) {
@@ -980,7 +980,7 @@ void balloon_deflate(balloon_device_t *balloon, size_t num_pages) {
         balloon->total_deflated++;
     }
     
-    printf("Balloon size: %zu pages (%zu MB)\n",
+    printf("Balloon size: %zu pages (%zu MB), ",
            balloon->current_pages,
            balloon->current_pages * PAGE_SIZE / (1024*1024));
     
@@ -1015,7 +1015,7 @@ void* balloon_worker(void *arg) {
 
 // 동적 메모리 관리: 실제 프로덕션 시나리오
 void dynamic_memory_management() {
-    printf("\n=== 실전: Black Friday 트래픽 폭증 대응 ===\n");
+    printf(", === 실전: Black Friday 트래픽 폭증 대응 ===, ");
     
     // 4개 VM 시뮬레이션 (웹서버 2개, DB 1개, 캐시 1개)
     balloon_device_t *vms[4];
@@ -1032,15 +1032,15 @@ void dynamic_memory_management() {
         
         if (memory_usage > 0.9) {
             // 메모리 부족 - VM에서 회수
-            printf("🚨 메모리 위기! 트래픽 폭증!\n");
-            printf("→ VM들에게 메모리 반납 요청 (Balloon 팽창)\n");
+            printf("🚨 메모리 위기! 트래픽 폭증!, ");
+            printf("→ VM들에게 메모리 반납 요청 (Balloon 팽창), ");
             for (int i = 0; i < 4; i++) {
                 vms[i]->target_pages = 1000;  // 각 VM에서 4MB 회수
             }
         } else if (memory_usage < 0.5) {
             // 메모리 여유 - VM에 반환
-            printf("😌 메모리 여유 생김. 트래픽 안정화\n");
-            printf("→ VM들에게 메모리 돌려주기 (Balloon 수축)\n");
+            printf("😌 메모리 여유 생김. 트래픽 안정화, ");
+            printf("→ VM들에게 메모리 돌려주기 (Balloon 수축), ");
             for (int i = 0; i < 4; i++) {
                 vms[i]->target_pages = 0;
             }
@@ -1049,7 +1049,7 @@ void dynamic_memory_management() {
         sleep(10);
     }
 }
-```
+```text
 
 ## 5. 메모리 티어링 (Memory Tiering): 메모리 계급 사회
 
@@ -1066,7 +1066,7 @@ node 2: 1TB Optane (3x slower!)
 node 3: 1TB Optane
 
 # 결과: 애플리케이션 30% 느려짐 😱
-```
+```text
 
 그때 깨달았습니다. **모든 메모리가 평등하지 않다!**
 
@@ -1080,7 +1080,7 @@ node 3: 1TB Optane
 성능: 원래 속도의 95% 유지
 용량: 2.5TB 사용 가능 (DRAM만 쓸 때의 5배!)
 비용: 40% 절감
-```
+```text
 
 ### 5.1 다계층 메모리 시스템: 메모리 카스트 제도
 
@@ -1146,15 +1146,15 @@ void migrate_page(tiered_memory_t *tm,
     // 페이지 테이블 업데이트
     update_page_mapping(page->vaddr, dst_addr);
     
-    printf("Page migrated: %s -> %s\n",
+    printf("Page migrated: %s -> %s, ",
            tier_name(src_tier->tier),
            tier_name(dst_tier->tier));
 }
 
 // 자동 티어링: AI가 메모리를 관리한다
 void auto_tiering(tiered_memory_t *tm) {
-    printf("\n=== 메모리 티어링 AI 가동 ===\n");
-    printf("목표: Hot data는 빠른 곳에, Cold data는 싼 곳에\n\n");
+    printf(", === 메모리 티어링 AI 가동 ===, ");
+    printf("목표: Hot data는 빠른 곳에, Cold data는 싼 곳에, , ");
     
     while (1) {
         for (size_t i = 0; i < tm->num_pages; i++) {
@@ -1189,7 +1189,7 @@ void auto_tiering(tiered_memory_t *tm) {
         sleep(10);  // 10초마다 재평가
     }
 }
-```
+```text
 
 ## 6. 실전: 메모리 압축 최적화 (프로덕션 레시피)
 
@@ -1207,7 +1207,7 @@ $ echo 2G > /sys/block/zram0/disksize
 $ mkswap /dev/zram0
 $ swapon -p 100 /dev/zram0
 
-\n# 🔍 KSM 설정 (Docker/K8s 환경 최적화)
+, # 🔍 KSM 설정 (Docker/K8s 환경 최적화)
 $ echo 1 > /sys/kernel/mm/ksm/run
 $ echo 2000 > /sys/kernel/mm/ksm/pages_to_scan
 $ echo 20 > /sys/kernel/mm/ksm/sleep_millisecs
@@ -1215,7 +1215,7 @@ $ echo 20 > /sys/kernel/mm/ksm/sleep_millisecs
 # 통계 확인
 $ cat /sys/kernel/mm/ksm/pages_sharing
 $ cat /sys/block/zram0/mm_stat
-```
+```text
 
 ### 6.2 애플리케이션 최적화: 압축 친화적 코딩
 
@@ -1224,7 +1224,7 @@ $ cat /sys/block/zram0/mm_stat
 ```c
 // 압축 친화적 메모리 패턴 (실제 프로덕션 코드에서 발췌)
 void compression_friendly_allocation() {
-    printf("압축률을 높이는 메모리 사용 패턴:\n\n");
+    printf("압축률을 높이는 메모리 사용 패턴:, , ");
     // 1. 제로 페이지 활용 (압축률 ∞)
     void *zero_mem = calloc(1000, PAGE_SIZE);
     // calloc은 제로 페이지 최적화 활용
@@ -1253,13 +1253,13 @@ void measure_compression_efficiency() {
     void *pattern_data = generate_pattern_data(test_size);
     void *text_data = load_text_file(test_size);
     
-    printf("Compression Ratios:\n");
-    printf("Random data: %.2fx\n", measure_compression(random_data));
-    printf("Zero data: %.2fx\n", measure_compression(zero_data));
-    printf("Pattern data: %.2fx\n", measure_compression(pattern_data));
-    printf("Text data: %.2fx\n", measure_compression(text_data));
+    printf("Compression Ratios:, ");
+    printf("Random data: %.2fx, ", measure_compression(random_data));
+    printf("Zero data: %.2fx, ", measure_compression(zero_data));
+    printf("Pattern data: %.2fx, ", measure_compression(pattern_data));
+    printf("Text data: %.2fx, ", measure_compression(text_data));
 }
-```
+```text
 
 ## 7. 문제 해결과 디버깅: 실전 트러블슈팅
 
@@ -1279,9 +1279,9 @@ void diagnose_compression_thrashing() {
     fclose(f);
     
     if (reads > writes * 2) {
-        printf("⚠️  경고: 압축 스래싱 발생!\n");
-        printf("증상: CPU는 100%인데 처리량은 떨어짐\n");
-        printf("Consider reducing swappiness\n");
+        printf("⚠️  경고: 압축 스래싱 발생!, ");
+        printf("증상: CPU는 100%인데 처리량은 떨어짐, ");
+        printf("Consider reducing swappiness, ");
     }
 }
 
@@ -1293,8 +1293,8 @@ void monitor_ksm_cpu() {
     
     double scans_per_sec = (after - before) / 60.0;
     if (scans_per_sec > 1) {
-        printf("🔥 KSM이 CPU를 잡아먹고 있습니다!\n");
-        printf("해결: sleep_millisecs를 20→100으로 증가\n");
+        printf("🔥 KSM이 CPU를 잡아먹고 있습니다!, ");
+        printf("해결: sleep_millisecs를 20→100으로 증가, ");
         increase_ksm_sleep_time();
     }
 }
@@ -1305,7 +1305,7 @@ void check_memory_fragmentation() {
     // 버디 시스템 정보 분석
     // 큰 연속 블록이 부족하면 단편화
 }
-```
+```text
 
 ## 8. 정리: 메모리 압축과 중복 제거의 핵심
 

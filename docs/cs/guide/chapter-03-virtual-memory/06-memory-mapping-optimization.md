@@ -41,8 +41,8 @@ sequenceDiagram
     App->>OS: mmap(addr, len, prot, flags, fd, offset)
     OS-->>App: 가상 주소 반환 (실제 읽기 없음)
     App->>RAM: 메모리 주소 접근
-    Note over OS,Disk: 페이지 폴트 발생 시에만<br/>디스크 읽기 (지연 로딩)
-```
+    Note over OS,Disk: 페이지 폴트 발생 시에만, 디스크 읽기 (지연 로딩)
+```text
 
 **mmap의 핵심 장점**:
 
@@ -61,36 +61,33 @@ graph TD
     DECISION --> PATTERN[접근 패턴]
     DECISION --> SHARING[공유 필요성]
     
-    SIZE -->|작음 (<1MB)| READ[read/write<br/>시스템 콜 오버헤드 적음]
-    SIZE -->|큼 (>100MB)| MMAP[mmap<br/>가상 메모리 활용]
+    SIZE -->|작음 1MB미만| READ[read/write 시스템콜 오버헤드 적음]
+    SIZE -->|큼 100MB이상| MMAP[mmap 가상메모리 활용]
     
-    PATTERN -->|순차| READ_SEQ[read + 큰 버퍼<br/>prefetch 효과]
-    PATTERN -->|랜덤| MMAP_RANDOM[mmap<br/>필요한 부분만 로드]
+    PATTERN -->|순차| READ_SEQ[read + 큰버퍼 prefetch효과]
+    PATTERN -->|랜덤| MMAP_RANDOM[mmap 필요한부분만 로드]
     
     SHARING -->|단독 사용| BOTH[둘 다 가능]
-    SHARING -->|다중 프로세스| MMAP_SHARED[mmap 공유<br/>메모리 효율성]
+    SHARING -->|다중 프로세스| MMAP_SHARED[mmap공유 메모리효율성]
     
     style MMAP fill:#c8e6c9
     style READ fill:#fff3e0
-```
+```text
 
 ### 1.2 성능 벤치마크 코드
 
 실제로 어떤 차이가 있는지 측정해봅시다:
 
 ```c
-// file_access_benchmark.c
+// file_access_benchmark.c - mmap vs read/write 성능 비교
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/time.h>
-#include <string.h>
 
-#define FILE_SIZE (1024 * 1024 * 1024)  // 1GB
-#define BUFFER_SIZE (64 * 1024)          // 64KB
+#define FILE_SIZE (256 * 1024 * 1024)  // 256MB로 축소
+#define BUFFER_SIZE (64 * 1024)
 
 double get_time() {
     struct timeval tv;
@@ -98,153 +95,116 @@ double get_time() {
     return tv.tv_sec + tv.tv_usec / 1000000.0;
 }
 
-void create_test_file(const char *filename) {
-    printf("테스트 파일 생성 중... (%dMB)\n", FILE_SIZE / 1024 / 1024);
-    
-    int fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-    if (fd == -1) {
-        perror("create file failed");
-        exit(1);
-    }
-    
-    char buffer[BUFFER_SIZE];
-    memset(buffer, 'A', BUFFER_SIZE);
-    
-    for (size_t written = 0; written < FILE_SIZE; written += BUFFER_SIZE) {
-        size_t to_write = (FILE_SIZE - written > BUFFER_SIZE) ? BUFFER_SIZE : (FILE_SIZE - written);
-        write(fd, buffer, to_write);
-    }
-    
-    close(fd);
-    printf("테스트 파일 생성 완료: %s\n", filename);
-}
-
-void test_sequential_read(const char *filename) {
-    printf("\n=== 순차 읽기 테스트 ===\n");
+// 1. read() 방식: 커널-유저 공간 복사 발생
+void test_read_method(const char *filename) {
+    printf("=== read() 시스템 콜 방식 ===, ");
     
     int fd = open(filename, O_RDONLY);
-    if (fd == -1) {
-        perror("open failed");
-        return;
-    }
-    
     char *buffer = malloc(BUFFER_SIZE);
     double start = get_time();
     
-    ssize_t total_read = 0;
-    ssize_t bytes_read;
-    
-    while ((bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0) {
-        total_read += bytes_read;
-        // 실제 처리를 시뮬레이션 (간단한 체크섬)
-        for (int i = 0; i < bytes_read; i += 1024) {
-            volatile char c = buffer[i];  // 메모리 접근 강제
+    size_t total = 0;
+    ssize_t bytes;
+    while ((bytes = read(fd, buffer, BUFFER_SIZE)) > 0) {
+        total += bytes;
+        // 실제 처리 시뮬레이션: 매 1KB마다 접근
+        for (int i = 0; i < bytes; i += 1024) {
+            volatile char c = buffer[i];  // CPU 캐시 효과 제거
         }
     }
     
-    double end = get_time();
-    
-    printf("read() 방식:\n");
-    printf("  읽은 데이터: %ld MB\n", total_read / 1024 / 1024);
-    printf("  소요 시간: %.3f 초\n", end - start);
-    printf("  처리 속도: %.1f MB/s\n", (total_read / 1024.0 / 1024.0) / (end - start));
+    double elapsed = get_time() - start;
+    printf("  처리량: %zu MB, 시간: %.3f초, 속도: %.1f MB/s, ",
+           total / 1024 / 1024, elapsed, (total / 1024.0 / 1024.0) / elapsed);
     
     free(buffer);
     close(fd);
 }
 
-void test_mmap_sequential(const char *filename) {
-    printf("\n=== mmap 순차 접근 테스트 ===\n");
+// 2. mmap() 방식: 가상 메모리 직접 매핑
+void test_mmap_method(const char *filename) {
+    printf(", === mmap() 메모리 매핑 방식 ===, ");
     
     int fd = open(filename, O_RDONLY);
-    if (fd == -1) {
-        perror("open failed");
-        return;
-    }
-    
     struct stat st;
-    if (fstat(fd, &st) == -1) {
-        perror("fstat failed");
-        close(fd);
-        return;
-    }
+    fstat(fd, &st);
     
     double start = get_time();
     
-    // 파일 전체를 메모리에 매핑
+    // 파일을 가상 메모리에 직접 매핑 (zero-copy)
     char *mapped = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-    if (mapped == MAP_FAILED) {
-        perror("mmap failed");
-        close(fd);
-        return;
-    }
     
-    // 순차 접근으로 처리
+    // 페이지 단위 접근으로 page fault 유발
     for (size_t i = 0; i < st.st_size; i += 1024) {
-        volatile char c = mapped[i];  // 페이지 폴트 유발
+        volatile char c = mapped[i];  // 지연 로딩 트리거
     }
     
-    double end = get_time();
-    
-    printf("mmap() 방식:\n");
-    printf("  매핑 크기: %ld MB\n", st.st_size / 1024 / 1024);
-    printf("  소요 시간: %.3f 초\n", end - start);
-    printf("  처리 속도: %.1f MB/s\n", (st.st_size / 1024.0 / 1024.0) / (end - start));
+    double elapsed = get_time() - start;
+    printf("  처리량: %ld MB, 시간: %.3f초, 속도: %.1f MB/s, ",
+           st.st_size / 1024 / 1024, elapsed, 
+           (st.st_size / 1024.0 / 1024.0) / elapsed);
     
     munmap(mapped, st.st_size);
     close(fd);
 }
 
-void test_mmap_random(const char *filename) {
-    printf("\n=== mmap 랜덤 접근 테스트 ===\n");
+// 3. 랜덤 접근 패턴에서 mmap의 장점
+void test_random_access(const char *filename) {
+    printf(", === 랜덤 접근 성능 비교 ===, ");
     
     int fd = open(filename, O_RDONLY);
     struct stat st;
     fstat(fd, &st);
     
     char *mapped = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-    if (mapped == MAP_FAILED) {
-        perror("mmap failed");
-        close(fd);
-        return;
-    }
     
     double start = get_time();
+    srand(42);  // 재현 가능한 결과
     
-    // 랜덤 위치 100,000회 접근
-    const int random_accesses = 100000;
-    srand(42);  // 재현 가능한 결과를 위해
-    
-    for (int i = 0; i < random_accesses; i++) {
+    // 10만 번의 랜덤 위치 접근 - 필요한 페이지만 로드
+    const int accesses = 100000;
+    for (int i = 0; i < accesses; i++) {
         size_t offset = rand() % (st.st_size - 1024);
         volatile char c = mapped[offset];
     }
     
-    double end = get_time();
-    
-    printf("mmap() 랜덤 접근:\n");
-    printf("  접근 횟수: %d\n", random_accesses);
-    printf("  소요 시간: %.3f 초\n", end - start);
-    printf("  초당 접근: %.0f ops/s\n", random_accesses / (end - start));
+    double elapsed = get_time() - start;
+    printf("  랜덤 접근: %d회, 시간: %.3f초, 속도: %.0f ops/s, ",
+           accesses, elapsed, accesses / elapsed);
     
     munmap(mapped, st.st_size);
     close(fd);
 }
 
+// 간단한 테스트 파일 생성
+void create_test_file(const char *filename) {
+    printf("테스트 파일 생성 중..., ");
+    int fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+    
+    char buffer[BUFFER_SIZE];
+    memset(buffer, 'T', BUFFER_SIZE);  // 'T'로 채움
+    
+    for (size_t written = 0; written < FILE_SIZE; written += BUFFER_SIZE) {
+        write(fd, buffer, BUFFER_SIZE);
+    }
+    
+    close(fd);
+    printf("테스트 파일 생성 완료 (%d MB), ", FILE_SIZE / 1024 / 1024);
+}
+
 int main() {
-    const char *test_file = "/tmp/mmap_test_file";
+    const char *test_file = "/tmp/mmap_benchmark";
     
     create_test_file(test_file);
     
-    test_sequential_read(test_file);
-    test_mmap_sequential(test_file);
-    test_mmap_random(test_file);
+    test_read_method(test_file);
+    test_mmap_method(test_file);
+    test_random_access(test_file);
     
-    unlink(test_file);  // 테스트 파일 삭제
-    
+    unlink(test_file);
     return 0;
 }
-```
+```text
 
 **실행 결과 예시**:
 
@@ -269,7 +229,7 @@ mmap() 랜덤 접근:
   접근 횟수: 100000
   소요 시간: 0.234 초
   초당 접근: 427350 ops/s
-```
+```text
 
 ## 2. madvise 패턴 활용
 
@@ -280,29 +240,28 @@ mmap() 랜덤 접근:
 ```mermaid
 graph LR
     subgraph "madvise 패턴들"
-        SEQUENTIAL[MADV_SEQUENTIAL<br/>순차 접근 예정<br/>→ 적극적 prefetch]
-        RANDOM[MADV_RANDOM<br/>랜덤 접근 예정<br/>→ prefetch 비활성화]
-        WILLNEED[MADV_WILLNEED<br/>곧 사용 예정<br/>→ 미리 로드]
-        DONTNEED[MADV_DONTNEED<br/>더 이상 불필요<br/>→ 캐시에서 제거]
+        SEQUENTIAL[MADV_SEQUENTIAL, 순차 접근 예정, → 적극적 prefetch]
+        RANDOM[MADV_RANDOM, 랜덤 접근 예정, → prefetch 비활성화]
+        WILLNEED[MADV_WILLNEED, 곧 사용 예정, → 미리 로드]
+        DONTNEED[MADV_DONTNEED, 더 이상 불필요, → 캐시에서 제거]
     end
     
     subgraph "성능 효과"
-        SEQUENTIAL --> PREFETCH[읽기 성능 향상<br/>캐시 히트율 증가]
-        RANDOM --> EFFICIENT[불필요한 prefetch 방지<br/>메모리 절약]
-        WILLNEED --> PRELOAD[접근 전 미리 로드<br/>지연시간 단축]
-        DONTNEED --> MEMORY[메모리 확보<br/>다른 프로세스 도움]
+        SEQUENTIAL --> PREFETCH[읽기 성능 향상, 캐시 히트율 증가]
+        RANDOM --> EFFICIENT[불필요한 prefetch 방지, 메모리 절약]
+        WILLNEED --> PRELOAD[접근 전 미리 로드, 지연시간 단축]
+        DONTNEED --> MEMORY[메모리 확보, 다른 프로세스 도움]
     end
-```
+```text
 
 ### 2.2 실무 madvise 활용 예제
 
 ```c
-// madvise_optimization.c
+// madvise_optimization.c - 메모리 접근 패턴 최적화
 #include <stdio.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <sys/time.h>
 
 double get_time() {
@@ -311,151 +270,130 @@ double get_time() {
     return tv.tv_sec + tv.tv_usec / 1000000.0;
 }
 
-void test_sequential_processing(const char *filename) {
-    printf("=== 순차 처리 최적화 ===\n");
+// 1. 순차 접근 패턴 최적화
+void test_sequential_with_hints(const char *filename) {
+    printf("=== MADV_SEQUENTIAL + WILLNEED/DONTNEED ===, ");
     
     int fd = open(filename, O_RDONLY);
     struct stat st;
     fstat(fd, &st);
     
-    // 파일 전체 매핑
     char *mapped = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-    if (mapped == MAP_FAILED) {
-        perror("mmap failed");
-        return;
-    }
     
-    // 순차 접근 패턴 힌트
-    if (madvise(mapped, st.st_size, MADV_SEQUENTIAL) != 0) {
-        perror("madvise SEQUENTIAL failed");
-    }
+    // 핵심: OS에게 순차 접근 패턴 알림 -> 적극적 prefetch
+    madvise(mapped, st.st_size, MADV_SEQUENTIAL);
     
     double start = get_time();
+    const size_t chunk_size = 64 * 1024;  // 64KB 청크
     
-    // 순차적으로 처리
-    const size_t chunk_size = 64 * 1024;  // 64KB씩 처리
     for (size_t offset = 0; offset < st.st_size; offset += chunk_size) {
         size_t size = (offset + chunk_size > st.st_size) ? 
                       (st.st_size - offset) : chunk_size;
         
-        // 현재 청크를 곧 사용한다고 힌트
+        // 미리 prefetch 요청 - 지연시간 줄임
         madvise(mapped + offset, size, MADV_WILLNEED);
         
-        // 실제 처리 (체크섬 계산 시뮬레이션)
+        // 체크섬 계산 (실제 데이터 처리 시뮬레이션)
         unsigned char checksum = 0;
         for (size_t i = 0; i < size; i++) {
             checksum ^= mapped[offset + i];
         }
         
-        // 처리 완료된 이전 청크는 더 이상 필요 없음
+        // 처리 완료된 이전 청크는 캐시에서 제거
         if (offset >= chunk_size) {
             madvise(mapped + offset - chunk_size, chunk_size, MADV_DONTNEED);
         }
         
-        printf("\rProcessing: %.1f%%", (double)offset / st.st_size * 100);
+        printf("\r진행률: %.1f%%", (double)offset / st.st_size * 100);
         fflush(stdout);
     }
     
-    double end = get_time();
-    printf("\n순차 처리 완료: %.3f초 (%.1f MB/s)\n", 
-           end - start, (st.st_size / 1024.0 / 1024.0) / (end - start));
+    double elapsed = get_time() - start;
+    printf(", 순차 처리 완료: %.3f초 (%.1f MB/s), ",
+           elapsed, (st.st_size / 1024.0 / 1024.0) / elapsed);
     
     munmap(mapped, st.st_size);
     close(fd);
 }
 
-void test_random_access(const char *filename) {
-    printf("\n=== 랜덤 접근 최적화 ===\n");
+// 2. 랜덤 접근 패턴 최적화
+void test_random_with_hints(const char *filename) {
+    printf(", === MADV_RANDOM - prefetch 비활성화 ===, ");
     
     int fd = open(filename, O_RDONLY);
     struct stat st;
     fstat(fd, &st);
     
     char *mapped = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-    if (mapped == MAP_FAILED) {
-        perror("mmap failed");
-        return;
-    }
     
-    // 랜덤 접근 패턴 힌트 (prefetch 비활성화)
-    if (madvise(mapped, st.st_size, MADV_RANDOM) != 0) {
-        perror("madvise RANDOM failed");
-    }
+    // 핵심: 랜덤 접근 패턴 알림 -> 불필요한 prefetch 비활성화
+    madvise(mapped, st.st_size, MADV_RANDOM);
     
     double start = get_time();
-    
-    // 랜덤 접근 시뮬레이션
     srand(42);
-    const int num_accesses = 50000;
+    const int accesses = 50000;
     
-    for (int i = 0; i < num_accesses; i++) {
+    for (int i = 0; i < accesses; i++) {
         size_t offset = rand() % (st.st_size - 4096);
         
-        // 해당 페이지를 곧 사용한다고 힌트
+        // 해당 페이지만 미리 로드 요청
         madvise(mapped + offset, 4096, MADV_WILLNEED);
         
-        // 데이터 접근
-        volatile char data = mapped[offset];
+        volatile char data = mapped[offset];  // 실제 데이터 접근
         
         if (i % 10000 == 0) {
-            printf("\rRandom accesses: %d/%d", i, num_accesses);
+            printf("\r랜덤 접근: %d/%d", i, accesses);
             fflush(stdout);
         }
     }
     
-    double end = get_time();
-    printf("\n랜덤 접근 완료: %.3f초 (%.0f ops/s)\n", 
-           end - start, num_accesses / (end - start));
+    double elapsed = get_time() - start;
+    printf(", 랜덤 접근 완료: %.3f초 (%.0f ops/s), ",
+           elapsed, accesses / elapsed);
     
     munmap(mapped, st.st_size);
     close(fd);
 }
 
-void demonstrate_memory_pressure() {
-    printf("\n=== 메모리 압박 상황 시뮬레이션 ===\n");
+// 3. 메모리 압박 상황에서 MADV_DONTNEED 활용
+void demonstrate_memory_cleanup() {
+    printf(", === MADV_DONTNEED - 메모리 정리 ===, ");
     
-    // 큰 메모리 블록 할당
-    const size_t size = 256 * 1024 * 1024;  // 256MB
+    const size_t size = 128 * 1024 * 1024;  // 128MB
     void *memory = malloc(size);
-    if (!memory) {
-        perror("malloc failed");
-        return;
-    }
     
-    printf("256MB 메모리 할당 완료\n");
-    
-    // 메모리를 사용하여 페이지를 물리 메모리에 로드
+    // 메모리를 채워서 물리 페이지 할당 유도
     memset(memory, 1, size);
-    printf("메모리 초기화 완료\n");
+    printf("메모리 할당 및 초기화 완료 (128MB), ");
     
-    // 잠시 대기
-    sleep(2);
+    // 잠시 후 이 메모리를 더 이상 사용하지 않음
+    sleep(1);
     
-    // 이 메모리를 더 이상 사용하지 않는다고 힌트
+    // OS에게 이 메모리를 스왑/캐시에서 제거해도 된다고 알리기
     if (madvise(memory, size, MADV_DONTNEED) == 0) {
-        printf("MADV_DONTNEED 적용 - 물리 메모리 확보\n");
+        printf("MADV_DONTNEED 성공 - 물리 메모리 확보, ");
     }
     
-    // 시스템의 메모리 상태 확인
-    system("grep -E 'MemFree|MemAvailable' /proc/meminfo");
+    // 메모리 상태 확인
+    system("echo '사용 가능 메모리:'; grep MemAvailable /proc/meminfo");
     
     free(memory);
-    printf("메모리 해제 완료\n");
+    printf("메모리 해제 완료, ");
 }
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        printf("Usage: %s <test_file>\n", argv[0]);
+        printf("Usage: %s <test_file>, ", argv[0]);
         return 1;
     }
     
-    test_sequential_processing(argv[1]);
-    test_random_access(argv[1]);
-    demonstrate_memory_pressure();
+    test_sequential_with_hints(argv[1]);
+    test_random_with_hints(argv[1]);
+    demonstrate_memory_cleanup();
     
     return 0;
 }
-```
+```text
 
 ## 3. Huge Pages 활용
 
@@ -466,20 +404,20 @@ int main(int argc, char *argv[]) {
 ```mermaid
 graph LR
     subgraph "일반 페이지 (4KB)"
-        NORMAL_DATA[1GB 데이터] --> NORMAL_PAGES[256,000개<br/>4KB 페이지]
-        NORMAL_PAGES --> NORMAL_TLB[TLB 엔트리<br/>256,000개 필요]
-        NORMAL_TLB --> NORMAL_MISS[TLB 미스<br/>빈번 발생]
+        NORMAL_DATA[1GB 데이터] --> NORMAL_PAGES[256,000개, 4KB 페이지]
+        NORMAL_PAGES --> NORMAL_TLB[TLB 엔트리, 256,000개 필요]
+        NORMAL_TLB --> NORMAL_MISS[TLB 미스, 빈번 발생]
     end
     
     subgraph "Huge 페이지 (2MB)"
-        HUGE_DATA[1GB 데이터] --> HUGE_PAGES[512개<br/>2MB 페이지]
-        HUGE_PAGES --> HUGE_TLB[TLB 엔트리<br/>512개만 필요]
-        HUGE_TLB --> HUGE_HIT[TLB 히트<br/>성능 향상]
+        HUGE_DATA[1GB 데이터] --> HUGE_PAGES[512개, 2MB 페이지]
+        HUGE_PAGES --> HUGE_TLB[TLB 엔트리, 512개만 필요]
+        HUGE_TLB --> HUGE_HIT[TLB 히트, 성능 향상]
     end
     
     style HUGE_HIT fill:#c8e6c9
     style NORMAL_MISS fill:#ffcccb
-```
+```text
 
 ### 3.2 Huge Pages 설정과 사용
 
@@ -494,13 +432,13 @@ echo "1. 현재 Huge Pages 상태:"
 grep -E "HugePages|Hugepagesize" /proc/meminfo
 
 # Transparent Huge Pages 상태 확인
-echo -e "\n2. THP 상태:"
+echo -e ", 2. THP 상태:"
 cat /sys/kernel/mm/transparent_hugepage/enabled
 cat /sys/kernel/mm/transparent_hugepage/defrag
 
 # 2MB Huge Pages 예약 (root 권한 필요)
 if [ "$EUID" -eq 0 ]; then
-    echo -e "\n3. 100개 2MB Huge Pages 예약..."
+    echo -e ", 3. 100개 2MB Huge Pages 예약..."
     echo 100 > /proc/sys/vm/nr_hugepages
     
     # 결과 확인
@@ -515,7 +453,7 @@ if [ "$EUID" -eq 0 ]; then
 else
     echo "root 권한이 필요합니다 (sudo 사용)"
 fi
-```
+```text
 
 **Huge Pages 성능 테스트**:
 
@@ -538,7 +476,7 @@ double get_time() {
 }
 
 void test_normal_pages() {
-    printf("=== 일반 페이지 (4KB) 테스트 ===\n");
+    printf("=== 일반 페이지 (4KB) 테스트 ===, ");
     
     // 일반 malloc 할당
     char *array = malloc(ARRAY_SIZE);
@@ -565,21 +503,21 @@ void test_normal_pages() {
     
     double end = get_time();
     
-    printf("일반 페이지 결과:\n");
-    printf("  소요 시간: %.3f 초\n", end - start);
-    printf("  초당 접근: %.0f ops/s\n", accesses / (end - start));
+    printf("일반 페이지 결과:, ");
+    printf("  소요 시간: %.3f 초, ", end - start);
+    printf("  초당 접근: %.0f ops/s, ", accesses / (end - start));
     
     free(array);
 }
 
 void test_hugepages() {
-    printf("\n=== Huge Pages (2MB) 테스트 ===\n");
+    printf(", === Huge Pages (2MB) 테스트 ===, ");
     
     // Huge Pages 파일 생성
     int fd = open("/mnt/hugepages/test", O_CREAT | O_RDWR, 0755);
     if (fd < 0) {
         perror("hugepage file creation failed");
-        printf("Huge Pages가 마운트되지 않았을 수 있습니다.\n");
+        printf("Huge Pages가 마운트되지 않았을 수 있습니다., ");
         return;
     }
     
@@ -610,9 +548,9 @@ void test_hugepages() {
     
     double end = get_time();
     
-    printf("Huge Pages 결과:\n");
-    printf("  소요 시간: %.3f 초\n", end - start);
-    printf("  초당 접근: %.0f ops/s\n", accesses / (end - start));
+    printf("Huge Pages 결과:, ");
+    printf("  소요 시간: %.3f 초, ", end - start);
+    printf("  초당 접근: %.0f ops/s, ", accesses / (end - start));
     
     munmap(array, ARRAY_SIZE);
     close(fd);
@@ -620,7 +558,7 @@ void test_hugepages() {
 }
 
 void test_thp_performance() {
-    printf("\n=== Transparent Huge Pages 테스트 ===\n");
+    printf(", === Transparent Huge Pages 테스트 ===, ");
     
     // THP 활성화 후 큰 메모리 할당
     char *array = malloc(ARRAY_SIZE);
@@ -647,11 +585,11 @@ void test_thp_performance() {
     
     double end = get_time();
     
-    printf("THP 순차 접근:\n");
-    printf("  소요 시간: %.3f 초\n", end - start);
-    printf("  처리 속도: %.1f MB/s\n", 
+    printf("THP 순차 접근:, ");
+    printf("  소요 시간: %.3f 초, ", end - start);
+    printf("  처리 속도: %.1f MB/s, ", 
            (ARRAY_SIZE / 1024.0 / 1024.0) / (end - start));
-    printf("  체크섬: 0x%02x\n", checksum);
+    printf("  체크섬: 0x%02x, ", checksum);
     
     free(array);
 }
@@ -663,7 +601,7 @@ int main() {
     
     return 0;
 }
-```
+```text
 
 ## 4. NUMA 최적화
 
@@ -685,7 +623,7 @@ $ lscpu | grep NUMA
 NUMA node(s):          2
 NUMA node0 CPU(s):     0-7
 NUMA node1 CPU(s):     8-15
-```
+```text
 
 ### 4.2 NUMA 바인딩 최적화
 
@@ -705,18 +643,18 @@ double get_time() {
 }
 
 void test_local_memory_access() {
-    printf("=== NUMA 로컬 메모리 접근 테스트 ===\n");
+    printf("=== NUMA 로컬 메모리 접근 테스트 ===, ");
     
     if (numa_available() < 0) {
-        printf("NUMA not available\n");
+        printf("NUMA not available, ");
         return;
     }
     
     int num_nodes = numa_max_node() + 1;
-    printf("NUMA 노드 수: %d\n", num_nodes);
+    printf("NUMA 노드 수: %d, ", num_nodes);
     
     for (int node = 0; node < num_nodes; node++) {
-        printf("\n--- NUMA 노드 %d 테스트 ---\n", node);
+        printf(", --- NUMA 노드 %d 테스트 ---, ", node);
         
         // 특정 NUMA 노드로 프로세스 바인딩
         struct bitmask *node_mask = numa_allocate_nodemask();
@@ -727,7 +665,7 @@ void test_local_memory_access() {
         size_t size = 128 * 1024 * 1024;  // 128MB
         void *memory = numa_alloc_onnode(size, node);
         if (!memory) {
-            printf("메모리 할당 실패 (노드 %d)\n", node);
+            printf("메모리 할당 실패 (노드 %d), ", node);
             continue;
         }
         
@@ -742,7 +680,7 @@ void test_local_memory_access() {
         
         double end = get_time();
         
-        printf("노드 %d 접근 성능: %.3f초 (%.1f MB/s)\n", 
+        printf("노드 %d 접근 성능: %.3f초 (%.1f MB/s), ", 
                node, end - start, 
                (size / 1024.0 / 1024.0) / (end - start));
         
@@ -755,10 +693,10 @@ void test_local_memory_access() {
 }
 
 void test_cross_node_access() {
-    printf("\n=== NUMA 크로스 노드 접근 테스트 ===\n");
+    printf(", === NUMA 크로스 노드 접근 테스트 ===, ");
     
     if (numa_max_node() < 1) {
-        printf("멀티 NUMA 시스템이 아닙니다.\n");
+        printf("멀티 NUMA 시스템이 아닙니다., ");
         return;
     }
     
@@ -785,7 +723,7 @@ void test_cross_node_access() {
         
         double end = get_time();
         
-        printf("크로스 노드 접근 성능: %.3f초 (%.1f MB/s)\n",
+        printf("크로스 노드 접근 성능: %.3f초 (%.1f MB/s), ",
                end - start, 
                (size / 1024.0 / 1024.0) / (end - start));
         
@@ -797,11 +735,11 @@ void test_cross_node_access() {
 }
 
 void optimize_numa_allocation() {
-    printf("\n=== NUMA 최적화 할당 전략 ===\n");
+    printf(", === NUMA 최적화 할당 전략 ===, ");
     
     // 현재 실행 중인 CPU의 NUMA 노드 확인
     int current_node = numa_node_of_cpu(sched_getcpu());
-    printf("현재 CPU의 NUMA 노드: %d\n", current_node);
+    printf("현재 CPU의 NUMA 노드: %d, ", current_node);
     
     // 로컬 노드에서 메모리 할당
     size_t size = 64 * 1024 * 1024;
@@ -811,7 +749,7 @@ void optimize_numa_allocation() {
     char *buffer = (char*)local_memory;
     memset(buffer, 0, size);  // 로컬 노드에서 페이지 할당 보장
     
-    printf("로컬 노드 메모리 할당 및 초기화 완료\n");
+    printf("로컬 노드 메모리 할당 및 초기화 완료, ");
     
     // 메모리 정책 확인
     int policy;
@@ -821,11 +759,11 @@ void optimize_numa_allocation() {
                      buffer, MPOL_F_ADDR) == 0) {
         printf("메모리 정책: ");
         switch (policy) {
-            case MPOL_DEFAULT: printf("DEFAULT\n"); break;
-            case MPOL_BIND: printf("BIND\n"); break;
-            case MPOL_INTERLEAVE: printf("INTERLEAVE\n"); break;
-            case MPOL_PREFERRED: printf("PREFERRED\n"); break;
-            default: printf("UNKNOWN\n"); break;
+            case MPOL_DEFAULT: printf("DEFAULT, "); break;
+            case MPOL_BIND: printf("BIND, "); break;
+            case MPOL_INTERLEAVE: printf("INTERLEAVE, "); break;
+            case MPOL_PREFERRED: printf("PREFERRED, "); break;
+            default: printf("UNKNOWN, "); break;
         }
     }
     
@@ -840,7 +778,7 @@ int main() {
     
     return 0;
 }
-```
+```text
 
 ## 5. 실무 메모리 매핑 최적화 패턴
 
@@ -892,7 +830,7 @@ class EfficientLogAnalyzer:
                     
                     # 라인 경계까지 확장
                     if chunk_end < file_size:
-                        while chunk_end < file_size and mm[chunk_end:chunk_end+1] != b'\n':
+                        while chunk_end < file_size and mm[chunk_end:chunk_end+1] != b', ':
                             chunk_end += 1
                         chunk_end += 1
                     
@@ -904,7 +842,7 @@ class EfficientLogAnalyzer:
                         self.stats[pattern_name] += matches
                     
                     # 라인 수 계산
-                    self.stats['total_lines'] += chunk_data.count(b'\n')
+                    self.stats['total_lines'] += chunk_data.count(b', ')
                     
                     processed += len(chunk_data)
                     progress = processed / file_size * 100
@@ -915,7 +853,7 @@ class EfficientLogAnalyzer:
         
         end_time = time.time()
         
-        print(f"\n분석 완료! 소요시간: {end_time - start_time:.3f}초")
+        print(f", 분석 완료! 소요시간: {end_time - start_time:.3f}초")
         print("=== 분석 결과 ===")
         for key, value in self.stats.items():
             print(f"{key}: {value:,}")
@@ -925,7 +863,7 @@ class EfficientLogAnalyzer:
 
     def analyze_with_read(self):
         """일반 read()를 사용한 비교 분석"""
-        print(f"\n일반 read()로 로그 분석 시작: {self.filename}")
+        print(f", 일반 read()로 로그 분석 시작: {self.filename}")
         
         start_time = time.time()
         stats = defaultdict(int)
@@ -952,7 +890,7 @@ class EfficientLogAnalyzer:
                 data = remainder + chunk
                 
                 # 마지막 라인 찾기
-                last_newline = data.rfind(b'\n')
+                last_newline = data.rfind(b', ')
                 if last_newline != -1:
                     process_data = data[:last_newline + 1]
                     remainder = data[last_newline + 1:]
@@ -965,7 +903,7 @@ class EfficientLogAnalyzer:
                     matches = len(pattern.findall(process_data))
                     stats[pattern_name] += matches
                 
-                stats['total_lines'] += process_data.count(b'\n')
+                stats['total_lines'] += process_data.count(b', ')
                 processed += len(process_data)
                 
                 if processed % (10 * 1024 * 1024) == 0:  # 10MB마다 진행률 출력
@@ -980,7 +918,7 @@ class EfficientLogAnalyzer:
         
         end_time = time.time()
         
-        print(f"\n일반 read() 분석 완료! 소요시간: {end_time - start_time:.3f}초")
+        print(f", 일반 read() 분석 완료! 소요시간: {end_time - start_time:.3f}초")
         print("=== 분석 결과 ===")
         for key, value in stats.items():
             print(f"{key}: {value:,}")
@@ -990,11 +928,11 @@ def create_test_log(filename, size_mb=100):
     print(f"테스트 로그 파일 생성: {filename} ({size_mb}MB)")
     
     log_templates = [
-        "2023-12-01 10:00:{:02d} INFO [app] Processing request {}\n",
-        "2023-12-01 10:00:{:02d} ERROR [db] Connection failed: {}\n", 
-        "2023-12-01 10:00:{:02d} WARNING [cache] High memory usage: {}%\n",
-        "2023-12-01 10:00:{:02d} DEBUG [auth] User {} authenticated\n",
-        "2023-12-01 10:00:{:02d} FATAL [system] Exception in thread {}: timeout\n"
+        "2023-12-01 10:00:{:02d} INFO [app] Processing request {}, ",
+        "2023-12-01 10:00:{:02d} ERROR [db] Connection failed: {}, ", 
+        "2023-12-01 10:00:{:02d} WARNING [cache] High memory usage: {}%, ",
+        "2023-12-01 10:00:{:02d} DEBUG [auth] User {} authenticated, ",
+        "2023-12-01 10:00:{:02d} FATAL [system] Exception in thread {}: timeout, "
     ]
     
     with open(filename, 'w') as f:
@@ -1024,163 +962,132 @@ if __name__ == "__main__":
     
     # 정리
     os.unlink(test_file)
-```
+```text
 
 ### 5.2 스트리밍 데이터 처리
 
 ```c
-// streaming_processor.c - 실시간 대용량 데이터 처리
+// streaming_processor.c - 윈도우 슬라이딩으로 대용량 데이터 처리
 #include <stdio.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/time.h>
-#include <signal.h>
 
+// 윈도우 슬라이딩 처리기 구조체
 typedef struct {
-    char *mapped_memory;
-    size_t file_size;
-    size_t current_pos;
-    size_t window_size;
+    char *mapped_memory;  // 매핑된 메모리 주소
+    size_t file_size;     // 전체 파일 크기
+    size_t current_pos;   // 현재 처리 위치
+    size_t window_size;   // 윈도우 크기
     int fd;
-} streaming_processor_t;
+} stream_processor_t;
 
-streaming_processor_t* processor_create(const char *filename, size_t window_size) {
-    streaming_processor_t *proc = malloc(sizeof(streaming_processor_t));
+// 처리기 초기화 - mmap + madvise 힌트 설정
+stream_processor_t* create_processor(const char *filename, size_t window_size) {
+    stream_processor_t *proc = malloc(sizeof(stream_processor_t));
     
     proc->fd = open(filename, O_RDONLY);
-    if (proc->fd == -1) {
-        free(proc);
-        return NULL;
-    }
-    
     struct stat st;
-    if (fstat(proc->fd, &st) == -1) {
-        close(proc->fd);
-        free(proc);
-        return NULL;
-    }
+    fstat(proc->fd, &st);
     
     proc->file_size = st.st_size;
     proc->window_size = window_size;
     proc->current_pos = 0;
     
     // 파일 전체를 메모리에 매핑
-    proc->mapped_memory = mmap(NULL, proc->file_size, PROT_READ, 
-                              MAP_PRIVATE, proc->fd, 0);
-    if (proc->mapped_memory == MAP_FAILED) {
-        close(proc->fd);
-        free(proc);
-        return NULL;
-    }
+    proc->mapped_memory = mmap(NULL, proc->file_size, PROT_READ, MAP_PRIVATE, proc->fd, 0);
     
-    // 순차 접근 힌트
+    // 핵심: 순차 접근 패턴 힌트 -> OS가 prefetch 최적화
     madvise(proc->mapped_memory, proc->file_size, MADV_SEQUENTIAL);
     
     return proc;
 }
 
-void processor_destroy(streaming_processor_t *proc) {
-    if (proc) {
-        munmap(proc->mapped_memory, proc->file_size);
-        close(proc->fd);
-        free(proc);
-    }
-}
-
-int processor_next_window(streaming_processor_t *proc, char **window_data, size_t *window_len) {
-    if (proc->current_pos >= proc->file_size) {
-        return 0;  // EOF
-    }
+// 다음 윈도우 가져오기 + 메모리 힌트 관리
+int get_next_window(stream_processor_t *proc, char **data, size_t *len) {
+    if (proc->current_pos >= proc->file_size) return 0;  // 끝
     
+    // 윈도우 크기 결정
     size_t remaining = proc->file_size - proc->current_pos;
-    *window_len = (remaining < proc->window_size) ? remaining : proc->window_size;
-    *window_data = proc->mapped_memory + proc->current_pos;
+    *len = (remaining < proc->window_size) ? remaining : proc->window_size;
+    *data = proc->mapped_memory + proc->current_pos;
     
-    // 다음 윈도우에 대한 힌트
-    size_t prefetch_size = proc->window_size * 2;  // 2 윈도우 ahead
-    if (proc->current_pos + prefetch_size < proc->file_size) {
-        madvise(*window_data + *window_len, prefetch_size, MADV_WILLNEED);
+    // 성능 최적화: 미리 prefetch + 사용 완료된 영역 정리
+    if (proc->current_pos + proc->window_size * 2 < proc->file_size) {
+        // 다음 윈도우 2개를 미리 로드 요청
+        madvise(*data + *len, proc->window_size * 2, MADV_WILLNEED);
     }
     
-    // 이전 윈도우는 더 이상 필요 없음
     if (proc->current_pos > proc->window_size) {
-        madvise(*window_data - proc->window_size, proc->window_size, MADV_DONTNEED);
+        // 이전 윈도우는 캐시에서 제거하여 메모리 절약
+        madvise(*data - proc->window_size, proc->window_size, MADV_DONTNEED);
     }
     
-    proc->current_pos += *window_len;
-    return 1;
+    proc->current_pos += *len;
+    return 1;  // 성공
 }
 
-// 실시간 데이터 처리 시뮬레이션
-void process_streaming_data(const char *filename) {
-    printf("=== 스트리밍 데이터 처리 시뮬레이션 ===\n");
+// 대용량 데이터 윈도우 슬라이딩 처리
+void process_large_file(const char *filename) {
+    printf("=== 윈도우 슬라이딩 데이터 처리 ===, ");
     
-    const size_t window_size = 1024 * 1024;  // 1MB 윈도우
-    streaming_processor_t *proc = processor_create(filename, window_size);
+    const size_t window_size = 2 * 1024 * 1024;  // 2MB 윈도우
+    stream_processor_t *proc = create_processor(filename, window_size);
     
-    if (!proc) {
-        perror("processor creation failed");
-        return;
-    }
+    printf("파일: %.1fMB, 윈도우: %.1fMB, ", 
+           proc->file_size / 1024.0 / 1024.0, window_size / 1024.0 / 1024.0);
     
-    printf("파일 크기: %.1f MB, 윈도우 크기: %.1f MB\n",
-           proc->file_size / 1024.0 / 1024.0,
-           window_size / 1024.0 / 1024.0);
-    
-    double start_time = get_time();
+    double start = get_time();
     size_t total_processed = 0;
-    int window_count = 0;
+    int windows = 0;
     
     char *window_data;
     size_t window_len;
     
-    while (processor_next_window(proc, &window_data, &window_len)) {
-        // 실제 처리 시뮬레이션 (체크섬 계산)
+    // 윈도우별로 순차 처리
+    while (get_next_window(proc, &window_data, &window_len)) {
+        // 실제 데이터 처리: 체크섬 계산
         unsigned char checksum = 0;
         for (size_t i = 0; i < window_len; i++) {
-            checksum ^= window_data[i];
+            checksum ^= window_data[i];  // XOR 체크섬
         }
         
         total_processed += window_len;
-        window_count++;
+        windows++;
         
-        // 진행 상황 출력
-        if (window_count % 100 == 0) {
+        // 진행 상황 보고 (매 50개 윈도우마다)
+        if (windows % 50 == 0) {
             double progress = (double)total_processed / proc->file_size * 100;
-            printf("\r윈도우 %d 처리 완료 (%.1f%%, 체크섬: 0x%02x)", 
-                   window_count, progress, checksum);
+            printf("\r진행: %.1f%% (%d 윈도우, 체크섬: 0x%02x)", 
+                   progress, windows, checksum);
             fflush(stdout);
         }
-        
-        // 실제 처리 시간 시뮬레이션
-        usleep(1000);  // 1ms 지연
     }
     
-    double end_time = get_time();
+    double elapsed = get_time() - start;
     
-    printf("\n스트리밍 처리 완료!\n");
-    printf("처리된 윈도우: %d개\n", window_count);
-    printf("총 처리량: %.1f MB\n", total_processed / 1024.0 / 1024.0);
-    printf("소요 시간: %.3f 초\n", end_time - start_time);
-    printf("처리 속도: %.1f MB/s\n", 
-           (total_processed / 1024.0 / 1024.0) / (end_time - start_time));
+    printf(", 처리 완료!, ");
+    printf("처리량: %.1fMB, 시간: %.3f초, 속도: %.1fMB/s, ",
+           total_processed / 1024.0 / 1024.0, elapsed,
+           (total_processed / 1024.0 / 1024.0) / elapsed);
     
-    processor_destroy(proc);
+    // 정리
+    munmap(proc->mapped_memory, proc->file_size);
+    close(proc->fd);
+    free(proc);
 }
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        printf("Usage: %s <large_file>\n", argv[0]);
+        printf("Usage: %s <large_file>, ", argv[0]);
         return 1;
     }
     
-    process_streaming_data(argv[1]);
-    
+    process_large_file(argv[1]);
     return 0;
 }
-```
+```text
 
 ## 6. 정리와 Best Practices
 
@@ -1217,7 +1124,7 @@ echo "=== 페이지 캐시 ===" && \
 cat /proc/meminfo | grep -E "(Cached|Buffers|Dirty)" && \
 echo "=== THP 사용량 ===" && \
 cat /proc/meminfo | grep AnonHugePages'
-```
+```text
 
 다음 섹션에서는 스왑 관리와 OOM 디버깅을 다뤄보겠습니다.
 

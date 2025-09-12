@@ -48,7 +48,7 @@ sequenceDiagram
         RAM-->>App: 데이터 반환
         Note over App,Disk: 수 밀리초 (10만배 느림!)
     end
-```
+```text
 
 Page fault 하나가 전체 애플리케이션을 수만 배 느리게 만들 수 있습니다.
 
@@ -72,7 +72,7 @@ mindmap
       로드밸런서 제외
       사용자 경험 저하
       비즈니스 영향
-```
+```text
 
 ## 1. Page Fault 종류와 원인 분석
 
@@ -82,8 +82,8 @@ mindmap
 graph TD
     subgraph "Page Fault 분류"
         PF[Page Fault 발생] --> CHECK{페이지가 물리 메모리에?}
-        CHECK -->|있음| MINOR[Minor Page Fault<br/>수 마이크로초]
-        CHECK -->|없음| MAJOR[Major Page Fault<br/>수 밀리초]
+        CHECK -->|있음| MINOR[Minor Page Fault, 수 마이크로초]
+        CHECK -->|없음| MAJOR[Major Page Fault, 수 밀리초]
     end
     
     subgraph "Minor Fault 원인"
@@ -100,7 +100,7 @@ graph TD
     
     style MINOR fill:#c8e6c9
     style MAJOR fill:#ffcccb
-```
+```text
 
 **실제 비용 차이**:
 
@@ -117,90 +117,73 @@ $ cat /proc/1234/stat | cut -d' ' -f10,12
 2340 156    # minor_faults major_faults
 
 # 더 읽기 쉬운 형태로
-$ awk '{print "Minor faults: " $10 "\nMajor faults: " $12}' /proc/1234/stat
+$ awk '{print "Minor faults: " $10 ", Major faults: " $12}' /proc/1234/stat
 Minor faults: 2340
 Major faults: 156
 
 # 실시간 page fault 모니터링
 $ while true; do
     echo -n "$(date '+%H:%M:%S'): "
-    awk '{printf "Minor: %8d, Major: %5d\n", $10, $12}' /proc/1234/stat
+    awk '{printf "Minor: %8d, Major: %5d, ", $10, $12}' /proc/1234/stat
     sleep 1
 done
-```
+```text
 
 **Page Fault 급증 감지 스크립트**:
 
 ```bash
 #!/bin/bash
-# pagefault_monitor.sh
+# pagefault_monitor.sh - Page Fault 실시간 모니터링
 
 PID=$1
 THRESHOLD_MINOR=1000  # 초당 minor fault 임계값
 THRESHOLD_MAJOR=10    # 초당 major fault 임계값
 
-if [ -z "$PID" ]; then
-    echo "Usage: $0 <pid>"
-    exit 1
-fi
+[ -z "$PID" ] && { echo "Usage: $0 <pid>"; exit 1; }
 
-# 이전 값 초기화
-prev_minor=0
-prev_major=0
-prev_time=$(date +%s)
+# 초기값 설정
+prev_minor=0; prev_major=0; prev_time=$(date +%s)
+echo "Page Fault 모니터링 시작: PID $PID (임계값: Minor $THRESHOLD_MINOR/sec, Major $THRESHOLD_MAJOR/sec)"
 
-echo "Page Fault 모니터링 시작: PID $PID"
-echo "Minor fault 임계값: $THRESHOLD_MINOR/sec"
-echo "Major fault 임계값: $THRESHOLD_MAJOR/sec"
-echo ""
-
-while true; do
-    if [ ! -d "/proc/$PID" ]; then
-        echo "프로세스 $PID 종료됨"
-        break
-    fi
-    
-    # 현재 통계 읽기
-    stats=$(cat /proc/$PID/stat 2>/dev/null)
-    if [ -z "$stats" ]; then
-        sleep 1
-        continue
-    fi
-    
-    curr_minor=$(echo $stats | cut -d' ' -f10)
-    curr_major=$(echo $stats | cut -d' ' -f12)  
+while [ -d "/proc/$PID" ]; do
+    # /proc/[pid]/stat에서 page fault 정보 추출
+    stats=$(cat /proc/$PID/stat 2>/dev/null) || continue
+    curr_minor=$(echo $stats | cut -d' ' -f10)    # Minor faults
+    curr_major=$(echo $stats | cut -d' ' -f12)    # Major faults
     curr_time=$(date +%s)
     
+    # 초당 page fault 비율 계산
     if [ $prev_minor -ne 0 ]; then
-        # 초당 page fault 계산
         time_diff=$((curr_time - prev_time))
-        if [ $time_diff -gt 0 ]; then
+        [ $time_diff -gt 0 ] && {
             minor_rate=$(((curr_minor - prev_minor) / time_diff))
             major_rate=$(((curr_major - prev_major) / time_diff))
             
+            # 실시간 출력
             printf "[%s] Minor: %8d/sec, Major: %5d/sec" \
                    "$(date '+%H:%M:%S')" "$minor_rate" "$major_rate"
             
-            # 임계값 초과 경고
-            if [ $minor_rate -gt $THRESHOLD_MINOR ]; then
-                printf " ⚠️  Minor fault 급증!"
-            fi
-            
-            if [ $major_rate -gt $THRESHOLD_MAJOR ]; then
-                printf " 🚨 Major fault 급증!"
-            fi
-            
-            printf "\n"
-        fi
+            # 임계값 초과 시 경고
+            [ $minor_rate -gt $THRESHOLD_MINOR ] && printf " ⚠️ Minor fault 급증!"
+            [ $major_rate -gt $THRESHOLD_MAJOR ] && printf " 🚨 Major fault 급증!"
+            printf ", "
+        }
     fi
     
-    prev_minor=$curr_minor
-    prev_major=$curr_major  
-    prev_time=$curr_time
-    
+    # 다음 주기를 위한 값 저장
+    prev_minor=$curr_minor; prev_major=$curr_major; prev_time=$curr_time
     sleep 1
 done
-```
+
+echo "프로세스 $PID 종료됨"
+```text
+
+**스크립트 주요 기능**:
+
+1. **실시간 모니터링**: `/proc/[pid]/stat`에서 page fault 카운터를 1초마다 읽기
+2. **비율 계산**: 이전 값과 비교하여 초당 page fault 발생률 계산
+3. **임계값 경고**: 설정한 임계값 초과 시 즉시 알림 표시
+4. **프로세스 추적**: 대상 프로세스가 종료될 때까지 지속적 모니터링
 
 ## 2. perf를 이용한 정밀 분석
 
@@ -226,7 +209,7 @@ CPU3                     3,123      page-faults
 
 # cgroup별 page fault 측정 (컨테이너 환경)
 $ perf stat -e page-faults -G docker/container_id ./program
-```
+```text
 
 ### 2.2 페이지 폴트 핫스팟 분석
 
@@ -251,7 +234,7 @@ $ perf annotate --stdio handle_mm_fault
 # 메모리 접근 패턴 분석
 $ perf c2c record ./program          # Cache-to-Cache 전송 기록
 $ perf c2c report --stats            # 분석 결과 출력
-```
+```text
 
 ### 2.3 실시간 페이지 폴트 트레이싱
 
@@ -274,7 +257,7 @@ interval:s:5 {
     print(@faults);
     clear(@faults);
 }'
-```
+```text
 
 ## 3. 메모리 잠금 (mlock/mlockall) 활용
 
@@ -294,11 +277,11 @@ graph TD
     CRYPTO --> MLOCK
     TRADING --> MLOCK
     
-    MLOCK --> CAREFUL[⚠️ 신중한 사용<br/>시스템 메모리 고갈 위험]
+    MLOCK --> CAREFUL[⚠️ 신중한 사용, 시스템 메모리 고갈 위험]
     
     style MLOCK fill:#c8e6c9
     style CAREFUL fill:#fff3e0
-```
+```text
 
 **mlock 사용 시나리오**:
 
@@ -310,7 +293,7 @@ graph TD
 ### 3.2 mlock 구현과 모니터링
 
 ```c
-// mlock_example.c
+// mlock_example.c - 메모리 잠금 예제
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -320,11 +303,10 @@ graph TD
 
 #define BUFFER_SIZE (64 * 1024 * 1024)  // 64MB
 
+// mlock 한계 확인
 void print_mlock_limits() {
-    // mlock 가능한 최대 메모리 확인
     FILE *limits = fopen("/proc/self/limits", "r");
     char line[256];
-    
     while (fgets(line, sizeof(line), limits)) {
         if (strstr(line, "Max locked memory")) {
             printf("Max locked memory: %s", line);
@@ -334,68 +316,69 @@ void print_mlock_limits() {
     fclose(limits);
 }
 
+// 선택적 mlock: 중요한 부분만 잠금
 void test_selective_mlock() {
-    printf("=== 선택적 mlock 테스트 ===\n");
+    printf("=== 선택적 mlock 테스트 ===, ");
     
-    // 큰 버퍼 할당
     void *buffer = malloc(BUFFER_SIZE);
     if (!buffer) {
         perror("malloc failed");
         return;
     }
     
-    // 중요한 부분만 mlock (처음 4KB)
+    // 처음 4KB만 물리 메모리에 고정
     size_t critical_size = 4096;
-    if (mlock(buffer, critical_size) == -1) {
-        printf("mlock 실패: %s\n", strerror(errno));
-        printf("ulimit -l로 locked memory 한계 확인 필요\n");
+    if (mlock(buffer, critical_size) == 0) {
+        printf("Critical section (%zu bytes) locked 성공, ", critical_size);
+        
+        // 전체 버퍼 사용 (mlock된 부분은 page fault 없음)
+        memset(buffer, 0xAA, BUFFER_SIZE);
+        
+        munlock(buffer, critical_size);
     } else {
-        printf("Critical section (%zu bytes) locked 성공\n", critical_size);
+        printf("mlock 실패: %s (ulimit -l 확인 필요), ", strerror(errno));
     }
     
-    // 메모리 사용 (page fault 유발)
-    memset(buffer, 0xAA, BUFFER_SIZE);
-    
-    // 통계 확인
-    printf("mlock 후 page fault 통계:\n");
-    system("grep -E '(minor|major)_fault' /proc/self/stat");
-    
-    // 해제
-    munlock(buffer, critical_size);
     free(buffer);
 }
 
+// mlockall: 전체 프로세스 메모리 잠금
 void test_mlockall() {
-    printf("\n=== mlockall 테스트 ===\n");
+    printf(", === mlockall 테스트 ===, ");
     
-    // 현재 및 미래 모든 페이지 잠금
-    if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
-        printf("mlockall 실패: %s\n", strerror(errno));
-        return;
+    // 현재 + 미래 모든 페이지 잠금
+    if (mlockall(MCL_CURRENT | MCL_FUTURE) == 0) {
+        printf("전체 메모리 잠금 성공 - 새 할당도 자동 잠김, ");
+        
+        void *buffer = malloc(1024 * 1024);  // 1MB (자동으로 잠김)
+        memset(buffer, 0xBB, 1024 * 1024);
+        
+        free(buffer);
+        munlockall();
+    } else {
+        printf("mlockall 실패: %s, ", strerror(errno));
     }
-    
-    printf("모든 메모리 잠금 성공\n");
-    
-    // 새 메모리 할당 (자동으로 잠김)
-    void *buffer = malloc(1024 * 1024);  // 1MB
-    memset(buffer, 0xBB, 1024 * 1024);
-    
-    printf("새 할당 메모리도 자동으로 잠김\n");
-    
-    // 해제
-    free(buffer);
-    munlockall();
 }
 
 int main() {
     print_mlock_limits();
-    
     test_selective_mlock();
     test_mlockall();
-    
     return 0;
 }
-```
+```text
+
+**mlock 사용법 핵심**:
+
+1. **선택적 mlock**: 중요한 메모리 영역만 물리 메모리에 고정
+   - 실시간 시스템의 핵심 버퍼
+   - 암호화 키나 민감한 데이터
+   - 고빈도 거래 시스템의 주요 자료구조
+
+2. **mlockall**: 프로세스 전체 메모리 잠금
+   - MCL_CURRENT: 현재 할당된 모든 메모리
+   - MCL_FUTURE: 향후 할당될 메모리도 자동 잠금
+   - 시스템 메모리 고갈 위험 주의
 
 **컴파일 및 실행**:
 
@@ -415,118 +398,95 @@ grep: /proc/self/stat: No such file or directory
 === mlockall 테스트 ===
 모든 메모리 잠금 성공
 새 할당 메모리도 자동으로 잠김
-```
+```text
 
 ### 3.3 mlock 사용 시 주의사항과 모니터링
 
 ```python
 #!/usr/bin/env python3
-# mlock_monitor.py
+# mlock_monitor.py - mlock 사용량 모니터링
 import os
 import time
-import signal
-import sys
 
-class MLockMonitor:
-    def __init__(self):
-        self.running = True
-        
-    def get_system_mlock_info(self):
-        """시스템 전체 mlock 정보 수집"""
-        info = {}
-        
-        try:
-            with open('/proc/meminfo') as f:
-                for line in f:
-                    if 'Mlocked:' in line:
-                        info['mlocked_kb'] = int(line.split()[1])
-                    elif 'MemTotal:' in line:
-                        info['total_kb'] = int(line.split()[1])
-        except:
-            pass
-            
-        return info
-    
-    def get_process_mlock_info(self, pid):
-        """특정 프로세스의 mlock 정보"""
+def get_system_mlock_info():
+    """시스템 전체 mlock 정보 수집"""
+    info = {'mlocked_kb': 0, 'total_kb': 0}
+    try:
+        with open('/proc/meminfo') as f:
+            for line in f:
+                if 'Mlocked:' in line:
+                    info['mlocked_kb'] = int(line.split()[1])
+                elif 'MemTotal:' in line:
+                    info['total_kb'] = int(line.split()[1])
+    except:
+        pass
+    return info
+
+def get_top_mlock_processes():
+    """mlock 사용량이 높은 프로세스 찾기"""
+    processes = []
+    for pid in os.listdir('/proc'):
+        if not pid.isdigit():
+            continue
         try:
             with open(f'/proc/{pid}/status') as f:
+                mlock_kb = 0
+                comm = 'unknown'
                 for line in f:
                     if 'VmLck:' in line:
-                        return int(line.split()[1])  # KB 단위
+                        mlock_kb = int(line.split()[1])
+                    elif 'Name:' in line:
+                        comm = line.split()[1]
+                
+                if mlock_kb > 1024:  # 1MB 이상만
+                    processes.append((int(pid), comm, mlock_kb))
         except:
-            return 0
-        
-        return 0
+            continue
     
-    def monitor_mlock_usage(self, duration=300, interval=5):
-        """mlock 사용량 모니터링"""
-        print("mlock 사용량 모니터링 시작...")
-        print(f"Duration: {duration}초, Interval: {interval}초")
-        print()
-        
-        start_time = time.time()
-        
-        while time.time() - start_time < duration and self.running:
-            # 시스템 전체 정보
-            sys_info = self.get_system_mlock_info()
-            
-            mlocked_mb = sys_info.get('mlocked_kb', 0) // 1024
-            total_mb = sys_info.get('total_kb', 0) // 1024
-            mlock_percent = (mlocked_mb / total_mb * 100) if total_mb > 0 else 0
-            
-            print(f"[{time.strftime('%H:%M:%S')}] "
-                  f"System mlock: {mlocked_mb:5d}MB / {total_mb:5d}MB "
-                  f"({mlock_percent:.1f}%)")
-            
-            # 상위 mlock 사용 프로세스들
-            mlock_processes = []
-            try:
-                for pid in os.listdir('/proc'):
-                    if pid.isdigit():
-                        mlock_kb = self.get_process_mlock_info(int(pid))
-                        if mlock_kb > 0:
-                            try:
-                                with open(f'/proc/{pid}/comm') as f:
-                                    comm = f.read().strip()
-                                mlock_processes.append((int(pid), comm, mlock_kb))
-                            except:
-                                continue
-            except:
-                pass
-            
-            # 상위 5개 프로세스 출력
-            mlock_processes.sort(key=lambda x: x[2], reverse=True)
-            for pid, comm, mlock_kb in mlock_processes[:5]:
-                if mlock_kb >= 1024:  # 1MB 이상만
-                    print(f"  PID {pid:5d} ({comm:15s}): {mlock_kb//1024:4d}MB locked")
-            
-            # 위험 수준 체크
-            if mlock_percent > 50:
-                print("  ⚠️  시스템 mlock 사용량이 50% 초과!")
-            elif mlock_percent > 80:
-                print("  🚨 시스템 mlock 사용량 위험 수준!")
-            
-            print()
-            time.sleep(interval)
-    
-    def stop(self):
-        self.running = False
+    return sorted(processes, key=lambda x: x[2], reverse=True)[:5]
 
-def signal_handler(signum, frame):
-    print("\n모니터링 중단...")
-    monitor.stop()
+def monitor_mlock_usage(duration=300, interval=5):
+    """mlock 사용량 실시간 모니터링"""
+    print(f"mlock 모니터링 시작 ({duration}초간, {interval}초 간격)")
+    
+    start_time = time.time()
+    while time.time() - start_time < duration:
+        # 시스템 전체 mlock 정보
+        sys_info = get_system_mlock_info()
+        mlocked_mb = sys_info['mlocked_kb'] // 1024
+        total_mb = sys_info['total_kb'] // 1024
+        mlock_percent = (mlocked_mb / total_mb * 100) if total_mb > 0 else 0
+        
+        print(f", [{time.strftime('%H:%M:%S')}] 시스템 mlock: {mlocked_mb:5d}MB / {total_mb:5d}MB ({mlock_percent:.1f}%)")
+        
+        # 위험 수준 경고
+        if mlock_percent > 80:
+            print("  🚨 mlock 사용량 위험 수준!")
+        elif mlock_percent > 50:
+            print("  ⚠️ mlock 사용량 주의 (50% 초과)")
+        
+        # 상위 mlock 사용 프로세스
+        top_processes = get_top_mlock_processes()
+        if top_processes:
+            print("  상위 mlock 사용 프로세스:")
+            for pid, comm, mlock_kb in top_processes:
+                print(f"    PID {pid:5d} ({comm:12s}): {mlock_kb//1024:4d}MB")
+        
+        time.sleep(interval)
 
 if __name__ == '__main__':
-    monitor = MLockMonitor()
-    
-    signal.signal(signal.SIGINT, signal_handler)
-    
     try:
-        monitor.monitor_mlock_usage()
+        monitor_mlock_usage()
     except KeyboardInterrupt:
-        print("\n프로그램 종료")
-```
+        print(", 모니터링 종료")
+```text
+
+**모니터링 핵심 기능**:
+
+1. **시스템 전체 mlock 사용량**: `/proc/meminfo`에서 Mlocked 값 추출
+2. **프로세스별 mlock**: `/proc/[pid]/status`의 VmLck 필드 확인
+3. **위험 수준 경고**: 시스템 메모리 대비 mlock 비율이 높을 때 알림
+4. **상위 사용자**: mlock을 많이 사용하는 프로세스 TOP 5 표시
 
 ## 4. Page Fault 최적화 전략
 
@@ -549,7 +509,7 @@ double get_time() {
 }
 
 void test_sequential_access() {
-    printf("=== 순차 접근 테스트 ===\n");
+    printf("=== 순차 접근 테스트 ===, ");
     
     int *array = malloc(ARRAY_SIZE * sizeof(int));
     double start = get_time();
@@ -560,13 +520,13 @@ void test_sequential_access() {
     }
     
     double end = get_time();
-    printf("순차 접근 시간: %.3f초\n", end - start);
+    printf("순차 접근 시간: %.3f초, ", end - start);
     
     free(array);
 }
 
 void test_random_access() {
-    printf("\n=== 랜덤 접근 테스트 ===\n");
+    printf(", === 랜덤 접근 테스트 ===, ");
     
     int *array = malloc(ARRAY_SIZE * sizeof(int));
     double start = get_time();
@@ -578,13 +538,13 @@ void test_random_access() {
     }
     
     double end = get_time();
-    printf("랜덤 접근 시간: %.3f초\n", end - start);
+    printf("랜덤 접근 시간: %.3f초, ", end - start);
     
     free(array);
 }
 
 void test_page_aligned_access() {
-    printf("\n=== 페이지 정렬 접근 테스트 ===\n");
+    printf(", === 페이지 정렬 접근 테스트 ===, ");
     
     // 페이지 경계에 정렬된 메모리 할당
     void *raw_ptr = malloc(ARRAY_SIZE * sizeof(int) + PAGE_SIZE);
@@ -601,14 +561,14 @@ void test_page_aligned_access() {
     }
     
     double end = get_time();
-    printf("페이지별 접근 시간: %.3f초\n", end - start);
+    printf("페이지별 접근 시간: %.3f초, ", end - start);
     
     free(raw_ptr);
 }
 
 int main() {
-    printf("메모리 접근 패턴과 Page Fault 관계 테스트\n");
-    printf("Array size: %zu MB\n\n", (ARRAY_SIZE * sizeof(int)) / (1024 * 1024));
+    printf("메모리 접근 패턴과 Page Fault 관계 테스트, ");
+    printf("Array size: %zu MB, , ", (ARRAY_SIZE * sizeof(int)) / (1024 * 1024));
     
     test_sequential_access();
     test_random_access();
@@ -616,7 +576,7 @@ int main() {
     
     return 0;
 }
-```
+```text
 
 ### 4.2 Prefault 기법
 
@@ -637,7 +597,7 @@ double get_time() {
 }
 
 void test_without_prefault() {
-    printf("=== Prefault 없이 테스트 ===\n");
+    printf("=== Prefault 없이 테스트 ===, ");
     
     // 큰 메모리 할당 (실제로는 가상 메모리만)
     char *buffer = malloc(BUFFER_SIZE);
@@ -650,26 +610,26 @@ void test_without_prefault() {
     }
     
     double end = get_time();
-    printf("Page fault 발생 시간: %.3f초\n", end - start);
+    printf("Page fault 발생 시간: %.3f초, ", end - start);
     
     free(buffer);
 }
 
 void test_with_prefault() {
-    printf("\n=== Prefault 적용 테스트 ===\n");
+    printf(", === Prefault 적용 테스트 ===, ");
     
     char *buffer = malloc(BUFFER_SIZE);
     
     double start = get_time();
     
     // Prefault: 미리 모든 페이지에 접근하여 page fault 유발
-    printf("Prefaulting...\n");
+    printf("Prefaulting..., ");
     for (int i = 0; i < BUFFER_SIZE; i += 4096) {
         buffer[i] = 0;  // 각 페이지의 첫 바이트 접근
     }
     
     // 실제 작업 (이제 page fault 없음)
-    printf("실제 작업 시작...\n");
+    printf("실제 작업 시작..., ");
     double work_start = get_time();
     
     for (int i = 0; i < BUFFER_SIZE; i += 4096) {
@@ -679,14 +639,14 @@ void test_with_prefault() {
     double work_end = get_time();
     double total_end = get_time();
     
-    printf("Prefault + 작업 총시간: %.3f초\n", total_end - start);
-    printf("실제 작업 시간: %.3f초\n", work_end - work_start);
+    printf("Prefault + 작업 총시간: %.3f초, ", total_end - start);
+    printf("실제 작업 시간: %.3f초, ", work_end - work_start);
     
     free(buffer);
 }
 
 void test_mmap_prefault() {
-    printf("\n=== mmap + MAP_POPULATE 테스트 ===\n");
+    printf(", === mmap + MAP_POPULATE 테스트 ===, ");
     
     double start = get_time();
     
@@ -705,14 +665,14 @@ void test_mmap_prefault() {
     }
     
     double end = get_time();
-    printf("MAP_POPULATE 총시간: %.3f초\n", end - start);
+    printf("MAP_POPULATE 총시간: %.3f초, ", end - start);
     
     munmap(buffer, BUFFER_SIZE);
 }
 
 int main() {
-    printf("Prefault 기법 성능 비교\n");
-    printf("Buffer size: %d MB\n\n", BUFFER_SIZE / (1024 * 1024));
+    printf("Prefault 기법 성능 비교, ");
+    printf("Buffer size: %d MB, , ", BUFFER_SIZE / (1024 * 1024));
     
     test_without_prefault();
     test_with_prefault();
@@ -720,7 +680,7 @@ int main() {
     
     return 0;
 }
-```
+```text
 
 ## 5. 실무 Page Fault 트러블슈팅
 
@@ -746,7 +706,7 @@ flowchart TD
     
     PROFILE --> PREFETCH[프리페치 적용]
     PROFILE --> MLOCK[중요 영역 mlock]
-```
+```text
 
 ### 5.2 자동화된 Page Fault 알림 시스템
 
@@ -827,7 +787,7 @@ Alerts:
 """
         
         for alert in alerts:
-            message += f"- {alert['type']}: {alert['rate']:.1f}/sec (threshold: {alert['threshold']}/sec)\n"
+            message += f"- {alert['type']}: {alert['rate']:.1f}/sec (threshold: {alert['threshold']}/sec), "
         
         print(f"🚨 ALERT: {message}")
         
@@ -899,8 +859,8 @@ if __name__ == '__main__':
     try:
         alerting.monitor_processes(process_patterns, duration=3600, interval=5)
     except KeyboardInterrupt:
-        print("\n모니터링 종료")
-```
+        print(", 모니터링 종료")
+```text
 
 ## 6. 정리와 Best Practices
 

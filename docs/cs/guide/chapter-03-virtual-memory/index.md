@@ -37,17 +37,17 @@ tags:
 ```mermaid
 graph TB
     subgraph "Virtual Address Space"
-        VA[가상 주소<br/>48-bit]
-        VP[가상 페이지 번호<br/>36-bit]
-        VO[페이지 오프셋<br/>12-bit]
+        VA[가상 주소, 48-bit]
+        VP[가상 페이지 번호, 36-bit]
+        VO[페이지 오프셋, 12-bit]
         VA --> VP
         VA --> VO
     end
     
     subgraph "Address Translation"
-        MMU[MMU<br/>Memory Management Unit]
-        PT[페이지 테이블<br/>4-level]
-        TLB[TLB<br/>Translation Cache]
+        MMU[MMU, Memory Management Unit]
+        PT[페이지 테이블, 4-level]
+        TLB[TLB, Translation Cache]
         
         VP --> TLB
         TLB -->|Hit| PA
@@ -67,7 +67,7 @@ graph TB
     style VA fill:#FFE082
     style TLB fill:#81C784
     style PA fill:#64B5F6
-```
+```text
 
 ## 이 장의 구성
 
@@ -166,7 +166,7 @@ $ sar -B 1                   # 페이징 통계
 # 메모리 설정
 $ sysctl vm.swappiness      # 스왑 성향 조정
 $ echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
-```
+```text
 
 ## 이 장을 읽고 나면
 
@@ -233,7 +233,7 @@ mindmap
         Static Huge Pages
         THP
         성능 영향
-```
+```text
 
 ## 가상 메모리 문제 진단 플로우차트
 
@@ -256,7 +256,7 @@ graph TD
     Type -->|랜덤 크래시| Protection[메모리 보호 위반]
     Protection --> SegFault[세그폴트 분석]
     Protection --> Permission[권한 설정 확인]
-```
+```text
 
 ## 관련 문서
 

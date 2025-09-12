@@ -53,11 +53,11 @@ Unit"]
     VA --> MMU --> PA
     
     style MMU fill:#FFE082
-```
+```text
 
 가상 주소의 구성:
 
-```
+```text
 64비트 시스템 (실제로는 48비트 사용):
 ┌──────────────┬─────────────────────────────────┐
 │   사용 안 함  │         사용되는 48비트          │
@@ -66,7 +66,7 @@ Unit"]
  63          48 47                              0
 
 48비트 = 256TB 주소 공간
-```
+```text
 
 ### 1.2 왜 주소 변환이 필요한가? 주소 충돌의 비극
 
@@ -84,7 +84,7 @@ int* data = (int*)0x1000;  // 같은 주소!
 *data = 99;
 
 // 충돌! Program A의 데이터가 덮어써짐
-```
+```text
 
 #### 해결책: 가상 주소라는 마법
 
@@ -100,7 +100,7 @@ int* data = (int*)0x1000;  // → 물리 주소 0x9000
 *data = 99;
 
 // 안전! 서로 다른 물리 메모리 사용
-```
+```text
 
 ### 1.3 페이지 단위 관리: 메모리를 책처럼 나누기
 
@@ -108,7 +108,7 @@ int* data = (int*)0x1000;  // → 물리 주소 0x9000
 
 메모리는 페이지라는 고정 크기 단위로 관리됩니다:
 
-```
+```text
 4KB 페이지 (일반적)
 ┌────────────────┐ 0x0000
 │    Page 0      │
@@ -124,7 +124,7 @@ int* data = (int*)0x1000;  // → 물리 주소 0x9000
 0x12345678
 = Page Number: 0x12345 (상위 20비트)
 + Offset: 0x678 (하위 12비트)
-```
+```text
 
 ## 2. 단일 레벨 페이지 테이블: 첫 번째 시도
 
@@ -149,7 +149,7 @@ struct page_table_entry {
 
 struct page_table_entry page_table[TOTAL_PAGES];
 // 크기 = 2^20 * 4 bytes = 4MB per process!
-```
+```text
 
 ### 2.2 주소 변환 과정: 실제로 어떻게 찾을까?
 
@@ -174,13 +174,13 @@ uint32_t translate_address_simple(uint32_t virtual_addr) {
     uint32_t physical_addr = (pte.frame_number << 12) | offset;
     return physical_addr;
 }
-```
+```text
 
 ### 2.3 문제점: 현실의 벽
 
 이 아이디어는 32비트 시절엔 그럭저럭 괜찮았습니다. 하지만 64비트 시대가 오면서...
 
-```
+```text
 64비트 시스템의 충격적인 계산:
 - 48비트 주소 공간 = 256TB (테라바이트!)
 - 4KB 페이지 = 2^12 bytes
@@ -192,7 +192,7 @@ uint32_t translate_address_simple(uint32_t virtual_addr) {
 크롬 탭 10개면 5TB???
 
 이건 말이 안 됩니다. 다른 방법이 필요해요!
-```
+```text
 
 ## 3. 다단계 페이지 테이블: 천재적인 해결책
 
@@ -230,26 +230,25 @@ PT 인덱스"]
     
     style CR3 fill:#4CAF50
     style PA fill:#2196F3
-```
+```text
 
 ### 3.2 실제 변환 코드: CPU가 주소를 찾는 여정
 
 CPU가 가상 주소를 물리 주소로 변환하는 과정은 마치 보물찾기와 같습니다. 4개의 지도를 차례로 따라가야 하죠:
 
 ```c
-// x86-64 페이지 워크: CPU의 4단계 보물찾기 (5-level도 지원)
-// Intel LA57 확장으로 5-level paging 가능 (57-bit 주소공간)
+// x86-64 페이지 워크: CPU의 4단계 보물찾기
 typedef struct {
     uint64_t entries[512];  // 각 테이블은 512개 항목
 } page_table_t;
 
 // 가상 주소를 물리 주소로 변환하는 마법의 여정
 uint64_t walk_page_table(uint64_t vaddr) {
-    printf("주소 변환 시작: 0x%lx\n", vaddr);
+    printf("주소 변환 시작: 0x%lx, ", vaddr);
     // Step 1: CR3 레지스터에서 첫 번째 지도(PML4) 위치 확인
     uint64_t cr3 = read_cr3();  // CPU의 "GPS 좌표"
     page_table_t* pml4 = (page_table_t*)(cr3 & ~0xFFF);
-    printf("  [1단계] PML4 테이블 위치: 0x%lx\n", cr3);
+    printf("  [1단계] PML4 테이블 위치: 0x%lx, ", cr3);
     
     // 가상 주소를 5개 조각으로 분해 (마치 우편번호처럼)
     uint64_t pml4_idx = (vaddr >> 39) & 0x1FF;  // 국가 (9 bits)
@@ -258,19 +257,19 @@ uint64_t walk_page_table(uint64_t vaddr) {
     uint64_t pt_idx   = (vaddr >> 12) & 0x1FF;  // 거리 (9 bits)
     uint64_t offset   = vaddr & 0xFFF;          // 집 번호 (12 bits)
     
-    printf("  주소 분해: PML4[%ld] → PDPT[%ld] → PD[%ld] → PT[%ld] + %ld\n",
+    printf("  주소 분해: PML4[%ld] → PDPT[%ld] → PD[%ld] → PT[%ld] + %ld, ",
            pml4_idx, pdpt_idx, pd_idx, pt_idx, offset);
     
     // Level 1: PML4 (첫 번째 관문)
     uint64_t pml4_entry = pml4->entries[pml4_idx];
     if (!(pml4_entry & 1)) {  // Present bit - 문이 잠겨있나?
-        printf("  [실패] PML4에서 막힘 - Page Fault!\n");
+        printf("  [실패] PML4에서 막힘 - Page Fault!, ");
         page_fault(vaddr, FAULT_NOT_PRESENT);
         return 0;
     }
-    printf("  [2단계] PML4 통과 → PDPT로 이동\n");
+    printf("  [2단계] PML4 통과 → PDPT로 이동, ");
     
-    // Level 2: PDPT
+    // Level 2: PDPT 확인 (1GB Huge Page 체크)
     page_table_t* pdpt = (page_table_t*)(pml4_entry & ~0xFFF);
     uint64_t pdpt_entry = pdpt->entries[pdpt_idx];
     if (!(pdpt_entry & 1)) {
@@ -280,12 +279,12 @@ uint64_t walk_page_table(uint64_t vaddr) {
     
     // 1GB Huge Page 확인 (고속도로 발견!)
     if (pdpt_entry & (1 << 7)) {  // PS bit = Page Size
-        printf("  [단축] 1GB Huge Page 발견! 바로 도착\n");
+        printf("  [단축] 1GB Huge Page 발견! 바로 도착, ");
         uint64_t page_1gb = pdpt_entry & ~0x3FFFFFFF;
         return page_1gb | (vaddr & 0x3FFFFFFF);
     }
     
-    // Level 3: PD
+    // Level 3: PD 확인 (2MB Huge Page 체크)
     page_table_t* pd = (page_table_t*)(pdpt_entry & ~0xFFF);
     uint64_t pd_entry = pd->entries[pd_idx];
     if (!(pd_entry & 1)) {
@@ -295,7 +294,7 @@ uint64_t walk_page_table(uint64_t vaddr) {
     
     // 2MB Huge Page 확인 (지름길 발견!)
     if (pd_entry & (1 << 7)) {  // PS bit
-        printf("  [단축] 2MB Huge Page 발견! 빠른 길로\n");
+        printf("  [단축] 2MB Huge Page 발견! 빠른 길로, ");
         uint64_t page_2mb = pd_entry & ~0x1FFFFF;
         return page_2mb | (vaddr & 0x1FFFFF);
     }
@@ -318,14 +317,36 @@ uint64_t walk_page_table(uint64_t vaddr) {
     uint64_t page_4kb = pt_entry & ~0xFFF;
     uint64_t physical_addr = page_4kb | offset;
     
-    printf("  [성공] 변환 완료!\n");
-    printf("  가상 주소: 0x%016lx\n", vaddr);
-    printf("  물리 주소: 0x%016lx\n", physical_addr);
-    printf("  총 4번의 메모리 접근 (약 100 사이클)\n");
+    printf("  [성공] 변환 완료!, ");
+    printf("  가상 주소: 0x%016lx, ", vaddr);
+    printf("  물리 주소: 0x%016lx, ", physical_addr);
+    printf("  총 4번의 메모리 접근 (약 100 사이클), ");
     
     return physical_addr;
 }
-```
+```text
+
+**페이지 워크 과정 상세 설명**:
+
+1. **주소 분해**: 48비트 가상 주소를 5개 부분으로 나눕니다
+   - PML4 인덱스 (9비트): 최상위 테이블 선택
+   - PDPT 인덱스 (9비트): 2단계 테이블 선택  
+   - PD 인덱스 (9비트): 3단계 테이블 선택
+   - PT 인덱스 (9비트): 최종 테이블 선택
+   - 오프셋 (12비트): 페이지 내 위치
+
+2. **4단계 탐색**: 각 단계에서 Present 비트 확인
+   - 비트가 0이면 → 페이지 폴트 발생
+   - 비트가 1이면 → 다음 단계로 진행
+
+3. **Huge Page 단축**: 2MB/1GB 페이지 발견 시 조기 종료
+   - PDPT 레벨에서 PS 비트 = 1GB 페이지
+   - PD 레벨에서 PS 비트 = 2MB 페이지
+
+4. **권한 검사**: 최종 단계에서 접근 권한 확인
+   - User 비트: 사용자 모드 접근 가능 여부
+   - Write 비트: 쓰기 접근 가능 여부
+   - NX 비트: 실행 방지 여부
 
 ### 3.3 페이지 테이블 엔트리 상세: 각 항목이 담는 정보
 
@@ -359,7 +380,7 @@ void set_page_permissions(pte_t* pte, int prot) {
     pte->bits.user = 1;  // 사용자 접근 허용
     pte->bits.nx = (prot & PROT_EXEC) ? 0 : 1;  // 실행 권한
 }
-```
+```text
 
 ## 4. 주소 변환 최적화: 속도의 비밀
 
@@ -394,7 +415,7 @@ uint64_t translate_with_tlb(uint64_t vaddr) {
         if (dtlb[i].valid && dtlb[i].vpn == vpn) {
             // TLB Hit! 대박! 100사이클 절약!
             tlb_hits++;
-            printf("TLB Hit! (적중률: %.1f%%)\n", 
+            printf("TLB Hit! (적중률: %.1f%%), ", 
                    100.0 * tlb_hits / (tlb_hits + tlb_misses));
             return (dtlb[i].pfn << 12) | (vaddr & 0xFFF);
         }
@@ -402,23 +423,23 @@ uint64_t translate_with_tlb(uint64_t vaddr) {
     
     // TLB Miss - 아쉽... 느린 길로 가야 함
     tlb_misses++;
-    printf("TLB Miss! 페이지 워크 시작 (100 사이클 소요)\n");
+    printf("TLB Miss! 페이지 워크 시작 (100 사이클 소요), ");
     
     uint64_t paddr = walk_page_table(vaddr);
     
     // TLB에 결과 저장 (다음엔 빠르게!)
     update_tlb(vpn, paddr >> 12);
-    printf("TLB 업데이트 완료 - 다음 접근은 빠를 거예요\n");
+    printf("TLB 업데이트 완료 - 다음 접근은 빠를 거예요, ");
     
     return paddr;
 }
-```
+```text
 
 ### 4.2 변환 시간 비교: 숫자로 보는 성능 차이
 
 실제 측정 결과를 보면 TLB의 중요성을 실감할 수 있습니다:
 
-```
+```text
 주소 변환 성능 측정 (Intel Core i7):
 
 TLB Hit:     ~1 cycle        🚀 초고속!
@@ -435,7 +456,7 @@ TLB Miss:
 1 cycle × 0.99 (hit) + 100 cycles × 0.01 (miss) = ~2 cycles
 
 결론: TLB 덕분에 50배 빨라짐!
-```
+```text
 
 ### 4.3 페이지 워크 캐시 (PWC): 중간 단계도 기억하기
 
@@ -466,7 +487,7 @@ uint64_t walk_with_pwc(uint64_t vaddr) {
     // 전체 워크 수행
     return walk_page_table(vaddr);
 }
-```
+```text
 
 ## 5. 특수한 주소 변환: 고급 기법들
 
@@ -494,23 +515,23 @@ void setup_huge_page(uint64_t vaddr, uint64_t paddr) {
 
 // 실제 성능 측정
 void benchmark_page_sizes() {
-    printf("=== 1GB 메모리 관리 비교 ===\n");
-    printf("4KB 페이지 사용시:\n");
-    printf("  - 필요한 페이지: 262,144개\n");
-    printf("  - TLB 엔트리 소진: 매우 빠름\n");
-    printf("  - 성능: 기준\n\n");
+    printf("=== 1GB 메모리 관리 비교 ===, ");
+    printf("4KB 페이지 사용시:, ");
+    printf("  - 필요한 페이지: 262,144개, ");
+    printf("  - TLB 엔트리 소진: 매우 빠름, ");
+    printf("  - 성능: 기준, , ");
     
-    printf("2MB Huge Page 사용시:\n");
-    printf("  - 필요한 페이지: 512개\n");
-    printf("  - TLB 효율: 512배 향상!\n");
-    printf("  - 성능: 10-30% 향상\n\n");
+    printf("2MB Huge Page 사용시:, ");
+    printf("  - 필요한 페이지: 512개, ");
+    printf("  - TLB 효율: 512배 향상!, ");
+    printf("  - 성능: 10-30% 향상, , ");
     
-    printf("1GB Huge Page 사용시:\n");
-    printf("  - 필요한 페이지: 1개\n");
-    printf("  - TLB 미스: 거의 없음\n");
-    printf("  - 성능: 데이터베이스 30-50% 향상!\n");
+    printf("1GB Huge Page 사용시:, ");
+    printf("  - 필요한 페이지: 1개, ");
+    printf("  - TLB 미스: 거의 없음, ");
+    printf("  - 성능: 데이터베이스 30-50% 향상!, ");
 }
-```
+```text
 
 ### 5.2 5-Level Paging (LA57): 미래를 위한 준비
 
@@ -531,7 +552,7 @@ typedef struct {
 // 128PB 주소 공간!
 #define MAX_VADDR_5LEVEL (1ULL << 57)
 #endif
-```
+```text
 
 ## 6. 주소 변환 디버깅: 문제를 찾아서
 
@@ -542,26 +563,26 @@ typedef struct {
 ```c
 void dump_page_tables(uint64_t vaddr) {
     uint64_t cr3 = read_cr3();
-    printf("CR3: 0x%016lx\n", cr3);
+    printf("CR3: 0x%016lx, ", cr3);
     
     // PML4
     uint64_t pml4_idx = (vaddr >> 39) & 0x1FF;
     uint64_t* pml4 = (uint64_t*)(cr3 & ~0xFFF);
-    printf("PML4[%03lx] = 0x%016lx\n", pml4_idx, pml4[pml4_idx]);
+    printf("PML4[%03lx] = 0x%016lx, ", pml4_idx, pml4[pml4_idx]);
     
     if (!(pml4[pml4_idx] & 1)) {
-        printf("Not present at PML4\n");
+        printf("Not present at PML4, ");
         return;
     }
     
     // PDPT
     uint64_t pdpt_idx = (vaddr >> 30) & 0x1FF;
     uint64_t* pdpt = (uint64_t*)(pml4[pml4_idx] & ~0xFFF);
-    printf("PDPT[%03lx] = 0x%016lx\n", pdpt_idx, pdpt[pdpt_idx]);
+    printf("PDPT[%03lx] = 0x%016lx, ", pdpt_idx, pdpt[pdpt_idx]);
     
     // 계속...
 }
-```
+```text
 
 ### 6.2 변환 추적: 리눅스 도구 활용하기
 
@@ -574,7 +595,7 @@ $ sudo ./translate_addr [pid] [vaddr]
 
 # 페이지 테이블 통계
 $ sudo perf stat -e dTLB-loads,dTLB-load-misses ./program
-```
+```text
 
 ## 7. 실전: 주소 변환 성능 최적화 노하우
 
@@ -593,7 +614,7 @@ void bad_access_pattern(int* array, int size) {
     }
     
     clock_t end = clock();
-    printf("랜덤 접근: %.2f초 (TLB 미스 폭발!)\n", 
+    printf("랜덤 접근: %.2f초 (TLB 미스 폭발!), ", 
            (double)(end - start) / CLOCKS_PER_SEC);
 }
 
@@ -606,7 +627,7 @@ void good_access_pattern(int* array, int size) {
     }
     
     clock_t end = clock();
-    printf("순차 접근: %.2f초 (TLB 적중률 99%%!)\n", 
+    printf("순차 접근: %.2f초 (TLB 적중률 99%%!), ", 
            (double)(end - start) / CLOCKS_PER_SEC);
 }
 
@@ -614,14 +635,14 @@ void good_access_pattern(int* array, int size) {
 // 랜덤 접근: 8.31초 (TLB 미스 폭발!)
 // 순차 접근: 0.92초 (TLB 적중률 99%!)
 // 성능 차이: 9배!
-```
+```text
 
 ### 7.2 Huge Pages 활용: 대용량 데이터의 비밀 무기
 
 ```c
 // Redis, PostgreSQL이 사용하는 기법
 void* allocate_huge_memory(size_t size) {
-    printf("대용량 메모리 할당 시도: %zu bytes\n", size);
+    printf("대용량 메모리 할당 시도: %zu bytes, ", size);
     // 2MB 정렬
     size = (size + (2*1024*1024 - 1)) & ~(2*1024*1024 - 1);
     
@@ -631,20 +652,20 @@ void* allocate_huge_memory(size_t size) {
                     -1, 0);
     
     if (ptr == MAP_FAILED) {
-        printf("Huge Pages 실패, 일반 페이지로 전환\n");
+        printf("Huge Pages 실패, 일반 페이지로 전환, ");
         // Fallback to normal pages
         ptr = mmap(NULL, size,
                   PROT_READ | PROT_WRITE,
                   MAP_PRIVATE | MAP_ANONYMOUS,
                   -1, 0);
-        printf("일반 4KB 페이지 사용 (성능 저하 예상)\n");
+        printf("일반 4KB 페이지 사용 (성능 저하 예상), ");
     } else {
-        printf("Huge Pages 할당 성공! (성능 30%% 향상)\n");
+        printf("Huge Pages 할당 성공! (성능 30%% 향상), ");
     }
     
     return ptr;
 }
-```
+```text
 
 ### 7.3 NUMA 고려사항: 멀티 CPU 시스템의 함정
 
@@ -666,7 +687,7 @@ void optimize_numa_page_tables() {
     
     numa_free_nodemask(mask);
 }
-```
+```text
 
 ## 8. 정리: 주소 변환의 핵심 정리
 

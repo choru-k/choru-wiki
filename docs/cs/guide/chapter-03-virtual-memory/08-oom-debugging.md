@@ -50,7 +50,7 @@ sequenceDiagram
             Note over System: "Killed process 1234 (mysqld)"
         end
     end
-```
+```text
 
 ### OOM의 근본 원인들
 
@@ -73,7 +73,7 @@ mindmap
       트래픽 급증
       대용량 데이터 처리
       동시 접속 증가
-```
+```text
 
 ## 1. OOM Killer 동작 원리
 
@@ -83,16 +83,16 @@ Linux OOM Killer는 각 프로세스에 점수를 매겨 희생양을 선택합�
 
 ```mermaid
 graph LR
-    subgraph "OOM Score 계산 요소"
-        RSS[RSS 메모리 사용량<br/>+1000점 기준]
-        RUNTIME[실행 시간<br/>오래 실행 = 감점]
-        ROOT[Root 프로세스<br/>-30점 보너스]
-        CHILDREN[자식 프로세스<br/>자식 많을수록 가점]
+    subgraph SCORE_CALC["OOM Score 계산 요소"]
+        RSS[RSS 메모리 사용량 기준 1000점]
+        RUNTIME[실행 시간 오래실행시 감점]
+        ROOT[Root 프로세스 30점 보너스]
+        CHILDREN[자식 프로세스 많을수록 가점]
     end
     
-    subgraph "최종 점수 조정"
-        BADNESS[badness() 함수] --> SCORE[OOM Score]
-        ADJ[oom_score_adj<br/>관리자 조정값] --> FINAL[최종 점수]
+    subgraph SCORE_ADJ["최종 점수 조정"]
+        BADNESS[badness함수] --> SCORE[OOM Score]
+        ADJ[oom_score_adj 관리자조정값] --> FINAL[최종 점수]
         SCORE --> FINAL
     end
     
@@ -102,7 +102,7 @@ graph LR
     CHILDREN --> BADNESS
     
     style FINAL fill:#ffcccb
-```
+```text
 
 **OOM Score 확인 방법**:
 
@@ -122,7 +122,7 @@ done | sort -rn | head -10
 # 756   0  5678 java
 # 543   0  9012 nginx
 # 234 -17  1    systemd       # 시스템 프로세스는 보호
-```
+```text
 
 ### 1.2 실시간 OOM Score 모니터링
 
@@ -179,7 +179,7 @@ class OOMScoreMonitor:
         start_time = time.time()
         
         while time.time() - start_time < duration:
-            print(f"\n[{time.strftime('%H:%M:%S')}] OOM 위험 프로세스 TOP 10:")
+            print(f", [{time.strftime('%H:%M:%S')}] OOM 위험 프로세스 TOP 10:")
             print(f"{'PID':>6} {'Name':15} {'OOM Score':>10} {'Adj':>5} {'Memory(MB)':>12}")
             print("-" * 65)
             
@@ -211,7 +211,7 @@ class OOMScoreMonitor:
             
             # 시스템 메모리 상태
             mem = psutil.virtual_memory()
-            print(f"\n시스템 메모리: {mem.percent:.1f}% 사용 "
+            print(f", 시스템 메모리: {mem.percent:.1f}% 사용 "
                   f"(사용 가능: {mem.available / 1024 / 1024 / 1024:.1f}GB)")
             
             if mem.percent > 90:
@@ -226,8 +226,8 @@ if __name__ == "__main__":
     try:
         monitor.monitor_oom_risk(duration=600, interval=15)  # 10분간 모니터링
     except KeyboardInterrupt:
-        print("\n모니터링 중단됨")
-```
+        print(", 모니터링 중단됨")
+```text
 
 ### 1.3 OOM Score 조정 전략
 
@@ -235,63 +235,68 @@ if __name__ == "__main__":
 
 ```bash
 #!/bin/bash
-# oom_protection.sh
+# oom_protection.sh - OOM으로부터 중요한 프로세스 보호 및 위험 프로세스 우선 순위 설정 도구
 
 echo "=== OOM 보호 설정 도구 ==="
 
-# 중요한 시스템 프로세스 보호
+# 중요한 시스템 프로세스 보호 - oom_score_adj를 음수로 설정하여 OOM Killer로부터 보호
 protect_critical_processes() {
     echo "중요한 프로세스 보호 설정 중..."
     
-    # SSH 데몬 보호
+    # SSH 데몬 보호 - 시스템 접근을 위해 가장 중요 (-17: 매우 높은 보호 수준)
     for pid in $(pgrep sshd); do
         echo -17 > /proc/$pid/oom_score_adj
-        echo "sshd (PID $pid) 보호 설정 완료"
+        echo "sshd (PID $pid) 보호 설정 완료 (oom_score_adj: -17)"
     done
     
-    # 데이터베이스 보호
+    # 데이터베이스 보호 - 데이터 무결성을 위해 높은 보호 수준 (-10)
     for service in mysqld postgres mongod; do
         for pid in $(pgrep $service); do
             echo -10 > /proc/$pid/oom_score_adj
-            echo "$service (PID $pid) 보호 설정 완료"
+            echo "$service (PID $pid) 보호 설정 완료 (oom_score_adj: -10)"
         done
     done
     
-    # 웹 서버 보호
+    # 웹 서버 보호 - 서비스 가용성을 위해 중간 보호 수준 (-5)
     for service in nginx apache2 httpd; do
         for pid in $(pgrep $service); do
             echo -5 > /proc/$pid/oom_score_adj
-            echo "$service (PID $pid) 보호 설정 완료"
+            echo "$service (PID $pid) 보호 설정 완료 (oom_score_adj: -5)"
         done
     done
 }
 
-# 메모리 소비 프로세스 우선 종료 설정
+# 메모리 집약적 프로세스를 우선 종료 대상으로 설정
 deprioritize_memory_hogs() {
     echo "메모리 집약적 프로세스 우선 종료 설정..."
     
-    # 브라우저 프로세스
+    # 브라우저 프로세스 - 메모리를 많이 사용하는 비필수 프로세스 (+10)
     for service in chrome firefox; do
         for pid in $(pgrep $service); do
             echo 10 > /proc/$pid/oom_score_adj
-            echo "$service (PID $pid) 우선 종료 설정 완료"
+            echo "$service (PID $pid) 우선 종료 설정 완료 (oom_score_adj: +10)"
         done
     done
     
-    # 개발 도구
+    # 개발 도구 - 메모리 사용량이 높은 개발 환경 도구들 (+5)
     for service in code idea pycharm; do
         for pid in $(pgrep $service); do
             echo 5 > /proc/$pid/oom_score_adj
-            echo "$service (PID $pid) 우선 종료 설정 완료"
+            echo "$service (PID $pid) 우선 종료 설정 완료 (oom_score_adj: +5)"
         done
     done
 }
 
-# systemd 서비스 OOM 설정
+# systemd 서비스에 대한 OOM 정책 설정
 configure_systemd_oom() {
     echo "systemd 서비스 OOM 설정..."
     
-    # 예시: MySQL 서비스 설정
+    # systemd override 디렉토리 생성
+    mkdir -p /etc/systemd/system/mysql.service.d/
+    
+    # MySQL 서비스 OOM 설정 예시
+    # OOMScoreAdjust: OOM Score 조정값
+    # OOMPolicy: OOM 발생시 정책 (continue: 서비스 유지, stop: 서비스 중단)
     cat > /etc/systemd/system/mysql.service.d/oom.conf << 'EOF'
 [Service]
 OOMScoreAdjust=-10
@@ -299,6 +304,7 @@ OOMPolicy=continue
 EOF
     
     echo "systemd OOM 설정 완료 (서비스 재시작 필요)"
+    echo "적용 명령어: systemctl daemon-reload && systemctl restart mysql"
 }
 
 # 메뉴
@@ -322,7 +328,7 @@ case $choice in
     5) echo "종료합니다." ;;
     *) echo "잘못된 선택입니다." ;;
 esac
-```
+```text
 
 ## 2. dmesg OOM 메시지 분석
 
@@ -338,27 +344,40 @@ $ dmesg | grep -A 20 -B 5 "Out of memory"
 [12345.678901] Out of memory: Kill process 1234 (mysqld) score 987 or sacrifice child
 [12345.678902] Killed process 1234 (mysqld) total-vm:4194304kB, anon-rss:2097152kB, file-rss:0kB, shmem-rss:0kB
 [12345.678903] oom_reaper: reaped process 1234 (mysqld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-```
+```text
 
 ### 2.2 자동 OOM 분석 도구
 
 ```python
 #!/usr/bin/env python3
-# oom_analyzer.py
+# oom_analyzer.py - dmesg OOM 로그 분석 및 패턴 분석 도구
 import re
 import subprocess
 import datetime
 from collections import defaultdict, namedtuple
 
+# OOM 이벤트 정보를 담는 네임드 튜플
+# timestamp: OOM 발생 시간 (커널 부팅 이후 초)
+# killed_process: 종료된 프로세스명
+# pid: 종료된 프로세스 ID
+# score: OOM Score (높을수록 종료 우선순위 높음)
+# memory_info: 메모리 사용량 상세 정보 (total-vm, anon-rss, file-rss)
 OOMEvent = namedtuple('OOMEvent', ['timestamp', 'killed_process', 'pid', 'score', 'memory_info'])
 
 class OOMAnalyzer:
+    """dmesg에서 OOM 이벤트를 파싱하고 패턴을 분석하는 클래스"""
+    
     def __init__(self):
-        self.oom_events = []
-        self.memory_patterns = defaultdict(int)
+        self.oom_events = []  # 파싱된 OOM 이벤트 목록
+        self.memory_patterns = defaultdict(int)  # 프로세스별 OOM 발생 횟수
         
     def parse_dmesg_oom(self):
-        """dmesg에서 OOM 이벤트 파싱"""
+        """dmesg에서 OOM 이벤트 파싱
+        
+        dmesg 출력에서 다음 패턴들을 찾아 파싱:
+        1. "Out of memory: Kill process [pid] ([name]) score [score]"
+        2. "Killed process [pid] ([name]) total-vm:[total]kB, anon-rss:[anon]kB, file-rss:[file]kB"
+        """
         try:
             result = subprocess.run(['dmesg'], capture_output=True, text=True)
             dmesg_output = result.stdout
@@ -366,38 +385,44 @@ class OOMAnalyzer:
             print(f"dmesg 실행 실패: {e}")
             return
         
-        lines = dmesg_output.split('\n')
-        current_oom = None
+        lines = dmesg_output.split(', ')
+        current_oom = None  # 현재 파싱 중인 OOM 이벤트
         
         for line in lines:
-            # OOM 시작 감지
+            # OOM 시작 감지 - "Out of memory: Kill process" 패턴 매칭
             oom_match = re.search(r'\[([\d.]+)\].*Out of memory: Kill process (\d+) \(([^)]+)\) score (\d+)', line)
             if oom_match:
+                # 커널 타임스탬프, PID, 프로세스명, OOM 점수 추출
                 timestamp = float(oom_match.group(1))
                 pid = int(oom_match.group(2))
                 process_name = oom_match.group(3)
                 score = int(oom_match.group(4))
                 
+                # 새로운 OOM 이벤트 시작
                 current_oom = {
                     'timestamp': timestamp,
                     'pid': pid,
                     'process_name': process_name,
                     'score': score,
-                    'memory_info': {}
+                    'memory_info': {}  # 다음 라인에서 파싱될 메모리 정보
                 }
                 continue
             
-            # 메모리 정보 파싱
+            # 메모리 정보 파싱 - "Killed process" 라인에서 메모리 사용량 추출
             if current_oom:
                 mem_match = re.search(r'Killed process \d+ \([^)]+\) total-vm:(\d+)kB, anon-rss:(\d+)kB, file-rss:(\d+)kB', line)
                 if mem_match:
+                    # 메모리 사용량 정보 파싱
+                    # total-vm: 가상 메모리 총 사용량
+                    # anon-rss: 익명 메모리 (힙, 스택 등)
+                    # file-rss: 파일 매핑 메모리 (바이너리, 라이브러리 등)
                     current_oom['memory_info'] = {
-                        'total_vm': int(mem_match.group(1)),
-                        'anon_rss': int(mem_match.group(2)),
-                        'file_rss': int(mem_match.group(3))
+                        'total_vm': int(mem_match.group(1)),  # KB 단위
+                        'anon_rss': int(mem_match.group(2)),  # KB 단위
+                        'file_rss': int(mem_match.group(3))   # KB 단위
                     }
                     
-                    # OOM 이벤트 완성
+                    # 완성된 OOM 이벤트를 객체로 변환하여 저장
                     event = OOMEvent(
                         timestamp=current_oom['timestamp'],
                         killed_process=current_oom['process_name'],
@@ -407,11 +432,11 @@ class OOMAnalyzer:
                     )
                     
                     self.oom_events.append(event)
-                    self.memory_patterns[current_oom['process_name']] += 1
-                    current_oom = None
+                    self.memory_patterns[current_oom['process_name']] += 1  # 프로세스별 OOM 카운트 증가
+                    current_oom = None  # 현재 이벤트 완료
     
     def analyze_oom_patterns(self):
-        """OOM 패턴 분석"""
+        """파싱된 OOM 이벤트들의 패턴 분석 및 보고서 생성"""
         if not self.oom_events:
             print("OOM 이벤트가 발견되지 않았습니다.")
             return
@@ -419,101 +444,129 @@ class OOMAnalyzer:
         print(f"=== OOM 분석 결과 ===")
         print(f"총 OOM 이벤트: {len(self.oom_events)}개")
         
-        # 시간별 분석
+        # 시간별 분석 - 최근 24시간 내 이벤트 필터링
         recent_events = []
         now = datetime.datetime.now().timestamp()
         
+        print(f", === 개별 OOM 이벤트 상세 정보 ===")
         for event in self.oom_events:
+            # 커널 타임스탬프를 실제 시간으로 변환
+            # 주의: 이 방법은 정확하지 않을 수 있음 (시스템 부팅 시간 고려 필요)
             event_time = datetime.datetime.fromtimestamp(event.timestamp)
             time_diff = now - event.timestamp
             
-            if time_diff < 86400:  # 24시간 이내
+            if time_diff < 86400:  # 24시간 이내 이벤트 표시
                 recent_events.append(event)
             
-            print(f"\n[{event_time.strftime('%Y-%m-%d %H:%M:%S')}]")
+            print(f", [{event_time.strftime('%Y-%m-%d %H:%M:%S')}]")
             print(f"  프로세스: {event.killed_process} (PID: {event.pid})")
-            print(f"  OOM Score: {event.score}")
+            print(f"  OOM Score: {event.score} (점수가 높을수록 종료 우선순위 높음)")
             print(f"  메모리 사용량:")
-            print(f"    가상 메모리: {event.memory_info['total_vm'] / 1024:.1f} MB")
-            print(f"    익명 RSS: {event.memory_info['anon_rss'] / 1024:.1f} MB")
-            print(f"    파일 RSS: {event.memory_info['file_rss'] / 1024:.1f} MB")
+            # KB를 MB로 변환하여 가독성 향상
+            print(f"    가상 메모리: {event.memory_info['total_vm'] / 1024:.1f} MB (프로세스가 할당받은 전체 가상 주소 공간)")
+            print(f"    익명 RSS: {event.memory_info['anon_rss'] / 1024:.1f} MB (힙, 스택 등 실제 메모리 사용량)")
+            print(f"    파일 RSS: {event.memory_info['file_rss'] / 1024:.1f} MB (실행 파일, 라이브러리 매핑 메모리)")
         
-        # 최근 24시간 이벤트
+        # 최근 24시간 이벤트 경고
         if recent_events:
-            print(f"\n⚠️  최근 24시간 내 {len(recent_events)}개 OOM 이벤트 발생!")
+            print(f", ⚠️  최근 24시간 내 {len(recent_events)}개 OOM 이벤트 발생!")
+            print(f"    → 시스템 메모리 부족 문제가 지속되고 있습니다")
         
-        # 반복적으로 죽는 프로세스
-        print(f"\n=== 프로세스별 OOM 빈도 ===")
+        # 프로세스별 OOM 발생 빈도 분석
+        print(f", === 프로세스별 OOM 빈도 ===")
         for process, count in sorted(self.memory_patterns.items(), key=lambda x: x[1], reverse=True):
             print(f"{process}: {count}회")
             if count > 3:
-                print(f"  ⚠️  {process}가 반복적으로 OOM으로 종료됨!")
+                print(f"  ⚠️  {process}가 반복적으로 OOM으로 종료됨! (메모리 누수 의심)")
     
     def generate_recommendations(self):
-        """개선 권장사항 생성"""
-        print(f"\n=== 권장사항 ===")
+        """OOM 분석 결과를 바탕으로 구체적인 개선 권장사항 생성"""
+        print(f", === 권장사항 ===")
         
-        # 반복 OOM 프로세스 분석
+        # 반복적으로 OOM되는 프로세스 분석 (2회 이상)
         frequent_victims = [(proc, count) for proc, count in self.memory_patterns.items() if count > 2]
         
         if frequent_victims:
             print("1. 메모리 누수 조사 필요:")
             for proc, count in frequent_victims:
                 print(f"   - {proc}: {count}회 OOM (메모리 누수 가능성 높음)")
+                print(f"     → valgrind, AddressSanitizer 등으로 메모리 누수 검사 필요")
+                print(f"     → 애플리케이션 로그에서 메모리 사용 패턴 분석")
+                print(f"     → htop, ps 명령어로 해당 프로세스 메모리 사용량 지속 모니터링")
         
-        # 시스템 리소스 권장사항
+        # 시스템 리소스 부족 분석 (OOM 이벤트가 많은 경우)
         if len(self.oom_events) > 5:
             print("2. 시스템 리소스 부족:")
-            print("   - 메모리 증설 고려")
-            print("   - 스왑 설정 검토")
-            print("   - 애플리케이션 메모리 제한 설정")
+            print("   - 메모리 증설 고려 (현재 시스템 부하에 비해 메모리 부족)")
+            print("   - 스왑 설정 검토 (vm.swappiness, zram/zswap 활용)")
+            print("   - 애플리케이션 메모리 제한 설정 (cgroup, Docker memory limits)")
+            print("   - 메모리 오버커밋 설정 검토 (vm.overcommit_memory, vm.overcommit_ratio)")
         
-        # 모니터링 권장사항
+        # 모니터링 시스템 구축 권장사항
         print("3. 모니터링 개선:")
-        print("   - OOM Score 실시간 모니터링 설정")
-        print("   - 메모리 사용량 알림 설정")
-        print("   - 로그 수집 시스템 구축")
+        print("   - OOM Score 실시간 모니터링 설정 (oom_score_monitor.py 활용)")
+        print("   - 메모리 사용량 알림 설정 (85% 경고, 95% 위험 임계값)")
+        print("   - dmesg 로그 수집 시스템 구축 (rsyslog, fluentd 등)")
+        print("   - Prometheus + Grafana로 메모리 사용 패턴 시각화")
         
-        # 예방 조치
+        # OOM 예방을 위한 구체적 조치
         print("4. 예방 조치:")
-        print("   - 중요 프로세스 oom_score_adj 설정")
-        print("   - systemd OOMPolicy 설정")
-        print("   - 메모리 제한 (cgroup) 활용")
+        print("   - 중요 프로세스 oom_score_adj 설정 (SSH: -17, DB: -10, 웹서버: -5)")
+        print("   - systemd OOMPolicy 설정 (서비스별 OOM 동작 정의)")
+        print("   - 컨테이너 메모리 제한 활용 (Docker --memory, Kubernetes resources.limits)")
+        print("   - Early OOM 도구 설치 (earlyoom 패키지 또는 커스텀 스크립트)")
 
 def parse_system_oom_info():
-    """시스템의 OOM 관련 설정 정보 수집"""
+    """시스템의 OOM 관련 커널 파라미터 및 설정 정보 수집 및 해석"""
     print("=== 시스템 OOM 설정 ===")
     
-    # OOM 관련 커널 파라미터
+    # OOM 관련 커널 파라미터 목록
+    # vm.panic_on_oom: OOM 발생 시 커널 패닉 여부 (0: 비활성화, 1: 활성화)
+    # vm.oom_kill_allocating_task: 메모리를 요청한 태스크를 우선 종료 (0: 비활성화, 1: 활성화)
+    # vm.oom_dump_tasks: OOM 발생 시 모든 태스크 정보 덤프 (0: 비활성화, 1: 활성화)
     oom_params = [
-        'vm.panic_on_oom',
-        'vm.oom_kill_allocating_task', 
-        'vm.oom_dump_tasks'
+        ('vm.panic_on_oom', 'OOM 발생 시 시스템 패닉 여부'),
+        ('vm.oom_kill_allocating_task', '메모리 요청 태스크 우선 종료'),
+        ('vm.oom_dump_tasks', 'OOM 시 모든 태스크 정보 덤프')
     ]
     
-    for param in oom_params:
+    for param, description in oom_params:
         try:
             with open(f'/proc/sys/{param.replace(".", "/")}') as f:
                 value = f.read().strip()
-                print(f"{param}: {value}")
+                status = "활성화" if value == "1" else "비활성화"
+                print(f"{param}: {value} ({status}) - {description}")
         except FileNotFoundError:
-            print(f"{param}: 설정되지 않음")
+            print(f"{param}: 설정되지 않음 - {description}")
     
-    # 메모리 오버커밋 설정
+    print()  # 구분선
+    
+    # 메모리 오버커밋 설정 - 시스템이 실제 사용 가능한 메모리보다 더 많은 메모리 할당을 허용하는지 제어
     try:
         with open('/proc/sys/vm/overcommit_memory') as f:
             overcommit = f.read().strip()
         with open('/proc/sys/vm/overcommit_ratio') as f:
             ratio = f.read().strip()
         
+        # 오버커밋 모드 설명
         overcommit_modes = {
-            '0': '휴리스틱 (기본값)',
-            '1': '항상 허용',
-            '2': '엄격한 제한'
+            '0': '휴리스틱 오버커밋 (기본값) - 커널이 합리적인 오버커밋만 허용',
+            '1': '항상 오버커밋 허용 - 메모리 할당 요청을 항상 성공시킴 (위험)',
+            '2': '엄격한 오버커밋 제한 - swap + RAM * overcommit_ratio/100 까지만 허용'
         }
         
-        print(f"Memory Overcommit: {overcommit_modes.get(overcommit, overcommit)}")
-        print(f"Overcommit Ratio: {ratio}%")
+        print(f"Memory Overcommit Mode: {overcommit} ({overcommit_modes.get(overcommit, '알 수 없는 모드')})")
+        print(f"Overcommit Ratio: {ratio}% (모드 2에서 사용, 전체 메모리 중 오버커밋 허용 비율)")
+        
+        # 실제 커밋된 메모리 정보
+        with open('/proc/meminfo') as f:
+            meminfo = f.read()
+            for line in meminfo.split(', '):
+                if 'Committed_AS' in line:
+                    committed = line.split()[1]
+                    print(f"현재 커밋된 메모리: {int(committed) / 1024:.1f} MB")
+                    break
+                    
     except FileNotFoundError:
         print("Overcommit 정보를 읽을 수 없음")
 
@@ -526,7 +579,7 @@ if __name__ == "__main__":
     analyzer.parse_dmesg_oom()
     analyzer.analyze_oom_patterns()
     analyzer.generate_recommendations()
-```
+```text
 
 ## 3. cgroup 메모리 제한과 OOM
 
@@ -537,18 +590,18 @@ if __name__ == "__main__":
 ```mermaid
 graph TD
     subgraph "시스템 레벨"
-        SYSTEM_MEM[시스템 메모리<br/>16GB] --> SYSTEM_OOM{시스템 OOM}
-        SYSTEM_OOM -->|전체 메모리 부족| KERNEL_OOM[Kernel OOM Killer<br/>전역적 선택]
+        SYSTEM_MEM[시스템 메모리, 16GB] --> SYSTEM_OOM{시스템 OOM}
+        SYSTEM_OOM -->|전체 메모리 부족| KERNEL_OOM[Kernel OOM Killer, 전역적 선택]
     end
     
     subgraph "cgroup 레벨"
-        CGROUP1[Container A<br/>제한: 2GB] --> CGROUP_OOM1{cgroup OOM}
-        CGROUP2[Container B<br/>제한: 4GB] --> CGROUP_OOM2{cgroup OOM}
+        CGROUP1[Container A, 제한: 2GB] --> CGROUP_OOM1{cgroup OOM}
+        CGROUP2[Container B, 제한: 4GB] --> CGROUP_OOM2{cgroup OOM}
         
         CGROUP_OOM1 -->|컨테이너 제한 초과| LOCAL_OOM1[컨테이너 내 프로세스 종료]
         CGROUP_OOM2 -->|컨테이너 제한 초과| LOCAL_OOM2[컨테이너 내 프로세스 종료]
     end
-```
+```text
 
 ### 3.2 Docker 컨테이너 OOM 디버깅
 
@@ -558,7 +611,7 @@ graph TD
 
 echo "=== Docker 컨테이너 OOM 디버깅 ==="
 
-# 컨테이너 메모리 사용량 확인
+# 특정 컨테이너의 메모리 사용량 및 cgroup 설정 상세 분석
 check_container_memory() {
     local container_name=$1
     
@@ -567,93 +620,231 @@ check_container_memory() {
         return 1
     fi
     
+    # 실행 중인 컨테이너에서 이름으로 컨테이너 ID 찾기
     container_id=$(docker ps -q --filter name=$container_name)
     if [ -z "$container_id" ]; then
-        echo "컨테이너를 찾을 수 없습니다: $container_name"
+        echo "실행 중인 컨테이너를 찾을 수 없습니다: $container_name"
+        echo "중단된 컨테이너 포함 검색:"
+        docker ps -a --filter name=$container_name
         return 1
     fi
     
     echo "컨테이너: $container_name (ID: $container_id)"
     
-    # 메모리 제한 확인
+    # Docker 컨테이너 메모리 제한 설정 확인
     memory_limit=$(docker inspect $container_id | jq -r '.[0].HostConfig.Memory')
-    echo "메모리 제한: $memory_limit bytes"
-    
-    # 현재 사용량
-    docker stats $container_name --no-stream
-    
-    # cgroup 경로 찾기
-    cgroup_path="/sys/fs/cgroup/memory/docker/$container_id"
-    if [ -d "$cgroup_path" ]; then
-        echo -e "\ncgroup 메모리 통계:"
-        cat $cgroup_path/memory.stat | grep -E "cache|rss|swap"
-        
-        echo -e "\n메모리 사용량 히스토리:"
-        cat $cgroup_path/memory.usage_in_bytes
-        cat $cgroup_path/memory.max_usage_in_bytes
-        
-        # OOM 이벤트 확인
-        oom_control=$(cat $cgroup_path/memory.oom_control)
-        echo -e "\nOOM 제어 설정:"
-        echo "$oom_control"
-        
-        if echo "$oom_control" | grep -q "oom_kill_disable 0"; then
-            echo "OOM Killer 활성화됨"
-        else
-            echo "OOM Killer 비활성화됨"
-        fi
+    if [ "$memory_limit" = "0" ] || [ "$memory_limit" = "null" ]; then
+        echo "메모리 제한: 제한 없음 (위험: 시스템 전체 메모리 사용 가능)"
     else
-        echo "cgroup 경로를 찾을 수 없습니다: $cgroup_path"
+        echo "메모리 제한: $memory_limit bytes ($(echo "scale=1; $memory_limit / 1024 / 1024 / 1024" | bc) GB)"
+    fi
+    
+    # 현재 실시간 메모리 사용량 표시
+    echo -e ", 현재 메모리 사용량:"
+    docker stats $container_name --no-stream --format "table {{.Container}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.CPUPerc}}"
+    
+    # cgroup v1 경로 찾기 (Docker 20.10 이하)
+    cgroup_path="/sys/fs/cgroup/memory/docker/$container_id"
+    # cgroup v2 경로도 확인
+    cgroup_v2_path="/sys/fs/cgroup/system.slice/docker-$container_id.scope"
+    
+    if [ -d "$cgroup_path" ]; then
+        echo -e ", cgroup v1 메모리 통계 ($cgroup_path):"
+        
+        # 메모리 사용 현황
+        if [ -f "$cgroup_path/memory.stat" ]; then
+            echo "주요 메모리 사용 현황:"
+            cat $cgroup_path/memory.stat | grep -E "(cache|rss|swap|mapped_file)" | while read line; do
+                key=$(echo $line | awk '{print $1}')
+                value=$(echo $line | awk '{print $2}')
+                value_mb=$(echo "scale=1; $value / 1024 / 1024" | bc)
+                echo "  $key: $value bytes (${value_mb} MB)"
+            done
+        fi
+        
+        # 메모리 사용량 히스토리
+        if [ -f "$cgroup_path/memory.usage_in_bytes" ] && [ -f "$cgroup_path/memory.max_usage_in_bytes" ]; then
+            current_usage=$(cat $cgroup_path/memory.usage_in_bytes)
+            max_usage=$(cat $cgroup_path/memory.max_usage_in_bytes)
+            echo -e ", 메모리 사용량:"
+            echo "  현재 사용량: $(echo "scale=1; $current_usage / 1024 / 1024" | bc) MB"
+            echo "  최대 사용량: $(echo "scale=1; $max_usage / 1024 / 1024" | bc) MB (컨테이너 시작 이후 최대값)"
+        fi
+        
+        # OOM 제어 및 이벤트 확인
+        if [ -f "$cgroup_path/memory.oom_control" ]; then
+            oom_control=$(cat $cgroup_path/memory.oom_control)
+            echo -e ", OOM 제어 설정:"
+            echo "$oom_control" | while read line; do
+                echo "  $line"
+            done
+            
+            if echo "$oom_control" | grep -q "oom_kill_disable 0"; then
+                echo "  → OOM Killer 활성화됨 (메모리 부족 시 프로세스 자동 종료)"
+            else
+                echo "  → OOM Killer 비활성화됨 (메모리 부족 시 블로킹)"
+            fi
+        fi
+        
+    elif [ -d "$cgroup_v2_path" ]; then
+        echo -e ", cgroup v2 메모리 통계 ($cgroup_v2_path):"
+        if [ -f "$cgroup_v2_path/memory.current" ]; then
+            current_usage=$(cat $cgroup_v2_path/memory.current)
+            echo "현재 사용량: $(echo "scale=1; $current_usage / 1024 / 1024" | bc) MB"
+        fi
+        
+    else
+        echo "주의: cgroup 경로를 찾을 수 없습니다."
+        echo "  예상 경로: $cgroup_path"
+        echo "  cgroup v2 경로: $cgroup_v2_path"
+        echo "  이는 cgroup 버전이나 Docker 설정에 따라 다를 수 있습니다."
     fi
 }
 
-# Docker 이벤트에서 OOM 감지
+# Docker 이벤트에서 OOM 감지 및 자동 분석
 monitor_docker_oom() {
     echo "Docker OOM 이벤트 모니터링 중..."
     echo "Ctrl+C로 중단"
+    echo "모니터링할 이벤트: OOM 발생, 컨테이너 종료"
+    echo "=" * 50
     
-    docker events --filter event=oom | while read event; do
-        echo "[$(date)] OOM 이벤트 감지: $event"
+    # OOM 이벤트뿐만 아니라 die 이벤트도 모니터링 (OOM으로 인한 종료 포함)
+    docker events --filter event=oom --filter event=die | while read event; do
+        timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+        echo "[$timestamp] Docker 이벤트 감지: $event"
         
-        # 컨테이너 ID 추출
-        container_id=$(echo $event | grep -o '[0-9a-f]\{64\}')
+        # 컨테이너 ID 추출 (12자리 또는 64자리)
+        container_id=$(echo $event | grep -o '[0-9a-f]\{12,64\}')
+        
         if [ -n "$container_id" ]; then
-            container_name=$(docker inspect $container_id | jq -r '.[0].Name' | sed 's/^\//')
-            echo "영향받은 컨테이너: $container_name"
-            
-            # 상세 정보 수집
-            check_container_memory $container_name
+            # 컨테이너 정보 조회
+            container_info=$(docker inspect $container_id 2>/dev/null)
+            if [ $? -eq 0 ]; then
+                container_name=$(echo $container_info | jq -r '.[0].Name' | sed 's/^\//')
+                exit_code=$(echo $container_info | jq -r '.[0].State.ExitCode')
+                
+                echo "  → 영향받은 컨테이너: $container_name (ID: ${container_id:0:12})"
+                
+                # OOM 관련 종료 코드 확인 (Exit Code 137 = SIGKILL, 보통 OOM)
+                if [ "$exit_code" = "137" ]; then
+                    echo "  ⚠️ 종료 코드 137: OOM Killer에 의한 종료 가능성 높음"
+                elif [ "$exit_code" != "null" ] && [ "$exit_code" != "0" ]; then
+                    echo "  ℹ️ 종료 코드: $exit_code"
+                fi
+                
+                # 이벤트가 OOM이면 상세 정보 수집
+                if echo "$event" | grep -q "oom"; then
+                    echo "  🚨 OOM 이벤트 확인됨! 상세 분석 시작..."
+                    echo "  " + "-" * 40
+                    check_container_memory $container_name
+                    echo "  " + "-" * 40
+                fi
+            else
+                echo "  → 컨테이너 정보를 조회할 수 없음 (이미 제거됨?)"
+            fi
+        else
+            echo "  → 컨테이너 ID를 추출할 수 없음"
         fi
+        
+        echo
     done
 }
 
-# 컨테이너별 OOM 설정 최적화
+# 컨테이너별 OOM 설정 최적화 및 권장사항 제공
 optimize_container_oom() {
     local container_name=$1
+    
+    if [ -z "$container_name" ]; then
+        echo "사용법: optimize_container_oom <컨테이너명>"
+        return 1
+    fi
     
     echo "컨테이너 $container_name OOM 설정 최적화..."
     
     # 현재 설정 확인
     container_id=$(docker ps -q --filter name=$container_name)
-    current_memory=$(docker inspect $container_id | jq -r '.[0].HostConfig.Memory')
+    if [ -z "$container_id" ]; then
+        echo "실행 중인 컨테이너를 찾을 수 없습니다: $container_name"
+        return 1
+    fi
     
-    echo "현재 메모리 제한: $current_memory bytes"
+    # 컨테이너 현재 설정 분석
+    container_info=$(docker inspect $container_id)
+    current_memory=$(echo $container_info | jq -r '.[0].HostConfig.Memory')
+    current_swap=$(echo $container_info | jq -r '.[0].HostConfig.MemorySwap')
+    current_reservation=$(echo $container_info | jq -r '.[0].HostConfig.MemoryReservation')
     
-    # 권장 설정 생성
+    echo "=== 현재 메모리 설정 ==="
+    if [ "$current_memory" = "0" ]; then
+        echo "메모리 제한: 없음 (위험!)"
+    else
+        echo "메모리 제한: $current_memory bytes ($(echo "scale=1; $current_memory / 1024 / 1024 / 1024" | bc) GB)"
+    fi
+    
+    if [ "$current_swap" = "0" ]; then
+        echo "스왑 제한: 없음"
+    else
+        echo "스왑 제한: $current_swap bytes"
+    fi
+    
+    if [ "$current_reservation" = "0" ]; then
+        echo "메모리 예약: 없음"
+    else
+        echo "메모리 예약: $current_reservation bytes"
+    fi
+    
+    # 현재 실제 사용량 확인
+    echo -e ", === 현재 사용량 ==="
+    docker stats $container_name --no-stream --format "table {{.MemUsage}}\t{{.MemPerc}}\t{{.CPUPerc}}"
+    
+    # 권장 설정 계산 (현재 사용량 기반)
+    current_usage=$(docker stats $container_name --no-stream --format "{{.MemUsage}}" | cut -d'/' -f1 | sed 's/MiB//g' | sed 's/GiB//g')
+    
+    echo -e ", === 권장 설정 ==="
+    
+    # Docker Compose 파일 생성
     cat > docker-compose.override.yml << EOF
 version: '3.8'
 services:
   $container_name:
-    mem_limit: 2g
-    mem_reservation: 1g
-    oom_kill_disable: false
-    oom_score_adj: 0
-    # 메모리 스왑 비활성화 (선택적)
-    memswap_limit: 2g
+    # 메모리 제한 설정
+    mem_limit: 2g              # 최대 사용 가능 메모리
+    mem_reservation: 1g        # 최소 보장 메모리 (소프트 제한)
+    
+    # OOM 설정
+    oom_kill_disable: false    # OOM Killer 활성화 (권장)
+    oom_score_adj: 0           # OOM Score 조정 (기본값)
+    
+    # 스왑 설정
+    memswap_limit: 2g          # 메모리+스왑 총 제한 (mem_limit와 동일하면 스왑 비활성화)
+    
+    # 추가 권장 설정
+    restart: unless-stopped    # OOM 후 자동 재시작
+    
+    # 헬스체크 설정 (애플리케이션에 맞게 조정)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 EOF
     
     echo "docker-compose.override.yml 파일이 생성되었습니다."
-    echo "다음 명령어로 적용하세요: docker-compose up -d"
+    echo
+    echo "=== 적용 방법 ==="
+    echo "1. docker-compose.yml이 있는 경우:"
+    echo "   docker-compose up -d"
+    echo
+    echo "2. 단일 컨테이너 실행하는 경우:"
+    echo "   docker run --memory=2g --memory-reservation=1g --oom-kill-disable=false \\"
+    echo "              --memory-swap=2g --restart=unless-stopped [이미지명]"
+    echo
+    echo "=== 추가 권장사항 ==="
+    echo "• 애플리케이션별 메모리 프로파일링 수행"
+    echo "• 로그에서 메모리 누수 패턴 확인"
+    echo "• 모니터링 시스템(Prometheus, Grafana) 구축"
+    echo "• 정기적인 메모리 사용 패턴 분석"
 }
 
 # 메뉴
@@ -683,7 +874,7 @@ case $choice in
         echo "잘못된 선택입니다."
         ;;
 esac
-```
+```text
 
 ### 3.3 Kubernetes Pod OOM 분석
 
@@ -749,7 +940,7 @@ subjects:
 - kind: ServiceAccount
   name: oom-monitor
   namespace: default
-```
+```text
 
 **Kubernetes OOM 이벤트 모니터링**:
 
@@ -779,7 +970,7 @@ monitor_pod_memory() {
     else
         echo "Pod $pod_name 모니터링 중..."
         while true; do
-            echo -e "\n[$(date)] Pod 메모리 사용량:"
+            echo -e ", [$(date)] Pod 메모리 사용량:"
             kubectl top pod $pod_name -n $namespace
             
             # 메모리 제한 대비 사용률 계산
@@ -849,7 +1040,7 @@ case $choice in
         echo "잘못된 선택입니다."
         ;;
 esac
-```
+```text
 
 ## 4. Early OOM 및 예방 전략
 
@@ -1031,7 +1222,7 @@ case $choice in
     4) echo "종료합니다." ;;
     *) echo "잘못된 선택입니다." ;;
 esac
-```
+```text
 
 ### 4.2 메모리 압박 감지 시스템
 
@@ -1145,7 +1336,7 @@ def log_pressure_event(event: MemoryPressureEvent):
     """압박 이벤트 로그 기록"""
     timestamp_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(event.timestamp))
     
-    print(f"\n[{timestamp_str}] 메모리 압박 감지: {event.pressure_level.upper()}")
+    print(f", [{timestamp_str}] 메모리 압박 감지: {event.pressure_level.upper()}")
     print(f"메모리 사용률: {event.memory_percent:.1f}%")
     print(f"사용 가능: {event.available_gb:.1f}GB")
     print(f"스왑 사용률: {event.swap_percent:.1f}%")
@@ -1191,7 +1382,7 @@ def auto_cleanup_on_pressure(event: MemoryPressureEvent):
 def suggest_process_termination(event: MemoryPressureEvent):
     """프로세스 종료 제안"""
     if event.pressure_level == 'critical' and event.top_processes:
-        print("\n프로세스 종료 제안:")
+        print(", 프로세스 종료 제안:")
         
         for proc in event.top_processes[:3]:  # 상위 3개 프로세스
             # 중요한 시스템 프로세스는 제외
@@ -1225,9 +1416,9 @@ if __name__ == "__main__":
         monitor_thread.join()
         
     except KeyboardInterrupt:
-        print("\n모니터링 중단 중...")
+        print(", 모니터링 중단 중...")
         detector.stop_monitoring()
-```
+```text
 
 ## 5. 정리와 OOM 방지 전략
 
@@ -1258,14 +1449,14 @@ graph TD
     WORKLOAD --> BATCH[배치 처리]
     WORKLOAD --> CONTAINER[컨테이너 서비스]
     
-    WEB --> WEB_STRATEGY[• 연결 수 제한<br/>• 메모리 기반 로드밸런싱<br/>• graceful shutdown]
+    WEB --> WEB_STRATEGY[• 연결 수 제한, • 메모리 기반 로드밸런싱, • graceful shutdown]
     
-    DB --> DB_STRATEGY[• 최대 연결 수 제한<br/>• 쿼리 메모리 제한<br/>• 버퍼 풀 최적화]
+    DB --> DB_STRATEGY[• 최대 연결 수 제한, • 쿼리 메모리 제한, • 버퍼 풀 최적화]
     
-    BATCH --> BATCH_STRATEGY[• 청크 단위 처리<br/>• 메모리 사용량 모니터링<br/>• 백프레셔 적용]
+    BATCH --> BATCH_STRATEGY[• 청크 단위 처리, • 메모리 사용량 모니터링, • 백프레셔 적용]
     
-    CONTAINER --> CONTAINER_STRATEGY[• 적절한 메모리 제한<br/>• 요청/제한값 설정<br/>• 리소스 쿼터 사용]
-```
+    CONTAINER --> CONTAINER_STRATEGY[• 적절한 메모리 제한, • 요청/제한값 설정, • 리소스 쿼터 사용]
+```text
 
 ### 5.3 실무 권장사항
 

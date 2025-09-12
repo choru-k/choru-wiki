@@ -68,7 +68,7 @@ Unified"]
     style DTLB fill:#4CAF50
     style STLB fill:#FFE082
     style WALK fill:#FF5252
-```
+```text
 
 ### 1.2 TLB 엔트리 구조: 각 항목이 담는 비밀
 
@@ -114,7 +114,7 @@ typedef struct {
     tlb_entry_t entries[L1_DTLB_SETS][L1_DTLB_WAYS];
     uint8_t lru[L1_DTLB_SETS];  // LRU 정보
 } l1_dtlb_t;
-```
+```text
 
 ### 1.3 TLB 검색 과정: 1 사이클의 마법
 
@@ -142,7 +142,7 @@ uint64_t tlb_lookup(l1_dtlb_t* tlb, uint64_t vaddr, uint16_t asid) {
             
             // TLB Hit! 대박! 100 사이클 절약!
             tlb_hits++;
-            printf("TLB Hit! (적중률: %.1f%%)\n", 
+            printf("TLB Hit! (적중률: %.1f%%), ", 
                    100.0 * tlb_hits / tlb_accesses);
             update_lru(tlb, set_index, way);
             
@@ -158,10 +158,10 @@ uint64_t tlb_lookup(l1_dtlb_t* tlb, uint64_t vaddr, uint16_t asid) {
     }
     
     // TLB Miss - 아쉽, 느린 길로 가야 함 (100 사이클)
-    printf("TLB Miss! 페이지 테이블 워크 필요\n");
+    printf("TLB Miss! 페이지 테이블 워크 필요, ");
     return TLB_MISS;
 }
-```
+```text
 
 ## 2. TLB Miss 처리: 비상 탈출구
 
@@ -204,7 +204,7 @@ uint64_t hardware_page_walk(page_walker_t* walker, uint64_t vaddr) {
     
     return paddr;
 }
-```
+```text
 
 ### 2.2 Software TLB Management: 수동 기어 방식
 
@@ -237,7 +237,7 @@ void tlb_refill_handler(uint64_t bad_vaddr) {
     int index = tlb_get_random_index();
     write_tlb_entry(index, &new_entry);
 }
-```
+```text
 
 ### 2.3 TLB Miss 비용 분석: 숫자로 보는 충격
 
@@ -249,7 +249,7 @@ void tlb_refill_handler(uint64_t bad_vaddr) {
 #include <stdlib.h>
 
 void measure_tlb_miss_cost() {
-    printf("=== TLB Miss 비용 측정 실험 ===\n");
+    printf("=== TLB Miss 비용 측정 실험 ===, ");
     
     size_t page_size = 4096;
     size_t tlb_entries = 64;  // L1 DTLB 크기 (Intel Core i7)
@@ -281,16 +281,16 @@ void measure_tlb_miss_cost() {
     }
     clock_t miss_time = clock() - start;
     
-    printf("\n=== 측정 결과 ===\n");
-    printf("TLB Hit 시간:  %ld cycles (초고속!)\n", hit_time);
-    printf("TLB Miss 시간: %ld cycles (느림...)\n", miss_time);
-    printf("\n충격적인 사실: TLB Miss는 %.2f배 느립니다!\n", 
+    printf(", === 측정 결과 ===, ");
+    printf("TLB Hit 시간:  %ld cycles (초고속!), ", hit_time);
+    printf("TLB Miss 시간: %ld cycles (느림...), ", miss_time);
+    printf(", 충격적인 사실: TLB Miss는 %.2f배 느립니다!, ", 
            (double)miss_time / hit_time);
-    printf("\n결론: TLB Hit Rate가 98%%만 되어도 성능은 50배 차이!\n");
+    printf(", 결론: TLB Hit Rate가 98%%만 되어도 성능은 50배 차이!, ");
     
     free(memory);
 }
-```
+```text
 
 ## 3. TLB Shootdown: 멀티코어의 악몽
 
@@ -317,7 +317,7 @@ sequenceDiagram
     
     Note over CPU0: 모든 ACK 대기
     Note over CPU0: 계속 진행
-```
+```text
 
 ### 3.2 TLB Shootdown 구현: 비싼 대가
 
@@ -352,7 +352,7 @@ void flush_tlb_mm_range(struct mm_struct* mm,
     cpumask_clear_cpu(smp_processor_id(), &cpus_to_flush);
     
     if (!cpumask_empty(&cpus_to_flush)) {
-        printf("[TLB Shootdown] %d개 CPU에 IPI 전송 시작\n", 
+        printf("[TLB Shootdown] %d개 CPU에 IPI 전송 시작, ", 
                cpumask_weight(&cpus_to_flush));
         
         // IPI(Inter-Processor Interrupt) 전송
@@ -362,7 +362,7 @@ void flush_tlb_mm_range(struct mm_struct* mm,
                               &info,
                               1);  // 모든 CPU가 완료할 때까지 대기
         
-        printf("[TLB Shootdown] 완료 - 비용: ~500 microseconds\n");
+        printf("[TLB Shootdown] 완료 - 비용: ~500 microseconds, ");
     }
 }
 
@@ -391,7 +391,7 @@ void flush_tlb_func_remote(void* info) {
     
     this_cpu_write(cpu_tlbstate.tlb_gen, f->new_tlb_gen);
 }
-```
+```text
 
 ### 3.3 TLB Shootdown 최적화: 비용 줄이기
 
@@ -432,7 +432,7 @@ void switch_mm_irqs_off(struct mm_struct* prev,
         write_cr3(build_cr3(next->pgd, 0));
     }
 }
-```
+```text
 
 ## 4. TLB와 CPU 캐시의 상호작용: 두 친구의 협력
 
@@ -460,20 +460,20 @@ typedef struct {
 
 // VIPT 캐시: 똑똑한 접근 방식
 void vipt_cache_access(uint64_t vaddr) {
-    printf("[VIPT] 가상 주소로 캐시 인덱싱 시작\n");
+    printf("[VIPT] 가상 주소로 캐시 인덱싱 시작, ");
     
     // 천재적인 최적화: TLB와 캐시를 동시에 접근!
     uint32_t cache_index = (vaddr >> 6) & 0x3F;  // 가상 주소로 인덱싱
     uint64_t physical_addr = tlb_lookup(vaddr);   // TLB 검색 (병렬)
     
-    printf("[VIPT] TLB와 캐시 검색 동시 진행 - 1 cycle 절약!\n");
+    printf("[VIPT] TLB와 캐시 검색 동시 진행 - 1 cycle 절약!, ");
     
     // 태그 비교는 물리 주소 필요
     if (cache[cache_index].physical_tag == (physical_addr >> 12)) {
-        printf("[VIPT] Cache Hit! TLB와 캐시 모두 성공\n");
+        printf("[VIPT] Cache Hit! TLB와 캐시 모두 성공, ");
     }
 }
-```
+```text
 
 ### 4.2 TLB와 캐시 일관성: 두 친구를 동기화하기
 
@@ -503,7 +503,7 @@ void update_page_mapping(uint64_t vaddr, uint64_t new_paddr) {
     // 4. 다른 코어에 통지 (TLB shootdown)
     send_tlb_shootdown(vaddr);
 }
-```
+```text
 
 ## 5. Context Switch와 TLB: 프로세스 전환의 비용
 
@@ -515,14 +515,14 @@ void update_page_mapping(uint64_t vaddr, uint64_t new_paddr) {
 // 옛날 방식: TLB를 다 비워버리기
 void context_switch_no_asid(struct task_struct* prev,
                             struct task_struct* next) {
-    printf("[구식 Context Switch] %s → %s\n", prev->comm, next->comm);
+    printf("[구식 Context Switch] %s → %s, ", prev->comm, next->comm);
     
     // CR3 변경 = TLB 전체 삭제 (재앙!)
     write_cr3(next->mm->pgd);
     
-    printf("  TLB 전체 플러시: 200 cycles 소모\n");
-    printf("  앞으로 100번의 TLB miss 예상...\n");
-    printf("  총 비용: ~10,000 cycles (성능 저하!)\n");
+    printf("  TLB 전체 플러시: 200 cycles 소모, ");
+    printf("  앞으로 100번의 TLB miss 예상..., ");
+    printf("  총 비용: ~10,000 cycles (성능 저하!), ");
 }
 
 // TLB 플러시 영향 측정
@@ -545,10 +545,10 @@ void measure_context_switch_cost() {
     }
     clock_t after_reload = clock();
     
-    printf("TLB flush cost: %ld cycles\n", after_flush - before);
-    printf("TLB reload cost: %ld cycles\n", after_reload - after_flush);
+    printf("TLB flush cost: %ld cycles, ", after_flush - before);
+    printf("TLB reload cost: %ld cycles, ", after_reload - after_flush);
 }
-```
+```text
 
 ### 5.2 ASID/PCID 활용: 현대적인 해결책
 
@@ -590,22 +590,22 @@ uint16_t allocate_pcid(struct mm_struct* mm) {
 
 void context_switch_with_pcid(struct task_struct* prev,
                               struct task_struct* next) {
-    printf("[현대식 Context Switch] %s → %s\n", prev->comm, next->comm);
+    printf("[현대식 Context Switch] %s → %s, ", prev->comm, next->comm);
     
     if (!next->mm->pcid) {
         next->mm->pcid = allocate_pcid(next->mm);
-        printf("  새 PCID 할당: %d\n", next->mm->pcid);
+        printf("  새 PCID 할당: %d, ", next->mm->pcid);
     }
     
     // PCID로 TLB 유지! (혁명적!)
     uint64_t new_cr3 = build_cr3_pcid(next->mm->pgd, next->mm->pcid);
     write_cr3(new_cr3);
     
-    printf("  TLB 유지됨! (PCID %d 사용)\n", next->mm->pcid);
-    printf("  절약된 시간: ~10,000 cycles\n");
-    printf("  성능 향상: 10-30%%\n");
+    printf("  TLB 유지됨! (PCID %d 사용), ", next->mm->pcid);
+    printf("  절약된 시간: ~10,000 cycles, ");
+    printf("  성능 향상: 10-30%%, ");
 }
-```
+```text
 
 ## 6. TLB 최적화 기법: 성능 끌어올리기
 
@@ -616,11 +616,11 @@ void context_switch_with_pcid(struct task_struct* prev,
 ```c
 // PostgreSQL이 사용하는 기법
 void optimize_with_huge_pages() {
-    printf("=== Huge Pages로 TLB 최적화 ===\n");
-    printf("\n문제: 1GB 메모리를 관리하려면...\n");
-    printf("  4KB 페이지: 262,144개 TLB 엔트리 필요\n");
-    printf("  2MB 페이지: 512개만 필요!\n");
-    printf("  효율: 512배 향상!\n\n");
+    printf("=== Huge Pages로 TLB 최적화 ===, ");
+    printf(", 문제: 1GB 메모리를 관리하려면..., ");
+    printf("  4KB 페이지: 262,144개 TLB 엔트리 필요, ");
+    printf("  2MB 페이지: 512개만 필요!, ");
+    printf("  효율: 512배 향상!, , ");
     
     size_t size = 1ULL << 30;  // 1GB
     
@@ -631,20 +631,20 @@ void optimize_with_huge_pages() {
                          -1, 0);
     
     if (huge_mem != MAP_FAILED) {
-        printf("✓ Huge Pages 할당 성공!\n");
-        printf("  필요 TLB 엔트리: %zu개\n", size / (2*1024*1024));
-        printf("  예상 성능 향상: 20-40%%\n");
+        printf("✓ Huge Pages 할당 성공!, ");
+        printf("  필요 TLB 엔트리: %zu개, ", size / (2*1024*1024));
+        printf("  예상 성능 향상: 20-40%%, ");
     } else {
-        printf("✗ Huge Pages 실패, 일반 페이지 사용\n");
+        printf("✗ Huge Pages 실패, 일반 페이지 사용, ");
         void* regular_mem = mmap(NULL, size,
                                 PROT_READ | PROT_WRITE,
                                 MAP_PRIVATE | MAP_ANONYMOUS,
                                 -1, 0);
-        printf("  필요 TLB 엔트리: %zu개 (TLB 폭발!)\n", size / 4096);
-        printf("  성능 저하 예상...\n");
+        printf("  필요 TLB 엔트리: %zu개 (TLB 폭발!), ", size / 4096);
+        printf("  성능 저하 예상..., ");
     }
 }
-```
+```text
 
 ### 6.2 TLB Prefetching: 미리 준비하기
 
@@ -653,7 +653,7 @@ void optimize_with_huge_pages() {
 ```c
 // 게임 엔진의 트릭: TLB 미리 채우기
 void tlb_prefetch_range(void* start, size_t size) {
-    printf("[TLB Prefetch] %zu MB 영역 미리 로드\n", size / (1024*1024));
+    printf("[TLB Prefetch] %zu MB 영역 미리 로드, ", size / (1024*1024));
     char* addr = (char*)start;
     char* end = addr + size;
     
@@ -672,7 +672,7 @@ void process_large_data(void* data, size_t size) {
     // 실제 처리 - TLB hit 증가
     actual_processing(data, size);
 }
-```
+```text
 
 ### 6.3 TLB-aware 데이터 구조: TLB를 고려한 설계
 
@@ -703,7 +703,7 @@ void* hash_lookup(struct tlb_friendly_hash* hash, uint64_t key) {
     
     return NULL;
 }
-```
+```text
 
 ## 7. 실전: TLB 성능 분석 노하우
 
@@ -718,7 +718,7 @@ $ perf stat -e dTLB-loads,dTLB-load-misses,iTLB-loads,iTLB-load-misses ./program
 #     12,345,678  dTLB-load-misses  # 0.12% miss rate
 #  5,123,456,789  iTLB-loads
 #         23,456  iTLB-load-misses  # 0.0005% miss rate
-```
+```text
 
 ### 7.2 TLB 미스 원인 분석: 왜 느려졌나?
 
@@ -748,11 +748,11 @@ void analyze_tlb_misses() {
     
     long long count;
     read(fd, &count, sizeof(count));
-    printf("DTLB misses: %lld\n", count);
+    printf("DTLB misses: %lld, ", count);
     
     close(fd);
 }
-```
+```text
 
 ## 8. 정리: TLB와 캐싱의 핵심 정리
 
