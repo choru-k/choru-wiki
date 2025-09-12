@@ -39,7 +39,7 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
 100개 탭 ÷ 4 코어 = 코어당 25개 탭
 1초 ÷ 25 = 40ms per 탭
 # 40ms면 충분합니다! 인간은 50ms 이하 지연을 느끼지 못하거든요
-```
+```text
 
 ### CPU의 저글링 - 프로세스 공을 떨어뜨리지 마라
 
@@ -59,7 +59,7 @@ class CPU:
             self.throw_ball(process)        # 다음을 위해 저장
             next_process = self.grab_next() # 다음 프로세스 로드
             # 🎪 완벽한 저글링! 아무도 떨어지지 않음
-```
+```text
 
 이제 이 마법같은 저글링이 어떻게 작동하는지 깊이 들어가봅시다!
 
@@ -83,39 +83,39 @@ context_checklist = {
     '보안': ['권한 정보', 'capabilities'],                    # 1KB
     # 총 이사 짐: 프로세스당 약 14KB!
 }
-```
+```text
 
 ### 프로세스 컨텍스트 구조 - CPU의 신분증
 
 ```mermaid
 graph TB
-    subgraph "Process Context"
-        PC["Program Counter]
-        SP[Stack Pointer"]
-        GP["General Purpose Registers]
-        FP[Floating Point Registers"]
+    subgraph PROCESS_CTX["Process Context"]
+        PC[Program Counter]
+        SP[Stack Pointer]
+        GP[General Purpose Registers]
+        FP[Floating Point Registers]
         PSW[Processor Status Word]
         
-        subgraph "Memory Management"
-            CR3["Page Table Pointer]
-            ASID[Address Space ID"]
+        subgraph MEM_MGMT["Memory Management"]
+            CR3[Page Table Pointer]
+            ASID[Address Space ID]
             TLB[TLB Entries]
         end
         
-        subgraph "Kernel State"
-            KS["Kernel Stack]
-            FS[File Descriptors"]
-            SIG["Signal Handlers]
+        subgraph KERNEL_STATE["Kernel State"]
+            KS[Kernel Stack]
+            FS[File Descriptors]
+            SIG[Signal Handlers]
         end
     end
     
-    PC --> SaveArea[Task Struct Save Area"]
+    PC --> SaveArea[Task Struct Save Area]
     SP --> SaveArea
     GP --> SaveArea
     FP --> SaveArea
     PSW --> SaveArea
     CR3 --> SaveArea
-```
+```text
 
 ### Task Struct의 컨텍스트 저장 영역 - 프로세스의 블랙박스
 
@@ -168,7 +168,7 @@ struct pt_regs {
     unsigned long rsp;      // Stack pointer
     unsigned long ss;       // Stack segment
 };
-```
+```text
 
 ## 컨텍스트 스위칭 과정의 상세 분석
 
@@ -197,7 +197,7 @@ class GameEngine:
             context_switch_to(task)  # ~10μs 오버헤드
             execute_for(time_ms)
             # 프레임 드롭 없음! 🎮
-```
+```text
 
 ### 1. 스케줄러 호출 시점 - 언제 공을 바꿔 잡을까?
 
@@ -250,7 +250,7 @@ asmlinkage __visible void __sched schedule(void) {
     
     preempt_enable();
 }
-```
+```text
 
 ### 2. 컨텍스트 저장 및 복원 - 0.001초의 예술
 
@@ -270,7 +270,7 @@ Load new context:   230 ns  # 새 컨텍스트 로드
 Cache warm-up:      970 ns  # 캐시 워밍업
 --------------------------
 Total:             3000 ns  # 3 마이크로초!
-```
+```text
 
 ```c
 // 컨텍스트 스위칭의 핵심 함수 - 마법이 일어나는 곳
@@ -309,15 +309,15 @@ do {                                                    \
                                                        \
     asm volatile(                                      \
         /* 현재 스택 포인터 저장 */                    \
-        "pushq %%rbp\n\t"                             \
-        "movq %%rsp, %P[thread_sp](%[prev])\n\t"      \
+        "pushq %%rbp, \t"                             \
+        "movq %%rsp, %P[thread_sp](%[prev]), \t"      \
                                                        \
         /* 새 스택 포인터 로드 */                      \
-        "movq %P[thread_sp](%[next]), %%rsp\n\t"      \
+        "movq %P[thread_sp](%[next]), %%rsp, \t"      \
                                                        \
         /* 새 태스크로 점프 */                         \
-        "movq %P[thread_ip](%[next]), %%rbx\n\t"      \
-        "jmp __switch_to_asm\n\t"                     \
+        "movq %P[thread_ip](%[next]), %%rbx, \t"      \
+        "jmp __switch_to_asm, \t"                     \
                                                        \
         : /* outputs */                                \
         : [prev] "a" (prev),                          \
@@ -327,7 +327,7 @@ do {                                                    \
         : "memory", "cc", "rbx", "rcx", "rsi", "rdi" \
     );                                                 \
 } while (0)
-```
+```text
 
 ### 3. 메모리 관리 컨텍스트 전환 - 주소 공간 순간이동
 
@@ -380,7 +380,7 @@ void switch_fpu_finish(struct task_struct *new, int cpu) {
         }
     }
 }
-```
+```text
 
 ## 컨텍스트 스위칭 오버헤드 분석
 
@@ -409,7 +409,7 @@ overhead_breakdown = {
     },
     '총 오버헤드': '18%'  # = 10억 달러/년 💸
 }
-```
+```text
 
 ### 직접 비용과 간접 비용 - 빙산의 일각
 
@@ -437,7 +437,7 @@ graph LR
     PF --> Total
     
     Total --> Perf[Performance Impact"]
-```
+```text
 
 ### 컨텍스트 스위칭 비용 측정 - 실제로 얼마나 느릴까?
 
@@ -452,7 +452,7 @@ graph LR
 Ideal (hot cache):     2-3 μs   # 교과서
 Reality (cold cache): 20-30 μs  # 실제 서버
 Worst case:           100+ μs   # NUMA 시스템
-```
+```text
 
 ```c
 // 컨텍스트 스위칭 레이턴시 측정 - 진실을 밝혀라
@@ -496,7 +496,7 @@ void measure_context_switch_latency(void) {
                             (end.tv_nsec - start.tv_nsec);
         
         // 2번의 컨텍스트 스위칭이 발생 (parent->child, child->parent)
-        printf("Average context switch time: %lld ns\n", 
+        printf("Average context switch time: %lld ns, ", 
                total_ns / (ITERATIONS * 2));
     }
 }
@@ -541,13 +541,13 @@ void measure_cache_effects(void) {
     long cold_cache_ns = (end.tv_sec - start.tv_sec) * 1000000000LL +
                         (end.tv_nsec - start.tv_nsec);
     
-    printf("Hot cache access: %ld ns\n", hot_cache_ns);
-    printf("Cold cache access: %ld ns\n", cold_cache_ns);
-    printf("Cache miss penalty: %ld ns\n", cold_cache_ns - hot_cache_ns);
+    printf("Hot cache access: %ld ns, ", hot_cache_ns);
+    printf("Cold cache access: %ld ns, ", cold_cache_ns);
+    printf("Cache miss penalty: %ld ns, ", cold_cache_ns - hot_cache_ns);
     
     free(array);
 }
-```
+```text
 
 ## 컨텍스트 스위칭 최적화 기법
 
@@ -573,7 +573,7 @@ latency_after = {
     'avg_latency': '5ms',
     'p99_latency': '15ms',  # 매끄러운 재생 🎵
 }
-```
+```text
 
 ### 1. 프로세스 친화도 설정 - CPU 전용 차선 만들기
 
@@ -610,7 +610,7 @@ void optimize_numa_placement(void) {
     numa_sched_setaffinity(0, cpumask);
     numa_free_cpumask(cpumask);
 }
-```
+```text
 
 ### 2. 스레드 풀과 작업 큐 - 우버의 비밀 무기
 
@@ -669,7 +669,7 @@ void* worker_thread(void* arg) {
     
     return NULL;
 }
-```
+```text
 
 ### 3. Lock-Free 프로그래밍 - 거래소의 마이크로초 전쟁
 
@@ -692,7 +692,7 @@ lock_free = {
     'context_switches': 0,
     'daily_profit': '$67.2M'  # 💰💰💰
 }
-```
+```text
 
 ```c
 // 컨텍스트 스위칭을 피하는 lock-free 큐 - 나노초가 돈
@@ -735,7 +735,7 @@ void lock_free_enqueue(lock_free_queue_t *q, void *data) {
     // tail을 새 노드로 이동
     atomic_compare_exchange_weak(&q->tail, &prev_tail, new_node);
 }
-```
+```text
 
 ### 4. 사용자 레벨 스레딩 (Coroutine) - Go의 100만 고루틴 비밀
 
@@ -759,7 +759,7 @@ Created 1,000,000 goroutines
 Memory: 2GB
 Context switch: 50ns  # OS 스레드의 1/100!
 ✨ Success!
-```
+```text
 
 ```c
 // 커널 컨텍스트 스위칭을 피하는 코루틴 - Go처럼 날아라
@@ -819,7 +819,7 @@ coroutine_t* coroutine_create(void (*func)(void*), void *arg) {
     
     return coro;
 }
-```
+```text
 
 ## 실전 최적화 사례
 
@@ -845,7 +845,7 @@ Context switches/sec: 500  # 90배 적음!
 CPU usage: 25%
 Requests/sec: 50,000  # 10배 빠름!
 Latency p99: 50ms  # 빠름! ⚡
-```
+```text
 
 ```c
 // epoll 기반 이벤트 루프 (nginx 스타일)
@@ -909,7 +909,7 @@ void setup_reuseport_listeners(int port, int num_workers) {
         }
     }
 }
-```
+```text
 
 ### 데이터베이스의 컨텍스트 스위칭 최적화 - Microsoft SQL Server의 혁신
 
@@ -947,7 +947,7 @@ restart:
     
     return search_leaf(node, key);
 }
-```
+```text
 
 ## 성능 모니터링과 분석
 
@@ -975,7 +975,7 @@ dashboard = {
         'Action: CPU 친화도 재설정 중...'
     ]
 }
-```
+```text
 
 ### 컨텍스트 스위칭 메트릭 수집 - 문제를 찾아라
 
@@ -988,7 +988,7 @@ void monitor_context_switches(void) {
     
     while (fgets(line, sizeof(line), fp)) {
         if (sscanf(line, "ctxt %lu", &ctxt_switches) == 1) {
-            printf("Total context switches: %lu\n", ctxt_switches);
+            printf("Total context switches: %lu, ", ctxt_switches);
             break;
         }
     }
@@ -1016,11 +1016,11 @@ void setup_perf_monitoring(void) {
     while (1) {
         long long count;
         read(fd, &count, sizeof(count));
-        printf("Context switches in last period: %lld\n", count);
+        printf("Context switches in last period: %lld, ", count);
         sleep(1);
     }
 }
-```
+```text
 
 ## 요약: 컨텍스트 스위칭의 진실
 
@@ -1044,7 +1044,7 @@ context_switching_wisdom = {
         '필요하면 코루틴을 써라'
     ]
 }
-```
+```text
 
 ### 마지막 조언
 

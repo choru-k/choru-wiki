@@ -25,12 +25,12 @@ tags:
 
 그는 Spectre 취약점을 설명하며 이렇게 말했습니다:
 
-```
+```text
 "CPU는 if문의 결과를 미리 '추측'하고 실행합니다.
 맞으면? 10배 빨라집니다.
 틀리면? 20 사이클을 버립니다.
 하지만 95% 이상 맞춥니다."
-```
+```text
 
 ### 🎮 게임이 60 FPS를 유지하는 비밀
 
@@ -41,7 +41,7 @@ tags:
 for (int i = 0; i < 1000000; i++) {
     update_particle(i);  // 파티클 하나당 16.6ns!
 }
-```
+```text
 
 16.6 나노초. 빛이 겨우 5미터 가는 시간입니다.
 그 짧은 순간에 CPU는:
@@ -120,7 +120,7 @@ graph TB
     style ALU1 fill:#2196F3
     style L1I fill:#FFE082
     style L1D fill:#FFE082
-```
+```text
 
 ### 1.2 레지스터 구조: CPU의 작업대
 
@@ -128,11 +128,11 @@ graph TB
 
 제가 어셈블리 최적화를 하면서 깨달은 점:
 
-```
+```text
 메모리 접근: 100 사이클
 L1 캐시: 4 사이클
 레지스터: 0 사이클! (같은 사이클 내 접근)
-```
+```text
 
 그래서 컴파일러는 자주 쓰는 변수를 레지스터에 최대한 오래 둡니다.
 
@@ -195,17 +195,17 @@ void register_operations() {
                     : "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx)
                     : "a"(0));
     
-    printf("CPU Vendor: %.4s%.4s%.4s\n", 
+    printf("CPU Vendor: %.4s%.4s%.4s, ", 
            (char*)&ebx, (char*)&edx, (char*)&ecx);
     
     // 플래그 레지스터 읽기
     uint64_t flags;
     __asm__ volatile("pushfq; pop %0" : "=r"(flags));
     
-    printf("Zero Flag: %d\n", (flags >> 6) & 1);
-    printf("Sign Flag: %d\n", (flags >> 7) & 1);
+    printf("Zero Flag: %d, ", (flags >> 6) & 1);
+    printf("Sign Flag: %d, ", (flags >> 7) & 1);
 }
-```
+```text
 
 ## 2. 명령어 실행 과정
 
@@ -215,21 +215,21 @@ void register_operations() {
 
 Intel 엔지니어의 고백:
 
-```
+```text
 "x86 명령어는 1바이트부터 15바이트까지... 악몽이죠.
 ARM은 모두 4바이트. 얼마나 부러운지...
 하지만 우리에겐 비밀 무기가 있습니다: μop 캐시!"
-```
+```text
 
 실제로 Intel CPU는 x86 명령어를 내부적으로 RISC 스타일 마이크로 옵으로 변환합니다:
 
-```
+```text
 add [rax + rbx*4 + 0x10], rcx
 ↓ 디코드
 1. load temp, [rax + rbx*4 + 0x10]
 2. add temp, temp, rcx  
 3. store [rax + rbx*4 + 0x10], temp
-```
+```text
 
 ```c
 // 명령어 형식 (x86-64 예제)
@@ -312,19 +312,19 @@ micro_op_t decode_instruction(uint8_t* bytes) {
     
     return uop;
 }
-```
+```text
 
 ### 2.2 파이프라인: 세탁소의 지혜
 
 **파이프라인을 세탁소에 비유하면:**
 
-```
+```text
 세탁기 → 건조기 → 다림질 → 포장 → 배달
 
 손님 1: ■■■□□  (건조 중)
 손님 2: ■■□□□  (세탁 중)  
 손님 3: ■□□□□  (투입 중)
-```
+```text
 
 한 손님이 끝날 때까지 기다리면 5시간.
 파이프라인으로 하면 매시간 한 명씩 완료!
@@ -343,7 +343,7 @@ void benchmark_pipeline() {
         sum = hash(sum);   // 8.5ns/iteration - 7배 느림!
     }
 }
-```
+```text
 
 ```mermaid
 graph LR
@@ -380,7 +380,7 @@ graph LR
     style IF3 fill:#4CAF50
     style IF4 fill:#4CAF50
     style IF5 fill:#4CAF50
-```
+```text
 
 ```c
 // 파이프라인 시뮬레이터
@@ -465,7 +465,7 @@ void forwarding_unit(pipeline_t* pipe) {
         pipe->ID_EX.instruction.src2_value = pipe->MEM_WB.result;
     }
 }
-```
+```text
 
 ## 3. 분기 예측
 
@@ -490,20 +490,20 @@ for (int i = 0; i < N; i++) {
         sum += data[i];
 }
 // 시간: 2.8초 - 4배 빠름!
-```
+```text
 
 **분기 예측기의 학습 과정**
 
 제가 CPU 시뮬레이터로 관찰한 결과:
 
-```
+```text
 Loop 1: if(true)  → 예측: false ❌ (miss)
 Loop 2: if(true)  → 예측: false ❌ (miss)
 Loop 3: if(true)  → 예측: true  ✅ (학습됨!)
 Loop 4: if(true)  → 예측: true  ✅
 ...
 정확도: 처음 50% → 학습 후 95%
-```
+```text
 
 ```c
 // 2비트 포화 카운터
@@ -584,7 +584,7 @@ void handle_misprediction(pipeline_t* pipe, uint64_t correct_target) {
     performance_counters.branch_mispredictions++;
     performance_counters.pipeline_flushes++;
 }
-```
+```text
 
 ### 3.2 분기 예측 영향: Meltdown의 교훈
 
@@ -599,7 +599,7 @@ if (x < array1_size) {  // CPU가 true로 추측
     // 나중에 잘못된 추측임을 알고 롤백
     // 하지만 캐시에는 흔적이 남음!
 }
-```
+```text
 
 **성능 vs 보안의 트레이드오프**
 
@@ -648,9 +648,9 @@ void measure_branch_prediction() {
     }
     clock_t predictable = clock() - start;
     
-    printf("Unpredictable: %ld ms\n", unpredictable);
-    printf("Predictable: %ld ms\n", predictable);
-    printf("Speedup: %.2fx\n", (double)unpredictable / predictable);
+    printf("Unpredictable: %ld ms, ", unpredictable);
+    printf("Predictable: %ld ms, ", predictable);
+    printf("Speedup: %.2fx, ", (double)unpredictable / predictable);
     // 결과: 약 2-6배 차이
     
     free(data);
@@ -669,7 +669,7 @@ int conditional_without_branch(int a, int b, bool condition) {
 int cmov_example(int a, int b, int c) {
     int result;
     __asm__ volatile(
-        "cmp %2, %3\n\t"
+        "cmp %2, %3, \t"
         "cmovg %1, %0"
         : "=r"(result)
         : "r"(a), "r"(b), "r"(c)
@@ -677,7 +677,7 @@ int cmov_example(int a, int b, int c) {
     );
     return result;  // b > c ? a : result
 }
-```
+```text
 
 ## 4. Out-of-Order 실행
 
@@ -685,7 +685,7 @@ int cmov_example(int a, int b, int c) {
 
 **McDonald's vs 고급 레스토랑**
 
-```
+```text
 McDonald's (In-Order):
 주문 1: 햄버거 → 감자튀김 → 콜라 (순서대로)
 주문 2: (대기...)
@@ -696,7 +696,7 @@ McDonald's (In-Order):
 주문 2: 샐러드 (3분) ← 먼저 완성!
 주문 3: 스프 (5분) ← 두 번째 완성!
 주문 1: 스테이크 완성 ← 마지막이지만 순서는 보장
-```
+```text
 
 CPU도 마찬가지입니다:
 
@@ -710,7 +710,7 @@ c = z * 2;         // 1 사이클
 b = x + y;         // 즉시 실행!
 c = z * 2;         // 즉시 실행!
 a = memory[1000];  // 기다리는 동안 위 두 개 완료
-```
+```text
 
 **실제 성능 차이**
 
@@ -819,7 +819,7 @@ void check_memory_dependencies(reservation_station_t* load_rs,
         }
     }
 }
-```
+```text
 
 ## 5. CPU 캐시
 
@@ -827,25 +827,25 @@ void check_memory_dependencies(reservation_station_t* load_rs,
 
 **캐시를 도서관에 비유하면:**
 
-```
+```text
 레지스터 = 손에 든 책 (1권, 즉시)
 L1 캐시 = 책상 위 (10권, 1초)
 L2 캐시 = 책장 (100권, 10초)
 L3 캐시 = 같은 층 서고 (1000권, 30초)
 메모리 = 지하 서고 (100만권, 2분)
 디스크 = 다른 도서관 (무제한, 1시간)
-```
+```text
 
 **실제 레이턴시 (Intel i9):**
 
-```
+```text
 L1: 4 cycles (1ns)
 L2: 12 cycles (3ns)  
 L3: 42 cycles (10ns)
 RAM: 200+ cycles (50ns)
 SSD: 100,000 cycles (25μs)
 HDD: 10,000,000 cycles (2.5ms)
-```
+```text
 
 ### 캐시 미스의 공포
 
@@ -870,7 +870,7 @@ for (int y = 0; y < 1080; y++) {
         process(image[y][x]);  // 0.08초 - 30배 빠름!
     }
 }
-```
+```text
 
 ```c
 // 캐시 라인
@@ -979,7 +979,7 @@ void handle_cache_coherence(coherent_cache_line_t* line,
             break;
     }
 }
-```
+```text
 
 ### 5.2 캐시 최적화: Netflix의 비밀
 
@@ -1006,7 +1006,7 @@ struct video_data {
 
 // 결과: 캐시 히트율 45% → 92%
 // 처리량: 10Gbps → 40Gbps!
-```
+```text
 
 **False Sharing: 멀티코어의 함정**
 
@@ -1026,7 +1026,7 @@ struct counters {
     alignas(64) int thread2_count;
 } counter;
 // 성능: 50M ops/sec - 50배!
-```
+```text
 
 ```c
 // 캐시 친화적 코드
@@ -1104,14 +1104,14 @@ void measure_cache_performance() {
         
         clock_t elapsed = clock() - start;
         
-        printf("Size: %d KB, Time: %ld ms, Avg: %.2f ns\n",
+        printf("Size: %d KB, Time: %ld ms, Avg: %.2f ns, ",
                size / 1024, elapsed,
                (double)elapsed / 10000000 * 1000);
         
         free(array);
     }
 }
-```
+```text
 
 ## 6. SIMD와 벡터화
 
@@ -1141,15 +1141,15 @@ for (int i = 0; i < pixels; i += 8) {
     // ... 8픽셀 동시 처리
 }
 // 시간: 6ms - 7.5배 빠름!
-```
+```text
 
 **YouTube의 비디오 인코딩**
 
-```
+```text
 일반 CPU: 1시간 비디오 → 3시간 인코딩
 SIMD 최적화: 1시간 비디오 → 25분 인코딩
 GPU 가속: 1시간 비디오 → 5분 인코딩
-```
+```text
 
 ```c
 #include <immintrin.h>
@@ -1217,7 +1217,7 @@ int simd_strlen(const char* str) {
         ptr += 32;
     }
 }
-```
+```text
 
 ## 7. CPU 성능 측정
 
@@ -1227,12 +1227,12 @@ int simd_strlen(const char* str) {
 
 게임이 느려서 최적화하려고 프로파일링:
 
-```
+```text
 Function Time:
 - render(): 45%
 - physics(): 30%
 - AI(): 25%
-```
+```text
 
 "렌더링이 문제구나!" → 3일 동안 렌더링 최적화 → 변화 없음 😭
 
@@ -1242,7 +1242,7 @@ Function Time:
 $ perf stat ./game
 L3-cache-misses: 45,234,123 (89% of all cache refs)
 Branch-misses: 12,345,678 (15% of all branches)
-```
+```text
 
 진짜 문제는 **캐시 미스**였습니다!
 
@@ -1266,7 +1266,7 @@ struct Entities {
 };
 
 // 결과: 60 FPS → 144 FPS!
-```
+```text
 
 ```c
 // CPU 사이클 측정
@@ -1288,7 +1288,7 @@ void measure_instruction_latency() {
         __asm__ volatile("add $1, %0" : "+r"(dummy));
     }
     end = rdtsc();
-    printf("ADD: %.2f cycles\n", 
+    printf("ADD: %.2f cycles, ", 
            (double)(end - start) / iterations);
     
     // MUL 레이턴시
@@ -1297,7 +1297,7 @@ void measure_instruction_latency() {
         __asm__ volatile("imul $3, %0" : "+r"(dummy));
     }
     end = rdtsc();
-    printf("MUL: %.2f cycles\n",
+    printf("MUL: %.2f cycles, ",
            (double)(end - start) / iterations);
     
     // DIV 레이턴시
@@ -1307,7 +1307,7 @@ void measure_instruction_latency() {
         __asm__ volatile("idiv %0" : "+r"(dummy));
     }
     end = rdtsc();
-    printf("DIV: %.2f cycles\n",
+    printf("DIV: %.2f cycles, ",
            (double)(end - start) / iterations);
 }
 
@@ -1334,11 +1334,11 @@ void setup_perf_counter() {
     // 결과 읽기
     long long cycles;
     read(fd, &cycles, sizeof(cycles));
-    printf("CPU cycles: %lld\n", cycles);
+    printf("CPU cycles: %lld, ", cycles);
     
     close(fd);
 }
-```
+```text
 
 ## 8. 실전: CPU 최적화
 
@@ -1346,14 +1346,14 @@ void setup_perf_counter() {
 
 **10년간 최적화하며 배운 우선순위:**
 
-```
+```text
 1. 알고리즘 개선 (100-1000x)
 2. 캐시 최적화 (10-50x)
 3. SIMD 벡터화 (4-16x)
 4. 병렬화 (2-8x)
 5. 컴파일러 플래그 (1.1-1.5x)
 6. 어셈블리 수동 최적화 (1.01-1.1x) ← 시간 낭비!
-```
+```text
 
 **실제 사례: JSON 파서 최적화**
 
@@ -1372,7 +1372,7 @@ parse_json_prefetch(data);  // 1.2GB/s
 
 // Step 5: 병렬화
 parse_json_parallel(data);  // 4.5GB/s
-```
+```text
 
 **최적화의 함정**
 
@@ -1439,7 +1439,7 @@ void set_cpu_affinity_for_performance() {
     
     pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset);
 }
-```
+```text
 
 ## 9. 정리: CPU 아키텍처의 핵심
 
@@ -1476,11 +1476,11 @@ void set_cpu_affinity_for_performance() {
 
 #### 2. **실제 병목은 대부분 메모리**
 
-```
+```text
 CPU 대기 시간의 60% = 메모리 대기
 CPU 대기 시간의 20% = 분기 예측 실패
 CPU 대기 시간의 20% = 실제 계산
-```
+```text
 
 #### 3. **최적화 체크리스트**
 

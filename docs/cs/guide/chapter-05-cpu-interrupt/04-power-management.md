@@ -44,7 +44,7 @@ power_consumption = {
     },
     'yearly_savings': '$3.0B'  # 💰💰💰
 }
-```
+```text
 
 ### 아이폰이 하루 종일 버티는 비밀
 
@@ -63,7 +63,7 @@ power_consumption = {
 23:00-24:00: Charging + Sleep    # 0.001W
 
 평균 소비 전력: 1.2W  # 배터리 20시간 지속!
-```
+```text
 
 이제 CPU가 어떻게 이런 마법을 부리는지 깊이 들어가 봅시다!
 
@@ -87,7 +87,7 @@ cpu_matryoshka = {
     'C6': {'freq': 'Off',    'power': '0.5W', 'desc': '깊은 절전'},
     # 🦆 차례대로 열고 닫기!
 }
-```
+```text
 
 ### 전력 상태 계층 구조 - CPU의 엘리베이터
 
@@ -126,7 +126,7 @@ graph TB
     P0 -.->|"High Power"| Power[Power Consumption]
     Pn -.->|"Low Power"| Power
     C6 -.->|"Minimal Power"| Power
-```
+```text
 
 ### ACPI 전력 관리 인터페이스 - 컴퓨터의 절전 매뉴얼
 
@@ -180,7 +180,7 @@ struct cpufreq_policy {
     bool boost_enabled;
     unsigned int boost_max_freq;
 };
-```
+```text
 
 ## Dynamic Voltage and Frequency Scaling (DVFS)
 
@@ -206,7 +206,7 @@ example = {
     'half_freq': calculate_power(1.2, 1.5e9),   # 2.16W (50% 절감)
     # 💡 전압 조절이 훨씬 효과적!
 }
-```
+```text
 
 ### DVFS 원리와 구현 - 매 나노초마다 결정
 
@@ -278,7 +278,7 @@ static void od_check_cpu(int cpu) {
                                CPUFREQ_RELATION_L);
     }
 }
-```
+```text
 
 ### 주파수 전환 메커니즘 - FM 라디오 튜닝처럼
 
@@ -348,7 +348,7 @@ static const struct dvfs_table {
     { 1200000, 650 },   // 1.2 GHz, 0.65V
     { 800000,  550 },   // 0.8 GHz, 0.55V
 };
-```
+```text
 
 ## C-State 전력 관리
 
@@ -379,7 +379,7 @@ netflix_server_states = {
         'C6': '1000 ns',  # 1 마이크로초
     }
 }
-```
+```text
 
 ### C-State 진입과 탈출 - CPU의 겨울잠
 
@@ -467,7 +467,7 @@ int select_idle_state(struct cpuidle_driver *drv,
         
     return idx;
 }
-```
+```text
 
 ### Package C-State 조정 - 아파트 전체 소등
 
@@ -510,7 +510,7 @@ void update_package_cstate(int cpu, int new_cstate) {
     
     spin_unlock(&pkg->lock);
 }
-```
+```text
 
 ## 터보 부스트와 동적 오버클럭
 
@@ -533,7 +533,7 @@ turbo_scenario = {
     '45s': {'event': '보스 처치', 'freq': '3.5GHz', 'temp': '70°C'},
     'result': 'Boss defeated! 🎆'
 }
-```
+```text
 
 ### Intel Turbo Boost 구현 - 온도와 전력의 균형
 
@@ -625,7 +625,7 @@ void dynamic_overclocking(void) {
         usleep(CONTROL_LOOP_PERIOD_US);
     }
 }
-```
+```text
 
 ### AMD Precision Boost - 더 스마트한 터보
 
@@ -672,7 +672,7 @@ u32 calculate_boost_frequency(struct precision_boost_state *state) {
     
     return freq;
 }
-```
+```text
 
 ## 에너지 효율 최적화 전략
 
@@ -702,7 +702,7 @@ strategy_comparison = {
         'good_for': '메모리 집약적 작업'
     }
 }
-```
+```text
 
 ### Race-to-Idle vs Race-to-Sleep - 토끼와 거북이
 
@@ -758,7 +758,7 @@ u32 calculate_energy_efficient_freq(struct task *task) {
     
     return best_freq;
 }
-```
+```text
 
 ### 워크로드 특성 기반 최적화 - AI가 전력을 관리한다
 
@@ -831,7 +831,7 @@ void optimize_for_workload(enum workload_type type) {
         break;
     }
 }
-```
+```text
 
 ## 실전 전력 관리 구현
 
@@ -867,7 +867,7 @@ power_allocation = {
     },
     'dynamic_adjustment': '매 초마다 재분배'
 }
-```
+```text
 
 ### 데이터센터 전력 최적화 - RAPL로 전력 제한
 
@@ -927,7 +927,7 @@ void distribute_power_budget(int total_power_budget) {
         enforce_power_cap(pkg_domain, adjusted_budget);
     }
 }
-```
+```text
 
 ### 모바일 디바이스 전력 최적화 - 아이폰의 마법
 
@@ -996,7 +996,7 @@ void apply_app_power_profile(const char *app_name) {
         set_migration_cost_low();
     }
 }
-```
+```text
 
 ## 성능 모니터링과 분석
 
@@ -1022,7 +1022,7 @@ tesla_factory_monitoring = {
     },
     'daily_savings': '$45,000'  # 전력 최적화로 절약
 }
-```
+```text
 
 ### 전력 및 주파수 모니터링 - 실시간 추적
 
@@ -1053,7 +1053,7 @@ void monitor_power_consumption(void) {
     double power_watts = (energy_consumed * rapl_energy_units) / 
                         (time_elapsed_ns / 1e9);
     
-    printf("Package Power: %.2f W\n", power_watts);
+    printf("Package Power: %.2f W, ", power_watts);
     
     // 주파수 모니터링
     int cpu;
@@ -1065,7 +1065,7 @@ void monitor_power_consumption(void) {
         u64 freq_ratio = (aperf * 100) / mperf;
         u32 freq_mhz = (base_frequency * freq_ratio) / 100;
         
-        printf("CPU%d Frequency: %u MHz\n", cpu, freq_mhz);
+        printf("CPU%d Frequency: %u MHz, ", cpu, freq_mhz);
     }
 }
 
@@ -1076,7 +1076,7 @@ void analyze_cstate_residency(void) {
     int cpu, state;
     
     for_each_online_cpu(cpu) {
-        printf("CPU%d C-state residency:\n", cpu);
+        printf("CPU%d C-state residency:, ", cpu);
         
         for (state = 0; state < 10; state++) {
             snprintf(path, sizeof(path),
@@ -1090,11 +1090,11 @@ void analyze_cstate_residency(void) {
             fscanf(fp, "%llu", &residency_us);
             fclose(fp);
             
-            printf("  C%d: %llu us\n", state, residency_us);
+            printf("  C%d: %llu us, ", state, residency_us);
         }
     }
 }
-```
+```text
 
 ## 요약: CPU 전력 관리의 진실
 
@@ -1118,7 +1118,7 @@ power_management_wisdom = {
         '터보 부스트는 필요할 때만'
     ]
 }
-```
+```text
 
 ### 마지막 조언
 

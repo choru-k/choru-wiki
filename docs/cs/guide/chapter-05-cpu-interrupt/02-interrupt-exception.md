@@ -27,7 +27,7 @@ tags:
 [ERROR] CPU0: NMI watchdog: BUG: soft lockup - CPU#0 stuck for 23s!
 [ERROR] CPU1: rcu_sched self-detected stall on CPU
 [ERROR] Network interrupts: 0 (expected: 100000+/sec)
-```
+```text
 
 한 엔지니어가 회상합니다:
 
@@ -68,7 +68,7 @@ def on_bell_ring(table_number):  # 인터럽트 핸들러
     
 # CPU는 다른 일을 하다가 벨이 울릴 때만 반응
 do_other_work()  # 🎯 효율적!
-```
+```text
 
 이제 인터럽트와 예외가 어떻게 현대 컴퓨팅의 심장이 되었는지 깊이 탐구해봅시다!
 
@@ -100,7 +100,7 @@ void optimized_mouse_handler() {
         process_mouse_queue();
     }
 }
-```
+```text
 
 ### 1.1 인터럽트 종류
 
@@ -127,7 +127,7 @@ Interrupt"]
     
     style HW fill:#4CAF50
     style SW fill:#2196F3
-```
+```text
 
 ### 1.2 인터럽트 벡터 테이블 - CPU의 전화번호부
 
@@ -232,7 +232,7 @@ void set_idt_entry(int vector, void* handler, int type, int dpl) {
     idt[vector].offset_high = (handler_addr >> 32) & 0xFFFFFFFF;
     idt[vector].reserved = 0;
 }
-```
+```text
 
 ## 2. 인터럽트 처리 과정
 
@@ -250,7 +250,7 @@ CPU0: 1,234,567  # 초당 100만 개 인터럽트! 😵
 # 넷플릭스 서버 (NAPI 최적화)
 $ cat /proc/interrupts | grep eth0  
 CPU0: 1,000  # 초당 1000개로 감소! 🎯
-```
+```text
 
 비결은 **적응형 인터럽트 결합**:
 
@@ -269,8 +269,7 @@ sequenceDiagram
     Note over CPU: 명령어 실행 중
     
     CPU->>CPU: 인터럽트 신호 감지
-    CPU->>Stack: 현재 상태 저장
-(RFLAGS, CS, RIP)
+    CPU->>Stack: 현재 상태 저장 (RFLAGS, CS, RIP)
     CPU->>IDT: 벡터 번호로 핸들러 조회
     IDT-->>CPU: 핸들러 주소
     CPU->>Handler: 핸들러로 점프
@@ -279,7 +278,7 @@ sequenceDiagram
     CPU->>Stack: 상태 복원
     
     Note over CPU: 원래 작업 재개
-```
+```text
 
 ### 2.2 인터럽트 핸들러 구현 - 긴급실 의사처럼
 
@@ -302,7 +301,7 @@ void good_interrupt_handler() {
     wake_up_worker();        // ✅ 0.002ms
     // 실제 처리는 워커 스레드에서
 }
-```
+```text
 
 인터럽트 핸들러의 황금률:
 
@@ -333,42 +332,42 @@ typedef struct {
 
 // 공통 인터럽트 핸들러 (어셈블리)
 __asm__(
-    ".global interrupt_common_stub\n"
-    "interrupt_common_stub:\n"
-    "    push %rax\n"
-    "    push %rcx\n"
-    "    push %rdx\n"
-    "    push %rbx\n"
-    "    push %rbp\n"
-    "    push %rsi\n"
-    "    push %rdi\n"
-    "    push %r8\n"
-    "    push %r9\n"
-    "    push %r10\n"
-    "    push %r11\n"
-    "    push %r12\n"
-    "    push %r13\n"
-    "    push %r14\n"
-    "    push %r15\n"
-    "    mov %rsp, %rdi\n"      // 인터럽트 프레임 포인터
-    "    call interrupt_handler\n"
-    "    pop %r15\n"
-    "    pop %r14\n"
-    "    pop %r13\n"
-    "    pop %r12\n"
-    "    pop %r11\n"
-    "    pop %r10\n"
-    "    pop %r9\n"
-    "    pop %r8\n"
-    "    pop %rdi\n"
-    "    pop %rsi\n"
-    "    pop %rbp\n"
-    "    pop %rbx\n"
-    "    pop %rdx\n"
-    "    pop %rcx\n"
-    "    pop %rax\n"
-    "    add $16, %rsp\n"       // int_no, err_code 제거
-    "    iretq\n"
+    ".global interrupt_common_stub, "
+    "interrupt_common_stub:, "
+    "    push %rax, "
+    "    push %rcx, "
+    "    push %rdx, "
+    "    push %rbx, "
+    "    push %rbp, "
+    "    push %rsi, "
+    "    push %rdi, "
+    "    push %r8, "
+    "    push %r9, "
+    "    push %r10, "
+    "    push %r11, "
+    "    push %r12, "
+    "    push %r13, "
+    "    push %r14, "
+    "    push %r15, "
+    "    mov %rsp, %rdi, "      // 인터럽트 프레임 포인터
+    "    call interrupt_handler, "
+    "    pop %r15, "
+    "    pop %r14, "
+    "    pop %r13, "
+    "    pop %r12, "
+    "    pop %r11, "
+    "    pop %r10, "
+    "    pop %r9, "
+    "    pop %r8, "
+    "    pop %rdi, "
+    "    pop %rsi, "
+    "    pop %rbp, "
+    "    pop %rbx, "
+    "    pop %rdx, "
+    "    pop %rcx, "
+    "    pop %rax, "
+    "    add $16, %rsp, "       // int_no, err_code 제거
+    "    iretq, "
 );
 
 // C 인터럽트 핸들러
@@ -430,7 +429,7 @@ void handle_keyboard_interrupt(interrupt_frame_t* frame) {
     // 대기 중인 프로세스 깨우기
     wake_up(&keyboard_wait_queue);
 }
-```
+```text
 
 ## 3. 예외 처리
 
@@ -455,7 +454,7 @@ void* ptr = NULL;
 // 3. CPU: "예외 14번 (Page Fault) 발생!"
 // 4. OS: "NULL 포인터네? SIGSEGV 보내!"
 // 5. 프로그램: "Segmentation fault" 💀
-```
+```text
 
 ### 화성 탐사선을 구한 예외 처리
 
@@ -482,7 +481,7 @@ void patched_meteorological_task() {
         }
     }
 }
-```
+```text
 
 2100만 킬로미터 떨어진 곳에서 예외 처리 하나가 $2.8억 미션을 구했습니다!
 
@@ -509,9 +508,9 @@ void handle_page_fault(interrupt_frame_t* frame) {
     bool reserved = frame->err_code & 0x8;    // 예약 비트
     bool fetch = frame->err_code & 0x10;      // 명령어 페치
     
-    printf("Page Fault at %p\n", (void*)fault_addr);
-    printf("  RIP: %p\n", (void*)frame->rip);
-    printf("  Error: %s %s %s\n",
+    printf("Page Fault at %p, ", (void*)fault_addr);
+    printf("  RIP: %p, ", (void*)frame->rip);
+    printf("  Error: %s %s %s, ",
            present ? "protection" : "not-present",
            write ? "write" : "read",
            user ? "user" : "kernel");
@@ -535,7 +534,7 @@ void handle_page_fault(interrupt_frame_t* frame) {
 
 // 0으로 나누기 예외
 void handle_divide_error(interrupt_frame_t* frame) {
-    printf("Division by zero at RIP: %p\n", (void*)frame->rip);
+    printf("Division by zero at RIP: %p, ", (void*)frame->rip);
     
     // 명령어 분석
     uint8_t* instruction = (uint8_t*)frame->rip;
@@ -546,8 +545,8 @@ void handle_divide_error(interrupt_frame_t* frame) {
 
 // 일반 보호 예외
 void handle_general_protection(interrupt_frame_t* frame) {
-    printf("General Protection Fault\n");
-    printf("  Error Code: 0x%lx\n", frame->err_code);
+    printf("General Protection Fault, ");
+    printf("  Error Code: 0x%lx, ", frame->err_code);
     
     // 세그먼트 셀렉터 분석
     if (frame->err_code != 0) {
@@ -555,8 +554,8 @@ void handle_general_protection(interrupt_frame_t* frame) {
         bool external = frame->err_code & 0x1;
         int table = (frame->err_code >> 1) & 0x3;
         
-        printf("  Selector: 0x%x\n", selector);
-        printf("  Table: %s\n", 
+        printf("  Selector: 0x%x, ", selector);
+        printf("  Table: %s, ", 
                table == 0 ? "GDT" : 
                table == 1 ? "IDT" : "LDT");
     }
@@ -567,14 +566,14 @@ void handle_general_protection(interrupt_frame_t* frame) {
 
 // 이중 폴트 (치명적)
 void handle_double_fault(interrupt_frame_t* frame) {
-    printf("DOUBLE FAULT - System Halted\n");
-    printf("  RIP: %p\n", (void*)frame->rip);
-    printf("  RSP: %p\n", (void*)frame->rsp);
+    printf("DOUBLE FAULT - System Halted, ");
+    printf("  RIP: %p, ", (void*)frame->rip);
+    printf("  RSP: %p, ", (void*)frame->rsp);
     
     // 시스템 정지
     panic("Double fault - unable to recover");
 }
-```
+```text
 
 ## 4. 인터럽트 컨트롤러
 
@@ -586,13 +585,13 @@ void handle_double_fault(interrupt_frame_t* frame) {
 
 진화의 역사:
 
-```
+```text
 1976: 8259 PIC    - 8개 인터럽트 (충분해!)
 1981: IBM PC      - 2개 PIC 캐스케이드 (15개 인터럽트)
 1996: APIC        - CPU당 224개 인터럽트
 2008: x2APIC     - 2^32개 인터럽트 (40억개!)
 2024: 현재        - PIC는 여전히 부팅 시 필요 😅
-```
+```text
 
 ### 데이터센터의 인터럽트 전쟁
 
@@ -609,7 +608,7 @@ mlx0-1:  0    0   1234567    0     # Queue 1 → CPU2
 mlx0-2:  0  1234567   0      0     # Queue 2 → CPU1
 mlx0-3: 1234567 0     0      0     # Queue 3 → CPU0
 # 완벽한 로드 밸런싱! 🎯
-```
+```text
 
 ### 4.1 PIC와 APIC
 
@@ -718,7 +717,7 @@ void send_ipi(int cpu_id, int vector) {
     // 전송 완료 대기
     while (lapic->icr_low & (1 << 12));
 }
-```
+```text
 
 ## 5. 인터럽트 최적화
 
@@ -747,7 +746,7 @@ power_consumption = {
     'power_watts': 45,  # 50% 절감!
     'annual_cost': '$39,000'  # 연간 $43,000 절약!
 }
-```
+```text
 
 ### 5.1 인터럽트 결합 (Interrupt Coalescing) - 택배 묶음 배송처럼
 
@@ -807,7 +806,7 @@ void napi_poll_handler(struct napi_struct* napi) {
         napi_reschedule(napi);
     }
 }
-```
+```text
 
 ### 5.2 인터럽트 친화도 (Affinity) - CPU 매칭 서비스
 
@@ -837,7 +836,7 @@ CPU1: %irq 33.3  # 네트워크 RX
 CPU2: %irq 33.3  # 네트워크 TX
 CPU3: %irq 33.3  # 디스크 I/O
 Game FPS: 60 🎮  # 목표 달성!
-```
+```text
 
 ```c
 // CPU별 인터럽트 분산
@@ -847,7 +846,7 @@ void set_irq_affinity(int irq, int cpu) {
     
     FILE* f = fopen(path, "w");
     if (f) {
-        fprintf(f, "%x\n", 1 << cpu);
+        fprintf(f, "%x, ", 1 << cpu);
         fclose(f);
     }
 }
@@ -895,7 +894,7 @@ void configure_msi_x(struct pci_device* dev) {
         irq_set_affinity_hint(entries[i].vector, cpumask_of(cpu));
     }
 }
-```
+```text
 
 ## 6. 소프트 인터럽트
 
@@ -922,7 +921,7 @@ NET_TX: 123456789   123456788  # 네트워크 전송
 NET_RX: 987654321   987654320  # 네트워크 수신
 TIMER:  11111111    11111110   # 타이머
 # 초당 수백만 개의 소프트 인터럽트!
-```
+```text
 
 ### 6.1 Softirq - 인터럽트의 뒷정리 담당
 
@@ -1024,7 +1023,7 @@ void ksoftirqd_thread(void* data) {
         cond_resched();
     }
 }
-```
+```text
 
 ### 6.2 Tasklet - 일회용 작업 처리기
 
@@ -1058,7 +1057,7 @@ void network_interrupt_handler() {
     tasklet_schedule(&my_tasklet);  // 0.001ms
     // 인터럽트 핸들러 끝! (0.002ms)
 }
-```
+```text
 
 ```c
 // Tasklet 구조체
@@ -1128,7 +1127,7 @@ void tasklet_action(struct softirq_action* a) {
         local_irq_enable();
     }
 }
-```
+```text
 
 ## 7. 실시간 인터럽트
 
@@ -1153,7 +1152,7 @@ critical_interrupt_t tesla_interrupts[] = {
     {1000,  10000, "경로 계획"},         // 1ms 내 반응
     {10000, 100000,"UI 업데이트"}        // 10ms (덜 중요)
 };
-```
+```text
 
 ### SpaceX 로켓의 인터럽트 처리
 
@@ -1172,7 +1171,7 @@ class RocketInterruptHandler:
         if actual_ns > self.interrupt_budget[interrupt_type]:
             # 타이밍 실패 = 미션 실패
             initiate_abort_sequence()
-```
+```text
 
 ### 7.1 인터럽트 지연 최소화 - 나노초 단위 최적화
 
@@ -1264,7 +1263,7 @@ irqreturn_t thread_irq_handler(int irq, void* dev_id) {
     
     return IRQ_HANDLED;
 }
-```
+```text
 
 ## 8. 인터럽트 디버깅
 
@@ -1289,7 +1288,7 @@ eth0: 1,800,000  # 0.1초에 80만개?!
 [CRITICAL] Disabling IRQ 24 - nobody cared
 [CRITICAL] Network interface eth0 down
 # 네트워크 죽음 = 서비스 죽음 💀
-```
+```text
 
 ### 인터럽트 스톰을 잡아라
 
@@ -1316,20 +1315,20 @@ def detect_interrupt_storm():
                     disable_irq(irq)  # 긴급 차단
                     enable_polling_mode()  # 폴링으로 전환
                     alert_oncall_engineer()  # 담당자 호출
-```
+```text
 
 ### 8.1 인터럽트 추적 - 셜록 홈즈처럼
 
 ```c
 // 인터럽트 트레이스
 void trace_irq_handler_entry(int irq, struct irqaction* action) {
-    trace_printk("irq_handler_entry: irq=%d name=%s\n",
+    trace_printk("irq_handler_entry: irq=%d name=%s, ",
                  irq, action->name);
 }
 
 void trace_irq_handler_exit(int irq, struct irqaction* action,
                            int ret) {
-    trace_printk("irq_handler_exit: irq=%d ret=%d\n", irq, ret);
+    trace_printk("irq_handler_exit: irq=%d ret=%d, ", irq, ret);
 }
 
 // /proc/interrupts 구현
@@ -1341,7 +1340,7 @@ void show_interrupts(struct seq_file* p) {
     for_each_online_cpu(j) {
         seq_printf(p, "CPU%-8d", j);
     }
-    seq_putc(p, '\n');
+    seq_putc(p, ', ');
     
     // 각 IRQ 정보
     for (i = 0; i < NR_IRQS; i++) {
@@ -1367,7 +1366,7 @@ void show_interrupts(struct seq_file* p) {
             }
         }
         
-        seq_putc(p, '\n');
+        seq_putc(p, ', ');
     }
 }
 
@@ -1392,7 +1391,7 @@ void detect_interrupt_storm() {
         
         if (rate > IRQ_STORM_THRESHOLD) {
             printk(KERN_WARNING "IRQ storm detected on IRQ %d: "
-                   "%llu irqs/sec\n", i, rate);
+                   "%llu irqs/sec, ", i, rate);
             
             // 임시 비활성화
             disable_irq_nosync(i);
@@ -1406,7 +1405,7 @@ void detect_interrupt_storm() {
     
     last_time = now;
 }
-```
+```text
 
 ## 9. 정리: 인터럽트와 예외의 핵심
 
@@ -1430,7 +1429,7 @@ void detect_interrupt_storm() {
 "하드/소프트 인터럽트의 2단계 처리"
 "예외는 CPU의 비명"
 "인터럽트 결합과 친화도로 최적화"
-```
+```text
 
 ### 실무에서 써먹을 수 있는 것들
 
@@ -1446,7 +1445,7 @@ $ mpstat -P ALL 1 | grep soft
 
 # 4. 인터럽트 결합 튜닝
 $ ethtool -C eth0 rx-usecs 100
-```
+```text
 
 ## 관련 문서
 

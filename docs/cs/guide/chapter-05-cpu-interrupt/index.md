@@ -44,22 +44,22 @@ graph TB
     end
     
     subgraph "Execution Modes"
-        USER[User Mode<br/>Ring 3]
-        KERNEL[Kernel Mode<br/>Ring 0]
+        USER[User Mode, Ring 3]
+        KERNEL[Kernel Mode, Ring 0]
     end
     
     subgraph "Interrupt System"
         HW[Hardware Interrupt]
-        SW[Software Interrupt<br/>System Call]
+        SW[Software Interrupt, System Call]
         EX[Exception]
         
-        IDT[IDT<br/>Interrupt Descriptor Table]
-        ISR[ISR<br/>Interrupt Service Routine]
+        IDT[IDT, Interrupt Descriptor Table]
+        ISR[ISR, Interrupt Service Routine]
     end
     
     subgraph "Power Management"
-        CSTATE[C-States<br/>Idle States]
-        PSTATE[P-States<br/>Performance States]
+        CSTATE[C-States, Idle States]
+        PSTATE[P-States, Performance States]
         FREQ[CPU Frequency]
     end
     
@@ -73,7 +73,7 @@ graph TB
     style REG fill:#FFE082
     style IDT fill:#81C784
     style KERNEL fill:#64B5F6
-```
+```text
 
 ## 이 장의 구성
 
@@ -136,7 +136,7 @@ $ turbostat                # 전력 상태 모니터링
 # 컨텍스트 스위칭
 $ vmstat 1                  # cs 컬럼 확인
 $ pidstat -w 1             # 프로세스별 스위칭
-```
+```text
 
 ## 이 장을 읽고 나면
 
@@ -204,7 +204,7 @@ mindmap
         Performance
         Powersave
         Ondemand
-```
+```text
 
 ## CPU 문제 진단 플로우차트
 
@@ -227,7 +227,7 @@ graph TD
     Type -->|전력/발열| Power[전력 상태 확인]
     Power --> Governor[거버너 설정 조정]
     Governor --> Cooling[쿨링 솔루션 개선]
-```
+```text
 
 ## 다음 단계
 
