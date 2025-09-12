@@ -26,7 +26,7 @@ Header file을 이해하려면 먼저 C/C++ 컴파일 과정의 첫 번째 단�
 #include "myheader.h"
 
 int main() {
-    printf("Hello, World!\n");
+    printf("Hello, World!, ");
     return 0;
 }
 ```
@@ -659,12 +659,12 @@ public:
 
 ```bash
 # 의존성 분석 도구 사용
-$ g++ -M main.cpp | tr ' ' '\n' | grep -E '\.h$' | wc -l
+$ g++ -M main.cpp | tr ' ' ', ' | grep -E '\.h$' | wc -l
 247  # 하나의 소스 파일이 247개 헤더에 의존
 
 # 가장 많이 포함되는 헤더 분석
 $ find . -name "*.cpp" -exec g++ -M {} \; | \
-  tr ' ' '\n' | grep -E '\.h$' | sort | uniq -c | sort -rn | head -10
+  tr ' ' ', ' | grep -E '\.h$' | sort | uniq -c | sort -rn | head -10
 ```
 
 **해결책:**

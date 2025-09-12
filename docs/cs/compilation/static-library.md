@@ -25,17 +25,17 @@ Static Library(정적 라이브러리)는 컴파일된 오브젝트 파일들을
 
 ```mermaid
 graph TB
-    A[Source Files<br/>math.c, string.c, util.c] --> B[Compiler<br/>gcc -c]
-    B --> C[Object Files<br/>math.o, string.o, util.o]
-    C --> D[Archiver<br/>ar rcs]
-    D --> E[Static Library<br/>libmylib.a]
+    A[Source Files, math.c, string.c, util.c] --> B[Compiler, gcc -c]
+    B --> C[Object Files, math.o, string.o, util.o]
+    C --> D[Archiver, ar rcs]
+    D --> E[Static Library, libmylib.a]
     
-    F[Main Program<br/>main.c] --> G[Compiler<br/>gcc -c]
+    F[Main Program, main.c] --> G[Compiler, gcc -c]
     G --> H[main.o]
     
-    H --> I[Linker<br/>ld]
+    H --> I[Linker, ld]
     E --> I
-    I --> J[Executable<br/>program]
+    I --> J[Executable, program]
     
     subgraph "Static Linking Process"
         K[Symbol Resolution]
@@ -70,12 +70,12 @@ graph TB
 #include <stdio.h>
 
 int add(int a, int b) {
-    printf("Adding %d + %d\n", a, b);
+    printf("Adding %d + %d, ", a, b);
     return a + b;
 }
 
 int multiply(int a, int b) {
-    printf("Multiplying %d * %d\n", a, b);
+    printf("Multiplying %d * %d, ", a, b);
     return a * b;
 }
 
@@ -84,7 +84,7 @@ int power(int base, int exp) {
     for (int i = 0; i < exp; i++) {
         result *= base;
     }
-    printf("%d^%d = %d\n", base, exp, result);
+    printf("%d^%d = %d, ", base, exp, result);
     return result;
 }
 ```
@@ -102,7 +102,7 @@ char* string_duplicate(const char* src) {
     char* dst = malloc(len + 1);
     if (dst) {
         strcpy(dst, src);
-        printf("Duplicated string: %s\n", dst);
+        printf("Duplicated string: %s, ", dst);
     }
     return dst;
 }
@@ -116,7 +116,7 @@ void string_reverse(char* str) {
         str[i] = str[len - 1 - i];
         str[len - 1 - i] = temp;
     }
-    printf("Reversed string: %s\n", str);
+    printf("Reversed string: %s, ", str);
 }
 
 int string_count_chars(const char* str, char c) {
@@ -126,7 +126,7 @@ int string_count_chars(const char* str, char c) {
     for (const char* p = str; *p; p++) {
         if (*p == c) count++;
     }
-    printf("Character '%c' appears %d times in '%s'\n", c, count, str);
+    printf("Character '%c' appears %d times in '%s', ", c, count, str);
     return count;
 }
 ```
@@ -149,7 +149,7 @@ void debug_log(const char* format, ...) {
     va_start(args, format);
     vprintf(format, args);
     va_end(args);
-    printf("\n");
+    printf(", ");
 }
 
 void debug_enable() {
@@ -266,7 +266,7 @@ extern void string_reverse(char* str);
 extern void debug_log(const char* format, ...);
 
 int main() {
-    printf("=== Static Library Demo ===\n");
+    printf("=== Static Library Demo ===, ");
     
     // 수학 함수 사용
     int sum = add(10, 20);
@@ -342,7 +342,7 @@ void debug_memory_info(void* ptr, size_t size);
 #include "utils.h"
 
 int main() {
-    printf("=== Static Library with Header ===\n");
+    printf("=== Static Library with Header ===, ");
     
     // 모든 함수 선언이 헤더에 정의되어 있음
     int result = power(2, 10);
@@ -437,12 +437,12 @@ $ ls -la minimal_program whole_archive_program
 
 __attribute__((constructor))
 void init_function() {
-    printf("Library initialized automatically\n");
+    printf("Library initialized automatically, ");
 }
 
 __attribute__((destructor))
 void cleanup_function() {
-    printf("Library cleanup completed\n");
+    printf("Library cleanup completed, ");
 }
 
 int utility_function() {
@@ -482,11 +482,11 @@ Library cleanup completed
 #include <stdio.h>
 
 void common_function() {
-    printf("Implementation from lib1\n");
+    printf("Implementation from lib1, ");
 }
 
 void lib1_specific() {
-    printf("Lib1 specific function\n");
+    printf("Lib1 specific function, ");
 }
 ```
 
@@ -495,11 +495,11 @@ void lib1_specific() {
 #include <stdio.h>
 
 void common_function() {
-    printf("Implementation from lib2\n");
+    printf("Implementation from lib2, ");
 }
 
 void lib2_specific() {
-    printf("Lib2 specific function\n");
+    printf("Lib2 specific function, ");
 }
 ```
 
@@ -510,7 +510,7 @@ extern void lib1_specific();
 extern void lib2_specific();
 
 int main() {
-    printf("=== Symbol Precedence Test ===\n");
+    printf("=== Symbol Precedence Test ===, ");
     common_function();  // 어느 구현이 사용될까?
     lib1_specific();
     lib2_specific();
@@ -546,7 +546,7 @@ Lib1 specific function
 #include <stdio.h>
 
 void low_level_function() {
-    printf("Low level function called\n");
+    printf("Low level function called, ");
 }
 ```
 
@@ -555,7 +555,7 @@ void low_level_function() {
 extern void low_level_function();
 
 void high_level_function() {
-    printf("High level function calling low level\n");
+    printf("High level function calling low level, ");
     low_level_function();
 }
 ```
@@ -1084,7 +1084,7 @@ void mylib_set_allocator(const mylib_allocator_t* allocator) {
     if (allocator && allocator->malloc_func && 
         allocator->realloc_func && allocator->free_func) {
         current_allocator = (mylib_allocator_t*)allocator;
-        MYLIB_DEBUG_PRINT("Custom allocator set\n");
+        MYLIB_DEBUG_PRINT("Custom allocator set, ");
     }
 }
 
@@ -1099,7 +1099,7 @@ void* mylib_malloc(size_t size) {
     if (ptr) {
         total_allocated += size;
         allocation_count++;
-        MYLIB_DEBUG_PRINT("Allocated %zu bytes at %p (total: %zu)\n", 
+        MYLIB_DEBUG_PRINT("Allocated %zu bytes at %p (total: %zu), ", 
                          size, ptr, total_allocated);
     }
 #endif
@@ -1113,7 +1113,7 @@ void mylib_free(void* ptr) {
         
 #if MYLIB_DEBUG
         allocation_count--;
-        MYLIB_DEBUG_PRINT("Freed memory at %p (remaining allocations: %zu)\n", 
+        MYLIB_DEBUG_PRINT("Freed memory at %p (remaining allocations: %zu), ", 
                          ptr, allocation_count);
 #endif
     }
@@ -1121,9 +1121,9 @@ void mylib_free(void* ptr) {
 
 #if MYLIB_DEBUG
 void mylib_memory_report(void) {
-    printf("=== Memory Report ===\n");
-    printf("Total allocated: %zu bytes\n", total_allocated);
-    printf("Active allocations: %zu\n", allocation_count);
+    printf("=== Memory Report ===, ");
+    printf("Total allocated: %zu bytes, ", total_allocated);
+    printf("Active allocations: %zu, ", allocation_count);
 }
 
 size_t mylib_memory_usage(void) {
@@ -1243,15 +1243,15 @@ help:
 #include "mylib_memory.h"
 
 void test_version_info() {
-    printf("=== Version Test ===\n");
+    printf("=== Version Test ===, ");
     const char* version = mylib_version_string();
-    printf("Library version: %s\n", version);
+    printf("Library version: %s, ", version);
     assert(strlen(version) > 0);
-    printf("✓ Version test passed\n\n");
+    printf("✓ Version test passed, , ");
 }
 
 void test_point_operations() {
-    printf("=== Point Operations Test ===\n");
+    printf("=== Point Operations Test ===, ");
     
     mylib_point_t p1, p2;
     mylib_error_t err;
@@ -1267,14 +1267,14 @@ void test_point_operations() {
     
     // 거리 계산 테스트
     double distance = mylib_point_distance(&p1, &p2);
-    printf("Distance between (0,0) and (3,4): %.2f\n", distance);
+    printf("Distance between (0,0) and (3,4): %.2f, ", distance);
     assert(distance == 5.0);  // 3-4-5 직각삼각형
     
-    printf("✓ Point operations test passed\n\n");
+    printf("✓ Point operations test passed, , ");
 }
 
 void test_polygon_operations() {
-    printf("=== Polygon Operations Test ===\n");
+    printf("=== Polygon Operations Test ===, ");
     
     mylib_polygon_t poly;
     mylib_error_t err;
@@ -1294,17 +1294,17 @@ void test_polygon_operations() {
     
     // 면적 계산 (4 x 3 = 12)
     double area = mylib_polygon_area(&poly);
-    printf("Rectangle area: %.2f\n", area);
+    printf("Rectangle area: %.2f, ", area);
     assert(area == 12.0);
     
     // 정리
     mylib_polygon_destroy(&poly);
     
-    printf("✓ Polygon operations test passed\n\n");
+    printf("✓ Polygon operations test passed, , ");
 }
 
 void test_memory_management() {
-    printf("=== Memory Management Test ===\n");
+    printf("=== Memory Management Test ===, ");
     
 #if MYLIB_DEBUG
     size_t initial_usage = mylib_memory_usage();
@@ -1316,7 +1316,7 @@ void test_memory_management() {
     assert(ptr1 && ptr2);
     
 #if MYLIB_DEBUG
-    printf("Memory usage after allocation: %zu bytes\n", mylib_memory_usage());
+    printf("Memory usage after allocation: %zu bytes, ", mylib_memory_usage());
     assert(mylib_memory_usage() >= initial_usage + 300);
 #endif
     
@@ -1328,11 +1328,11 @@ void test_memory_management() {
     mylib_memory_report();
 #endif
     
-    printf("✓ Memory management test passed\n\n");
+    printf("✓ Memory management test passed, , ");
 }
 
 void test_error_handling() {
-    printf("=== Error Handling Test ===\n");
+    printf("=== Error Handling Test ===, ");
     
     // NULL 포인터 전달 테스트
     mylib_error_t err = mylib_point_create(0, 0, NULL);
@@ -1347,11 +1347,11 @@ void test_error_handling() {
     double distance = mylib_point_distance(NULL, NULL);
     assert(distance < 0);  // 오류 시 음수 반환
     
-    printf("✓ Error handling test passed\n\n");
+    printf("✓ Error handling test passed, , ");
 }
 
 int main() {
-    printf("Starting MyLib tests...\n\n");
+    printf("Starting MyLib tests..., , ");
     
     test_version_info();
     test_point_operations();
@@ -1359,7 +1359,7 @@ int main() {
     test_memory_management();
     test_error_handling();
     
-    printf("All tests passed successfully! ✓\n");
+    printf("All tests passed successfully! ✓, ");
     return 0;
 }
 ```
@@ -1514,7 +1514,7 @@ double measure_time_diff(struct timespec start, struct timespec end) {
 }
 
 void benchmark_point_operations() {
-    printf("=== Point Operations Benchmark ===\n");
+    printf("=== Point Operations Benchmark ===, ");
     
     struct timespec start, end;
     mylib_point_t points[ITERATIONS];
@@ -1527,7 +1527,7 @@ void benchmark_point_operations() {
     clock_gettime(CLOCK_MONOTONIC, &end);
     
     double create_time = measure_time_diff(start, end);
-    printf("Point creation: %.3f seconds (%d ops, %.1f ns/op)\n", 
+    printf("Point creation: %.3f seconds (%d ops, %.1f ns/op), ", 
            create_time, ITERATIONS, create_time * 1e9 / ITERATIONS);
     
     // 거리 계산 벤치마크
@@ -1539,13 +1539,13 @@ void benchmark_point_operations() {
     clock_gettime(CLOCK_MONOTONIC, &end);
     
     double distance_time = measure_time_diff(start, end);
-    printf("Distance calculation: %.3f seconds (%d ops, %.1f ns/op)\n", 
+    printf("Distance calculation: %.3f seconds (%d ops, %.1f ns/op), ", 
            distance_time, ITERATIONS - 1, distance_time * 1e9 / (ITERATIONS - 1));
-    printf("Total distance (sanity check): %.2f\n\n", total_distance);
+    printf("Total distance (sanity check): %.2f, , ", total_distance);
 }
 
 void benchmark_polygon_operations() {
-    printf("=== Polygon Operations Benchmark ===\n");
+    printf("=== Polygon Operations Benchmark ===, ");
     
     const int poly_size = 100;
     mylib_polygon_t poly;
@@ -1563,7 +1563,7 @@ void benchmark_polygon_operations() {
     
     clock_gettime(CLOCK_MONOTONIC, &end);
     double add_time = measure_time_diff(start, end);
-    printf("Adding %d points: %.6f seconds (%.1f ns/op)\n", 
+    printf("Adding %d points: %.6f seconds (%.1f ns/op), ", 
            poly_size, add_time, add_time * 1e9 / poly_size);
     
     // 면적 계산 반복
@@ -1577,15 +1577,15 @@ void benchmark_polygon_operations() {
     
     clock_gettime(CLOCK_MONOTONIC, &end);
     double area_time = measure_time_diff(start, end);
-    printf("Area calculation: %.6f seconds (%d iterations, %.1f ns/op)\n", 
+    printf("Area calculation: %.6f seconds (%d iterations, %.1f ns/op), ", 
            area_time, area_iterations, area_time * 1e9 / area_iterations);
     
     mylib_polygon_destroy(&poly);
-    printf("\n");
+    printf(", ");
 }
 
 void benchmark_memory_operations() {
-    printf("=== Memory Operations Benchmark ===\n");
+    printf("=== Memory Operations Benchmark ===, ");
     
     const int alloc_count = 100000;
     void** ptrs = malloc(alloc_count * sizeof(void*));
@@ -1600,7 +1600,7 @@ void benchmark_memory_operations() {
     clock_gettime(CLOCK_MONOTONIC, &end);
     
     double alloc_time = measure_time_diff(start, end);
-    printf("Memory allocation: %.6f seconds (%d ops, %.1f ns/op)\n", 
+    printf("Memory allocation: %.6f seconds (%d ops, %.1f ns/op), ", 
            alloc_time, alloc_count, alloc_time * 1e9 / alloc_count);
     
     // 해제 벤치마크
@@ -1611,16 +1611,16 @@ void benchmark_memory_operations() {
     clock_gettime(CLOCK_MONOTONIC, &end);
     
     double free_time = measure_time_diff(start, end);
-    printf("Memory deallocation: %.6f seconds (%d ops, %.1f ns/op)\n", 
+    printf("Memory deallocation: %.6f seconds (%d ops, %.1f ns/op), ", 
            free_time, alloc_count, free_time * 1e9 / alloc_count);
     
     free(ptrs);
-    printf("\n");
+    printf(", ");
 }
 
 int main() {
-    printf("MyLib Performance Benchmark\n");
-    printf("============================\n\n");
+    printf("MyLib Performance Benchmark, ");
+    printf("============================, , ");
     
     benchmark_point_operations();
     benchmark_polygon_operations();

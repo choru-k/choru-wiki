@@ -23,13 +23,13 @@ DevOps/SRE 엔지니어로서 컴파일레이션 과정을 깊이 이해하면 �
 
 ```mermaid
 graph LR
-    A[Source Code<br/>.c, .cpp] --> B[Preprocessor<br/>cpp]
-    B --> C[Compiler<br/>cc1]
-    C --> D[Assembly Code<br/>.s]
-    D --> E[Assembler<br/>as]
-    E --> F[Object File<br/>.o]
-    F --> G[Linker<br/>ld]
-    G --> H[Executable<br/>a.out]
+    A[Source Code, .c, .cpp] --> B[Preprocessor, cpp]
+    B --> C[Compiler, cc1]
+    C --> D[Assembly Code, .s]
+    D --> E[Assembler, as]
+    E --> F[Object File, .o]
+    F --> G[Linker, ld]
+    G --> H[Executable, a.out]
 ```
 
 ## 컴파일레이션 단계별 분석
@@ -46,9 +46,9 @@ graph LR
 
 int main() {
 #ifdef DEBUG
-    printf("Debug mode enabled\n");
+    printf("Debug mode enabled, ");
 #endif
-    printf("Hello, World!\n");
+    printf("Hello, World!, ");
     return 0;
 }
 ```
@@ -71,8 +71,8 @@ extern int printf (const char *__restrict __format, ...);
 ...
 # 2 "hello.c"
 int main() {
-    printf("Debug mode enabled\n");
-    printf("Hello, World!\n");
+    printf("Debug mode enabled, ");
+    printf("Hello, World!, ");
     return 0;
 }
 ```
@@ -193,7 +193,7 @@ extern int multiply(int a, int b);
 
 int main() {
     int result = add(5, 3);
-    printf("Result: %d\n", result);
+    printf("Result: %d, ", result);
     return 0;
 }
 ```
@@ -233,7 +233,7 @@ int x = 42 + y;
 
 토큰 분해:
 
-```
+```text
 INT     -> "int"
 ID      -> "x"  
 ASSIGN  -> "="
@@ -341,7 +341,7 @@ int calculate() {
     
     // Loop unrolling 대상
     for (int i = 0; i < 4; i++) {
-        printf("%d\n", i);
+        printf("%d, ", i);
     }
     
     return result;
@@ -513,7 +513,7 @@ int main() {
     double pi = calculate_pi(100000000);
     clock_t end = clock();
     
-    printf("Pi: %f, Time: %f seconds\n", 
+    printf("Pi: %f, Time: %f seconds, ", 
            pi, (double)(end - start) / CLOCKS_PER_SEC);
     return 0;
 }
@@ -614,7 +614,7 @@ collect2: error: ld returned 1 exit status
 ```c
 // missing_header.c
 int main() {
-    printf("Hello\n");  // stdio.h 누락
+    printf("Hello, ");  // stdio.h 누락
     return 0;
 }
 ```
@@ -635,7 +635,7 @@ missing_header.c:2:5: warning: implicit declaration of function 'printf'
 
 int main() {
     double result = sqrt(16.0);
-    printf("Result: %f\n", result);
+    printf("Result: %f, ", result);
     return 0;
 }
 ```
@@ -834,8 +834,8 @@ $ nm -D libmath.so
 #include "mathlib.h"
 
 int main() {
-    printf("5 + 3 = %d\n", add(5, 3));
-    printf("5 * 3 = %d\n", multiply(5, 3));
+    printf("5 + 3 = %d, ", add(5, 3));
+    printf("5 * 3 = %d, ", multiply(5, 3));
     return 0;
 }
 ```

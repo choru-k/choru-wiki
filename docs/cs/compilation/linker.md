@@ -24,12 +24,12 @@ tags:
 
 ```mermaid
 graph TB
-    A[Source Files<br/>main.c, utils.c] --> B[Compiler<br/>gcc -c]
-    B --> C[Object Files<br/>main.o, utils.o]
-    C --> D[Linker<br/>ld]
-    E[Static Libraries<br/>libmath.a] --> D
-    F[Dynamic Libraries<br/>libc.so] --> D
-    D --> G[Executable<br/>program]
+    A[Source Files, main.c, utils.c] --> B[Compiler, gcc -c]
+    B --> C[Object Files, main.o, utils.o]
+    C --> D[Linker, ld]
+    E[Static Libraries, libmath.a] --> D
+    F[Dynamic Libraries, libc.so] --> D
+    D --> G[Executable, program]
     
     subgraph "Linking Process"
         H[Symbol Resolution]
@@ -70,7 +70,7 @@ extern int multiply(int a, int b);
 
 int main() {
     int result = add(5, multiply(3, 4));
-    printf("Result: %d\n", result);
+    printf("Result: %d, ", result);
     return 0;
 }
 ```
@@ -119,7 +119,7 @@ Static linking은 모든 의존성을 실행 파일에 포함시킵니다.
 
 int main() {
     double result = sqrt(16.0);
-    printf("Square root of 16: %.2f\n", result);
+    printf("Square root of 16: %.2f, ", result);
     return 0;
 }
 ```
@@ -729,7 +729,7 @@ collect2: error: ld returned 1 exit status
 ```c
 // utils.c
 void missing_function() {
-    printf("Function found!\n");
+    printf("Function found!, ");
 }
 ```
 
@@ -737,14 +737,14 @@ void missing_function() {
 gcc main.c utils.c -o program
 ```
 
-2. **라이브러리 링크**:
+1. **라이브러리 링크**:
 
 ```bash
 # 수학 라이브러리 예제
 $ gcc math_program.c -lm -o program
 ```
 
-3. **라이브러리 경로 지정**:
+1. **라이브러리 경로 지정**:
 
 ```bash
 gcc main.c -L/custom/lib -lmylib -o program
@@ -757,7 +757,7 @@ gcc main.c -L/custom/lib -lmylib -o program
 int global_var = 10;
 
 void func1() {
-    printf("Function 1\n");
+    printf("Function 1, ");
 }
 ```
 
@@ -766,7 +766,7 @@ void func1() {
 int global_var = 20;  // 중복 정의!
 
 void func2() {
-    printf("Function 2\n");
+    printf("Function 2, ");
 }
 ```
 
@@ -786,7 +786,7 @@ collect2: error: ld returned 1 exit status
 static int global_var = 10;  // 파일 내부에서만 접근
 ```
 
-2. **extern 선언** 사용:
+1. **extern 선언** 사용:
 
 ```c
 // globals.h
@@ -960,7 +960,7 @@ int main() {
     // 런타임에 플러그인 로딩
     void* plugin_handle = dlopen("./plugin.so", RTLD_LAZY);
     if (!plugin_handle) {
-        fprintf(stderr, "Error: %s\n", dlerror());
+        fprintf(stderr, "Error: %s, ", dlerror());
         return 1;
     }
     
@@ -969,7 +969,7 @@ int main() {
         dlsym(plugin_handle, "get_plugin_interface");
     
     if (!get_plugin_interface) {
-        fprintf(stderr, "Error: %s\n", dlerror());
+        fprintf(stderr, "Error: %s, ", dlerror());
         dlclose(plugin_handle);
         return 1;
     }
@@ -989,7 +989,7 @@ int main() {
 #include "plugin_interface.h"
 
 static int plugin_init(void) {
-    printf("Plugin initialized\n");
+    printf("Plugin initialized, ");
     return 0;
 }
 
@@ -998,7 +998,7 @@ static int plugin_process(int input) {
 }
 
 static void plugin_cleanup(void) {
-    printf("Plugin cleaned up\n");
+    printf("Plugin cleaned up, ");
 }
 
 static plugin_interface_t plugin = {
@@ -1040,7 +1040,7 @@ void optional_logging(const char* message) {
 }
 
 void main_function() {
-    printf("Main function executing\n");
+    printf("Main function executing, ");
     optional_logging("This is a log message");
 }
 ```
@@ -1052,7 +1052,7 @@ void main_function() {
 
 void optional_logging(const char* message) {
     time_t now = time(NULL);
-    printf("[%s] %s\n", ctime(&now), message);
+    printf("[%s] %s, ", ctime(&now), message);
 }
 ```
 
@@ -1145,7 +1145,7 @@ int main() {
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     
-    printf("Execution time: %f seconds\n", cpu_time_used);
+    printf("Execution time: %f seconds, ", cpu_time_used);
     return 0;
 }
 ```

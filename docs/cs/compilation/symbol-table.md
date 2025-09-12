@@ -28,10 +28,10 @@ Symbol Table은 컴파일러와 [링커](linker.md)가 함수, 변수, 타입 �
 ```mermaid
 graph TB
     subgraph "Compilation Process"
-        A[Source Code<br/>main.c] --> B[Preprocessor<br/>cpp]
-        B --> C[Compiler<br/>gcc -S]
-        C --> D[Assembler<br/>as]
-        D --> E[Object File<br/>main.o]
+        A[Source Code, main.c] --> B[Preprocessor, cpp]
+        B --> C[Compiler, gcc -S]
+        C --> D[Assembler, as]
+        D --> E[Object File, main.o]
     end
     
     subgraph "Symbol Table Creation"
@@ -42,11 +42,11 @@ graph TB
     end
     
     subgraph "Symbol Types"
-        K[Text Symbols<br/>T, t]
-        L[Data Symbols<br/>D, d] 
-        M[BSS Symbols<br/>B, b]
-        N[Undefined<br/>U]
-        O[Common<br/>C]
+        K[Text Symbols, T, t]
+        L[Data Symbols, D, d] 
+        M[BSS Symbols, B, b]
+        N[Undefined, U]
+        O[Common, C]
     end
     
     C --> F
@@ -80,18 +80,18 @@ extern int external_variable;
 // Static symbols (internal binding) 
 static int static_variable = 10;
 static void static_function(void) {
-    printf("Static function\n");
+    printf("Static function, ");
 }
 
 // Weak symbols
 __attribute__((weak)) int weak_variable = 100;
 __attribute__((weak)) void weak_function(void) {
-    printf("Weak function\n");
+    printf("Weak function, ");
 }
 
 // Strong symbols (default)
 void public_function(void) {
-    printf("Public function\n");
+    printf("Public function, ");
 }
 
 // Function with different linkage
@@ -104,9 +104,9 @@ int main() {
     static_function();
     public_function();
     
-    printf("Global: %d\n", global_variable);
-    printf("Static: %d\n", static_variable);
-    printf("Weak: %d\n", weak_variable);
+    printf("Global: %d, ", global_variable);
+    printf("Static: %d, ", static_variable);
+    printf("Weak: %d, ", weak_variable);
     
     return 0;
 }
@@ -138,25 +138,25 @@ $ nm symbol_types.o
 
 // Default visibility (global scope)
 void default_function(void) {
-    printf("Default visibility\n");
+    printf("Default visibility, ");
 }
 
 // Hidden visibility (module scope)
 __attribute__((visibility("hidden")))
 void hidden_function(void) {
-    printf("Hidden visibility\n");
+    printf("Hidden visibility, ");
 }
 
 // Protected visibility (no interposition)
 __attribute__((visibility("protected")))
 void protected_function(void) {
-    printf("Protected visibility\n");
+    printf("Protected visibility, ");
 }
 
 // Internal visibility (like hidden but stronger)
 __attribute__((visibility("internal")))
 void internal_function(void) {
-    printf("Internal visibility\n");
+    printf("Internal visibility, ");
 }
 
 void test_visibility(void) {
@@ -312,7 +312,7 @@ public:
     
     // Static 메서드
     static void static_method() {
-        std::cout &lt;&lt; "Static method\n";
+        std::cout &lt;&lt; "Static method, ";
     }
 };
 
@@ -499,7 +499,7 @@ Employee* create_employee(int id, const char* name, double salary) {
 
 void print_employee(const Employee* emp) {
     if (emp) {
-        printf("ID: %d, Name: %s, Salary: %.2f\n", 
+        printf("ID: %d, Name: %s, Salary: %.2f, ", 
                emp-&gt;id, emp-&gt;name, emp-&gt;salary);
     }
 }
@@ -610,12 +610,12 @@ static int internal_counter = 0;
 
 static void internal_function(void) {
     internal_counter++;
-    printf("Internal call #%d\n", internal_counter);
+    printf("Internal call #%d, ", internal_counter);
 }
 
 void public_function(void) {
     internal_function();
-    printf("Public function called\n");
+    printf("Public function called, ");
 }
 
 extern void external_dependency(void);
@@ -744,19 +744,19 @@ int custom_data = 0x12345678;
 
 __attribute__((constructor))
 void init_function(void) {
-    printf("Constructor called\n");
+    printf("Constructor called, ");
 }
 
 __attribute__((destructor))
 void cleanup_function(void) {
-    printf("Destructor called\n");
+    printf("Destructor called, ");
 }
 
 int main() {
     char buffer[100];
     strcpy(buffer, "Hello, Symbol Analysis!");
-    printf("%s\n", buffer);
-    printf("Custom data: 0x%x\n", custom_data);
+    printf("%s, ", buffer);
+    printf("Custom data: 0x%x, ", custom_data);
     return 0;
 }
 ```
@@ -849,12 +849,12 @@ analyze_binary() {
     echo "============================================"
     
     # 1. 파일 기본 정보
-    echo -e "\n1. Binary Information:"
+    echo -e ", 1. Binary Information:"
     file "$binary"
     ls -lh "$binary"
     
     # 2. 심볼 통계
-    echo -e "\n2. Symbol Statistics:"
+    echo -e ", 2. Symbol Statistics:"
     local total_symbols=$(nm "$binary" 2>/dev/null | wc -l)
     local dynamic_symbols=$(nm -D "$binary" 2>/dev/null | wc -l)
     local undefined_symbols=$(nm -u "$binary" 2>/dev/null | wc -l)
@@ -870,17 +870,17 @@ analyze_binary() {
     echo "BSS symbols (uninitialized): $bss_symbols"
     
     # 3. 가장 큰 심볼들
-    echo -e "\n3. Largest Symbols:"
+    echo -e ", 3. Largest Symbols:"
     nm -S --size-sort "$binary" 2>/dev/null | tail -10
     
     # 4. 외부 의존성
-    echo -e "\n4. External Dependencies:"
+    echo -e ", 4. External Dependencies:"
     if command -v ldd &> /dev/null; then
         ldd "$binary" 2>/dev/null | head -10
     fi
     
     # 5. 보안 정보
-    echo -e "\n5. Security Features:"
+    echo -e ", 5. Security Features:"
     if command -v checksec &> /dev/null; then
         checksec --file="$binary"
     elif command -v readelf &> /dev/null; then
@@ -890,7 +890,7 @@ analyze_binary() {
     fi
     
     # 6. 스트립 상태
-    echo -e "\n6. Strip Status:"
+    echo -e ", 6. Strip Status:"
     if readelf -S "$binary" 2>/dev/null | grep -q "\.symtab"; then
         echo "Symbols: Present"
     else
@@ -904,7 +904,7 @@ analyze_binary() {
     fi
     
     # 7. 중복 심볼 검사 (라이브러리인 경우)
-    echo -e "\n7. Potential Issues:"
+    echo -e ", 7. Potential Issues:"
     local duplicate_symbols=$(nm "$binary" 2>/dev/null | awk '{print $3}' | sort | uniq -d | wc -l)
     echo "Duplicate symbols: $duplicate_symbols"
     
@@ -1023,7 +1023,7 @@ __attribute__((noinline))
 void proper_allocation(void) {
     char* ptr = malloc(2048);
     strcpy(ptr, "This memory will be freed");
-    printf("Allocated properly: %s\n", ptr);
+    printf("Allocated properly: %s, ", ptr);
     free(ptr);  // 올바른 해제
 }
 
@@ -1031,7 +1031,7 @@ int main() {
     proper_allocation();
     create_leak_in_loop();  // 메모리 리크 발생
     
-    printf("Program finished - check for leaks\n");
+    printf("Program finished - check for leaks, ");
     return 0;
 }
 ```

@@ -27,9 +27,9 @@ Dynamic Library(공유 라이브러리)는 프로그램 실행 시점에 메모�
 ```mermaid
 graph TB
     subgraph "Static Linking"
-        A[Program A<br/>+ libc + libmath] --> M1[Memory]
-        B[Program B<br/>+ libc + libmath] --> M2[Memory]
-        C[Program C<br/>+ libc + libmath] --> M3[Memory]
+        A[Program A, + libc + libmath] --> M1[Memory]
+        B[Program B, + libc + libmath] --> M2[Memory]
+        C[Program C, + libc + libmath] --> M3[Memory]
     end
     
     subgraph "Dynamic Linking"
@@ -68,20 +68,20 @@ static int internal_counter = 0;  // 라이브러리 내부 전역 변수
 
 int add(int a, int b) {
     internal_counter++;
-    printf("Addition called %d times\n", internal_counter);
+    printf("Addition called %d times, ", internal_counter);
     return a + b;
 }
 
 int multiply(int a, int b) {
     internal_counter++;
-    printf("Multiplication called %d times\n", internal_counter);
+    printf("Multiplication called %d times, ", internal_counter);
     return a * b;
 }
 
 // 라이브러리 정보 함수
 void get_library_info(void) {
-    printf("Math Utils Library v1.0\n");
-    printf("Total operations: %d\n", internal_counter);
+    printf("Math Utils Library v1.0, ");
+    printf("Total operations: %d, ", internal_counter);
 }
 ```
 
@@ -150,12 +150,12 @@ extern int multiply(int a, int b);
 extern void get_library_info(void);
 
 int main() {
-    printf("Starting program...\n");
+    printf("Starting program..., ");
     
     int result1 = add(5, 3);
     int result2 = multiply(4, 7);
     
-    printf("Results: %d, %d\n", result1, result2);
+    printf("Results: %d, %d, ", result1, result2);
     get_library_info();
     
     return 0;
@@ -196,8 +196,8 @@ GOT는 전역 변수와 함수의 실제 주소를 저장하는 테이블입니�
 int global_variable = 42;
 
 void function_call_example() {
-    printf("Global variable value: %d\n", global_variable);
-    printf("Address of global_variable: %p\n", &global_variable);
+    printf("Global variable value: %d, ", global_variable);
+    printf("Address of global_variable: %p, ", &global_variable);
 }
 ```
 
@@ -229,11 +229,11 @@ PLT는 외부 함수 호출을 지연 바인딩(lazy binding)으로 처리하는
 void demonstrate_plt() {
     // 첫 번째 호출 시 PLT를 통해 실제 주소 해결
     double result1 = sqrt(16.0);
-    printf("First sqrt call: %.2f\n", result1);
+    printf("First sqrt call: %.2f, ", result1);
     
     // 두 번째 호출 시 이미 해결된 주소 직접 사용
     double result2 = sqrt(25.0);
-    printf("Second sqrt call: %.2f\n", result2);
+    printf("Second sqrt call: %.2f, ", result2);
 }
 ```
 
@@ -283,13 +283,13 @@ $ readelf -d program_eager | grep -E "(BIND_NOW|LAZY)"
 #include <stdio.h>
 
 void shared_function() {
-    printf("Main program implementation\n");
+    printf("Main program implementation, ");
 }
 
 extern void call_shared_function();
 
 int main() {
-    printf("=== Symbol Resolution Test ===\n");
+    printf("=== Symbol Resolution Test ===, ");
     
     // 직접 호출
     printf("Direct call: ");
@@ -308,7 +308,7 @@ int main() {
 #include <stdio.h>
 
 void shared_function() {
-    printf("Library implementation\n");
+    printf("Library implementation, ");
 }
 
 void call_shared_function() {
@@ -338,13 +338,13 @@ Library call: Main program implementation  # 메인 프로그램의 심볼이 �
 // Version 1.0 함수
 __asm__(".symver old_function_v1, old_function@VER_1.0");
 void old_function_v1() {
-    printf("Function version 1.0\n");
+    printf("Function version 1.0, ");
 }
 
 // Version 2.0 함수 (기본값)
 __asm__(".symver new_function_v2, old_function@@VER_2.0");
 void new_function_v2() {
-    printf("Function version 2.0 (default)\n");
+    printf("Function version 2.0 (default), ");
 }
 ```
 
@@ -527,12 +527,12 @@ int main() {
     void (*info_func)(void);
     char *error;
 
-    printf("=== Runtime Library Loading ===\n");
+    printf("=== Runtime Library Loading ===, ");
 
     // 1. 라이브러리 로딩
     handle = dlopen("./libmath.so", RTLD_LAZY);
     if (!handle) {
-        fprintf(stderr, "dlopen error: %s\n", dlerror());
+        fprintf(stderr, "dlopen error: %s, ", dlerror());
         exit(EXIT_FAILURE);
     }
 
@@ -542,21 +542,21 @@ int main() {
     // 3. 함수 심볼 로딩
     *(void **) (&add_func) = dlsym(handle, "add");
     if ((error = dlerror()) != NULL) {
-        fprintf(stderr, "dlsym error: %s\n", error);
+        fprintf(stderr, "dlsym error: %s, ", error);
         dlclose(handle);
         exit(EXIT_FAILURE);
     }
 
     *(void **) (&info_func) = dlsym(handle, "get_library_info");
     if ((error = dlerror()) != NULL) {
-        fprintf(stderr, "dlsym error: %s\n", error);
+        fprintf(stderr, "dlsym error: %s, ", error);
         dlclose(handle);
         exit(EXIT_FAILURE);
     }
 
     // 4. 함수 호출
     int result = add_func(10, 20);
-    printf("Dynamic function result: %d\n", result);
+    printf("Dynamic function result: %d, ", result);
     info_func();
 
     // 5. 라이브러리 언로딩
@@ -616,7 +616,7 @@ typedef plugin_interface_t* (*get_plugin_interface_func_t)(void);
 #include "plugin_interface.h"
 
 static int plugin_init(void) {
-    printf("Text Processor Plugin initialized\n");
+    printf("Text Processor Plugin initialized, ");
     return 0;
 }
 
@@ -633,7 +633,7 @@ static int plugin_process(const char* input, char* output, size_t output_size) {
 }
 
 static void plugin_cleanup(void) {
-    printf("Text Processor Plugin cleaned up\n");
+    printf("Text Processor Plugin cleaned up, ");
 }
 
 static plugin_info_t plugin_info = {
@@ -681,7 +681,7 @@ plugin_t* load_plugin(const char* path) {
     // 플러그인 로딩
     plugin->handle = dlopen(path, RTLD_LAZY);
     if (!plugin->handle) {
-        printf("Plugin load error: %s\n", dlerror());
+        printf("Plugin load error: %s, ", dlerror());
         free(plugin);
         return NULL;
     }
@@ -691,7 +691,7 @@ plugin_t* load_plugin(const char* path) {
         (get_plugin_interface_func_t) dlsym(plugin->handle, "get_plugin_interface");
     
     if (!get_interface) {
-        printf("Entry point not found: %s\n", dlerror());
+        printf("Entry point not found: %s, ", dlerror());
         dlclose(plugin->handle);
         free(plugin);
         return NULL;
@@ -700,7 +700,7 @@ plugin_t* load_plugin(const char* path) {
     // 인터페이스 획득
     plugin->interface = get_interface();
     if (!plugin->interface) {
-        printf("Failed to get plugin interface\n");
+        printf("Failed to get plugin interface, ");
         dlclose(plugin->handle);
         free(plugin);
         return NULL;
@@ -709,7 +709,7 @@ plugin_t* load_plugin(const char* path) {
     // 플러그인 정보 획득
     plugin->info = plugin->interface->get_info();
     if (plugin->info->api_version != PLUGIN_API_VERSION) {
-        printf("Plugin API version mismatch: expected %d, got %d\n",
+        printf("Plugin API version mismatch: expected %d, got %d, ",
                PLUGIN_API_VERSION, plugin->info->api_version);
         dlclose(plugin->handle);
         free(plugin);
@@ -732,23 +732,23 @@ void unload_plugin(plugin_t* plugin) {
 }
 
 int main() {
-    printf("=== Plugin Manager Demo ===\n");
+    printf("=== Plugin Manager Demo ===, ");
 
     // 플러그인 로딩
     plugin_t* plugin = load_plugin("./text_processor_plugin.so");
     if (!plugin) {
-        printf("Failed to load plugin\n");
+        printf("Failed to load plugin, ");
         return 1;
     }
 
     // 플러그인 정보 출력
-    printf("Loaded plugin: %s v%s\n", 
+    printf("Loaded plugin: %s v%s, ", 
            plugin->info->name, plugin->info->version);
-    printf("Description: %s\n", plugin->info->description);
+    printf("Description: %s, ", plugin->info->description);
 
     // 플러그인 초기화
     if (plugin->interface->init() != 0) {
-        printf("Plugin initialization failed\n");
+        printf("Plugin initialization failed, ");
         unload_plugin(plugin);
         return 1;
     }
@@ -758,9 +758,9 @@ int main() {
     char output[256];
     int result = plugin->interface->process(input, output, sizeof(output));
     
-    printf("Input: %s\n", input);
-    printf("Output: %s\n", output);
-    printf("Processed %d characters\n", result);
+    printf("Input: %s, ", input);
+    printf("Output: %s, ", output);
+    printf("Processed %d characters, ", result);
 
     // 플러그인 언로딩
     unload_plugin(plugin);
@@ -811,7 +811,7 @@ int main() {
     clock_t start, end;
     double cpu_time_used;
     
-    printf("=== Performance Test: Dynamic vs Static ===\n");
+    printf("=== Performance Test: Dynamic vs Static ===, ");
     
     start = clock();
     
@@ -823,7 +823,7 @@ int main() {
     end = clock();
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     
-    printf("Execution time: %f seconds\n", cpu_time_used);
+    printf("Execution time: %f seconds, ", cpu_time_used);
     
     return 0;
 }
@@ -850,14 +850,14 @@ echo -n "PIC overhead: "
 time ./perf_pic
 
 # 메모리 사용량 비교
-echo -e "\n=== Memory Usage ==="
+echo -e ", === Memory Usage ==="
 echo -n "Static binary size: "
 ls -lh perf_static | awk '{print $5}'
 echo -n "Dynamic binary size: "  
 ls -lh perf_dynamic | awk '{print $5}'
 
 # 실행 시 메모리 사용량
-echo -e "\n=== Runtime Memory Usage ==="
+echo -e ", === Runtime Memory Usage ==="
 echo "Static linking memory:"
 /usr/bin/time -v ./perf_static 2>&1 | grep "Maximum resident set size"
 
@@ -936,7 +936,7 @@ RPATH           : No RPATH
 // 내부 함수 (외부에서 접근 불가)
 __attribute__((visibility("hidden")))
 static void internal_debug_function() {
-    printf("Internal debug info\n");
+    printf("Internal debug info, ");
 }
 
 // Private 헬퍼 함수
@@ -958,7 +958,7 @@ int public_api_function(int input) {
 // 또 다른 public 함수
 __attribute__((visibility("default")))
 void library_info() {
-    printf("Secure Library v1.0\n");
+    printf("Secure Library v1.0, ");
 }
 ```
 
@@ -1078,7 +1078,7 @@ void print_memory_usage() {
     char line[256];
     
     if (status) {
-        printf("=== Memory Usage ===\n");
+        printf("=== Memory Usage ===, ");
         while (fgets(line, sizeof(line), status)) {
             if (strncmp(line, "VmSize:", 7) == 0 ||
                 strncmp(line, "VmRSS:", 6) == 0 ||
@@ -1098,7 +1098,7 @@ void print_library_mappings() {
     char line[512];
     
     if (maps) {
-        printf("\n=== Library Mappings ===\n");
+        printf(", === Library Mappings ===, ");
         while (fgets(line, sizeof(line), maps)) {
             if (strstr(line, ".so")) {
                 printf("%s", line);
@@ -1109,18 +1109,18 @@ void print_library_mappings() {
 }
 
 int main() {
-    printf("Initial state:\n");
+    printf("Initial state:, ");
     print_memory_usage();
     
     // 동적으로 라이브러리 로딩
-    printf("\nLoading library dynamically...\n");
+    printf(", Loading library dynamically..., ");
     void *handle = dlopen("./libmath.so", RTLD_LAZY);
     if (!handle) {
-        fprintf(stderr, "dlopen error: %s\n", dlerror());
+        fprintf(stderr, "dlopen error: %s, ", dlerror());
         return 1;
     }
     
-    printf("After loading library:\n");
+    printf("After loading library:, ");
     print_memory_usage();
     print_library_mappings();
     
@@ -1128,15 +1128,15 @@ int main() {
     int (*add_func)(int, int) = dlsym(handle, "add");
     if (add_func) {
         int result = add_func(10, 20);
-        printf("\nFunction result: %d\n", result);
+        printf(", Function result: %d, ", result);
     }
     
-    printf("\nPress Enter to unload library...");
+    printf(", Press Enter to unload library...");
     getchar();
     
     // 라이브러리 언로딩
     dlclose(handle);
-    printf("After unloading library:\n");
+    printf("After unloading library:, ");
     print_memory_usage();
     
     return 0;
@@ -1160,7 +1160,7 @@ diagnose_library_issues() {
     ldd "$program" 2>&1
     
     # 2. 누락된 라이브러리 찾기
-    echo -e "\n=== Missing Libraries ==="
+    echo -e ", === Missing Libraries ==="
     ldd "$program" 2>&1 | grep "not found" | while read line; do
         lib_name=$(echo "$line" | awk '{print $1}')
         echo "Missing: $lib_name"
@@ -1170,13 +1170,13 @@ diagnose_library_issues() {
     done
     
     # 3. 라이브러리 검색 경로 확인
-    echo -e "\n=== Library Search Paths ==="
+    echo -e ", === Library Search Paths ==="
     echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
     echo "System paths:"
     cat /etc/ld.so.conf /etc/ld.so.conf.d/* 2>/dev/null | grep -v "#"
     
     # 4. 프로그램의 RPATH/RUNPATH 확인
-    echo -e "\n=== Program RPATH/RUNPATH ==="
+    echo -e ", === Program RPATH/RUNPATH ==="
     readelf -d "$program" 2>/dev/null | grep -E "(RPATH|RUNPATH)"
 }
 
@@ -1198,7 +1198,7 @@ check_version_compatibility() {
     echo "Required libraries:"
     readelf -d "$program" | grep NEEDED | awk '{print $5}' | tr -d '[]'
     
-    echo -e "\nActual library versions:"
+    echo -e ", Actual library versions:"
     ldd "$program" | while read line; do
         if echo "$line" | grep -q "=>"; then
             lib_path=$(echo "$line" | awk '{print $3}')
@@ -1212,7 +1212,7 @@ check_version_compatibility() {
     done
     
     # ABI 호환성 확인
-    echo -e "\n=== ABI Information ==="
+    echo -e ", === ABI Information ==="
     file "$program"
     
     ldd "$program" | grep "=>" | awk '{print $3}' | while read lib_path; do
