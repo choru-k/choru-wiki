@@ -21,7 +21,7 @@ Python은 Reference Counting을 기본으로 하고, 순환 참조를 위한 별
 
 ### Python 메모리 구조
 
-```
+```text
 Python Process Memory:
 ┌─────────────────────────────────┐
 │      Python Objects             │
@@ -153,7 +153,7 @@ Go는 저지연 동시 GC로 유명합니다.
 
 ### Go 메모리 구조
 
-```
+```text
 Go Memory Layout:
 ┌─────────────────────────────────┐
 │         mheap                   │ ← 전역 힙
@@ -207,11 +207,11 @@ func main() {
     var m runtime.MemStats
     runtime.ReadMemStats(&m)
     
-    fmt.Printf("Alloc: %d MB\n", m.Alloc / 1024 / 1024)
-    fmt.Printf("TotalAlloc: %d MB\n", m.TotalAlloc / 1024 / 1024)
-    fmt.Printf("Sys: %d MB\n", m.Sys / 1024 / 1024)
-    fmt.Printf("NumGC: %d\n", m.NumGC)
-    fmt.Printf("PauseNs: %v\n", m.PauseNs[(m.NumGC+255)%256])
+    fmt.Printf("Alloc: %d MB, ", m.Alloc / 1024 / 1024)
+    fmt.Printf("TotalAlloc: %d MB, ", m.TotalAlloc / 1024 / 1024)
+    fmt.Printf("Sys: %d MB, ", m.Sys / 1024 / 1024)
+    fmt.Printf("NumGC: %d, ", m.NumGC)
+    fmt.Printf("PauseNs: %v, ", m.PauseNs[(m.NumGC+255)%256])
 }
 ```
 
@@ -283,7 +283,7 @@ JVM은 가장 정교한 GC를 가지고 있지만, 컨테이너 환경에서 함
 
 ### JVM 메모리 영역
 
-```
+```text
 JVM Memory (Native + Heap):
 ┌─────────────────────────────────┐
 │      Native Memory              │
@@ -364,7 +364,7 @@ Node.js는 V8 엔진의 GC를 사용하며, Native 애드온이 추가 복잡성
 
 ### V8 메모리 구조
 
-```
+```text
 V8 Heap Structure:
 ┌─────────────────────────────────┐
 │      New Space (Young)          │ ← Scavenge GC
@@ -521,7 +521,7 @@ jfr print --events GCHeapSummary recording.jfr
 
 ### 메모리 효율성 순위
 
-```
+```text
 1. Rust/C++ (수동 관리)
    └─ 오버헤드 최소, 완벽한 제어
 

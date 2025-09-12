@@ -22,7 +22,7 @@ tags:
 
 Virtual Memory가 없다면 현대적인 멀티태스킹은 불가능합니다:
 
-```
+```text
 Physical Memory without Virtual Memory:
 ┌─────────────────────────────────────┐ 0xFFFFFFFF
 │     Process C (Crashed!)            │ ← 프로세스 종료시 메모리 구멍
@@ -43,7 +43,7 @@ Physical Memory without Virtual Memory:
 
 Virtual Memory 도입 후:
 
-```
+```text
 Virtual Memory Architecture:
 ┌─────────────────────────────────────┐
 │      Process A Virtual Space        │ 각 프로세스마다
@@ -77,7 +77,7 @@ Virtual Memory Architecture:
 
 64-bit Linux 시스템에서 프로세스당 가상 주소 공간:
 
-```
+```text
 Virtual Address Space Layout (x86_64):
 ┌─────────────────────────────────────┐ 0xFFFFFFFFFFFFFFFF
 │     Kernel Space (128TB)            │ ← 커널 전용, User 접근 불가
@@ -118,12 +118,12 @@ int main() {
     void* mmap_ptr = mmap(NULL, 4096, PROT_READ | PROT_WRITE,
                          MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     
-    printf("Code (text):    %p\n", main);
-    printf("Data:           %p\n", &global_var);
-    printf("BSS:            %p\n", &uninitialized_var);  
-    printf("Stack:          %p\n", &stack_var);
-    printf("Heap:           %p\n", heap_ptr);
-    printf("Mmap:           %p\n", mmap_ptr);
+    printf("Code (text):    %p, ", main);
+    printf("Data:           %p, ", &global_var);
+    printf("BSS:            %p, ", &uninitialized_var);  
+    printf("Stack:          %p, ", &stack_var);
+    printf("Heap:           %p, ", heap_ptr);
+    printf("Mmap:           %p, ", mmap_ptr);
     
     // 실제 출력 예시:
     // Code (text):    0x000055b8c2f4d149
@@ -157,7 +157,7 @@ $ cat /proc/iomem
 
 실제 물리 메모리 레이아웃:
 
-```
+```text
 Physical Memory Layout:
 ┌─────────────────────────────────────┐ 32GB
 │        Available RAM                │
@@ -178,7 +178,7 @@ Physical Memory Layout:
 
 ### 4-Level Page Table 구조
 
-```
+```text
 Virtual Address (64-bit):
 ┌─────┬─────┬─────┬─────┬─────┬─────────────┐
 │ --- │PML4 │PDPT │ PD  │ PT  │   Offset    │
@@ -251,14 +251,14 @@ typedef unsigned long pte_t;
 
 ```bash
 # 프로세스의 페이지 테이블 정보 확인 (root 권한 필요)
-$ hexdump -C /proc/&lt;pid&gt;/pagemap | head -20
+$ hexdump -C /proc/[pid]/pagemap | head -20
 
 # 또는 페이지 정보 확인
-$ cat /proc/&lt;pid&gt;/maps
+$ cat /proc/[pid]/maps
 7ffff7a00000-7ffff7bd0000 r-xp 00000000 08:01 1234 /lib/x86_64-linux-gnu/libc.so.6
 
 # 해당 주소의 페이지 정보
-$ cat /proc/&lt;pid&gt;/smaps
+$ cat /proc/[pid]/smaps
 7ffff7a00000-7ffff7bd0000 r-xp 00000000 08:01 1234 /lib/x86_64-linux-gnu/libc.so.6
 Size:               1856 kB    # 가상 크기
 Rss:                 516 kB    # 실제 물리 메모리 사용량 (Resident Set Size)
@@ -276,7 +276,7 @@ Swap:                  0 kB    # 스왑된 페이지
 
 MMU는 CPU와 메모리 사이에서 가상 주소를 물리 주소로 변환합니다:
 
-```
+```text
 CPU Address Translation Flow:
                     
 CPU Core            MMU                     Physical Memory
@@ -323,7 +323,7 @@ int pt_index   = (vaddr >> 12) & 0x1ff;  // bits 20-12: 0x1d5
 int offset     = vaddr & 0xfff;          // bits 11-0:  0x123
 ```
 
-2. **Page Table Walking Algorithm**:
+1. **Page Table Walking Algorithm**:
 
 ```c
 // 커널의 페이지 테이블 워킹 (단순화된 버전)
@@ -364,7 +364,7 @@ pte_t *page_table_walk(struct mm_struct *mm, unsigned long vaddr) {
 }
 ```
 
-3. **Physical Address 계산**:
+1. **Physical Address 계산**:
 
 ```c
 // 최종 물리 주소 계산
@@ -388,7 +388,7 @@ unsigned long get_physical_address(pte_t *pte, unsigned long vaddr) {
 
 Page Table Walk는 메모리에 4번 접근해야 하므로 매우 비쌉니다. TLB는 이를 해결하는 하드웨어 캐시입니다:
 
-```
+```text
 Memory Access without TLB:
 Virtual Address → PML4 access → PDPT access → PD access → PT access → Data access
       1              2             3            4           5           6
@@ -460,9 +460,9 @@ void tlb_miss_test() {
     long random_time = (end.tv_sec - start.tv_sec) * 1000000000 + 
                       (end.tv_nsec - start.tv_nsec);
     
-    printf("Sequential: %ld ns\n", sequential_time);  // ~100ms
-    printf("Random: %ld ns\n", random_time);         // ~500ms
-    printf("TLB penalty: %.2fx\n", (double)random_time / sequential_time);
+    printf("Sequential: %ld ns, ", sequential_time);  // ~100ms
+    printf("Random: %ld ns, ", random_time);         // ~500ms
+    printf("TLB penalty: %.2fx, ", (double)random_time / sequential_time);
 }
 ```
 
@@ -488,7 +488,7 @@ $ cat /proc/interrupts | grep TLB
 
 리눅스는 다양한 페이지 크기를 지원합니다:
 
-```
+```text
 Page Size Options:
 ┌─────────────────┬─────────────┬─────────────┬──────────────┐
 │ Page Type       │ Size        │ TLB Entries │ Coverage     │
@@ -589,9 +589,9 @@ void hugepage_benchmark() {
     long huge_time = (end.tv_sec - start.tv_sec) * 1000000000 + 
                     (end.tv_nsec - start.tv_nsec);
     
-    printf("Normal pages: %ld ns\n", normal_time);
-    printf("Huge pages: %ld ns\n", huge_time); 
-    printf("Speedup: %.2fx\n", (double)normal_time / huge_time);
+    printf("Normal pages: %ld ns, ", normal_time);
+    printf("Huge pages: %ld ns, ", huge_time); 
+    printf("Speedup: %.2fx, ", (double)normal_time / huge_time);
     // 일반적으로 10-30% 성능 향상
 }
 ```
@@ -699,7 +699,7 @@ $ sar -B 1
 # fault/s:  Total page faults per second
 
 # 애플리케이션별 Page Fault 확인  
-$ cat /proc/&lt;pid&gt;/stat | awk '{print "Minor faults: " $10 ", Major faults: " $12}'
+$ cat /proc/[pid]/stat | awk '{print "Minor faults: " $10 ", Major faults: " $12}'
 ```
 
 메모리 예열(Warm-up) 기법:
@@ -717,7 +717,7 @@ void memory_warmup(void *addr, size_t size) {
     
     // 또는 mlock으로 메모리 고정
     if (mlock(addr, size) == 0) {
-        printf("Memory locked in RAM\n");
+        printf("Memory locked in RAM, ");
     }
 }
 
@@ -796,7 +796,7 @@ Mitigation: PTI
 
 ## Linux 구현체 분석
 
-### /proc/&lt;pid&gt;/maps 심화 분석
+### /proc/[pid]/maps 심화 분석
 
 ```bash
 # 프로세스 메모리 맵 상세 분석
@@ -816,7 +816,7 @@ address           perms offset  dev   inode    pathname
 # p = private (COW), s = shared
 ```
 
-### /proc/&lt;pid&gt;/pagemap 활용
+### /proc/[pid]/pagemap 활용
 
 실제 가상-물리 주소 매핑 확인:
 
@@ -854,16 +854,16 @@ void test_address_translation() {
     char *buffer = malloc(4096);
     strcpy(buffer, "Hello, World!");
     
-    printf("Virtual address: %p\n", buffer);
-    printf("Physical address: 0x%lx\n", get_physical_address(buffer));
+    printf("Virtual address: %p, ", buffer);
+    printf("Physical address: 0x%lx, ", get_physical_address(buffer));
     
     // 같은 데이터에 대한 다른 가상 주소
     char *mmaped = mmap(NULL, 4096, PROT_READ | PROT_WRITE, 
                         MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     strcpy(mmaped, "Hello, World!");
     
-    printf("Mmaped virtual: %p\n", mmaped);  
-    printf("Mmaped physical: 0x%lx\n", get_physical_address(mmaped));
+    printf("Mmaped virtual: %p, ", mmaped);  
+    printf("Mmaped physical: 0x%lx, ", get_physical_address(mmaped));
     // 다른 물리 페이지에 매핑됨
 }
 ```
@@ -929,7 +929,7 @@ void good_memory_access(int **matrix, int size) {
 }
 ```
 
-2. **메모리 풀 사용**:
+1. **메모리 풀 사용**:
 
 ```c
 // 메모리 풀로 TLB 효율성 향상
@@ -974,7 +974,7 @@ node 1 cpus: 4 5 6 7 12 13 14 15
 node 1 size: 16384 MB
 
 # 프로세스의 NUMA 메모리 사용량
-$ cat /proc/&lt;pid&gt;/numa_maps
+$ cat /proc/[pid]/numa_maps
 7ffff7a00000 default file=/lib/x86_64-linux-gnu/libc.so.6 mapped=464 N0=232 N1=232
 7ffffffde000 default stack anon=1 dirty=1 N0=1
 
@@ -988,7 +988,7 @@ NUMA 인식 메모리 할당:
 
 void numa_aware_allocation() {
     if (numa_available() < 0) {
-        printf("NUMA not available\n");
+        printf("NUMA not available, ");
         return;
     }
     
@@ -997,7 +997,7 @@ void numa_aware_allocation() {
     void *mem = numa_alloc_onnode(1024*1024, node);  // 1MB
     
     if (mem) {
-        printf("Allocated on NUMA node %d\n", node);
+        printf("Allocated on NUMA node %d, ", node);
         
         // 메모리 사용 (first-touch policy에 의해 로컬 노드에 할당)
         memset(mem, 0, 1024*1024);
@@ -1043,7 +1043,7 @@ void container_memory_optimization() {
     if (limit_file) {
         unsigned long limit;
         fscanf(limit_file, "%lu", &limit);
-        printf("Memory limit: %lu bytes\n", limit);
+        printf("Memory limit: %lu bytes, ", limit);
         fclose(limit_file);
     }
     
@@ -1056,7 +1056,7 @@ void container_memory_optimization() {
             void *huge_mem = mmap(NULL, 1024*1024*1024,
                                  PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
             if (huge_mem != MAP_FAILED) {
-                printf("Using Huge Pages in container\n");
+                printf("Using Huge Pages in container, ");
             }
         }
     }
@@ -1070,7 +1070,7 @@ void container_memory_optimization() {
             printf("%d ", i);
         }
     }
-    printf("\n");
+    printf(", ");
 }
 ```
 
@@ -1082,14 +1082,14 @@ void container_memory_optimization() {
 
 ```bash
 # TLB 관련 성능 카운터 확인
-$ perf stat -e dTLB-load-misses,iTLB-load-misses -p &lt;pid&gt; sleep 10
+$ perf stat -e dTLB-load-misses,iTLB-load-misses -p [pid] sleep 10
 
 Performance counter stats:
      12,345,678      dTLB-load-misses    # 매우 높은 Data TLB miss!
       3,456,789      iTLB-load-misses    # Instruction TLB miss도 높음
 
 # 프로세스 메모리 분산도 확인  
-$ pmap -x &lt;pid&gt; | head -20
+$ pmap -x [pid] | head -20
 Address           Kbytes     RSS   Dirty Mode  Mapping
 00400000               4       4       0 r-x-- /usr/bin/app
 ...
@@ -1150,10 +1150,10 @@ Mem:           31Gi        12Gi       2.1Gi       1.2Gi        16Gi        17Gi
 
 ```bash
 # cgroup 메모리 상세 확인
-$ cat /sys/fs/cgroup/memory/kubepods/burstable/pod-uuid/&lt;container-id&gt;/memory.usage_in_bytes
+$ cat /sys/fs/cgroup/memory/kubepods/burstable/pod-uuid/[container-id]/memory.usage_in_bytes
 4294967296  # 정확히 4GB (limit)
 
-$ cat /sys/fs/cgroup/memory/kubepods/burstable/pod-uuid/&lt;container-id&gt;/memory.stat
+$ cat /sys/fs/cgroup/memory/kubepods/burstable/pod-uuid/[container-id]/memory.stat
 cache 3221225472          # 3GB가 page cache!
 rss 1073741824            # 실제 RSS는 1GB
 mapped_file 0
@@ -1236,7 +1236,7 @@ if (huge_mem == MAP_FAILED) {
     perror("mmap failed");
 } else {
     // 성공! 하지만 실제 물리 메모리는 접근시 할당됨
-    printf("Virtual allocation success: %p\n", huge_mem);
+    printf("Virtual allocation success: %p, ", huge_mem);
 }
 ```
 
@@ -1246,7 +1246,7 @@ if (huge_mem == MAP_FAILED) {
 
 ```bash
 # 1. 프로세스 메모리 맵 실시간 모니터링
-$ watch -n 1 "cat /proc/&lt;pid&gt;/status | grep -E 'Vm|RSS'"
+$ watch -n 1 "cat /proc/[pid]/status | grep -E 'Vm|RSS'"
 
 VmPeak:  2345678 kB  # 최대 가상 메모리 사용량
 VmSize:  1234567 kB  # 현재 가상 메모리 사용량
@@ -1256,7 +1256,7 @@ VmStk:       136 kB  # 스택 크기
 VmExe:       123 kB  # 코드 세그먼트 크기
 
 # 2. Page fault 추적
-$ sudo perf record -e page-faults -p &lt;pid&gt; sleep 10
+$ sudo perf record -e page-faults -p [pid] sleep 10
 $ perf report
 
 # 3. TLB 성능 분석

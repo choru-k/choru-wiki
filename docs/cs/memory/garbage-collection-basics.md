@@ -56,7 +56,7 @@ ref->method();  // ref는 여전히 죽은 객체 가리킴! → 크래시
 
 GC의 핵심 아이디어는 간단합니다: **"도달할 수 없는 객체는 쓰레기다"**
 
-```
+```text
 GC Root부터 시작한 객체 그래프:
 ┌─────────────────────────────────────────┐
 │           GC Roots                      │
@@ -141,7 +141,7 @@ b = None    # b.ref_count = 1 (a.next가 여전히 참조)
 
 Root에서 시작해 도달 가능한 객체를 찾습니다:
 
-```
+```text
 Mark & Sweep 알고리즘:
 
 Phase 1: Mark (표시)
@@ -163,7 +163,7 @@ Phase 2: Sweep (청소)
 
 GC의 가장 큰 문제는 STW입니다:
 
-```
+```text
 일반 실행:
 │─────────────────────────────────────│
 │ App Thread 1: ████████████████████  │
@@ -206,7 +206,7 @@ class Problem {
 
 대부분의 객체는 금방 죽는다는 관찰에 기반합니다:
 
-```
+```text
 객체 수명 분포:
 │
 │ 많음 ┤ ▓▓▓▓▓▓▓▓▓
@@ -222,7 +222,7 @@ class Problem {
 
 ### 세대 구분
 
-```
+```text
 Heap Memory:
 ┌──────────────────────────────────────┐
 │          Young Generation            │
@@ -239,7 +239,7 @@ Heap Memory:
 
 ### Minor GC 동작
 
-```
+```text
 Step 1: Eden 가득 참
 ┌─────┬────┬────┐
 │Eden │ S0 │ S1 │
@@ -265,7 +265,7 @@ Step 4: Age 임계값 도달 → Old로 승격
 
 ### 1. Throughput (처리량)
 
-```
+```text
 Throughput = Application Time / Total Time
           = Application Time / (Application Time + GC Time)
 
@@ -277,7 +277,7 @@ Throughput = Application Time / Total Time
 
 ### 2. Latency (지연시간)
 
-```
+```text
 GC Pause Distribution:
 ┌────────────────────────────────┐
 │ P50:   10ms                   │
@@ -291,7 +291,7 @@ GC Pause Distribution:
 
 ### 3. Footprint (메모리 사용량)
 
-```
+```text
 실제 사용 vs 할당:
 ┌────────────────────────────────┐
 │ Heap Reserved:     4GB         │
@@ -306,7 +306,7 @@ GC Pause Distribution:
 
 최신 GC들은 STW를 최소화하려 노력합니다:
 
-```
+```text
 Traditional GC (전체 STW):
 │──────────────────────────────────│
 │ App:  ████──STOP───████████████  │
@@ -327,7 +327,7 @@ Concurrent GC (부분 동시 실행):
 
 동시 마킹을 위한 알고리즘:
 
-```
+```text
 색상 의미:
 ⚫ Black: 완전히 스캔됨 (자식까지 모두 방문)
 ⚪ Gray:  방문했지만 자식은 아직 (작업 큐에 있음)
@@ -383,14 +383,14 @@ def memory_hungry():
 
 ```bash
 # 높은 GC 빈도
-$ jstat -gcutil &lt;pid&gt; 1000
+$ jstat -gcutil [pid] 1000
 S0     S1     E      O      M     YGC     YGCT    FGC    FGCT
 0.00  100.00  85.43  95.67  98.12  1523   45.234   89    125.45
 # YGC가 빠르게 증가 = Minor GC 빈번
 # FGC 증가 = Major GC 빈번 (위험!)
 
 # 컨테이너 환경에서
-$ kubectl exec &lt;pod&gt; -- jcmd 1 GC.heap_info
+$ kubectl exec [pod] -- jcmd 1 GC.heap_info
 ```
 
 ## Kubernetes 환경에서의 GC 고려사항
@@ -425,7 +425,7 @@ node --max-old-space-size=1536 app.js
 
 ### 2. CPU 스로틀링과 GC
 
-```
+```text
 문제: GC는 CPU를 많이 사용 → 스로틀링 → GC 더 느림 → 악순환
 
 CPU Limit 미설정:          CPU Limit 설정:
@@ -439,7 +439,7 @@ CPU Limit 미설정:          CPU Limit 설정:
 
 ### 워크로드별 추천
 
-```
+```text
 1. 짧은 지연 중요 (실시간 서비스):
    → ZGC, Shenandoah (Java)
    → Go (기본 GC가 저지연)

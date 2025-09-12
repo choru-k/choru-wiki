@@ -18,7 +18,7 @@ tags:
 
 먼저 프로세스의 가상 메모리 공간에서 스레드들의 스택이 어떻게 배치되는지 봅시다:
 
-```
+```text
 Process Virtual Memory (멀티스레드):
 ┌─────────────────────────────────────┐ 0xFFFFFFFF
 │         Kernel Space                │
@@ -67,7 +67,7 @@ Process Virtual Memory (멀티스레드):
 
 void* worker_thread(void* arg) {
     sleep(10);
-    printf("Worker still running...\n");
+    printf("Worker still running..., ");
     return NULL;
 }
 
@@ -90,12 +90,12 @@ int main(int argc, char* argv[], char* envp[]) {
     
     // 1. 프로그램 인자
     for (int i = 0; i < argc; i++) {
-        printf("argv[%d]: %s at %p\n", i, argv[i], argv[i]);
+        printf("argv[%d]: %s at %p, ", i, argv[i], argv[i]);
     }
     
     // 2. 환경 변수
     for (char** env = envp; *env != NULL; env++) {
-        printf("env: %s at %p\n", *env, *env);
+        printf("env: %s at %p, ", *env, *env);
     }
     
     // 3. Auxiliary Vector (시스템 정보)
@@ -120,12 +120,12 @@ void compare_stack_locations() {
     pthread_t thread;
     int main_stack_var;
     
-    printf("Main thread stack: %p\n", &main_stack_var);
+    printf("Main thread stack: %p, ", &main_stack_var);
     // 0x7fffffffXXXX (높은 주소, 스택 영역)
     
     pthread_create(&thread, NULL, [](void* arg) -> void* {
         int worker_stack_var;
-        printf("Worker thread stack: %p\n", &worker_stack_var);
+        printf("Worker thread stack: %p, ", &worker_stack_var);
         // 0x7f8a2c7fXXXX (중간 주소, mmap 영역)
         return NULL;
     }, NULL);
@@ -158,9 +158,9 @@ void print_memory_usage(const char* label) {
     }
     fclose(status);
     
-    printf("%s:\n", label);
-    printf("  Virtual Memory: %ld MB\n", vmsize / 1024);
-    printf("  Physical Memory (RSS): %ld MB\n", vmrss / 1024);
+    printf("%s:, ", label);
+    printf("  Virtual Memory: %ld MB, ", vmsize / 1024);
+    printf("  Physical Memory (RSS): %ld MB, ", vmrss / 1024);
 }
 
 void* minimal_thread(void* arg) {
@@ -204,7 +204,7 @@ After creating 100 threads:
 
 Linux는 "게으른 할당(Lazy Allocation)"을 사용합니다:
 
-```
+```text
 스레드 생성 시 메모리 할당 과정:
 
 Step 1: pthread_create() 호출
@@ -238,7 +238,7 @@ Step 3: 스택 추가 사용
 
 ```bash
 # 프로세스의 스레드 스택 확인
-$ cat /proc/&lt;pid&gt;/smaps | grep -B1 -A3 "stack"
+$ cat /proc/[pid]/smaps | grep -B1 -A3 "stack"
 
 7f8a2c000000-7f8a2c800000 rw-p 00000000 00:00 0    [stack:12345]
 Size:               8192 kB   # 가상 크기: 8MB
@@ -313,7 +313,7 @@ void demonstrate_guard_page() {
     
     size_t guard_size;
     pthread_attr_getguardsize(&attr, &guard_size);
-    printf("Guard page size: %zu bytes\n", guard_size);  // 보통 4096
+    printf("Guard page size: %zu bytes, ", guard_size);  // 보통 4096
     
     // Guard page 비활성화 (위험!)
     pthread_attr_setguardsize(&attr, 0);
@@ -372,7 +372,7 @@ void* monitored_thread(void* arg) {
     // 스택 끝 확인
     char stack_bottom;
     size_t stack_used = &stack_top - &stack_bottom;
-    printf("Stack used: %zu bytes\n", stack_used);
+    printf("Stack used: %zu bytes, ", stack_used);
     
     return NULL;
 }
@@ -437,7 +437,7 @@ void setup_thread_pool() {
     int max_threads = (memory_limit - overhead) / stack_size;
     max_threads = min(max_threads, 500);  // 상한선
     
-    printf("Creating thread pool with %d threads\n", max_threads);
+    printf("Creating thread pool with %d threads, ", max_threads);
 }
 ```
 
@@ -447,7 +447,7 @@ void setup_thread_pool() {
 
 ```bash
 # 진단
-$ cat /proc/&lt;pid&gt;/status | grep Threads
+$ cat /proc/[pid]/status | grep Threads
 Threads: 32768  # 너무 많은 스레드!
 
 # 원인 확인
@@ -462,12 +462,12 @@ $ ulimit -u 65536  # 제한 증가
 
 ```bash
 # 스택 실제 사용량 확인
-$ pmap -x &lt;pid&gt; | grep stack
+$ pmap -x [pid] | grep stack
 7f8a2c000000   8192K rw---  [stack:12345]
 # RSS 컬럼 확인 → 실제 물리 메모리
 
 # 스레드별 스택 사용량 집계
-$ cat /proc/&lt;pid&gt;/smaps | grep -A3 stack | grep Rss | \
+$ cat /proc/[pid]/smaps | grep -A3 stack | grep Rss | \
   awk '{sum+=$2} END {print sum/1024 " MB"}'
 ```
 

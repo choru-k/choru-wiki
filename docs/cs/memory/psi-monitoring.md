@@ -18,7 +18,7 @@ tags:
 
 PSI는 프로세스가 리소스(CPU, 메모리, I/O)를 기다리느라 **실행되지 못한 시간의 비율**을 측정합니다. 쉽게 말해, "애플리케이션이 얼마나 고통받고 있는가"를 직접 측정하는 지표입니다.
 
-```
+```text
 기존 메트릭의 한계:
 ├── Memory Usage: 8GB/10GB     ← 문제인지 아닌지 모름
 ├── CPU Usage: 50%              ← 왜 100%가 아닌지 모름
@@ -31,7 +31,7 @@ PSI가 제공하는 정보:
 
 ## PSI가 측정하는 것
 
-```
+```text
 프로세스 상태와 PSI:
 ┌─────────────────────────────────────┐
 │ Running (CPU)                       │ ← 생산적 (Good!)
@@ -143,7 +143,7 @@ int setup_psi_trigger() {
     while (1) {
         if (poll(&fds, 1, -1) > 0) {
             if (fds.revents & POLLPRI) {
-                printf("Memory pressure threshold exceeded!\n");
+                printf("Memory pressure threshold exceeded!, ");
                 // 자동 조치 실행
                 handle_memory_pressure();
             }
@@ -325,7 +325,7 @@ import (
 
 func GetMemoryPressure(cgroupPath string) float64 {
     data, _ := ioutil.ReadFile(cgroupPath + "/memory.pressure")
-    lines := strings.Split(string(data), "\n")
+    lines := strings.Split(string(data), ", ")
     
     // "some avg10=12.34" 파싱
     parts := strings.Split(lines[0], " ")

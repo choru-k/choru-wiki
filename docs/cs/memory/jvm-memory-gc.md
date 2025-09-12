@@ -18,7 +18,7 @@ tags:
 
 ### 전체 메모리 맵
 
-```
+```text
 JVM Process Memory (실제 RSS):
 ┌─────────────────────────────────────────┐
 │           Heap Memory                   │
@@ -98,7 +98,7 @@ public class MemoryCalculator {
 
 ### Eden과 Survivor 메커니즘
 
-```
+```text
 객체 생성과 이동:
 
 1. 새 객체 생성 → Eden
@@ -160,7 +160,7 @@ class TLAB {
 
 ### 세대 간 참조 문제
 
-```
+```text
 문제: Old → Young 참조를 어떻게 추적?
 
 Old Generation          Young Generation
@@ -174,7 +174,7 @@ Minor GC 시 Old 전체를 스캔? → 너무 느림!
 
 ### Card Table 해결책
 
-```
+```text
 Card Table: Old를 512바이트 카드로 분할
 ┌─────────────────────────────────┐
 │        Old Generation           │
@@ -205,7 +205,7 @@ for (card in cardTable) {
 
 ### Serial GC
 
-```
+```text
 특징: 단일 스레드, Stop-the-World
 용도: 힙 < 100MB, 단일 CPU
 
@@ -218,7 +218,7 @@ for (card in cardTable) {
 
 ### Parallel GC (처리량 우선)
 
-```
+```text
 특징: 다중 스레드 GC, 긴 STW
 용도: 배치 처리, 처리량 중요
 
@@ -233,7 +233,7 @@ for (card in cardTable) {
 
 ### G1GC (균형)
 
-```
+```text
 특징: Region 기반, 예측 가능한 Pause
 용도: 힙 > 4GB, 지연시간 중요
 
@@ -252,7 +252,7 @@ Region 구조:
 
 ### ZGC (초저지연)
 
-```
+```text
 특징: Colored Pointers, <10ms Pause
 용도: 초대형 힙(TB), 실시간 서비스
 
@@ -270,7 +270,7 @@ Colored Pointer (64비트):
 
 ### Shenandoah (초저지연 대안)
 
-```
+```text
 특징: Brooks Pointers, 동시 압축
 용도: ZGC 대안, RedHat 지원
 
@@ -318,7 +318,7 @@ java -XX:+UseShenandoahGC \  // JDK 12+
 
 ### Metaspace vs PermGen
 
-```
+```text
 JDK 7 (PermGen):                JDK 8+ (Metaspace):
 ┌──────────────┐                ┌──────────────┐
 │ Heap Memory  │                │ Heap Memory  │
@@ -415,7 +415,7 @@ spec:
         -XX:ConcGCThreads=1
 ```
 
-```
+```text
 메모리 계산:
 Heap:           1536 MB
 Metaspace:       256 MB
@@ -487,7 +487,7 @@ kubectl exec $POD -- jcmd 1 VM.native_memory
 
 ```java
 // 힙 덤프 생성
-jcmd &lt;pid&gt; GC.heap_dump /tmp/heap.hprof
+jcmd [pid] GC.heap_dump /tmp/heap.hprof
 
 // 또는 OOM 시 자동 덤프
 -XX:+HeapDumpOnOutOfMemoryError
@@ -507,7 +507,7 @@ SELECT * FROM java.util.HashMap$Node WHERE size > 10000
 -XX:NativeMemoryTracking=detail
 
 # 실행 중 확인
-jcmd &lt;pid&gt; VM.native_memory detail
+jcmd [pid] VM.native_memory detail
 
 # 출력 예시
 Native Memory Tracking:
@@ -526,18 +526,18 @@ Total: reserved=2530MB, committed=1893MB
 
 ```bash
 # GC 빈도와 시간
-jstat -gcutil &lt;pid&gt; 1000 10
+jstat -gcutil [pid] 1000 10
 
 # GC 원인
-jcmd &lt;pid&gt; GC.heap_info
+jcmd [pid] GC.heap_info
 
 # 메모리 상태
-jcmd &lt;pid&gt; VM.native_memory summary
+jcmd [pid] VM.native_memory summary
 ```
 
 ### 2. 목표 설정
 
-```
+```text
 □ P99 레이턴시 < 100ms
 □ GC Pause < 200ms
 □ Throughput > 95%
@@ -547,7 +547,7 @@ jcmd &lt;pid&gt; VM.native_memory summary
 
 ### 3. 튜닝 우선순위
 
-```
+```text
 1. 힙 크기 조정 (-Xmx, -Xms)
 2. GC 알고리즘 선택
 3. Generation 비율 조정

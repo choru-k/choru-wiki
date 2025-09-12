@@ -17,7 +17,7 @@ DevOps/SRE 엔지니어로서 메모리 문제를 디버깅할 때, "왜 RSS와 
 
 일반적으로 프로세스가 사용하는 메모리는 `코드영역`, `데이터영역`, `스택`, `힙` 으로 나뉩니다. 각 영역은 고유한 목적과 특성을 가지고 있습니다.
 
-```
+```text
 High Address (0xFFFFFFFF)
 ┌─────────────────────┐
 │   Kernel Space      │ (1GB on 32-bit, much larger on 64-bit)
@@ -71,7 +71,7 @@ $ objdump -d example
   ...
 
 # 실행 중인 프로세스의 메모리 맵 확인
-$ cat /proc/`&lt;pid&gt;`/maps | grep r-xp
+$ cat /proc/`[pid]`/maps | grep r-xp
 00400000-00401000 r-xp 00000000 08:01 1234 /path/to/example
 ```
 
@@ -139,7 +139,7 @@ int main() {
 
 스택 메모리 레이아웃:
 
-```
+```text
 High Address
 ┌─────────────────────┐
 │  main's return addr │
@@ -176,7 +176,7 @@ Low Address
 
 void* thread_function(void* arg) {
     int thread_local = 42;  // 이 스레드의 스택에 저장
-    printf("Thread stack variable: %p\n", &thread_local);
+    printf("Thread stack variable: %p, ", &thread_local);
     return NULL;
 }
 
@@ -187,7 +187,7 @@ int main() {
 
     pthread_attr_init(&attr);
     pthread_attr_getstacksize(&attr, &stacksize);
-    printf("Default thread stack size: %zu MB\n", stacksize / 1024 / 1024);
+    printf("Default thread stack size: %zu MB, ", stacksize / 1024 / 1024);
 
     // 보통 8MB가 기본값 (ulimit -s)
     pthread_create(&thread1, NULL, thread_function, NULL);
@@ -205,11 +205,11 @@ $ ulimit -s
 8192  # 8MB
 
 # 프로세스별 스택 사용량 확인
-$ cat /proc/&lt;pid&gt;/status | grep -I stack
+$ cat /proc/[pid]/status | grep -I stack
 VmStk:      136 kB
 
 # 스레드별 스택 확인
-$ cat /proc/&lt;pid&gt;/maps | grep stack
+$ cat /proc/[pid]/maps | grep stack
 7ffff7fff000-7ffff8000000 rw-p 00000000 00:00 0 [stack]
 7ffff77ff000-7ffff7800000 rw-p 00000000 00:00 0 [stack:12345] # thread 12345
 ```
@@ -255,7 +255,7 @@ int main() {
 
     // brk 시스템 콜로 힙 확장
     void* current_brk = sbrk(0);
-    printf("Current program break: %p\n", current_brk);
+    printf("Current program break: %p, ", current_brk);
 
     // 메모리 해제
     free(small);   // 바로 OS에 반환하지 않고 풀에 보관
@@ -266,7 +266,7 @@ int main() {
 
 ### glibc malloc 내부 구조
 
-```
+```text
 Heap Organization:
 ┌─────────────────────────────────┐
 │         Main Arena              │
@@ -340,7 +340,7 @@ int main() {
 
 ## 실제 프로세스 메모리 분석
 
-### /proc/&lt;pid&gt;/maps 읽기
+### /proc/[pid]/maps 읽기
 
 ```bash
 $ cat /proc/self/maps
@@ -357,7 +357,7 @@ $ cat /proc/self/maps
 ### pmap을 통한 상세 분석
 
 ```bash
-$ pmap -x &lt;pid&gt;
+$ pmap -x [pid]
 Address           Kbytes     RSS   Dirty Mode  Mapping
 00400000             328     176       0 r-x-- /usr/bin/bash
 00651000               4       4       4 r---- /usr/bin/bash
@@ -452,12 +452,12 @@ func main() {
 ```bash
 # 메모리 맵 변화 추적
 while true; do
-    cat /proc/&lt;pid&gt;/status | grep VmRSS
+    cat /proc/[pid]/status | grep VmRSS
     sleep 1
 done
 
 # 어느 영역이 증가하는지 확인
-cat /proc/&lt;pid&gt;/smaps | grep -A 1 "heap\|stack"
+cat /proc/[pid]/smaps | grep -A 1 "heap\|stack"
 ```
 
 ### 2. 메모리 누수 의심
@@ -478,11 +478,11 @@ python -m tracemalloc myapp.py
 
 ```bash
 # OOM Score 확인
-cat /proc/&lt;pid&gt;/oom_score
-cat /proc/&lt;pid&gt;/oom_score_adj
+cat /proc/[pid]/oom_score
+cat /proc/[pid]/oom_score_adj
 
 # 중요 프로세스 보호
-echo -200 > /proc/&lt;pid&gt;/oom_score_adj
+echo -200 > /proc/[pid]/oom_score_adj
 ```
 
 OOM Killer에 대한 자세한 내용은 [OOM Killer와 Cgroup 메모리 제한](oom-killer.md)을 참조하세요.

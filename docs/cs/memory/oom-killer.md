@@ -18,7 +18,7 @@ tags:
 
 많은 엔지니어들이 memory.high와 memory.max의 차이를 정확히 모릅니다. 이 둘은 완전히 다른 방식으로 동작합니다.
 
-```
+```text
 Memory Usage Timeline:
 │
 memory.max ────────────────── OOM Kill (즉시 죽임)
@@ -107,7 +107,7 @@ oom_kill 1       # 실제 프로세스 kill 횟수
 
 커널이 메모리를 회수할 때의 우선순위를 이해하는 것이 중요합니다:
 
-```
+```text
 회수 우선순위 (쉬운 것부터):
 ┌─────────────────────────────────────┐
 │ 1. Clean Page Cache                │
@@ -231,7 +231,7 @@ spec:
 
 Cgroup은 다양한 메모리 타입을 추적합니다:
 
-```
+```text
 Cgroup Memory Usage 포함 항목:
 ┌─────────────────────────────────────┐
 │ 1. Anonymous Memory (RSS)           │ ← 앱의 힙/스택
@@ -271,7 +271,7 @@ cgroup v2는 계층적 메모리 보호를 제공합니다:
 │   └── memory.current: 2.5G  # 현재 사용량
 ```
 
-```
+```text
 메모리 압력 시 회수 순서:
 1. memory.low 이하: 보호됨 (회수 안 함)
 2. memory.low ~ memory.high: 보호 약함 (필요시 회수)
@@ -443,7 +443,7 @@ free -h
 vmstat 1
 ```
 
-2. **압력 확인**
+1. **압력 확인**
 
 ```bash
 # PSI 확인
@@ -451,7 +451,7 @@ cat /proc/pressure/memory
 cat /sys/fs/cgroup/*/memory.pressure
 ```
 
-3. **OOM 위험도 확인**
+1. **OOM 위험도 확인**
 
 ```bash
 # OOM Score 높은 프로세스 찾기
@@ -462,14 +462,14 @@ for pid in $(ls /proc | grep '^[0-9]'); do
 done | sort -nrk2 | head -10
 ```
 
-4. **임시 조치**
+1. **임시 조치**
 
 ```bash
 # 중요 프로세스 보호
-echo -500 > /proc/&lt;important-pid&gt;/oom_score_adj
+echo -500 > /proc/[important-pid]/oom_score_adj
 
 # 불필요한 프로세스 우선 종료 대상으로
-echo 500 > /proc/&lt;unimportant-pid&gt;/oom_score_adj
+echo 500 > /proc/[unimportant-pid]/oom_score_adj
 ```
 
 ## 정리

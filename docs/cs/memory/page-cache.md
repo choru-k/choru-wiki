@@ -32,7 +32,7 @@ Mem:           15Gi       3.2Gi       1.8Gi       520Mi       10Gi        11Gi
 
 대부분의 애플리케이션은 Page Cache를 통해 파일을 읽지만, 데이터베이스는 종종 Direct I/O를 사용합니다:
 
-```
+```text
 Normal Read (Page Cache 사용):
 ┌──────┐      ┌─────────────┐      ┌────────────┐
 │ Disk │ ───> │ Page Cache  │ ───> │ User Space │
@@ -82,7 +82,7 @@ Kubernetes 노드에서 Page Cache는 **모든 Pod가 공유**합니다. 이는 
 
 ### 공유 메커니즘
 
-```
+```text
 Kubernetes Node:
 ┌─────────────────────────────────────────┐
 │              Kernel Space               │
@@ -101,7 +101,7 @@ Kubernetes Node:
 
 커널은 inode 번호로 파일을 식별합니다:
 
-```
+```text
 Pod A: /app-data/file.txt     → inode 12345
 Pod B: /different/file.txt    → inode 12345 (같은 파일!)
 Pod C: /another/file.txt      → inode 67890 (다른 파일)
@@ -152,7 +152,7 @@ print(f"Load time: {time.time() - start}s")  # 2초
 
 Page Cache의 가장 큰 함정은 **cache ownership 전환**입니다:
 
-```
+```text
 시나리오: 3개의 동일한 Pod가 같은 2GB 파일을 읽음
 
 Timeline:
@@ -241,7 +241,7 @@ spec:
 
 이 방식의 동작 원리:
 
-```
+```text
 Timeline of cache ownership:
 
 1. Job이 파일을 읽음:
@@ -312,7 +312,7 @@ spec:
 
 ```bash
 # Pod의 실제 메모리 사용량 확인
-$ cat /sys/fs/cgroup/memory/kubepods/pod&lt;uid&gt;/memory.stat
+$ cat /sys/fs/cgroup/memory/kubepods/pod[uid]/memory.stat
 cache 2147483648         # 2GB Page Cache
 rss 536870912           # 512MB RSS (실제 앱 메모리)
 mapped_file 1073741824  # 1GB 메모리 맵 파일

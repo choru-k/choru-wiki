@@ -18,7 +18,7 @@ tags:
 
 Cgroup(Control Groups)은 Linux 커널 기능으로, 프로세스 그룹의 리소스 사용을 제한하고 격리합니다. Docker, Kubernetes 등 모든 컨테이너 기술의 핵심입니다.
 
-```
+```text
 컨테이너 기술 스택:
 ┌────────────────────┐
 │   Application      │
@@ -39,7 +39,7 @@ Cgroup(Control Groups)은 Linux 커널 기능으로, 프로세스 그룹의 리�
 
 많은 엔지니어가 RSS만 생각하지만, Cgroup은 훨씬 더 많은 것을 추적합니다:
 
-```
+```text
 Cgroup Memory Usage 포함 항목:
 ┌─────────────────────────────────────┐
 │ 1. Anonymous Memory (RSS)           │ ← 앱의 힙/스택
@@ -110,13 +110,13 @@ pgpgout 654321          # Page out 횟수
 /sys/fs/cgroup/
 └── kubepods.slice/                          # 모든 Pod
     ├── kubepods-guaranteed.slice/           # Guaranteed QoS
-    │   └── kubepods-guaranteed-pod&lt;uid&gt;.slice/
+    │   └── kubepods-guaranteed-pod[uid].slice/
     │       ├── docker-<container1>.scope/
     │       └── docker-<container2>.scope/
     ├── kubepods-burstable.slice/           # Burstable QoS
-    │   └── kubepods-burstable-pod&lt;uid&gt;.slice/
+    │   └── kubepods-burstable-pod[uid].slice/
     └── kubepods-besteffort.slice/          # BestEffort QoS
-        └── kubepods-besteffort-pod&lt;uid&gt;.slice/
+        └── kubepods-besteffort-pod[uid].slice/
 ```
 
 ### QoS별 Cgroup 설정
@@ -153,7 +153,7 @@ memory.current  # 현재 사용량
 
 계층적 보호 계산:
 
-```
+```text
 Parent cgroup:
   memory.low = 4G
   ├── Child A: memory.low = 3G, usage = 2G
@@ -378,7 +378,7 @@ int setup_oom_notification(const char* cgroup_path) {
     // 이벤트 대기
     uint64_t val;
     while (read(event_fd, &val, sizeof(val)) == sizeof(val)) {
-        printf("OOM Event detected! Count: %llu\n", val);
+        printf("OOM Event detected! Count: %llu, ", val);
         // 자동 복구 로직
         restart_container();
     }
