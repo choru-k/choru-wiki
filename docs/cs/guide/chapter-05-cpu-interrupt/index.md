@@ -42,38 +42,38 @@ graph TB
         CU[Control Unit]
         CACHE[L1/L2 Cache]
     end
-    
+
     subgraph "Execution Modes"
         USER[User Mode, Ring 3]
         KERNEL[Kernel Mode, Ring 0]
     end
-    
+
     subgraph "Interrupt System"
         HW[Hardware Interrupt]
         SW[Software Interrupt, System Call]
         EX[Exception]
-        
+
         IDT[IDT, Interrupt Descriptor Table]
         ISR[ISR, Interrupt Service Routine]
     end
-    
+
     subgraph "Power Management"
         CSTATE[C-States, Idle States]
         PSTATE[P-States, Performance States]
         FREQ[CPU Frequency]
     end
-    
+
     USER -->|System Call| KERNEL
     HW --> IDT
     SW --> IDT
     EX --> IDT
     IDT --> ISR
     ISR --> KERNEL
-    
+
     style REG fill:#FFE082
     style IDT fill:#81C784
     style KERNEL fill:#64B5F6
-```text
+```
 
 ## 이 장의 구성
 
@@ -136,15 +136,15 @@ $ turbostat                # 전력 상태 모니터링
 # 컨텍스트 스위칭
 $ vmstat 1                  # cs 컬럼 확인
 $ pidstat -w 1             # 프로세스별 스위칭
-```text
+```
 
 ## 이 장을 읽고 나면
 
-✅ **CPU 이해**: 현대 CPU의 내부 동작 원리 완벽 이해  
-✅ **인터럽트 마스터**: 인터럽트 처리와 최적화 능력  
-✅ **성능 진단**: CPU 병목 현상 분석과 해결  
-✅ **전력 최적화**: 성능과 전력 소비의 균형 조정  
-✅ **시스템 튜닝**: 워크로드에 맞는 CPU 설정 최적화  
+✅ **CPU 이해**: 현대 CPU의 내부 동작 원리 완벽 이해
+✅ **인터럽트 마스터**: 인터럽트 처리와 최적화 능력
+✅ **성능 진단**: CPU 병목 현상 분석과 해결
+✅ **전력 최적화**: 성능과 전력 소비의 균형 조정
+✅ **시스템 튜닝**: 워크로드에 맞는 CPU 설정 최적화
 
 ## 핵심 개념 미리보기
 
@@ -204,30 +204,30 @@ mindmap
         Performance
         Powersave
         Ondemand
-```text
+```
 
 ## CPU 문제 진단 플로우차트
 
 ```mermaid
 graph TD
     Start[CPU 문제 발생] --> Type{문제 유형?}
-    
+
     Type -->|높은 사용률| Usage[CPU 사용률 분석]
     Usage --> TopProcess[top/htop으로 프로세스 확인]
     TopProcess --> Optimize[코드 최적화 또는 스케일링]
-    
+
     Type -->|인터럽트 과다| Interrupt[인터럽트 분석]
     Interrupt --> IRQBalance[IRQ 밸런싱 확인]
     IRQBalance --> Affinity[CPU 어피니티 조정]
-    
+
     Type -->|레이턴시| Latency[레이턴시 원인 분석]
     Latency --> CSwitch[컨텍스트 스위칭 확인]
     CSwitch --> Isolate[CPU Isolation 적용]
-    
+
     Type -->|전력/발열| Power[전력 상태 확인]
     Power --> Governor[거버너 설정 조정]
     Governor --> Cooling[쿨링 솔루션 개선]
-```text
+```
 
 ## 다음 단계
 
