@@ -3,56 +3,136 @@ tags:
   - Network
   - Performance
   - Server
-  - Optimization
-  - Scalability
+  - Overview
 ---
 
-# Chapter 7-3: 고성능 네트워크 서버 구현
+# Chapter 7-3: 고성능 네트워크 서버 구현 개요
 
-## 이 절에서 답할 질문들
+## 🎯 현대 네트워크 서버의 극한 성능 도전
 
-- C10K 문제는 무엇이고 어떻게 해결하는가?
-- 제로카피는 어떻게 성능을 향상시키는가?
-- CPU 친화도와 NUMA는 왜 중요한가?
-- 커넥션 풀과 로드 밸런싱은 어떻게 구현하는가?
-- 프로토콜 최적화는 어떤 효과가 있는가?
+1999년, Dan Kegel이 "C10K 문제"를 제기했을 때, 많은 사람들이 회의적이었습니다. "한 대의 서버로 만 명을 동시에? 불가능해!" 하지만 지금은? 우리는 천만 명(C10M)을 목표로 하고 있습니다!
 
-## 도입: C10K에서 C10M으로
+현대의 고성능 네트워크 서버는 단순한 이벤트 기반 프로그래밍을 넘어, 커널 바이패스, NUMA 최적화, 락프리 자료구조, 제로카피 등 시스템의 모든 레벨에서 최적화가 필요합니다.
 
-### 🚀 10,000명에서 10,000,000명으로
+## 📚 학습 로드맵
 
-1999년, Dan Kegel이 "C10K 문제"를 제기했을 때, 많은 사람들이 회의적이었습니다. "한 대의 서버로 만 명을 동시에? 불가능해!" 하지만 지금은? 우리는 천만 명을 목표로 하고 있습니다!
+이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-제가 스타트업에서 일할 때의 일입니다. 우리 앱이 갑자기 TikTok에서 바이럴되어 동시 접속자가 10만 명을 넘었습니다. 서버는 불타고 있었고, 저는 새벽 3시에 카페인을 과다복용하며 서버를 최적화하고 있었죠.
+### 1️⃣ [C10K/C10M 문제 해결](03a-c10k-scaling-solutions.md)
+
+- 연결당 리소스 최적화 전략
+- 멀티코어 스케일링과 SO_REUSEPORT
+- 메모리 풀과 슬랩 캐시 시스템
+- Per-CPU 캐시 기반 락프리 아키텍처
+
+### 2️⃣ [제로카피와 NUMA 최적화](03b-zerocopy-numa-optimization.md)
+
+- sendfile, splice, MSG_ZEROCOPY 기술
+- NUMA 토폴로지와 메모리 지역성
+- 노드별 메모리 할당과 CPU 친화도
+- 정적 파일 서빙 성능 극대화
+
+### 3️⃣ [커넥션 풀과 로드 밸런싱](03c-connection-pool-load-balancing.md)
+
+- 고성능 커넥션 풀 설계
+- 로드 밸런싱 알고리즘 구현
+- Circuit Breaker와 헬스 체크
+- Consistent Hashing과 분산 처리
+
+### 4️⃣ [프로토콜 최적화](03d-protocol-optimization.md)
+
+- HTTP/2 멀티플렉싱과 서버 푸시
+- WebSocket 실시간 통신
+- HPACK 헤더 압축 최적화
+- 프로토콜별 성능 튜닝 기법
+
+## 🎯 핵심 성능 지표 비교표
+
+| 기술 | 연결 수 | 메모리/연결 | CPU 효율성 | 설명 |
+|------|---------|-------------|------------|------|
+| **전통적 스레드** | 1,000 | 8KB | 낮음 | 스레드당 스택 오버헤드 |
+| **이벤트 기반** | 10,000 | 2KB | 보통 | epoll/kqueue 활용 |
+| **제로카피** | 100,000 | 512B | 높음 | CPU 복사 오버헤드 제거 |
+| **NUMA 최적화** | 1,000,000 | 256B | 매우 높음 | 메모리 지역성 극대화 |
+| **커널 바이패스** | 10,000,000 | 128B | 극한 | DPDK/io_uring 활용 |
+
+## 🚀 실전 활용 시나리오
+
+### 고트래픽 웹 서비스
+
+- Netflix, YouTube 등 스트리밍 플랫폼
+- CDN과 정적 파일 서빙 최적화
+- 수백만 동시 연결 처리
+
+### 실시간 통신 시스템
+
+- Slack, Discord 등 실시간 채팅
+- WebSocket 기반 양방향 통신
+- 메시지 브로드캐스팅 최적화
+
+### 게임 서버
+
+- 대규모 온라인 게임 서버
+- 저지연 패킷 처리
+- 상태 동기화와 스케일링
+
+### API 게이트웨이
+
+- 마이크로서비스 프록시
+- 로드 밸런싱과 서비스 디스커버리
+- Circuit Breaker 패턴 구현
+
+## 🎭 학습 전략
+
+### 초보자 (추천 순서)
+
+1. [C10K 문제 해결](03a-c10k-scaling-solutions.md) → 기본 스케일링 개념 이해
+2. [제로카피 최적화](03b-zerocopy-numa-optimization.md) → 성능 최적화 기법 습득
+3. 간단한 고성능 서버 프로토타입 구현
+
+### 중급자 (심화 학습)
+
+1. [커넥션 풀링](03c-connection-pool-load-balancing.md) → 분산 시스템 설계
+2. [프로토콜 최적화](03d-protocol-optimization.md) → 최신 네트워크 기술
+3. 실제 프로덕션 환경 최적화 적용
+
+### 고급자 (전문가 과정)
+
+- DPDK, io_uring 등 고급 기술 마스터
+- 커스텀 프로토콜 설계와 구현
+- 대규모 분산 시스템 아키텍처 설계
+
+## 🔗 연관 학습
+
+### 선행 학습
+
+- [소켓 프로그래밍 기초](01-socket-basics.md) - 기본 네트워크 개념
+- [TCP/IP 스택 구현](02-tcp-ip-stack.md) - 프로토콜 이해
+
+### 후속 학습  
+
+- [보안 네트워킹과 TLS](04-secure-networking.md) - 암호화 통신
+- [네트워크 모니터링](05-network-monitoring.md) - 성능 분석
+
+## 💪 실전 성능 체크리스트
 
 ```bash
-# 그날 밤의 서버 상태
-$ ss -s
-Total: 142857 (kernel 0)
-TCP:   100000 (estab 98765, closed 1234, orphaned 0, synrecv 0, timewait 1234/0)
+# 고성능 서버 필수 설정
+□ SO_REUSEPORT 활성화
+□ TCP_NODELAY 설정 (Nagle 알고리즘 비활성화)
+□ sendfile()/splice() 사용
+□ NUMA 노드별 메모리 할당
+□ 커넥션 풀 구현
+□ HTTP/2 지원
+□ WebSocket 지원 (실시간 기능)
+□ Circuit Breaker 패턴
+□ 메트릭 수집과 모니터링
+□ CPU 친화도 설정
+```
 
-$ top
-%Cpu0  : 100.0 us,  0.0 sy,  0.0 ni,  0.0 id,  0.0 wa
-%Cpu1  : 100.0 us,  0.0 sy,  0.0 ni,  0.0 id,  0.0 wa
-# 모든 CPU가 불타고 있었습니다... 🔥
-```text
+---
 
-이를 위해서는 단순히 이벤트 기반 프로그래밍을 넘어, 커널 바이패스, NUMA 최적화, 락프리 자료구조, 제로카피 등 시스템의 모든 레벨에서 최적화가 필요합니다.
-
-### 💡 실전 경험: C10K 문제 해결기
-
-```python
-# 진화의 역사
-서버_진화 = [
-    "1995년: 프로세스당 연결 (Apache) - 최대 150명",
-    "2000년: 스레드당 연결 - 최대 1,000명",
-    "2004년: 이벤트 기반 (epoll) - 최대 10,000명",
-    "2010년: 비동기 I/O - 최대 100,000명",
-    "2015년: 커널 바이패스 - 최대 1,000,000명",
-    "2020년: io_uring + DPDK - 최대 10,000,000명",
-    "미래: 양자 컴퓨팅? - 무한대?? 😄"
-]
-```text
+**다음**: [C10K/C10M 문제 해결](03a-c10k-scaling-solutions.md)에서 대규모 연결 처리의 핵심 기술을 학습합니다.
 
 ## C10K/C10M 문제 해결
 
@@ -74,7 +154,7 @@ $ top
 초보자: 8GB (서버 폭발 💥)
 중급자: 2GB (그럭저럭)
 고수: 256MB (여유롭게 춤추며 ���💃)
-```text
+```
 
 ```c
 // 연결 구조체 최적화
@@ -82,7 +162,7 @@ $ top
 // 캐시 라인(64바이트)의 배수로 맞춰 성능 극대화!
 struct connection {
     int fd;
-    
+
     // 상태 플래그 비트필드로 압축
     uint32_t state : 4;
     uint32_t is_reading : 1;
@@ -90,7 +170,7 @@ struct connection {
     uint32_t keep_alive : 1;
     uint32_t close_on_write : 1;
     uint32_t reserved : 24;
-    
+
     // 버퍼 관리
     struct {
         char *data;
@@ -98,17 +178,17 @@ struct connection {
         size_t used;
         size_t pos;
     } read_buf, write_buf;
-    
+
     // 타이밍
     uint64_t last_activity;
-    
+
     // 프로토콜별 데이터 (union으로 메모리 절약)
     union {
         struct http_request *http;
         struct websocket_state *ws;
         void *protocol_data;
     };
-    
+
     // 메모리 풀 링크
     struct connection *pool_next;
 } __attribute__((packed));
@@ -119,7 +199,7 @@ struct connection_pool {
     struct connection *connections;
     size_t total_connections;
     size_t active_connections;
-    
+
     // Per-CPU 캐시
     struct {
         struct connection *cache[CPU_CACHE_SIZE];
@@ -132,12 +212,12 @@ struct connection_pool {
 // 핵심 전략: Per-CPU 캐시로 lock contention 완전 제거 + 미리 할당된 커넥션 객체 재사용
 struct connection *alloc_connection(struct connection_pool *pool) {
     struct connection *conn;
-    
+
     // 1단계: Per-CPU 캐시에서 빠른 할당 시도 (lock-free fast path)
     // 각 CPU별로 전용 캐시를 두어 컨텍스트 스위칭 비용과 동기화 오버헤드 제거
     int cpu = get_cpu();  // 현재 CPU 번호 얻기 (공유 수정 방지)
     struct connection_cache *cache = per_cpu_ptr(pool->cpu_cache, cpu);
-    
+
     // CPU별 캐시에 재사용 가능한 커넥션이 있는지 확인
     if (cache->count > 0) {
         // 빠른 경로: lock 없이 즉시 커넥션 반환 (90% 이상의 경우)
@@ -146,11 +226,11 @@ struct connection *alloc_connection(struct connection_pool *pool) {
         return conn;
     }
     put_cpu();
-    
+
     // 2단계: 전역 풀에서 할당 (slow path - lock 필요)
     // CPU 캐시가 비어있을 때만 실행되는 느린 경로
     spin_lock(&pool->lock);  // 전역 풀 접근을 위한 스핀락 획등
-    
+
     if (pool->free_list) {
         // 재사용 가능한 커넥션이 있으면 연결리스트에서 제거
         conn = pool->free_list;
@@ -164,15 +244,15 @@ struct connection *alloc_connection(struct connection_pool *pool) {
         // 풀 고갈: 모든 커넥션이 사용 중 (로드 밸런싱 필요)
         conn = NULL;
     }
-    
+
     spin_unlock(&pool->lock);
-    
+
     // 커넥션 초기화 (보안상 중요: 이전 데이터 완전 제거)
     if (conn) {
         memset(conn, 0, sizeof(*conn));  // 모든 필드를 0으로 초기화
         conn->fd = -1;  // 유효하지 않은 소켓 디스크립터로 설정
     }
-    
+
     return conn;
 }
 
@@ -210,7 +290,7 @@ void *alloc_buffer(struct buffer_cache *cache, size_t size) {
         // 이러한 경우는 드물어야 하므로 성능 영향 최소화
         return kmalloc(size, GFP_KERNEL);
 }
-```text
+```
 
 ### 멀티코어 스케일링
 
@@ -226,11 +306,11 @@ void *alloc_buffer(struct buffer_cache *cache, size_t size) {
     listen_fd = socket.bind(80)
     for 워커 in 워커들:
         워커에게_fd_전달(listen_fd)  # 복잡한 fd passing
-        
+
 # SO_REUSEPORT 이후
 각_워커_프로세스:
     my_fd = socket.bind(80, SO_REUSEPORT)  # 간단!
-```text
+```
 
 성능 차이는 어마어마했습니다:
 
@@ -245,7 +325,7 @@ Latency: 8.84ms
 [SO_REUSEPORT 사용]
 Requests/sec: 142,857  # 3배 향상! 🚀
 Latency: 2.80ms
-```text
+```
 
 ```c
 // SO_REUSEPORT 기반 고성능 멀티프로세스 서버 아키텍처
@@ -255,7 +335,7 @@ struct server_config {
     int num_workers;      // 워커 프로세스 수 (보통 CPU 코어 수와 동일)
     int port;            // 리스닝 포트 번호
     cpu_set_t *cpu_sets; // 각 워커의 CPU 친화도 설정
-    
+
     // 공유 메모리 기반 성능 통계 - 전체 워커 프로세스가 동기화된 메트릭 공유
     // atomic 연산을 사용하여 lock-free로 고속 업데이트 가능
     struct shared_stats {
@@ -273,26 +353,26 @@ void spawn_workers(struct server_config *config) {
     // POSIX shared memory를 사용하여 높은 성능과 낮은 오버헤드 달성
     int shm_fd = shm_open("/server_stats", O_CREAT | O_RDWR, 0666);
     ftruncate(shm_fd, sizeof(struct shared_stats));  // 링딤과 과은 공간 할당
-    
+
     // 공유 메모리를 가상 주소 공간에 매핑
     config->stats = mmap(NULL, sizeof(struct shared_stats),
                         PROT_READ | PROT_WRITE, MAP_SHARED,  // 읽기/쓰기 가능, 프로세스간 공유
                         shm_fd, 0);
-    
+
     // 워커 프로세스 배열 생성 - 각각 독립적인 메모리 공간에서 실행
     for (int i = 0; i < config->num_workers; i++) {
         pid_t pid = fork();  // 새로운 프로세스 생성
-        
+
         if (pid == 0) {
             // 자식 프로세스 - 워커로 동작
-            
+
             // CPU 친화도 설정 - 각 워커를 특정 CPU 코어에 고정
             // 컨텍스트 스위칭 비용과 캐시 미스를 최소화하여 성능 향상
             if (sched_setaffinity(0, sizeof(cpu_set_t),
                                 &config->cpu_sets[i]) < 0) {
                 perror("sched_setaffinity");  // CPU 친화도 설정 실패 시 오류 출력
             }
-            
+
             // 워커 메인 루프 시작 - 각 워커는 독립적으로 요청 처리
             worker_main(config, i);
             exit(0);  // 워커 종료 시 프로세스 종료
@@ -305,26 +385,26 @@ void spawn_workers(struct server_config *config) {
 // SO_REUSEPORT를 사용하여 동일 포트에 바인드하고 io_uring으로 고성능 비동기 처리
 void worker_main(struct server_config *config, int worker_id) {
     int listen_fd;
-    
+
     // SO_REUSEPORT를 사용한 리스닝 소켓 생성
     // SOCK_NONBLOCK으로 비동기 모드 설정 - 블로킹 없는 고속 처리
     listen_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
-    
+
     // 소켓 옵션 설정 - 주소 재사용과 리유즈포트 활성화
     int opt = 1;
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));  // TIME_WAIT 상태에서도 리스닝 가능
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)); // 다중 프로세스가 동일 포트 공유
-    
+
     // 연결 주소 구조체 설정 - IPv4, 전체 IP에서 수신
     struct sockaddr_in addr = {
         .sin_family = AF_INET,                    // IPv4 프로토콜
         .sin_port = htons(config->port),          // 네트워크 바이트 순서로 변환
         .sin_addr.s_addr = INADDR_ANY             // 모든 로없 IP에서 수신
     };
-    
+
     bind(listen_fd, (struct sockaddr *)&addr, sizeof(addr));  // 소켓과 주소 연결
     listen(listen_fd, SOMAXCONN);  // 최대 대기열 크기로 리스닝 시작
-    
+
     // io_uring 초기화 - 최신 Linux 비동기 I/O 인터페이스
     struct io_uring ring;
     struct io_uring_params params = {
@@ -332,14 +412,14 @@ void worker_main(struct server_config *config, int worker_id) {
         .sq_thread_cpu = worker_id,                           // 해당 워커의 CPU에 SQ 스레드 고정
         .sq_thread_idle = 1000,                               // 비활성 시 1초 후 스레드 수면
     };
-    
+
     // 4096개의 submission queue entries로 초기화 - 대량 동시 연결 지원
     io_uring_queue_init_params(4096, &ring, &params);
-    
+
     // 메인 이벤트 루프 시작 - 수신된 연결을 비동기로 처리
     worker_event_loop(&ring, listen_fd, config);
 }
-```text
+```
 
 ## 제로카피 네트워킹
 
@@ -366,11 +446,11 @@ real    0m12.483s
 user    0m2.140s
 sys     0m10.343s  # CPU가 10초나 복사에 사용!
 
-$ time ./zero_copy large_file.bin  
+$ time ./zero_copy large_file.bin
 real    0m3.127s   # 4배 빨라짐!
 user    0m0.004s
 sys     0m0.128s   # CPU는 거의 놀고 있음
-```text
+```
 
 ### sendfile과 splice
 
@@ -390,15 +470,15 @@ struct file_cache_entry {
     off_t size;
     time_t mtime;
     char *path;
-    
+
     // 메타데이터 캐싱
     char *etag;
     char *content_type;
     char *last_modified;
-    
+
     // LRU 링크
     struct list_head lru;
-    
+
     // 참조 카운트
     atomic_t refcount;
 };
@@ -408,19 +488,19 @@ struct file_cache_entry {
 void serve_static_file(int client_fd, const char *filepath) {
     struct stat st;
     int file_fd;
-    
+
     file_fd = open(filepath, O_RDONLY);
     if (file_fd < 0) {
         send_404(client_fd);
         return;
     }
-    
+
     if (fstat(file_fd, &st) < 0) {
         close(file_fd);
         send_500(client_fd);
         return;
     }
-    
+
     // HTTP 헤더 전송
     char header[512];
     int header_len = snprintf(header, sizeof(header),
@@ -430,25 +510,25 @@ void serve_static_file(int client_fd, const char *filepath) {
         "Cache-Control: public, max-age=3600\r, "
         "\r, ",
         st.st_size, get_content_type(filepath));
-    
+
     send(client_fd, header, header_len, MSG_MORE);
-    
+
     // sendfile로 제로카피 전송
     off_t offset = 0;
     size_t remaining = st.st_size;
-    
+
     while (remaining > 0) {
         ssize_t sent = sendfile(client_fd, file_fd, &offset, remaining);
-        
+
         if (sent < 0) {
             if (errno == EAGAIN || errno == EINTR)
                 continue;
             break;
         }
-        
+
         remaining -= sent;
     }
-    
+
     close(file_fd);
 }
 
@@ -457,23 +537,23 @@ void serve_static_file(int client_fd, const char *filepath) {
 // CPU를 거치지 않고 커널 내에서 직접 데이터 이동
 void proxy_connection(int client_fd, int upstream_fd) {
     int pipefd[2];
-    
+
     if (pipe2(pipefd, O_NONBLOCK) < 0) {
         return;
     }
-    
+
     // 양방향 프록시
     while (1) {
         fd_set read_fds;
         FD_ZERO(&read_fds);
         FD_SET(client_fd, &read_fds);
         FD_SET(upstream_fd, &read_fds);
-        
+
         int max_fd = (client_fd > upstream_fd) ? client_fd : upstream_fd;
-        
+
         if (select(max_fd + 1, &read_fds, NULL, NULL, NULL) <= 0)
             break;
-            
+
         // 클라이언트 -> 업스트림
         if (FD_ISSET(client_fd, &read_fds)) {
             ssize_t n = splice(client_fd, NULL, pipefd[1], NULL,
@@ -485,7 +565,7 @@ void proxy_connection(int client_fd, int upstream_fd) {
                 break;
             }
         }
-        
+
         // 업스트림 -> 클라이언트
         if (FD_ISSET(upstream_fd, &read_fds)) {
             ssize_t n = splice(upstream_fd, NULL, pipefd[1], NULL,
@@ -498,7 +578,7 @@ void proxy_connection(int client_fd, int upstream_fd) {
             }
         }
     }
-    
+
     close(pipefd[0]);
     close(pipefd[1]);
 }
@@ -509,39 +589,39 @@ void proxy_connection(int client_fd, int upstream_fd) {
 void send_with_zerocopy(int fd, const void *buf, size_t len) {
     // MSG_ZEROCOPY 플래그 사용
     ssize_t ret = send(fd, buf, len, MSG_ZEROCOPY);
-    
+
     if (ret < 0) {
         perror("send");
         return;
     }
-    
+
     // 완료 통지 수신
     struct msghdr msg = {0};
     struct sock_extended_err *serr;
     struct cmsghdr *cmsg;
     char control[100];
-    
+
     msg.msg_control = control;
     msg.msg_controllen = sizeof(control);
-    
+
     ret = recvmsg(fd, &msg, MSG_ERRQUEUE);
     if (ret < 0) {
         perror("recvmsg");
         return;
     }
-    
+
     cmsg = CMSG_FIRSTHDR(&msg);
     if (!cmsg || cmsg->cmsg_level != SOL_IP ||
         cmsg->cmsg_type != IP_RECVERR) {
         return;
     }
-    
+
     serr = (struct sock_extended_err *)CMSG_DATA(cmsg);
     if (serr->ee_errno != 0 || serr->ee_origin != SO_EE_ORIGIN_ZEROCOPY) {
         printf("zerocopy failed, ");
     }
 }
-```text
+```
 
 ## NUMA 최적화
 
@@ -559,7 +639,7 @@ node distances:
 node   0   1
   0:  10  21   # 로컬: 10, 원격: 21 (2.1배 느림!)
   1:  21  10
-```text
+```
 
 실제 성능 차이:
 
@@ -567,11 +647,11 @@ node   0   1
 # 잘못된 NUMA 배치
 CPU 0에서 실행 + Node 1 메모리 사용 = 100ms
 
-# 올바른 NUMA 배치  
+# 올바른 NUMA 배치
 CPU 0에서 실행 + Node 0 메모리 사용 = 47ms
 
 # 무려 2배 이상 차이! 😱
-```text
+```
 
 ### NUMA 인식 메모리 할당
 
@@ -586,10 +666,10 @@ CPU 0에서 실행 + Node 0 메모리 사용 = 47ms
 struct numa_server {
     int num_nodes;
     int *cpus_per_node;
-    
+
     // 노드별 메모리 풀
     struct memory_pool **node_pools;
-    
+
     // 노드별 워커 스레드
     pthread_t **node_workers;
 };
@@ -601,36 +681,36 @@ struct numa_server *numa_server_init(void) {
         printf("NUMA not available, ");
         return NULL;
     }
-    
+
     struct numa_server *server = calloc(1, sizeof(*server));
     server->num_nodes = numa_num_configured_nodes();
-    
+
     printf("NUMA nodes: %d, ", server->num_nodes);
-    
+
     server->cpus_per_node = calloc(server->num_nodes, sizeof(int));
     server->node_pools = calloc(server->num_nodes, sizeof(void *));
     server->node_workers = calloc(server->num_nodes, sizeof(pthread_t *));
-    
+
     // 각 노드의 CPU 수 계산
     for (int node = 0; node < server->num_nodes; node++) {
         struct bitmask *cpus = numa_allocate_cpumask();
         numa_node_to_cpus(node, cpus);
-        
+
         server->cpus_per_node[node] = numa_bitmask_weight(cpus);
         printf("Node %d: %d CPUs, ", node, server->cpus_per_node[node]);
-        
+
         // 노드별 메모리 풀 생성
         server->node_pools[node] = create_numa_memory_pool(node);
-        
+
         // 노드별 워커 스레드 생성
         server->node_workers[node] = calloc(server->cpus_per_node[node],
                                            sizeof(pthread_t));
-        
+
         spawn_numa_workers(server, node, cpus);
-        
+
         numa_free_cpumask(cpus);
     }
-    
+
     return server;
 }
 
@@ -639,15 +719,15 @@ struct numa_server *numa_server_init(void) {
 // 성능 이득: 원격 메모리 접근 비용 50-70% 감소, 메모리 대역폭 2-3배 향상
 struct memory_pool *create_numa_memory_pool(int node) {
     struct memory_pool *pool;
-    
+
     // ⭐ 1단계: 풀 구조체를 지정된 NUMA 노드에 할당
     // numa_alloc_onnode(): 특정 NUMA 노드의 로컬 메모리에 할당
     // 중요: 풀 구조체 자체도 해당 노드에 두어야 메타데이터 접근도 최적화
     pool = numa_alloc_onnode(sizeof(*pool), node);
-    
+
     if (!pool)
         return NULL;
-        
+
     // ⭐ 2단계: 실제 메모리 풀을 노드 로컬 메모리에 할당
     // 핵심: 이 메모리 영역에서 네트워크 버퍼, 연결 구조체 등이 할당됨
     // 실무 예시: 64GB RAM에서 노드당 16GB씩 분할하여 캐시 지역성 극대화
@@ -655,7 +735,7 @@ struct memory_pool *create_numa_memory_pool(int node) {
     pool->node = node;
     pool->size = POOL_SIZE;
     pool->used = 0;
-    
+
     // ⭐ 3단계: 메모리 정책 설정 - 엄격한 노드 바인딩
     // MPOL_BIND: 해당 노드에서만 메모리 할당 (다른 노드 사용 금지)
     // MPOL_MF_MOVE: 이미 다른 노드에 있는 페이지도 강제로 이동
@@ -663,7 +743,7 @@ struct memory_pool *create_numa_memory_pool(int node) {
     unsigned long nodemask = 1UL << node;  // 비트마스크로 노드 지정
     mbind(pool->memory, POOL_SIZE, MPOL_BIND, &nodemask,
           numa_max_node() + 1, MPOL_MF_MOVE);
-    
+
     return pool;
 }
 
@@ -672,29 +752,29 @@ struct memory_pool *create_numa_memory_pool(int node) {
 void spawn_numa_workers(struct numa_server *server, int node,
                        struct bitmask *cpus) {
     int worker_id = 0;
-    
+
     for (int cpu = 0; cpu < numa_num_configured_cpus(); cpu++) {
         if (!numa_bitmask_isbitset(cpus, cpu))
             continue;
-            
+
         struct worker_config *config = calloc(1, sizeof(*config));
         config->server = server;
         config->node = node;
         config->cpu = cpu;
         config->pool = server->node_pools[node];
-        
+
         pthread_attr_t attr;
         pthread_attr_init(&attr);
-        
+
         // CPU 친화도 설정
         cpu_set_t cpuset;
         CPU_ZERO(&cpuset);
         CPU_SET(cpu, &cpuset);
         pthread_attr_setaffinity_np(&attr, sizeof(cpuset), &cpuset);
-        
+
         pthread_create(&server->node_workers[node][worker_id++],
                       &attr, numa_worker_thread, config);
-        
+
         pthread_attr_destroy(&attr);
     }
 }
@@ -702,39 +782,39 @@ void spawn_numa_workers(struct numa_server *server, int node,
 // NUMA 로컬 연결 처리
 void *numa_worker_thread(void *arg) {
     struct worker_config *config = arg;
-    
+
     // 현재 스레드를 NUMA 노드에 바인딩
     numa_run_on_node(config->node);
     numa_set_preferred(config->node);
-    
+
     // 노드 로컬 메모리만 사용
     numa_set_localalloc();
-    
+
     // io_uring 인스턴스 (노드 로컬)
     struct io_uring *ring = numa_alloc_onnode(sizeof(*ring), config->node);
     io_uring_queue_init(4096, ring, 0);
-    
+
     // 이벤트 루프
     while (1) {
         struct io_uring_cqe *cqe;
-        
+
         io_uring_wait_cqe(ring, &cqe);
-        
+
         // 노드 로컬 메모리에서 버퍼 할당
         void *buffer = allocate_from_pool(config->pool, BUFFER_SIZE);
-        
+
         // 요청 처리
         process_request(cqe, buffer);
-        
+
         // 버퍼 반환
         return_to_pool(config->pool, buffer);
-        
+
         io_uring_cqe_seen(ring, cqe);
     }
-    
+
     return NULL;
 }
-```text
+```
 
 ## 커넥션 풀과 로드 밸런싱
 
@@ -749,7 +829,7 @@ void *numa_worker_thread(void *arg) {
 00:05 - 평소의 100배 (서버 1대 다운)
 00:06 - 자동 페일오버 성공!
 00:10 - 안정화 (휴... 😅)
-```text
+```
 
 ### 고성능 커넥션 풀
 
@@ -772,7 +852,7 @@ void *numa_worker_thread(void *arg) {
     쿼리_실행()       # 1ms
     풀에_반환()       # 0.01ms
     총: 1.02ms (5배 빨라짐!)
-```text
+```
 
 ```c
 // 연결 풀 구현
@@ -784,24 +864,24 @@ struct connection_pool {
         int weight;
         int current_weight;
         int effective_weight;
-        
+
         // 연결 풀
         struct connection *free_conns;
         struct connection *busy_conns;
         int free_count;
         int busy_count;
         int max_conns;
-        
+
         // 상태
         atomic_int failures;
         atomic_int successes;
         time_t last_check;
         bool available;
-        
+
         pthread_mutex_t lock;
     } *backends;
     int num_backends;
-    
+
     // 로드 밸런싱 알고리즘
     enum {
         LB_ROUND_ROBIN,
@@ -810,7 +890,7 @@ struct connection_pool {
         LB_IP_HASH,
         LB_CONSISTENT_HASH
     } algorithm;
-    
+
     // Consistent Hash Ring
     struct hash_node {
         uint32_t hash;
@@ -825,25 +905,25 @@ struct connection_pool {
 struct backend *select_backend_wrr(struct connection_pool *pool) {
     struct backend *selected = NULL;
     int total_weight = 0;
-    
+
     for (int i = 0; i < pool->num_backends; i++) {
         struct backend *b = &pool->backends[i];
-        
+
         if (!b->available)
             continue;
-            
+
         b->current_weight += b->effective_weight;
         total_weight += b->effective_weight;
-        
+
         if (!selected || b->current_weight > selected->current_weight) {
             selected = b;
         }
     }
-    
+
     if (selected) {
         selected->current_weight -= total_weight;
     }
-    
+
     return selected;
 }
 
@@ -851,26 +931,26 @@ struct backend *select_backend_wrr(struct connection_pool *pool) {
 struct backend *select_backend_lc(struct connection_pool *pool) {
     struct backend *selected = NULL;
     int min_conns = INT_MAX;
-    
+
     for (int i = 0; i < pool->num_backends; i++) {
         struct backend *b = &pool->backends[i];
-        
+
         if (!b->available)
             continue;
-            
+
         int active_conns = b->busy_count;
-        
+
         // 가중치 고려
         if (b->weight > 0) {
             active_conns = active_conns * 100 / b->weight;
         }
-        
+
         if (active_conns < min_conns) {
             min_conns = active_conns;
             selected = b;
         }
     }
-    
+
     return selected;
 }
 
@@ -879,24 +959,24 @@ struct backend *select_backend_lc(struct connection_pool *pool) {
 // 서버 추가/제거 시 최소한의 재분배만 발생!
 void build_hash_ring(struct connection_pool *pool) {
     int virtual_nodes = 150;  // 각 백엔드당 가상 노드 수
-    
+
     pool->ring_size = pool->num_backends * virtual_nodes;
     pool->hash_ring = calloc(pool->ring_size, sizeof(struct hash_node));
-    
+
     int idx = 0;
     for (int i = 0; i < pool->num_backends; i++) {
         struct backend *b = &pool->backends[i];
-        
+
         for (int j = 0; j < virtual_nodes; j++) {
             char key[256];
             snprintf(key, sizeof(key), "%s:%d#%d", b->host, b->port, j);
-            
+
             pool->hash_ring[idx].hash = murmur3_32(key, strlen(key), 0);
             pool->hash_ring[idx].backend = b;
             idx++;
         }
     }
-    
+
     // 해시값으로 정렬
     qsort(pool->hash_ring, pool->ring_size, sizeof(struct hash_node),
           hash_node_compare);
@@ -905,10 +985,10 @@ void build_hash_ring(struct connection_pool *pool) {
 struct backend *select_backend_ch(struct connection_pool *pool,
                                   const char *key) {
     uint32_t hash = murmur3_32(key, strlen(key), 0);
-    
+
     // 이진 검색으로 해시 링에서 위치 찾기
     int left = 0, right = pool->ring_size - 1;
-    
+
     while (left < right) {
         int mid = (left + right) / 2;
         if (pool->hash_ring[mid].hash < hash) {
@@ -917,26 +997,26 @@ struct backend *select_backend_ch(struct connection_pool *pool,
             right = mid;
         }
     }
-    
+
     // 순환
     if (left >= pool->ring_size)
         left = 0;
-        
+
     return pool->hash_ring[left].backend;
 }
 
 // 연결 획득과 반환
 struct connection *acquire_connection(struct backend *backend) {
     struct connection *conn = NULL;
-    
+
     pthread_mutex_lock(&backend->lock);
-    
+
     // 사용 가능한 연결 확인
     if (backend->free_count > 0) {
         conn = backend->free_conns;
         backend->free_conns = conn->next;
         backend->free_count--;
-        
+
         conn->next = backend->busy_conns;
         backend->busy_conns = conn;
         backend->busy_count++;
@@ -949,25 +1029,25 @@ struct connection *acquire_connection(struct backend *backend) {
             backend->busy_count++;
         }
     }
-    
+
     pthread_mutex_unlock(&backend->lock);
-    
+
     return conn;
 }
 
 void release_connection(struct backend *backend, struct connection *conn) {
     pthread_mutex_lock(&backend->lock);
-    
+
     // busy 리스트에서 제거
     struct connection **pp = &backend->busy_conns;
     while (*pp && *pp != conn) {
         pp = &(*pp)->next;
     }
-    
+
     if (*pp) {
         *pp = conn->next;
         backend->busy_count--;
-        
+
         // 연결 상태 확인
         if (is_connection_alive(conn)) {
             // free 리스트로 이동
@@ -980,7 +1060,7 @@ void release_connection(struct backend *backend, struct connection *conn) {
             free(conn);
         }
     }
-    
+
     pthread_mutex_unlock(&backend->lock);
 }
 
@@ -989,35 +1069,35 @@ void release_connection(struct backend *backend, struct connection *conn) {
 // 죽은 서버에 계속 요청 보내는 바보짓 방지!
 void *health_check_thread(void *arg) {
     struct connection_pool *pool = arg;
-    
+
     while (1) {
         for (int i = 0; i < pool->num_backends; i++) {
             struct backend *b = &pool->backends[i];
-            
+
             // TCP 헬스 체크
             int sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
-            
+
             struct sockaddr_in addr = {
                 .sin_family = AF_INET,
                 .sin_port = htons(b->port)
             };
             inet_pton(AF_INET, b->host, &addr.sin_addr);
-            
+
             int ret = connect(sock, (struct sockaddr *)&addr, sizeof(addr));
-            
+
             if (ret == 0 || (ret < 0 && errno == EINPROGRESS)) {
                 // select로 연결 확인
                 fd_set write_fds;
                 FD_ZERO(&write_fds);
                 FD_SET(sock, &write_fds);
-                
+
                 struct timeval timeout = {.tv_sec = 1, .tv_usec = 0};
-                
+
                 if (select(sock + 1, NULL, &write_fds, NULL, &timeout) > 0) {
                     int error;
                     socklen_t len = sizeof(error);
                     getsockopt(sock, SOL_SOCKET, SO_ERROR, &error, &len);
-                    
+
                     if (error == 0) {
                         // 헬스 체크 성공
                         if (!b->available) {
@@ -1035,30 +1115,30 @@ void *health_check_thread(void *arg) {
             } else {
                 goto health_check_failed;
             }
-            
+
             close(sock);
             continue;
-            
+
 health_check_failed:
             close(sock);
-            
+
             int failures = atomic_fetch_add(&b->failures, 1) + 1;
-            
+
             if (failures >= 3 && b->available) {
                 printf("Backend %s:%d is DOWN, ", b->host, b->port);
                 b->available = false;
-                
+
                 // 기존 연결 정리
                 cleanup_backend_connections(b);
             }
         }
-        
+
         sleep(5);  // 5초마다 헬스 체크
     }
-    
+
     return NULL;
 }
-```text
+```
 
 ## 프로토콜 최적화
 
@@ -1071,21 +1151,21 @@ health_check_failed:
 HTTP/1.0 (1996):
     "연결당 하나의 요청" # Keep-Alive 없음
     "텍스트 기반" # 파싱 오버헤드
-    
+
 HTTP/1.1 (1997):
     "Keep-Alive 기본" # 연결 재사용
     "파이프라이닝" # 하지만 HOL 문제...
-    
+
 HTTP/2 (2015):
     "바이너리 프로토콜" # 파싱 최적화
     "멀티플렉싱" # 하나의 연결로 여러 요청
     "서버 푸시" # 능동적 리소스 전송
-    
+
 HTTP/3 (2022):
     "QUIC 기반" # TCP 대신 UDP
     "0-RTT" # 재연결 시 즉시 데이터 전송
     "연결 마이그레이션" # IP 변경에도 연결 유지
-```text
+```
 
 ### HTTP/2 서버 구현
 
@@ -1103,7 +1183,7 @@ Round trips: 17
 HTTP/2 (1개 연결):
 Time: 0.8s  # 4배 빨라짐!
 Round trips: 3
-```text
+```
 
 ```c
 // HTTP/2 프레임 처리
@@ -1131,20 +1211,20 @@ enum http2_frame_type {
 
 struct http2_connection {
     int fd;
-    
+
     // HPACK 컨텍스트
     struct hpack_context *encoder;
     struct hpack_context *decoder;
-    
+
     // 스트림 관리
     struct http2_stream *streams;
     uint32_t last_stream_id;
     uint32_t max_concurrent_streams;
-    
+
     // 흐름 제어
     int32_t local_window;
     int32_t remote_window;
-    
+
     // 설정
     struct http2_settings {
         uint32_t header_table_size;
@@ -1154,13 +1234,13 @@ struct http2_connection {
         uint32_t max_frame_size;
         uint32_t max_header_list_size;
     } local_settings, remote_settings;
-    
+
     // 송신 큐
     struct frame_queue {
         struct http2_frame *frame;
         struct frame_queue *next;
     } *send_queue;
-    
+
     pthread_mutex_t lock;
 };
 
@@ -1172,11 +1252,11 @@ int http2_handshake(struct http2_connection *conn) {
     if (recv(conn->fd, preface, 24, MSG_WAITALL) != 24) {
         return -1;
     }
-    
+
     if (memcmp(preface, "PRI * HTTP/2.0\r, \r, SM\r, \r, ", 24) != 0) {
         return -1;
     }
-    
+
     // SETTINGS 프레임 전송
     struct {
         struct http2_frame frame;
@@ -1200,9 +1280,9 @@ int http2_handshake(struct http2_connection *conn) {
             {htons(6), htonl(16384)}      // MAX_HEADER_LIST_SIZE
         }
     };
-    
+
     send(conn->fd, &settings_frame, sizeof(settings_frame), MSG_NOSIGNAL);
-    
+
     return 0;
 }
 
@@ -1211,20 +1291,20 @@ void http2_handle_stream(struct http2_connection *conn,
                         uint32_t stream_id,
                         struct http2_frame *frame) {
     struct http2_stream *stream = find_or_create_stream(conn, stream_id);
-    
+
     switch (frame->type) {
     case HTTP2_HEADERS:
         handle_headers_frame(conn, stream, frame);
         break;
-        
+
     case HTTP2_DATA:
         handle_data_frame(conn, stream, frame);
         break;
-        
+
     case HTTP2_RST_STREAM:
         handle_rst_stream(conn, stream, frame);
         break;
-        
+
     case HTTP2_WINDOW_UPDATE:
         handle_window_update(conn, stream, frame);
         break;
@@ -1239,19 +1319,19 @@ void http2_server_push(struct http2_connection *conn,
                       const char *path) {
     uint32_t promised_stream_id = conn->last_stream_id + 2;
     conn->last_stream_id = promised_stream_id;
-    
+
     // PUSH_PROMISE 프레임
     struct push_promise_frame {
         struct http2_frame frame;
         uint32_t promised_stream_id;
         uint8_t headers[];
     } __attribute__((packed));
-    
+
     // HPACK으로 헤더 인코딩
     uint8_t encoded_headers[1024];
     size_t headers_len = hpack_encode_headers(conn->encoder,
                                              path, encoded_headers);
-    
+
     struct push_promise_frame *push = malloc(sizeof(*push) + headers_len);
     push->frame.length = htonl(4 + headers_len) >> 8;
     push->frame.type = HTTP2_PUSH_PROMISE;
@@ -1259,14 +1339,14 @@ void http2_server_push(struct http2_connection *conn,
     push->frame.stream_id = htonl(parent_stream_id);
     push->promised_stream_id = htonl(promised_stream_id);
     memcpy(push->headers, encoded_headers, headers_len);
-    
+
     send(conn->fd, push, sizeof(*push) + headers_len, MSG_NOSIGNAL);
     free(push);
-    
+
     // 푸시된 리소스 전송
     send_pushed_resource(conn, promised_stream_id, path);
 }
-```text
+```
 
 ### WebSocket 서버
 
@@ -1291,7 +1371,7 @@ const ws = new WebSocket('ws://localhost')
 ws.onmessage = (msg) => {  // 진짜 실시간!
     console.log('즉시 도착:', msg)
 }
-```text
+```
 
 ```c
 // WebSocket 핸드셰이크와 프레임 처리
@@ -1325,26 +1405,26 @@ enum websocket_opcode {
 // HTTP에서 WebSocket으로의 마법같은 프로토콜 업그레이드!
 int websocket_handshake(int client_fd, const char *request) {
     char key[256];
-    
+
     // Sec-WebSocket-Key 추출
     const char *key_header = strstr(request, "Sec-WebSocket-Key:");
     if (!key_header) {
         return -1;
     }
-    
+
     sscanf(key_header, "Sec-WebSocket-Key: %s", key);
-    
+
     // 매직 문자열 추가
     strcat(key, "258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
-    
+
     // SHA-1 해시
     unsigned char hash[SHA_DIGEST_LENGTH];
     SHA1((unsigned char *)key, strlen(key), hash);
-    
+
     // Base64 인코딩
     char accept[256];
     base64_encode(hash, SHA_DIGEST_LENGTH, accept);
-    
+
     // 응답 전송
     char response[512];
     snprintf(response, sizeof(response),
@@ -1353,9 +1433,9 @@ int websocket_handshake(int client_fd, const char *request) {
         "Connection: Upgrade\r, "
         "Sec-WebSocket-Accept: %s\r, "
         "\r, ", accept);
-    
+
     send(client_fd, response, strlen(response), MSG_NOSIGNAL);
-    
+
     return 0;
 }
 
@@ -1364,9 +1444,9 @@ void websocket_send(int fd, const void *data, size_t len,
                    enum websocket_opcode opcode) {
     uint8_t frame[14];
     int frame_size = 2;
-    
+
     frame[0] = 0x80 | opcode;  // FIN=1
-    
+
     if (len < 126) {
         frame[1] = len;
     } else if (len < 65536) {
@@ -1378,10 +1458,10 @@ void websocket_send(int fd, const void *data, size_t len,
         *(uint64_t *)&frame[2] = htobe64(len);
         frame_size = 10;
     }
-    
+
     // 프레임 헤더 전송
     send(fd, frame, frame_size, MSG_MORE);
-    
+
     // 페이로드 전송
     send(fd, data, len, MSG_NOSIGNAL);
 }
@@ -1392,18 +1472,18 @@ void websocket_send(int fd, const void *data, size_t len,
 void websocket_broadcast(struct websocket_server *server,
                         const void *data, size_t len) {
     pthread_rwlock_rdlock(&server->clients_lock);
-    
+
     for (int i = 0; i < server->num_clients; i++) {
         struct websocket_client *client = server->clients[i];
-        
+
         if (client->state == WS_CONNECTED) {
             websocket_send(client->fd, data, len, WS_TEXT);
         }
     }
-    
+
     pthread_rwlock_unlock(&server->clients_lock);
 }
-```text
+```
 
 ## 요약
 
@@ -1431,7 +1511,7 @@ void websocket_broadcast(struct websocket_server *server,
 □ WebSocket 지원 (실시간 기능)
 □ 헬스 체크와 Circuit Breaker
 □ 메트릭 수집과 모니터링
-```text
+```
 
 고성능 네트워크 서버 구현은 시스템의 모든 레벨에서 최적화를 요구합니다. C10K/C10M 문제 해결을 위해 연결당 리소스를 최소화하고, 멀티코어를 효과적으로 활용해야 합니다.
 
@@ -1448,10 +1528,10 @@ void websocket_broadcast(struct websocket_server *server,
 ```bash
 # 항상 이렇게 시작하세요
 $ perf top           # CPU 병목 찾기
-$ iostat -x 1        # I/O 병목 찾기  
+$ iostat -x 1        # I/O 병목 찾기
 $ ss -s              # 연결 상태 확인
 $ numastat           # NUMA 통계 확인
-```text
+```
 
 다음 절에서는 보안 네트워킹과 암호화 통신을 살펴보겠습니다.
 
