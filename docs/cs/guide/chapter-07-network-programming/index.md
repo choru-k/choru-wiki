@@ -40,32 +40,32 @@ graph TB
         APP[Application]
         SOCK[Socket API]
     end
-    
+
     subgraph "Transport Layer"
         TCP[TCP]
         UDP[UDP]
         SCTP[SCTP]
     end
-    
+
     subgraph "Network Layer"
         IP[IP Layer]
         ROUTE[Routing]
         FRAG[Fragmentation]
     end
-    
+
     subgraph "Link Layer"
         ETH[Ethernet]
         WIFI[WiFi]
         NIC[Network Interface]
     end
-    
+
     subgraph "I/O Models"
         BLOCK[Blocking I/O]
         NBLOCK[Non-blocking I/O]
         MULTI[I/O Multiplexing, select/poll/epoll]
         ASYNC[Async I/O, io_uring]
     end
-    
+
     APP --> SOCK
     SOCK --> TCP
     SOCK --> UDP
@@ -73,16 +73,16 @@ graph TB
     UDP --> IP
     IP --> ETH
     ETH --> NIC
-    
+
     SOCK --> BLOCK
     SOCK --> NBLOCK
     NBLOCK --> MULTI
     MULTI --> ASYNC
-    
+
     style SOCK fill:#FFE082
     style TCP fill:#81C784
     style MULTI fill:#64B5F6
-```text
+```
 
 ## 이 장의 구성
 
@@ -175,22 +175,22 @@ $ ab -n 10000 -c 100    # Apache Bench
 # 네트워크 디버깅
 $ strace -e network     # 네트워크 시스템 콜 추적
 $ ltrace -e socket      # 라이브러리 호출 추적
-```text
+```
 
 ## 이 장을 읽고 나면
 
-✅ **소켓 프로그래밍 마스터**: TCP/UDP 소켓 자유자재로 활용  
-✅ **프로토콜 이해**: TCP/IP 스택의 내부 동작 원리 파악  
-✅ **고성능 서버 구현**: C10K 문제 해결과 최적화  
-✅ **보안 통신**: TLS/SSL을 활용한 암호화 통신 구현  
-✅ **문제 해결**: 네트워크 문제 진단과 디버깅 능력  
+✅ **소켓 프로그래밍 마스터**: TCP/UDP 소켓 자유자재로 활용
+✅ **프로토콜 이해**: TCP/IP 스택의 내부 동작 원리 파악
+✅ **고성능 서버 구현**: C10K 문제 해결과 최적화
+✅ **보안 통신**: TLS/SSL을 활용한 암호화 통신 구현
+✅ **문제 해결**: 네트워크 문제 진단과 디버깅 능력
 
 ## 핵심 개념 미리보기
 
 ```mermaid
 graph TD
     ROOT[네트워크 프로그래밍]
-    
+
     subgraph SOCKET["소켓 API"]
         CREATE[생성과 연결]
         SOCKET_FUNC[socket함수]
@@ -198,78 +198,78 @@ graph TD
         LISTEN_FUNC[listen함수]
         ACCEPT_FUNC[accept함수]
         CONNECT_FUNC[connect함수]
-        
+
         TRANSFER[데이터 전송]
         SEND_RECV[send/recv함수]
         SENDTO_RECVFROM[sendto/recvfrom함수]
         WRITEV_READV[writev/readv함수]
-        
+
         OPTION[옵션 설정]
         SO_REUSEADDR[SO_REUSEADDR]
         SO_KEEPALIVE[SO_KEEPALIVE]
         TCP_NODELAY[TCP_NODELAY]
     end
-    
+
     subgraph TCPIP["TCP/IP 스택"]
         TCP[TCP]
         HANDSHAKE[3-way handshake]
         CLOSE[4-way close]
         FLOW[흐름 제어]
         CONGESTION[혼잡 제어]
-        
+
         IP[IP]
         ROUTING[라우팅]
         FRAGMENT[단편화]
         TTL[TTL]
-        
+
         BUFFER[버퍼 관리]
         SEND_BUF[송신 버퍼]
         RECV_BUF[수신 버퍼]
         WINDOW[윈도우 크기]
     end
-    
+
     subgraph IO["I/O 모델"]
         SYNC_IO[동기 I/O]
         BLOCKING[블로킹]
         NONBLOCKING[논블로킹]
-        
+
         MULTIPLEX[I/O 멀티플렉싱]
         SELECT[select]
         POLL[poll]
         EPOLL[epoll/kqueue]
-        
+
         ASYNC_IO[비동기 I/O]
         POSIX_AIO[POSIX AIO]
         IO_URING[io_uring]
     end
-    
+
     ROOT --> SOCKET
     ROOT --> TCPIP
     ROOT --> IO
-```text
+```
 
 ## 네트워크 문제 진단 플로우차트
 
 ```mermaid
 graph TD
     Start[네트워크 문제 발생] --> Type{문제 유형?}
-    
+
     Type -->|연결 실패| Connect[연결 문제 분석]
     Connect --> Port[포트 상태 확인]
     Port --> Firewall[방화벽 규칙 확인]
-    
+
     Type -->|성능 저하| Perf[성능 분석]
     Perf --> Latency[레이턴시 측정]
     Latency --> Bandwidth[대역폭 확인]
-    
+
     Type -->|패킷 손실| Loss[패킷 분석]
     Loss --> TCPDump[tcpdump 캡처]
     TCPDump --> Retrans[재전송 확인]
-    
+
     Type -->|TIME_WAIT| TimeWait[소켓 상태 확인]
     TimeWait --> Tuning[커널 파라미터 조정]
     Tuning --> Reuse[SO_REUSEADDR 설정]
-```text
+```
 
 ## 다음 단계
 

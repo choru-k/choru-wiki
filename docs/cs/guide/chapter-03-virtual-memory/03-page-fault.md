@@ -118,7 +118,75 @@ tags:
 - [메모리 압축과 중복 제거](04-compression-deduplication.md) - 고급 메모리 기법
 - [프로세스 생성과 관리](../chapter-04-process-thread/01-process-creation.md) - fork()와 CoW 실전
 
-## 3. Demand Paging: 게으른 메모리 할당의 미학
+## 📊 성능 범위 비교 차트
+
+```mermaid
+graph TD
+    subgraph "페이지 폴트 성능 스팩트럼"
+        MINOR["Minor Fault<br/>0.001ms<br/>🟢 암묵적 성능"]
+        MAJOR["Major Fault<br/>5ms<br/>🟡 체감 가능"]
+        SEGV["Invalid Fault<br/>프로그램 종료<br/>🔴 재시작"]
+        
+        MINOR --> MAJOR
+        MAJOR --> SEGV
+        
+        style MINOR fill:#4CAF50
+        style MAJOR fill:#FFC107  
+        style SEGV fill:#F44336
+    end
+```
+
+### 성능 임계점
+
+- **우수**: Minor Fault 초당 1000회 이하
+- **보통**: Minor Fault 초당 1000-5000회
+- **주의**: Major Fault 초당 10회 이상
+- **심각**: Major Fault 초당 100회 이상
+
+## 🤔 사례 연구 모음
+
+### 성능 문제 진단 패턴
+
+1. **"Application is slow"**
+   - 검사 순서: Major Fault → Swap 사용량 → OOM Log → Memory Leak
+   - 해결 순서: Page Cache → Prefaulting → Memory Optimization
+
+2. **"System becomes unresponsive"**
+   - 원인: 스왑 지옥 (10,000배 느림)
+   - 방지: swappiness 조절, zRAM 도입, 사전 메모리 방지
+
+3. **"Process suddenly terminated"**
+   - OOM Score 계산에 의한 희생자 선정
+   - 방지: oom_score_adj -1000, cgroup 메모리 제한
+
+### 벤치마크 결과
+
+- **Minor Fault**: 25,000회/초 처리 가능 (오버헤드 ~25ms/초)
+- **Major Fault**: 200회/초마다 1초 대기 시간
+- **CoW 효율**: 수정 비율 <5%일 때 95% 메모리 절약
+
+## 🔧 고급 최적화 기법 미리보기
+
+### 하드웨어 최적화
+
+- **Huge Pages**: 4KB → 2MB/1GB 페이지로 TLB 리스 50% 전팩
+- **NUMA Awareness**: CPU-메모리 지역성으로 30% 성능 향상
+- **Memory Prefetching**: 하드웨어 예측으로 레이턴시 숨기기
+
+### 커널 튜닝
+
+```bash
+# 튜닝 매개변수 예시
+echo 1 > /proc/sys/vm/drop_caches        # 캐시 삭제
+echo 0 > /proc/sys/vm/swappiness         # 스왑 방지
+echo madvise > /sys/kernel/mm/transparent_hugepage/enabled
+```
+
+### 애플리케이션 레벨 최적화
+
+- **Memory Pool**: malloc() 오버헤드 제거, 리수 커끝 효과
+- **Object Pool**: 생성/소멸 비용 절약, GC 압박 감소
+- **Copy Elimination**: 무의미한 데이터 복사 제거
 
 ### 3.1 Demand Paging 원리: "필요할 때까지 미루자"
 
