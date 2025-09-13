@@ -40,47 +40,47 @@ graph TB
         TASK[task_struct]
         TGID[Thread Group ID, = Process ID]
         TID[Thread ID]
-        
+
         TASK --> TGID
         TASK --> TID
     end
-    
+
     subgraph "Resource Sharing"
         MM[메모리 공간, mm_struct]
         FILES[파일 테이블, files_struct]
         SIG[시그널 핸들러, signal_struct]
-        
+
         TASK --> MM
         TASK --> FILES
         TASK --> SIG
     end
-    
+
     subgraph "Scheduling"
         RQ[Run Queue]
         CFS[CFS Scheduler]
         PRIO[Priority/Nice]
-        
+
         TASK --> RQ
         RQ --> CFS
         CFS --> PRIO
     end
-    
+
     subgraph "IPC Mechanisms"
         PIPE[Pipe/FIFO]
         SHM[Shared Memory]
         MSG[Message Queue]
         SEM[Semaphore]
-        
+
         TASK -.-> PIPE
         TASK -.-> SHM
         TASK -.-> MSG
         TASK -.-> SEM
     end
-    
+
     style TASK fill:#FFE082
     style CFS fill:#81C784
     style SHM fill:#64B5F6
-```text
+```
 
 ## 이 장의 구성
 
@@ -154,7 +154,7 @@ graph TB
 
 **"SIGPIPE로 프로세스가 죽어요"**
 
-- 📡 **시그널 생성과 전달**: 커널의 시그널 전송 메커니즘  
+- 📡 **시그널 생성과 전달**: 커널의 시그널 전송 메커니즘
 - 🛡️ **견고한 시그널 핸들러**: 안전한 시그널 처리 패턴
 - 💥 **SIGPIPE/SIGTERM 처리**: 네트워크 서비스 안정성 확보
 - 🔄 **Graceful Shutdown**: 우아한 서비스 종료 구현
@@ -184,86 +184,86 @@ $ strace -p <pid>          # 시스템 콜 추적
 # 성능 분석
 $ perf sched               # 스케줄링 이벤트 분석
 $ perf lock                # 락 경합 분석
-```text
+```
 
 ## 이 장을 읽고 나면
 
-✅ **프로세스/스레드 이해**: Linux task 모델을 완벽히 이해  
-✅ **동시성 프로그래밍**: 안전하고 효율적인 멀티스레드 코드 작성  
-✅ **스케줄링 최적화**: 워크로드에 맞는 스케줄링 정책 선택  
-✅ **IPC 활용**: 적절한 프로세스 간 통신 방법 선택  
-✅ **성능 튜닝**: 컨텍스트 스위칭 최소화와 CPU 활용 최적화  
+✅ **프로세스/스레드 이해**: Linux task 모델을 완벽히 이해
+✅ **동시성 프로그래밍**: 안전하고 효율적인 멀티스레드 코드 작성
+✅ **스케줄링 최적화**: 워크로드에 맞는 스케줄링 정책 선택
+✅ **IPC 활용**: 적절한 프로세스 간 통신 방법 선택
+✅ **성능 튜닝**: 컨텍스트 스위칭 최소화와 CPU 활용 최적화
 
 ## 핵심 개념 미리보기
 
 ```mermaid
 graph TD
     ROOT[프로세스와 스레드]
-    
+
     subgraph PROCESS["프로세스 관리"]
         CREATION[생성]
         FORK[fork함수]
         VFORK[vfork함수]
         CLONE[clone함수]
         EXEC[exec함수]
-        
+
         TERMINATION[종료]
         EXIT[exit함수]
         WAIT[wait함수]
         ZOMBIE[좀비 프로세스]
         ORPHAN[고아 프로세스]
-        
+
         RESOURCE[자원]
         MEMORY[메모리 공간]
         FD[파일 디스크립터]
         SIGNAL_HANDLER[시그널 핸들러]
     end
-    
+
     subgraph THREAD["스레드"]
         PTHREAD[pthread]
         PTHREAD_CREATE[pthread_create함수]
         PTHREAD_JOIN[pthread_join함수]
         PTHREAD_DETACH[pthread_detach함수]
-        
+
         SYNC[동기화]
         MUTEX[뮤텍스]
         SEMAPHORE[세마포어]
         CONDVAR[조건 변수]
         BARRIER[배리어]
-        
+
         TLS[Thread Local Storage]
         THREAD_KEYWORD[thread 키워드]
     end
-    
+
     ROOT --> PROCESS
     ROOT --> THREAD
-```text
+```
 
 ## 프로세스/스레드 선택 플로우차트
 
 ```mermaid
 graph TD
     Start[동시성 필요] --> Isolation{격리 필요?}
-    
+
     Isolation -->|Yes| Process[프로세스 사용]
     Process --> Fork[fork함수 또는 spawn]
-    
+
     Isolation -->|No| Share{데이터 공유?}
     Share -->|많음| Thread[스레드 사용]
     Thread --> Pthread[pthread 라이브러리]
-    
+
     Share -->|적음| Overhead{오버헤드 민감?}
     Overhead -->|Yes| Thread
     Overhead -->|No| Process
-    
+
     Thread --> Sync{동기화 복잡도?}
     Sync -->|높음| Careful[신중한 설계 필요]
     Sync -->|낮음| Simple[간단한 뮤텍스]
-    
+
     Process --> IPC{통신 필요?}
     IPC -->|Yes| IPCMethod[IPC 방법 선택]
     IPC -->|No| Independent[독립 실행]
-```text
+```
 
 ## 관련 문서
 
