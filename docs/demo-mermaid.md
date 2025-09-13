@@ -21,7 +21,7 @@ graph TB
         E["BSS Segment<br/>uninitialized data"]
         F["Data Segment<br/>initialized data"]
         G["Text Segment<br/>code<br/>0x00000000"]
-        
+
         A --> B
         B --> C
         C --> D
@@ -64,7 +64,7 @@ sequenceDiagram
     participant Client
     participant Server
     participant Database
-    
+
     Client->>Server: Request
     Server->>Database: Query
     Database-->>Server: Result
@@ -95,14 +95,14 @@ classDiagram
         +stop()
         +allocate_memory()
     }
-    
+
     class Thread {
         +int tid
         +int stack_size
         +run()
         +join()
     }
-    
+
     Process "1" --> "*" Thread : creates
 ```
 

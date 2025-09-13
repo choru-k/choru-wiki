@@ -78,7 +78,7 @@ import gc
 
 # GC 임계값 확인 (기본값)
 print(gc.get_threshold())  # (700, 10, 10)
-# 의미: 
+# 의미:
 # - 0세대: 700개 객체 생성시 GC
 # - 1세대: 0세대 GC 10번마다
 # - 2세대: 1세대 GC 10번마다
@@ -135,7 +135,7 @@ def get_memory_limit():
         # cgroup v1
         with open('/sys/fs/cgroup/memory/memory.limit_in_bytes') as f:
             return int(f.read().strip())
-    
+
     # 폴백: 시스템 메모리
     return os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
 
@@ -202,11 +202,11 @@ import (
 func main() {
     // 메모리 제한 설정
     debug.SetMemoryLimit(512 * 1024 * 1024)  // 512MB
-    
+
     // GC 통계 확인
     var m runtime.MemStats
     runtime.ReadMemStats(&m)
-    
+
     fmt.Printf("Alloc: %d MB, ", m.Alloc / 1024 / 1024)
     fmt.Printf("TotalAlloc: %d MB, ", m.TotalAlloc / 1024 / 1024)
     fmt.Printf("Sys: %d MB, ", m.Sys / 1024 / 1024)
@@ -228,23 +228,23 @@ func problematic() {
     data := &Data{
         values: make([]byte, 100*1024*1024),
     }
-    
+
     // GC 전: 메모리 100MB
     // GOGC=100이면 200MB에서 GC 예정
-    
+
     // 추가 90MB 할당
     moreData := make([]byte, 90*1024*1024)
-    
+
     // 아직 200MB 미달, GC 안 함
     // 실제 메모리: 190MB
-    
+
     // 추가 20MB 할당
     evenMore := make([]byte, 20*1024*1024)
-    
+
     // 210MB 도달! GC 트리거
     // GC 후 라이브: 110MB
     // 다음 GC 목표: 220MB
-    
+
     // 메모리 사용: 110MB
     // OS에서 본 RSS: 210MB (아직 반환 안 함)
 }
@@ -346,7 +346,7 @@ CMD ["java", \
 
 ```bash
 # 실제 메모리 사용량 계산
-Total Memory = 
+Total Memory =
     Heap (Xmx)                     # 384MB
   + Metaspace                      # 64MB
   + CodeCache                      # 48MB
@@ -423,7 +423,7 @@ const bigBuffer = Buffer.alloc(100 * 1024 * 1024);  // 100MB
 // 문제: 클로저로 인한 메모리 유지
 function leakyFunction() {
     const hugeData = Buffer.alloc(50 * 1024 * 1024);
-    
+
     return function() {
         // hugeData를 사용하지 않지만
         // 클로저 때문에 메모리에 유지됨

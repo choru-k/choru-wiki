@@ -52,7 +52,7 @@ perf top
 perf record -g ./myapp
 perf report
 
-# 3. 특정 프로세스 프로파일링  
+# 3. 특정 프로세스 프로파일링
 perf record -g -p $(pgrep myapp) sleep 30
 ```
 
@@ -96,7 +96,7 @@ firefox flame.svg
 
 ```text
 |████████████████| heavy_computation() - 40% CPU
-|██████|           data_processing()   - 15% CPU  
+|██████|           data_processing()   - 15% CPU
 |███|              network_io()        - 8% CPU
 ```
 
@@ -129,7 +129,7 @@ for (int i = 0; i < 10000; i++) {
     strcat(result, data[i]);  // O(n) 복사가 반복 = O(n²)
 }
 
-// After (빠름)  
+// After (빠름)
 size_t total_len = 0;
 for (int i = 0; i < 10000; i++) {
     total_len += strlen(data[i]);  // 전체 길이 계산
@@ -177,7 +177,7 @@ def find_duplicates_slow(arr):
                 duplicates.append(arr[i])
     return duplicates
 
-# After: O(n) 알고리즘  
+# After: O(n) 알고리즘
 def find_duplicates_fast(arr):
     seen = set()
     duplicates = set()
@@ -240,7 +240,7 @@ gcc -O0 -g program.c
 # -O2: 일반적인 최적화 (production)
 gcc -O2 program.c
 
-# -O3: aggressive 최적화 
+# -O3: aggressive 최적화
 gcc -O3 program.c
 
 # Ofast: 수학 연산 정확도 trade-off
@@ -260,7 +260,7 @@ gcc -O3 -flto *.c -o optimized_program
 
 # 성능 개선 예시:
 # - 불필요한 함수 제거
-# - 인라인화 확대  
+# - 인라인화 확대
 # - Dead code elimination
 # - 추가 5-15% 성능 향상
 ```
@@ -300,7 +300,7 @@ void slow_string_processing(char* data) {
     // 1바이트 할당으로 매번 realloc 강제 발생
     char* result = malloc(1);
     result[0] = '\0';
-    
+
     for (int i = 0; i < 1000; i++) {
         // ⭐ 2단계: 연링 CPU 사용 패턴 (FlameGraph에서 80-90% 사용 영역으로 나타남)
         // 매 반복마다 3단계 비효율적 작업 수행:
@@ -311,7 +311,7 @@ void slow_string_processing(char* data) {
         result = realloc(result, strlen(result) + strlen(data) + 1);
         strcat(result, data);
     }
-    
+
     // ⭐ 3단계: 임시 결과 메모리 해제 (실제 사용에서는 반환되어야 함)
     // 이 해제로 인해 전체 작업이 순전히 CPU 벂벅 사이클로 낭비
     free(result);
@@ -350,13 +350,13 @@ void fast_string_processing(char* data) {
     // 개선 방식: 1번 strlen 호출 + 재사용 (1 * O(len) = O(len))
     size_t data_len = strlen(data);
     size_t total_len = data_len * 1000;
-    
+
     // ⭐ 2단계: 단일 메모리 할당으로 realloc 오버헤드 제거
     // 기존 방식: 1000번 realloc (1000 * O(avg_size) = O(n²))
     // 개선 방식: 1번 malloc (1 * O(total_size) = O(n))
     char* result = malloc(total_len + 1);
     char* ptr = result;  // 후속 쓰기를 위한 이동 포인터
-    
+
     // ⭐ 3단계: 순차적 메모리 접근으로 캐시 효율성 최대화
     for (int i = 0; i < 1000; i++) {
         // 기존 방식: 매번 전체 문자열 스캔 + 뒤에 추가 (strcat)
@@ -365,7 +365,7 @@ void fast_string_processing(char* data) {
         strcpy(ptr, data);     // O(len) 단일 복사, 캐시 라인 효율적 사용
         ptr += data_len;       // 포인터 연산 (O(1)), 다음 쓰기 위치로 이동
     }
-    
+
     // ⭐ 결과: 시간 복잡도 O(n*len), 공간 복잡도 O(n*len)
     // 성능 향상: 150배 빨라지 (45초 → 0.3초)
     free(result);
@@ -385,7 +385,7 @@ time ./cpu_optimized   # After: 0.3초
 ```bash
 # 다양한 최적화 레벨 테스트
 gcc -O0 -g example.c -o example_O0
-gcc -O2 example.c -o example_O2  
+gcc -O2 example.c -o example_O2
 gcc -O3 example.c -o example_O3
 gcc -O3 -flto example.c -o example_LTO
 
@@ -393,7 +393,7 @@ gcc -O3 -flto example.c -o example_LTO
 #!/bin/bash
 echo "Optimization Level Comparison:"
 echo "O0:" && time ./example_O0 2>&1 | grep real
-echo "O2:" && time ./example_O2 2>&1 | grep real  
+echo "O2:" && time ./example_O2 2>&1 | grep real
 echo "O3:" && time ./example_O3 2>&1 | grep real
 echo "LTO:" && time ./example_LTO 2>&1 | grep real
 ```
@@ -411,7 +411,7 @@ echo "LTO:" && time ./example_LTO 2>&1 | grep real
 # Escape Analysis 활용
 -XX:+DoEscapeAnalysis
 
-# NUMA 최적화  
+# NUMA 최적화
 -XX:+UseNUMA
 
 # GC 튜닝 (CPU 오버헤드 최소화)
@@ -513,7 +513,7 @@ time ./app_before < test_input.txt
 perf stat ./app_before < test_input.txt
 
 echo "After optimization:"
-time ./app_after < test_input.txt  
+time ./app_after < test_input.txt
 perf stat ./app_after < test_input.txt
 
 echo "=== Improvement Calculation ==="
@@ -541,7 +541,7 @@ fi
 ## 🎯 Key Takeaways
 
 1. **측정이 먼저**: perf + FlameGraph로 실제 병목점 확인
-2. **80/20 법칙**: 20%의 핫 경로가 80%의 성능 결정  
+2. **80/20 법칙**: 20%의 핫 경로가 80%의 성능 결정
 3. **알고리즘 우선**: O(n²) → O(n log n) 개선이 가장 효과적
 4. **컴파일러 활용**: -O2, LTO, PGO로 무료 성능 향상
 5. **지속적 검증**: 성능 개선을 측정하고 회귀 방지

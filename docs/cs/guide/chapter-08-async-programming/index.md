@@ -41,45 +41,45 @@ graph TB
         ASYNC[비동기/논블로킹]
         REACTIVE[리액티브]
     end
-    
+
     subgraph "Async Patterns"
         CB[Callback]
         PROMISE[Promise/Future]
         AWAIT[async/await]
         STREAM[Reactive Streams]
     end
-    
+
     subgraph "Concurrency Models"
         THREAD[OS Thread]
         GREEN[Green Thread]
         CORO[Coroutine]
         ACTOR[Actor Model]
     end
-    
+
     subgraph "Event Systems"
         LOOP[Event Loop]
         EPOLL[epoll/kqueue]
         URING[io_uring]
         IOCP[IOCP]
     end
-    
+
     SYNC --> THREAD
     ASYNC --> CB
     CB --> PROMISE
     PROMISE --> AWAIT
     AWAIT --> STREAM
-    
+
     ASYNC --> LOOP
     LOOP --> EPOLL
-    
+
     ASYNC --> GREEN
     GREEN --> CORO
     CORO --> ACTOR
-    
+
     style ASYNC fill:#FFE082
     style LOOP fill:#81C784
     style AWAIT fill:#64B5F6
-```text
+```
 
 ## 이 장의 구성
 
@@ -163,53 +163,53 @@ $ perf record          # 성능 프로파일링
 # 이벤트 루프 디버깅
 $ node --trace-events-enabled
 $ node --inspect-brk   # Chrome DevTools 연결
-```text
+```
 
 ## 이 장을 읽고 나면
 
-✅ **비동기 마스터**: 다양한 비동기 패턴 자유자재로 활용  
-✅ **이벤트 루프 이해**: Node.js와 브라우저의 동작 원리 파악  
-✅ **동시성 프로그래밍**: 코루틴과 액터 모델 구현 능력  
-✅ **성능 최적화**: 비동기 병목 현상 해결  
-✅ **분산 시스템**: 마이크로서비스 간 비동기 통신 구현  
+✅ **비동기 마스터**: 다양한 비동기 패턴 자유자재로 활용
+✅ **이벤트 루프 이해**: Node.js와 브라우저의 동작 원리 파악
+✅ **동시성 프로그래밍**: 코루틴과 액터 모델 구현 능력
+✅ **성능 최적화**: 비동기 병목 현상 해결
+✅ **분산 시스템**: 마이크로서비스 간 비동기 통신 구현
 
 ## 핵심 개념 미리보기
 
 ```mermaid
 graph TD
     ROOT[비동기 프로그래밍]
-    
+
     subgraph BASIC["기본 개념"]
         SYNC_ASYNC[동기 vs 비동기]
         BLOCKING[블로킹]
         NONBLOCKING[논블로킹]
         CONCURRENCY[동시성]
         PARALLEL[병렬성]
-        
+
         IO_MODEL[I/O 모델]
         SYNC_BLOCK[동기 블로킹]
         SYNC_NONBLOCK[동기 논블로킹]
         ASYNC_BLOCK[비동기 블로킹]
         ASYNC_NONBLOCK[비동기 논블로킹]
     end
-    
+
     subgraph PROMISE["Promise/Future"]
         STATE[상태]
         PENDING[Pending]
         FULFILLED[Fulfilled]
         REJECTED[Rejected]
-        
+
         METHOD[메서드]
         THEN[then함수]
         CATCH[catch함수]
         FINALLY[finally함수]
-        
+
         COMBINE[조합]
         PROMISE_ALL[Promise.all함수]
         PROMISE_RACE[Promise.race함수]
         PROMISE_SETTLED[Promise.allSettled함수]
     end
-    
+
     subgraph EVENTLOOP["이벤트 루프"]
         PHASE[페이즈]
         TIMERS[timers]
@@ -218,39 +218,39 @@ graph TD
         POLL[poll]
         CHECK[check]
         CLOSE_CB[close callbacks]
-        
+
         QUEUE[큐]
         MICRO[마이크로태스크]
         MACRO[매크로태스크]
         NEXTTICK[nextTick]
     end
-    
+
     ROOT --> BASIC
     ROOT --> PROMISE
     ROOT --> EVENTLOOP
-```text
+```
 
 ## 비동기 문제 진단 플로우차트
 
 ```mermaid
 graph TD
     Start[비동기 문제 발생] --> Type{문제 유형?}
-    
+
     Type -->|콜백 지옥| Callback[콜백 구조 분석]
     Callback --> Refactor[Promise/async로 리팩토링]
-    
+
     Type -->|성능 저하| Perf[이벤트 루프 분석]
     Perf --> Block[블로킹 코드 확인]
     Block --> Optimize[비동기 처리 전환]
-    
+
     Type -->|메모리 누수| Memory[힙 스냅샷 분석]
     Memory --> Listener[이벤트 리스너 확인]
     Listener --> Clean[정리 코드 추가]
-    
+
     Type -->|타이밍 버그| Timing[실행 순서 추적]
     Timing --> Sync[동기화 메커니즘 추가]
     Sync --> Test[단위 테스트 작성]
-```text
+```
 
 ## 다음 단계
 
