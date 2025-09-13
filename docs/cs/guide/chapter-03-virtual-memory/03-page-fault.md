@@ -4,374 +4,119 @@ tags:
   - Memory Management
   - Virtual Memory
   - Computer Science
+  - Overview
 ---
 
-# Chapter 3-3: 페이지 폴트와 메모리 관리는 어떻게 동작하는가
+# Chapter 3-3: 페이지 폴트와 메모리 관리 개요
 
-## 이 문서를 읽으면 답할 수 있는 질문들
+## 🎯 페이지 폴트와 메모리 관리의 세계로
 
-- Minor fault와 Major fault의 차이는 무엇인가?
-- Copy-on-Write는 어떻게 메모리를 절약하는가?
-- Demand Paging이 시스템 성능에 미치는 영향은?
-- 스왑이 발생하면 왜 시스템이 느려지는가?
-- 메모리 압박 상황에서 커널은 어떻게 대응하는가?
-
-## 들어가며: Segmentation Fault의 진실
+"누구나 이 메시지를 보고 좌절한 경험이 있을 겁니다."
 
 "Segmentation fault (core dumped)"
-
-개발자라면 누구나 이 메시지를 보고 좌절한 경험이 있을 겁니다. 제가 처음 이 에러를 만났을 때는 막막했습니다. "내 코드가 뭘 잘못했지?" "메모리를 잘못 건드렸나?"
 
 그런데 놀라운 사실을 알게 되었습니다. 프로그램이 정상적으로 실행될 때도 초당 수천 번의 "폴트"가 발생한다는 것을요. 다만 이것들은 **좋은 폴트**입니다. 페이지 폴트는 버그가 아니라, 현대 운영체제의 핵심 메커니즘입니다.
 
 더 충격적인 사실: Chrome이 10GB 메모리를 "사용"한다고 표시되어도, 실제로는 2GB만 쓰고 있을 수 있습니다. 나머지 8GB는 "약속"일 뿐이죠. 이게 가능한 이유가 바로 페이지 폴트입니다.
 
-이번 장에서는 이 마법 같은 메커니즘의 비밀을 파헤쳐보겠습니다.
-
-## 1. 페이지 폴트의 종류와 처리: 좋은 폴트, 나쁜 폴트, 치명적인 폴트
-
-### 1.1 페이지 폴트 분류: 신호등처럼 단순한 분류
-
-페이지 폴트는 신호등과 같습니다:
-
-- 🟢 **Minor Fault**: 초록불 - 빠르게 처리되고 계속 진행
-- 🟡 **Major Fault**: 노란불 - 잠시 멈추고 기다림
-- 🔴 **Invalid Fault**: 빨간불 - 정지! Segmentation Fault!
-
-```mermaid
-graph TD
-    PF["Page Fault 발생]
-    PF --> CHECK[페이지 상태 확인"]
-
-    CHECK --> MINOR["Minor Fault
-메모리에 있음"]
-    CHECK --> MAJOR["Major Fault
-디스크에서 로드"]
-    CHECK --> INVALID["Invalid Fault
-접근 위반"]
-
-    MINOR --> REMAP["페이지 테이블 업데이트]
-    MAJOR --> DISK[디스크 I/O"]
-    INVALID --> SEGV["SIGSEGV 신호]
-
-    REMAP --> RESUME[실행 재개"]
-    DISK --> ALLOC["메모리 할당]
-    ALLOC --> LOAD[페이지 로드"]
-    LOAD --> RESUME
-
-    style MINOR fill:#4CAF50
-    style MAJOR fill:#FFC107
-    style INVALID fill:#F44336
-```
-
-### 1.2 페이지 폴트 핸들러: OS의 응급실
-
-페이지 폴트가 발생하면, CPU는 즉시 멈추고 OS의 "응급실"로 달려갑니다:
-
-```c
-// Linux 커널의 페이지 폴트 처리: 초당 수천 번 실행되는 코드
-void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
-    unsigned long address = read_cr2();  // "어디가 아프신가요?"
-    struct mm_struct *mm = current->mm;
-    struct vm_area_struct *vma;
-    unsigned int flags = FAULT_FLAG_DEFAULT;
-
-    // 1. 커널 모드에서 발생? (이건 심각한 상황)
-    if (error_code & X86_PF_USER) {
-        flags |= FAULT_FLAG_USER;  // 사용자 프로그램의 폴트
-    } else {
-        // 커널이 페이지 폴트? 이건 정말 위험!
-        printf("[PANIC] 커널이 잘못된 메모리 접근!, ");
-        if (handle_kernel_fault(address, error_code))
-            return;
-    }
-
-    // 2. 이 주소가 프로그램의 영역인가?
-    vma = find_vma(mm, address);
-    if (!vma || vma->vm_start > address) {
-        // 할당받지 않은 메모리 접근!
-        printf("[SEGFAULT] 잘못된 포인터: %p, ", address);
-        printf("당신이 가장 싫어하는 메시지를 보게 됩니다..., ");
-        bad_area(regs, error_code, address);  // → "Segmentation fault"
-        return;
-    }
-
-    // 3. 권한 확인
-    if (error_code & X86_PF_WRITE) {
-        if (!(vma->vm_flags & VM_WRITE)) {
-            bad_area(regs, error_code, address);
-            return;
-        }
-        flags |= FAULT_FLAG_WRITE;
-    }
-
-    // 4. 실제 폴트 처리
-    fault_handler_t handler = get_fault_handler(vma);
-    int ret = handler(vma, address, flags);
-
-    if (ret & VM_FAULT_MAJOR) {
-        current->maj_flt++;  // Major fault: 디스크에서 읽어옴 (느림)
-        printf("[MAJOR] 디스크 I/O 발생 - %d ms 소요, ", io_time);
-    } else {
-        current->min_flt++;  // Minor fault: 메모리만 연결 (빠름)
-        // 이건 너무 자주 발생해서 로그도 안 남김
-    }
-}
-```
-
-### 1.3 Minor vs Major Fault: 천국과 지옥의 차이
-
-제가 실제로 경험한 사례입니다. 같은 100MB 파일을 처리하는데:
-
-- 첫 번째 실행: 5초 (Major Fault 다발)
-- 두 번째 실행: 0.1초 (Minor Fault만)
-
-50배 차이! 무슨 일이 일어난 걸까요?
-
-```c
-#include <sys/time.h>
-#include <sys/resource.h>
-
-// Minor Fault: 빠른 폴트의 예
-void demonstrate_minor_fault() {
-    printf("=== Minor Fault 실험 ===, ");
-
-    // 1. 메모리 할당 (이 순간은 '약속'만)
-    size_t size = 100 * 1024 * 1024;  // 100MB
-    char *memory = malloc(size);
-    printf("100MB 할당 완료! (사실 아직 메모리 사용 안 함), ");
-
-    struct rusage before, after;
-    getrusage(RUSAGE_SELF, &before);
-
-    // 2. 첫 접근 - Minor Fault 폭풍!
-    printf("메모리 접근 시작..., ");
-    for (size_t i = 0; i < size; i += 4096) {
-        memory[i] = 'A';  // 각 페이지 첫 접근 → Minor Fault!
-        // 커널: "아, 이제 진짜로 메모리가 필요하구나!"
-    }
-
-    getrusage(RUSAGE_SELF, &after);
-
-    long minor_faults = after.ru_minflt - before.ru_minflt;
-    printf(", 결과:, ");
-    printf("  Minor faults: %ld회, ", minor_faults);
-    printf("  예상: %zu회 (100MB / 4KB 페이지), ", size / 4096);
-    printf("  각 폴트 처리 시간: ~0.001ms, ");
-    printf("  총 오버헤드: ~%ldms (거의 무시 가능!), ", minor_faults / 1000);
-
-    free(memory);
-}
-
-// Major Fault: 느린 폴트의 악몽
-void demonstrate_major_fault() {
-    printf(", === Major Fault 실험 (커피 한 잔 준비하세요) ===, ");
-    // 1. 파일 매핑
-    int fd = open("large_file.dat", O_RDONLY);
-    struct stat st;
-    fstat(fd, &st);
-
-    char *file_map = mmap(NULL, st.st_size, PROT_READ,
-                         MAP_PRIVATE, fd, 0);
-
-    // 2. 최악의 상황 만들기
-    printf("페이지 캐시 삭제 중... (메모리를 텅 비웁니다), ");
-    system("echo 3 > /proc/sys/vm/drop_caches");  // 캐시 전부 삭제!
-    printf("이제 모든 파일 접근이 디스크를 거쳐야 합니다..., ");
-
-    struct rusage before, after;
-    getrusage(RUSAGE_SELF, &before);
-
-    // 3. 파일 접근 - Major Fault 지옥
-    printf("파일 읽기 시작 (SSD라도 느립니다!), ");
-    volatile char sum = 0;
-    for (size_t i = 0; i < st.st_size; i += 4096) {
-        sum += file_map[i];  // 각 접근마다 디스크 I/O!
-        if (i % (10 * 1024 * 1024) == 0) {
-            printf("  %zu MB 처리... (디스크가 울고 있어요), ", i / (1024*1024));
-        }
-    }
-
-    getrusage(RUSAGE_SELF, &after);
-
-    long major_faults = after.ru_majflt - before.ru_majflt;
-    printf(", 충격적인 결과:, ");
-    printf("  Major faults: %ld회, ", major_faults);
-    printf("  각 폴트 처리 시간: ~5ms (SSD 기준), ");
-    printf("  총 오버헤드: ~%ldms, ", major_faults * 5);
-    printf("  Minor Fault보다 5000배 느림!, ");
-
-    munmap(file_map, st.st_size);
-    close(fd);
-}
-```
-
-## 2. Copy-on-Write (CoW): fork()가 빠른 이유
-
-### 2.1 CoW 메커니즘: 게으른 복사의 천재성
-
-fork()는 프로세스를 통째로 복사합니다. 1GB 프로세스를 fork()하면 2GB가 필요할까요? 놀랍게도 아닙니다! 비밀은 Copy-on-Write에 있습니다.
-
-제가 Redis 개발자에게 들은 이야기입니다: "우리는 100GB 데이터베이스를 fork()로 백업하는데 1초도 안 걸려요. CoW가 없었다면 Redis는 존재하지 못했을 거예요."
-
-```mermaid
-sequenceDiagram
-    participant Parent
-    participant Kernel
-    participant Child
-
-    Parent->>Kernel: fork()
-    Kernel->>Kernel: 페이지 테이블 복사 (물리 페이지 공유)
-    Kernel->>Kernel: 모든 페이지를 읽기 전용으로 표시
-    Kernel->>Child: 자식 프로세스 생성
-
-    Note over Parent,Child: 메모리 공유 중
-
-    Child->>Kernel: 페이지 쓰기 시도
-    Kernel->>Kernel: Page Fault!
-    Kernel->>Kernel: 새 페이지 할당
-    Kernel->>Kernel: 내용 복사
-    Kernel->>Child: 쓰기 허용
-
-    Note over Child: 독립된 복사본 소유
-```
-
-### 2.2 CoW 구현: 마법이 일어나는 순간
-
-CoW의 천재적인 아이디어: "복사한 척만 하고, 진짜로 수정할 때만 복사하자!"
-
-```c
-// Copy-on-Write 실험: fork()의 마법
-#include <unistd.h>
-#include <sys/wait.h>
-#include <sys/mman.h>
-
-void demonstrate_cow() {
-    printf("=== Copy-on-Write 마법쇼 ===, ");
-
-    // 1. 거대한 메모리 준비
-    size_t size = 100 * 1024 * 1024;  // 100MB
-    char *shared_memory = mmap(NULL, size,
-                              PROT_READ | PROT_WRITE,
-                              MAP_PRIVATE | MAP_ANONYMOUS,
-                              -1, 0);
-
-    // 2. 데이터로 가득 채우기
-    memset(shared_memory, 'P', size);
-    printf("부모: 100MB 메모리를 'P'로 채웠습니다, ");
-
-    printf("부모: 메모리 주소 = %p, ", shared_memory);
-    long rss_before = get_rss_kb();
-    printf("부모: fork() 전 메모리 사용량 = %ld MB, , ", rss_before / 1024);
-
-    // 3. fork() - 여기서 마법이 시작됩니다!
-    printf("🎩 fork() 호출! (100MB를 복사하는 척...), ");
-    pid_t pid = fork();
-
-    if (pid == 0) {
-        // 자식 프로세스
-        printf("자식: 똑같은 주소 = %p (가상 주소는 동일!), ", shared_memory);
-        long child_rss = get_rss_kb();
-        printf("자식: fork() 직후 메모리 = %ld MB, ", child_rss / 1024);
-        printf("자식: 어? 메모리가 늘지 않았네요? (CoW 덕분!), , ");
-
-        // 4. 일부만 수정 - 이제 진짜 복사가 일어남!
-        printf("자식: 10개 페이지만 수정합니다..., ");
-        for (int i = 0; i < 10; i++) {
-            shared_memory[i * 4096] = 'C';  // 수정 → Page Fault → 복사!
-            printf("  페이지 %d 수정 → CoW 발생!, ", i);
-        }
-
-        long child_rss_after = get_rss_kb();
-        printf(", 자식: 수정 후 메모리 = %ld MB, ", child_rss_after / 1024);
-        printf("자식: 증가량 = %ld KB (10 페이지 * 4KB = 40KB), ",
-               child_rss_after - child_rss);
-        printf("자식: 나머지 99.96MB는 여전히 부모와 공유!, ");
-
-        exit(0);
-    } else {
-        // 부모 프로세스
-        wait(NULL);
-
-        // 부모의 메모리는 그대로!
-        printf(", 부모: 첫 글자 확인 = '%c' (여전히 'P'!), ", shared_memory[0]);
-        printf("부모: 자식이 수정했지만 내 메모리는 안전합니다, ");
-        printf("부모: 메모리 사용량 = %ld MB (변화 없음), ", get_rss_kb() / 1024);
-
-        printf(", 🎉 CoW 마법 성공!, ");
-        printf("fork()로 100MB 복사 → 실제로는 40KB만 복사, ");
-        printf("메모리 절약: 99.96%%, ");
-    }
-
-    munmap(shared_memory, size);
-}
-
-// RSS (Resident Set Size) 측정
-long get_rss_kb() {
-    FILE *f = fopen("/proc/self/status", "r");
-    char line[256];
-    while (fgets(line, sizeof(line), f)) {
-        if (strncmp(line, "VmRSS:", 6) == 0) {
-            long rss;
-            sscanf(line, "VmRSS: %ld kB", &rss);
-            fclose(f);
-            return rss;
-        }
-    }
-    fclose(f);
-    return 0;
-}
-```
-
-### 2.3 CoW의 실제 활용: 현업에서의 마법
-
-CoW는 우리가 매일 사용하는 프로그램들의 비밀 무기입니다:
-
-```c
-// Redis의 백그라운드 저장: 100GB를 1초 만에 "복사"
-void redis_bgsave_example() {
-    printf("=== Redis BGSAVE: CoW의 실전 활용 ===, ");
-    printf("현재 메모리: 100GB 데이터베이스, ");
-
-    // Redis는 fork()를 사용해 스냅샷 생성
-
-    pid_t pid = fork();
-
-    if (pid == 0) {
-        // 자식: 스냅샷 저장 (100GB를 디스크에)
-        printf("[자식] 100GB 스냅샷 저장 시작, ");
-        printf("[자식] 부모가 데이터를 수정해도 내 스냅샷은 안전!, ");
-        save_memory_to_disk();  // 몇 분 걸림
-        exit(0);
-    } else {
-        // 부모: 클라이언트 요청 계속 처리
-        printf("[부모] fork() 완료! (1초도 안 걸림), ");
-        printf("[부모] 계속 서비스 중... 수정된 페이지만 복사됨, ");
-        printf("[부모] 메모리 오버헤드: 수정된 데이터만큼만 (보통 <10%%), ");
-        continue_serving_requests();
-    }
-}
-
-// 효율적인 프로세스 생성
-void efficient_process_creation() {
-    // 대량의 초기화 데이터
-    size_t data_size = 500 * 1024 * 1024;  // 500MB
-    void *init_data = create_initialization_data(data_size);
-
-    // 여러 워커 프로세스 생성
-    for (int i = 0; i < 10; i++) {
-        if (fork() == 0) {
-            // 각 워커는 필요한 부분만 수정
-            // 대부분의 데이터는 공유됨
-            process_worker(i, init_data);
-            exit(0);
-        }
-    }
-
-    // 메모리 사용량: 500MB + α (수정된 부분만)
-    // CoW 없이: 500MB * 11 = 5.5GB
-}
-```
+## 📚 학습 로드맵
+
+이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
+
+### 1️⃣ [페이지 폴트 종류와 처리](03a-page-fault-types-handling.md)
+
+- Minor, Major, Invalid Fault의 분류와 특성
+- Linux 커널의 페이지 폴트 핸들러 동작 원리
+- 성능 차이의 근본 원인과 영향 분석
+- Segmentation Fault의 진실과 OS 응급실 체계
+
+### 2️⃣ [Copy-on-Write 메커니즘](03b-copy-on-write.md)
+
+- fork()가 빠른 이유: 게으른 복사의 천재성
+- Redis의 100GB 백업을 1초에 하는 비밀
+- CoW 구현과 실전 활용 사례
+- 이점과 한계, 최적화 전략
+
+### 3️⃣ [Demand Paging 메커니즘](03c-demand-paging.md)
+
+- malloc()의 거짓말: 1GB 할당 ≠ 1GB 사용
+- 게으른 메모리 할당의 미학과 원리
+- Prefaulting 최적화와 HugePage 활용
+- 메모리 효율성과 성능 개선 기법
+
+### 4️⃣ [스왑과 메모리 압박](03d-swap-memory-pressure.md)
+
+- 스왑 지옥: 컴퓨터가 느려지는 이유
+- RAM vs 디스크의 10,000배 성능 차이
+- kswapd 데몬과 LRU 알고리즘의 일상
+- Swappiness 제어와 zRAM 활용 전략
+
+### 5️⃣ [OOM Killer와 실전 최적화](03e-oom-optimization.md)
+
+- OOM Score 계산: 누가 죽을 것인가?
+- 사형수 선정 기준과 방지 전략
+- 페이지 폴트 프로파일링과 최적화 노하우
+- 체크리스트: 페이지 폴트 마스터 되기
+
+## 🎯 핵심 개념 비교표
+
+| 개념 | Minor Fault | Major Fault | Invalid Fault |
+|------|-------------|-------------|---------------|
+| **처리 시간** | ~0.001ms | ~5ms | 즉시 종료 |
+| **발생 원인** | 메모리 연결 필요 | 디스크 I/O 필요 | 잘못된 접근 |
+| **영향도** | 무시 가능 | 성능 저하 | 프로그램 크래시 |
+| **최적화** | Prefaulting | Page Cache | 코드 검토 |
+
+## 🚀 실전 활용 시나리오
+
+### Redis 백그라운드 저장
+
+- **문제**: 100GB 데이터베이스를 디스크에 저장하면서 서비스 중단 없이 계속 실행
+- **해결**: fork() + CoW로 스냅샷 생성, 수정된 페이지만 복사
+- **결과**: 1초 만에 백그라운드 저장 시작, 메모리 오버헤드 <10%
+
+### 게임 서버 메모리 최적화  
+
+- **문제**: 수백 MB 초기화 데이터를 여러 워커가 공유해야 함
+- **해결**: 부모 프로세스에서 초기화 후 fork(), CoW로 공유
+- **결과**: 메모리 사용량 1/10로 감소, 시작 시간 90% 단축
+
+### 웹 브라우저 탭 관리
+
+- **문제**: 각 탭이 독립적 메모리 공간이 필요하지만 공통 데이터 많음
+- **해결**: Demand Paging으로 필요한 부분만 로드
+- **결과**: 100개 탭 실행 시에도 실제 메모리 사용량은 10-20개 탭 수준
+
+## 🎭 학습 전략
+
+### 초보자 (추천 순서)
+
+1. [페이지 폴트 종류와 처리](03a-page-fault-types-handling.md) → 기본 개념 이해
+2. [Copy-on-Write 메커니즘](03b-copy-on-write.md) → fork() 마법 체험
+3. [Demand Paging 메커니즘](03c-demand-paging.md) → malloc() 거짓말 폭로
+4. 간단한 메모리 프로파일링 연습
+
+### 중급자 (심화 학습)
+
+1. [스왑과 메모리 압박](03d-swap-memory-pressure.md) → 성능 최적화 핵심
+2. [OOM Killer와 실전 최적화](03e-oom-optimization.md) → 고급 디버깅
+3. 실제 프로덕션 환경 적용
+
+### 고급자 (마스터 과정)
+
+- 모든 섹션 → 커널 소스 코드 분석 → 자체 메모리 관리 시스템 구현
+
+## 🔗 연관 학습
+
+### 선행 학습
+
+- [주소 변환 메커니즘](01-address-translation.md) - MMU와 페이지 테이블 기초
+- [TLB와 캐싱](02-tlb-caching.md) - 성능 최적화 기반 지식
+
+### 후속 학습  
+
+- [메모리 압축과 중복 제거](04-compression-deduplication.md) - 고급 메모리 기법
+- [프로세스 생성과 관리](../chapter-04-process-thread/01-process-creation.md) - fork()와 CoW 실전
 
 ## 3. Demand Paging: 게으른 메모리 할당의 미학
 

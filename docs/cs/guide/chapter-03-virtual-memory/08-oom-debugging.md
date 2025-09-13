@@ -69,44 +69,52 @@ mindmap
 
 ## 📚 학습 로드맵
 
-이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
+이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [OOM Killer 동작 원리](08a-oom-killer-fundamentals.md)
+### 1️⃣ [OOM Killer 동작 원리](08a-oom-fundamentals.md)
 
 - OOM Score 계산 메커니즘과 badness 함수 원리
 - 실시간 OOM Score 모니터링 도구 구현
 - oom_score_adj 조정을 통한 프로세스 보호 전략
 - systemd OOM 정책 설정과 중요 프로세스 보호
 
-### 2️⃣ [dmesg OOM 메시지 분석](08b-oom-log-analysis.md)
+### 2️⃣ [dmesg OOM 메시지 분석](08b-dmesg-log-analysis.md)
 
 - dmesg에 기록되는 OOM 로그 메시지 해석법
 - 자동 OOM 분석 도구로 패턴 발견하기
 - 시스템 OOM 설정 파라미터 분석
 - 반복적 OOM 발생 원인 진단과 해결책
 
-### 3️⃣ [컨테이너 환경 OOM 디버깅](08c-container-oom-debugging.md)
+### 3️⃣ [컨테이너 환경 OOM 디버깅](08c-cgroup-container-oom.md)
 
 - cgroup OOM vs 시스템 OOM 차이점 이해
 - Docker 컨테이너 메모리 제한과 OOM 대응
 - Kubernetes Pod OOM 이벤트 모니터링
 - 컨테이너별 메모리 최적화 전략
 
-### 4️⃣ [Early OOM 및 예방 시스템](08d-oom-prevention-strategies.md)
+### 4️⃣ [Early OOM 및 예방 시스템](08d-early-oom-prevention.md)
 
 - earlyoom과 커스텀 Early OOM 시스템 구축
 - 메모리 압박 감지 및 자동 대응 시스템
 - 워크로드별 OOM 방지 전략 수립
 - 실무 권장사항과 모니터링 시스템 구축
 
+### 5️⃣ [OOM 방지 모범 사례](08e-oom-best-practices.md)
+
+- 생산 환경 OOM 방지 전략과 체크리스트
+- 워크로드별 전문 OOM 대응 전략
+- 용량 계획과 장기적 메모리 관리
+- 조직 차원의 지속 가능한 OOM 관리 체계
+
 ## 🎯 핵심 개념 비교표
 
-| 구분 | 시스템 OOM | cgroup OOM | Early OOM | 예방 전략 |
-|------|------------|------------|-----------|----------|
-| **발생 시점** | 시스템 메모리 고갈 | 컨테이너 제한 초과 | 임계값 도달 | 사전 방지 |
-| **대상 범위** | 전역 프로세스 | 컨테이너 내부 | 설정 가능 | 애플리케이션별 |
-| **대응 방법** | Kernel OOM Killer | 컨테이너 재시작 | 조기 정리 | 리소스 제한 |
-| **모니터링** | dmesg, oom_score | docker events | 커스텀 스크립트 | Prometheus/Grafana |
+| 구분 | 시스템 OOM | cgroup OOM | Early OOM | 예방 전략 | 모범 사례 |
+|------|------------|------------|-----------|----------|----------|
+| **발생 시점** | 시스템 메모리 고갈 | 컨테이너 제한 초과 | 임계값 도달 | 사전 방지 | 설계 단계 |
+| **대상 범위** | 전역 프로세스 | 컨테이너 내부 | 설정 가능 | 애플리케이션별 | 조직 전체 |
+| **대응 방법** | Kernel OOM Killer | 컨테이너 재시작 | 조기 정리 | 리소스 제한 | 다층적 방어 |
+| **모니터링** | dmesg, oom_score | docker events | 커스텀 스크립트 | Prometheus/Grafana | 용량 계획 |
+| **목표** | 시스템 안정성 | 격리된 장애 | 예방적 개입 | 근본적 해결 | 지속 가능성 |
 
 ## 🚀 실전 활용 시나리오
 
@@ -126,17 +134,23 @@ mindmap
 
 ### 초보자 (추천 순서)
 
-1. [OOM Killer 동작 원리](08a-oom-killer-fundamentals.md) → 기본 개념 이해
-2. [dmesg 로그 분석](08b-oom-log-analysis.md) → 실제 OOM 사례 분석
+1. [OOM Killer 동작 원리](08a-oom-fundamentals.md) → 기본 개념 이해
+2. [dmesg 로그 분석](08b-dmesg-log-analysis.md) → 실제 OOM 사례 분석
 3. 간단한 메모리 모니터링 스크립트 작성 연습
 
 ### 중급자 (심화 학습)
 
-1. [컨테이너 OOM 디버깅](08c-container-oom-debugging.md) → 현대적 환경 적응
-2. [예방 시스템 구축](08d-oom-prevention-strategies.md) → 프로덕션 운영 기법
+1. [컨테이너 OOM 디버깅](08c-cgroup-container-oom.md) → 현대적 환경 적응
+2. [예방 시스템 구축](08d-early-oom-prevention.md) → 프로덕션 운영 기법
 3. 실제 운영 환경에서의 OOM 모니터링 시스템 구축
 
 ### 고급자 (전문가 과정)
+
+1. [모범 사례와 전략](08e-oom-best-practices.md) → 생산 환경 최적화
+2. 조직 차원의 OOM 관리 체계 구축
+3. 워크로드별 맞춤형 OOM 방지 솔루션 개발
+
+### 전문가 (마스터 과정)
 
 1. 커스텀 메모리 압박 감지 알고리즘 개발
 2. 대규모 분산 시스템에서의 OOM 예측 모델 구축
@@ -158,4 +172,4 @@ mindmap
 
 ---
 
-**다음**: 먼저 [OOM Killer 동작 원리](08a-oom-killer-fundamentals.md)에서 기본 개념을 학습하세요.
+**다음**: 먼저 [OOM Killer 동작 원리](08a-oom-fundamentals.md)에서 기본 개념을 학습하세요.
