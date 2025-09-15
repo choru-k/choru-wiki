@@ -2,7 +2,7 @@
 tags:
   - Container
   - Linux
-  - Namespace  
+  - Namespace
   - Cgroup
   - Docker
 ---
@@ -41,10 +41,10 @@ $ uname -r
 5.15.0-56-generic
 
 # 컨테이너 안에서
-$ docker run ubuntu uname -r  
+$ docker run ubuntu uname -r
 5.15.0-56-generic  # 똑같은 커널!
 
-# VM 안에서는  
+# VM 안에서는
 $ vagrant up ubuntu
 $ vagrant ssh
 vagrant@ubuntu:~$ uname -r
@@ -60,27 +60,27 @@ graph TD
     subgraph "Container Isolation"
         C[Container Process]
     end
-    
+
     subgraph "Linux Kernel Features"
         N[Namespaces, 격리된 View 제공]
         CG[Cgroups, 리소스 제한]
         UF[Union FS, 레이어드 파일시스템]
     end
-    
+
     subgraph "보안 강화"
         SE[SELinux/AppArmor, 접근 제어]
         SC[Seccomp, 시스템 콜 제한]
         CAP[Capabilities, 권한 세분화]
     end
-    
+
     C --> N
     C --> CG
     C --> UF
-    
+
     N --> SE
     CG --> SC
     UF --> CAP
-    
+
     style N fill:#e1f5fe
     style CG fill:#fff3e0
     style UF fill:#f3e5f5
@@ -109,7 +109,7 @@ graph TD
 # 호스트에서 보는 프로세스들
 $ ps aux | grep nginx
 root     1234  nginx: master process
-www      1235  nginx: worker process  
+www      1235  nginx: worker process
 
 # 컨테이너 안에서는
 $ docker exec container_id ps aux
@@ -163,7 +163,7 @@ $ sudo ip link set veth1 netns test_ns
 $ sudo ip addr add 10.0.0.1/24 dev veth0
 $ sudo ip link set veth0 up
 
-# namespace 쪽 설정  
+# namespace 쪽 설정
 $ sudo ip netns exec test_ns ip addr add 10.0.0.2/24 dev veth1
 $ sudo ip netns exec test_ns ip link set veth1 up
 
@@ -207,7 +207,7 @@ $ hostname
 container-test
 
 # 호스트에서는 변화 없음 (다른 terminal에서)
-$ hostname  
+$ hostname
 my-laptop  # 여전히 원래 이름
 ```
 
@@ -233,7 +233,7 @@ cheol
 
 # User namespace에서는 root가 될 수 있음!
 $ unshare -U bash  # root 권한 없이도 실행 가능
-$ whoami  
+$ whoami
 nobody  # 매핑 안 된 상태
 
 # UID 매핑 설정
@@ -325,7 +325,7 @@ $ top -p $!  # CPU 사용률이 ~50%로 제한됨!
 #### 3. I/O 제한 실습
 
 ```bash
-# I/O 제한 cgroup 생성  
+# I/O 제한 cgroup 생성
 $ sudo mkdir /sys/fs/cgroup/blkio/test_io
 $ cd /sys/fs/cgroup/blkio/test_io
 
@@ -346,7 +346,7 @@ $ time dd if=/dev/zero of=test.file bs=1M count=100
 # Docker 컨테이너의 리소스 제한
 $ docker run -it \
     --memory=512m \           # 512MB 메모리 제한
-    --cpus=1.5 \             # 1.5 CPU 제한  
+    --cpus=1.5 \             # 1.5 CPU 제한
     --device-read-bps=/dev/sda:10mb \  # 10MB/s 읽기 제한
     ubuntu bash
 
@@ -368,7 +368,7 @@ $ docker stop container_id
 ```bash
 # 만약 각 이미지를 통째로 저장한다면...
 Ubuntu 기본 이미지: 200MB
-+ Python 설치: 300MB  
++ Python 설치: 300MB
 + Django 설치: 350MB
 + 내 애플리케이션: 400MB
 
@@ -380,7 +380,7 @@ Ubuntu 기본 이미지: 200MB
 ```bash
 # Union FS로 레이어 공유
 기본 Ubuntu 레이어:    200MB (1개만 저장)
-Python 레이어:        100MB (1개만 저장)  
+Python 레이어:        100MB (1개만 저장)
 Django 레이어:         50MB (1개만 저장)
 애플리케이션 레이어:    50MB (각각 저장)
 
@@ -423,7 +423,7 @@ $ echo "new content" > merged/new.txt
 $ ls upper/
 app.txt   config.txt   new.txt  # new.txt 추가!
 
-$ ls lower/  
+$ ls lower/
 base.txt  config.txt  # 변화 없음 (읽기 전용)
 ```
 
@@ -457,7 +457,7 @@ ghi789jkl012
 # 1. 루트 파일시스템 준비
 mkdir -p container-root/{bin,lib,lib64,etc,proc,sys,dev,tmp}
 
-# 2. 필수 바이너리 복사  
+# 2. 필수 바이너리 복사
 cp /bin/bash container-root/bin/
 cp /lib/x86_64-linux-gnu/libc.so.6 container-root/lib/
 cp /lib64/ld-linux-x86-64.so.2 container-root/lib64/
@@ -526,7 +526,7 @@ $ docker run \
     --security-opt apparmor=docker-default \
     ubuntu
 
-# SELinux 라벨로 격리 강화  
+# SELinux 라벨로 격리 강화
 $ docker run \
     --security-opt label=type:container_t \
     fedora
@@ -551,10 +551,10 @@ echo "🚀 Creating container $CONTAINER_ID"
 create_rootfs() {
     echo "📁 Setting up rootfs..."
     mkdir -p $CONTAINER_ROOT/{bin,lib,lib64,etc,proc,sys,dev,tmp,var,usr}
-    
+
     # 필수 바이너리 복사
     cp /bin/{bash,ls,ps,cat,echo} $CONTAINER_ROOT/bin/
-    
+
     # 라이브러리 의존성 복사
     for binary in bash ls ps cat echo; do
         ldd /bin/$binary | grep -o '/lib[^ ]*' | while read lib; do
@@ -562,7 +562,7 @@ create_rootfs() {
             cp $lib $CONTAINER_ROOT/$lib 2>/dev/null || true
         done
     done
-    
+
     # /etc/passwd 생성 (ps 명령을 위해)
     echo "root:x:0:0:root:/root:/bin/bash" > $CONTAINER_ROOT/etc/passwd
 }
@@ -570,14 +570,14 @@ create_rootfs() {
 # 2단계: Cgroup 설정
 setup_cgroups() {
     echo "⚙️ Setting up cgroups..."
-    
+
     # Memory 제한 (100MB)
     MEMORY_CGROUP="/sys/fs/cgroup/memory/container-$CONTAINER_ID"
     sudo mkdir -p $MEMORY_CGROUP
     echo $((100*1024*1024)) | sudo tee $MEMORY_CGROUP/memory.limit_in_bytes > /dev/null
-    
+
     # CPU 제한 (50%)
-    CPU_CGROUP="/sys/fs/cgroup/cpu/container-$CONTAINER_ID"  
+    CPU_CGROUP="/sys/fs/cgroup/cpu/container-$CONTAINER_ID"
     sudo mkdir -p $CPU_CGROUP
     echo 50000 | sudo tee $CPU_CGROUP/cpu.cfs_quota_us > /dev/null
     echo 100000 | sudo tee $CPU_CGROUP/cpu.cfs_period_us > /dev/null
@@ -588,7 +588,7 @@ setup_cgroups() {
 # 실제 사용: containerd, CRI-O, Podman 등 모든 컨테이너 런타임의 기본 동작
 run_container() {
     echo "🎯 Starting container..."
-    
+
     # ⭐ 컨테이너 실행의 7단계 프로세스
     # 이는 Linux 네임스페이스 + cgroup + chroot의 조합으로 진정한 컨테이너 격리 구현
     # PID를 cgroup에 추가하고 네임스페이스 격리로 실행
@@ -598,24 +598,24 @@ run_container() {
         # 실제 동작: 메모리 100MB, CPU 50% 제한이 이 시점부터 적용됨
         echo \$\$ > /sys/fs/cgroup/memory/container-$CONTAINER_ID/cgroup.procs
         echo \$\$ > /sys/fs/cgroup/cpu/container-$CONTAINER_ID/cgroup.procs
-        
+
         # ⭐ 2단계: UTS 네임스페이스 격리 (컨테이너 고유 호스트명 설정)
         # unshare -u로 생성된 독립 UTS 네임스페이스에서 호스트명 변경
         # 실제 효과: 호스트와 다른 hostname, domainname 사용 가능
         hostname container-$CONTAINER_ID
-        
+
         # ⭐ 3단계: Mount 네임스페이스 준비 (독립 파일시스템 구성 시작)
         # bind mount로 컨테이너 루트를 자기 자신에게 마운트 (pivot_root 준비)
         # 실제 목적: chroot 이전에 마운트 포인트 독립성 확보
         mount --bind $CONTAINER_ROOT $CONTAINER_ROOT
         cd $CONTAINER_ROOT
-        
+
         # ⭐ 4단계: 가상 파일시스템 마운트 (컨테이너 내부에서 시스템 정보 접근)
         # /proc: 프로세스 정보 가상 파일시스템 (ps, top 명령 동작을 위해 필수)
         # /sys: 시스템/하드웨어 정보 가상 파일시스템 (udev, systemd 등을 위해 필요)
         mount -t proc proc proc/
         mount -t sysfs sysfs sys/
-        
+
         # ⭐ 5단계: 파일시스템 격리 완성 (chroot로 루트 디렉토리 변경)
         # exec chroot: 현재 프로세스를 대체하여 새로운 루트 파일시스템에서 실행
         # 실제 결과: 컨테이너 내부에서는 호스트의 파일시스템을 볼 수 없음
@@ -625,7 +625,7 @@ run_container() {
             echo \"Hostname: \$(hostname)\"  # UTS 네임스페이스 격리 확인
             echo \"PID 1 process: \$(ps aux | head -2 | tail -1)\"  # PID 네임스페이스 격리 확인
             echo \"Memory limit: \$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo \"N/A\")\"  # Cgroup 제한 확인
-            
+
             # ⭐ 7단계: 컨테이너 대화형 쉘 실행 (사용자 상호작용 환경 제공)
             # 이 bash는 완전히 격리된 환경에서 PID 1으로 실행됨 (init 프로세스 역할)
             /bin/bash
@@ -637,7 +637,7 @@ run_container() {
 cleanup() {
     echo "🧹 Cleaning up..."
     sudo umount $CONTAINER_ROOT/proc 2>/dev/null || true
-    sudo umount $CONTAINER_ROOT/sys 2>/dev/null || true  
+    sudo umount $CONTAINER_ROOT/sys 2>/dev/null || true
     sudo umount $CONTAINER_ROOT 2>/dev/null || true
     sudo rm -rf $CONTAINER_ROOT
     sudo rmdir /sys/fs/cgroup/memory/container-$CONTAINER_ID 2>/dev/null || true
@@ -649,7 +649,7 @@ trap cleanup EXIT
 
 # 메인 실행
 create_rootfs
-setup_cgroups  
+setup_cgroups
 run_container
 ```
 
@@ -680,7 +680,7 @@ $ python3 -c "data = bytearray(150*1024*1024)"  # OOM으로 종료됨
 ### 🎯 컨테이너 격리의 핵심
 
 1. **Namespace**: "무엇을 볼 수 있는가?"
-2. **Cgroup**: "얼마나 사용할 수 있는가?"  
+2. **Cgroup**: "얼마나 사용할 수 있는가?"
 3. **Union FS**: "어떻게 효율적으로 저장할 수 있는가?"
 4. **보안 모듈**: "무엇을 할 수 있는가?"
 
@@ -715,6 +715,6 @@ $ python3 -c "data = bytearray(150*1024*1024)"  # OOM으로 종료됨
 ## 관련 문서
 
 - [Chapter 3: Virtual Memory](../chapter-03-virtual-memory/index.md) - 컨테이너 격리의 기반이 되는 메모리 가상화 원리
-- [Chapter 4: Process & Thread](../chapter-04-process-thread/index.md) - 네임스페이스와 연관된 프로세스 격리 메커니즘  
+- [Chapter 4: Process & Thread](../chapter-04-process-thread/index.md) - 네임스페이스와 연관된 프로세스 격리 메커니즘
 - [Chapter 7: Network Programming](../chapter-07-network-programming/index.md) - 컨테이너 네트워킹 기반 이해
 - [Chapter 10: System Call & Kernel](../chapter-10-syscall-kernel/index.md) - 컨테이너가 사용하는 커널 시스템 콜들
