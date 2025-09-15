@@ -23,18 +23,18 @@ struct task_struct {
     void *stack;           // 커널 스택
     pid_t pid;             // Process ID (실제로는 Task ID)
     pid_t tgid;            // Thread Group ID (우리가 아는 PID)
-    
+
     struct mm_struct *mm;           // 메모리 디스크립터
     struct files_struct *files;     // 열린 파일들
     struct signal_struct *signal;   // 시그널 핸들러
     struct sighand_struct *sighand; // 시그널 핸들링
-    
+
     struct task_struct *parent;     // 부모 task
     struct list_head children;      // 자식 tasks
-    
+
     // 수백 개의 필드 더...
 };
-```
+```text
 
 **커널에는 "스레드"라는 개념이 없습니다.** 모든 실행 단위는 `task_struct`입니다.
 
@@ -61,7 +61,7 @@ int pthread_create(...) {
         child_stack, ...
     );
 }
-```
+```text
 
 ### clone() 플래그 상세 분석
 
@@ -73,7 +73,7 @@ int pthread_create(...) {
 
 // 1. 완전한 프로세스 생성 (fork와 동일)
 pid_t create_process() {
-    return clone(child_func, 
+    return clone(child_func,
                 child_stack + STACK_SIZE,
                 SIGCHLD,  // 최소한의 플래그
                 NULL);
@@ -104,7 +104,7 @@ pid_t create_thread() {
                 CLONE_SIGHAND | CLONE_THREAD | ...
                 NULL);
 }
-```
+```text
 
 ## PID vs TID vs TGID: 혼란의 삼위일체
 
@@ -115,14 +115,14 @@ void show_all_ids() {
     printf("getpid(): %d, ", getpid());           // TGID 반환
     printf("gettid(): %ld, ", syscall(SYS_gettid)); // 실제 TID
     printf("getppid(): %d, ", getppid());         // 부모의 TGID
-    
+
     // /proc/self/status 확인
     system("grep -E 'Pid:|Tgid:|PPid:' /proc/self/status");
 }
 
 // 메인 스레드: PID = TID = TGID = 1234
 // 자식 스레드: PID(TGID) = 1234, TID = 1235
-```
+```text
 
 ### 실험: PID의 진실
 
@@ -134,32 +134,32 @@ pid_t main_tid, child_tid;
 
 void* thread_func(void* arg) {
     child_tid = syscall(SYS_gettid);
-    printf("Thread: getpid()=%d, gettid()=%ld, ", 
+    printf("Thread: getpid()=%d, gettid()=%ld, ",
            getpid(), child_tid);
-    
+
     // /proc에서 확인
     char path[64];
     sprintf(path, "/proc/%ld/comm", child_tid);
     system(path);  // 실제로 존재!
-    
+
     return NULL;
 }
 
 int main() {
     main_tid = syscall(SYS_gettid);
-    printf("Main: getpid()=%d, gettid()=%ld, ", 
+    printf("Main: getpid()=%d, gettid()=%ld, ",
            getpid(), main_tid);
-    
+
     pthread_t thread;
     pthread_create(&thread, NULL, thread_func, NULL);
     pthread_join(thread, NULL);
-    
+
     // 놀라운 사실: /proc에 두 개의 "프로세스"가 보임
     printf(", /proc entries:, ");
     printf("/proc/%ld exists, ", main_tid);
     printf("/proc/%ld exists, ", child_tid);
 }
-```
+```text
 
 ## /proc 파일시스템의 이중성
 
@@ -183,11 +183,11 @@ $ cat /proc/1235/status  # 동작함!
 $ ps aux | grep myapp
 user  1234  # 프로세스만 표시
 
-$ ps -eLf | grep myapp  
+$ ps -eLf | grep myapp
 user  1234  1234  # PID = TID (메인)
 user  1234  1235  # PID ≠ TID (스레드)
 user  1234  1236  # PID ≠ TID (스레드)
-```
+```text
 
 ## 리소스 공유의 스펙트럼
 
@@ -222,7 +222,7 @@ if (flags & CLONE_FILES) {
     // 파일 디스크립터 복사
     new_task->files = dup_fd(current->files);
 }
-```
+```text
 
 ### 실험: 선택적 공유
 
@@ -238,10 +238,10 @@ char child_stack[8192];
 int child_func(void* arg) {
     // 파일 열기
     int fd = open("test.txt", O_RDONLY);
-    
+
     // 전역 변수 수정
     shared_var = 200;
-    
+
     printf("Child: fd=%d, var=%d, ", fd, shared_var);
     return 0;
 }
@@ -252,7 +252,7 @@ void test_sharing() {
           CLONE_VM | SIGCHLD, NULL);
     sleep(1);
     printf("After VM share: var=%d, ", shared_var);  // 200
-    
+
     // 2. 파일만 공유
     shared_var = 100;
     int fd = open("parent.txt", O_RDONLY);
@@ -262,7 +262,7 @@ void test_sharing() {
     printf("After FILES share: var=%d, ", shared_var);  // 100
     // 하지만 child가 연 파일이 parent에도 보임!
 }
-```
+```text
 
 ## 네임스페이스: 격리의 차원
 
@@ -283,7 +283,7 @@ pid_t create_container() {
 
 // 이것이 바로 컨테이너의 기초!
 // Docker = clone() + namespaces + cgroups
-```
+```text
 
 ## COW (Copy-on-Write)의 실체
 
@@ -291,17 +291,17 @@ pid_t create_container() {
 // fork() 직후 메모리 상태
 void demonstrate_cow() {
     int huge_array[1000000] = {0};  // 4MB
-    
+
     pid_t pid = fork();
-    
+
     if (pid == 0) {
         // 자식: 아직 복사 안 됨
         printf("Child RSS before write: ");
         system("grep VmRSS /proc/self/status");
-        
+
         // 쓰기 시도 → COW 발동
         huge_array[0] = 1;
-        
+
         printf("Child RSS after write: ");
         system("grep VmRSS /proc/self/status");
         // RSS 증가!
@@ -312,7 +312,7 @@ void demonstrate_cow() {
 // 1. fork() 시 페이지 테이블 항목 복사 (읽기 전용)
 // 2. 쓰기 시도 → Page Fault
 // 3. 커널이 페이지 복사 후 쓰기 가능으로 변경
-```
+```text
 
 ## 스케줄링 관점: 모두 평등하다
 
@@ -323,7 +323,7 @@ void demonstrate_cow() {
 void check_scheduling() {
     // 모든 task는 독립적으로 스케줄링
     system("cat /proc/sched_debug | grep myapp");
-    
+
     // 각 task별 CPU 시간
     for (int tid : all_tids) {
         char path[64];
@@ -336,7 +336,7 @@ void check_scheduling() {
 // nice 값도 task별
 renice(10, tid1);  // 스레드 1만 낮은 우선순위
 renice(-5, tid2);  // 스레드 2는 높은 우선순위
-```
+```text
 
 ## LWP (Light Weight Process)의 유래
 
@@ -351,7 +351,7 @@ Linux의 혁신:
 - 프로세스/스레드 이분법 거부
 - 리소스 공유의 연속 스펙트럼
 - 단일 task_struct로 통합
-```
+```text
 
 ## 실전: htop vs top
 
@@ -361,7 +361,7 @@ $ top
   PID COMMAND
  1234 myapp      # 하나로 보임
 
-# htop with H: task 중심 view  
+# htop with H: task 중심 view
 $ htop -H
   PID COMMAND
  1234 myapp      # 메인
@@ -371,7 +371,7 @@ $ htop -H
 # 커널의 진실
 $ ls /sys/kernel/debug/sched/
 # 모든 task가 동등하게 나열
-```
+```text
 
 ## 정리: 환상과 실체
 

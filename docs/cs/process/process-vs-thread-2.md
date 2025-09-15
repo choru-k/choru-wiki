@@ -21,28 +21,28 @@ tags:
 struct mm_struct {
     struct vm_area_struct *mmap;      // VMA 연결 리스트
     struct rb_root mm_rb;              // VMA 레드블랙 트리
-    
+
     pgd_t *pgd;                        // Page Global Directory
-    
+
     atomic_t mm_users;                 // 사용자 수 (스레드)
     atomic_t mm_count;                 // 참조 카운트
-    
+
     unsigned long start_code, end_code;   // 코드 영역
     unsigned long start_data, end_data;   // 데이터 영역
     unsigned long start_brk, brk;         // 힙 영역
     unsigned long start_stack;            // 스택 시작
-    
+
     unsigned long total_vm;            // 전체 가상 메모리
     unsigned long locked_vm;           // mlock된 페이지
     unsigned long pinned_vm;           // pinned 페이지
     unsigned long data_vm;             // 데이터 페이지
     unsigned long exec_vm;             // 실행 가능 페이지
     unsigned long stack_vm;            // 스택 페이지
-    
+
     struct rw_semaphore mmap_sem;      // VMA 보호
     spinlock_t page_table_lock;        // 페이지 테이블 보호
 };
-```
+```text
 
 ### 프로세스 vs 스레드의 mm_struct
 
@@ -51,29 +51,29 @@ struct mm_struct {
 if (!(clone_flags & CLONE_VM)) {
     // 새로운 mm_struct 할당
     mm = dup_mm(current);
-    
+
     // 모든 VMA 복사 (COW 설정)
     for (vma = current->mm->mmap; vma; vma = vma->vm_next) {
         new_vma = copy_vma(vma);
         // 페이지 테이블 항목 복사 (읽기 전용)
         copy_page_range(mm, current->mm, vma);
     }
-    
+
     new_task->mm = mm;
     atomic_inc(&mm->mm_users);
 }
 
-// 스레드 생성 (pthread_create)  
+// 스레드 생성 (pthread_create)
 if (clone_flags & CLONE_VM) {
     // 같은 mm_struct 공유
     atomic_inc(&current->mm->mm_users);
     new_task->mm = current->mm;
-    
+
     // 단, 스택은 새로 할당
     stack_vma = allocate_stack(PTHREAD_STACK_SIZE);
     insert_vm_struct(current->mm, stack_vma);
 }
-```
+```text
 
 ## VMA (Virtual Memory Area): 메모리 구획
 
@@ -81,27 +81,27 @@ if (clone_flags & CLONE_VM) {
 struct vm_area_struct {
     unsigned long vm_start;        // 시작 주소
     unsigned long vm_end;          // 끝 주소
-    
+
     struct vm_area_struct *vm_next, *vm_prev;  // 리스트
     struct rb_node vm_rb;          // RB 트리 노드
-    
+
     unsigned long vm_flags;        // 권한 플래그
-    
+
     struct file *vm_file;          // 매핑된 파일
     unsigned long vm_pgoff;        // 파일 오프셋
-    
+
     struct mm_struct *vm_mm;       // 소속 mm
-    
+
     const struct vm_operations_struct *vm_ops;  // 연산
 };
 
 // VMA 플래그
 #define VM_READ     0x00000001
-#define VM_WRITE    0x00000002  
+#define VM_WRITE    0x00000002
 #define VM_EXEC     0x00000004
 #define VM_SHARED   0x00000008
 #define VM_MAYSHARE 0x00000080
-```
+```text
 
 ### 실제 메모리 맵 확인
 
@@ -109,10 +109,10 @@ struct vm_area_struct {
 void print_memory_layout(pid_t pid) {
     char path[64];
     sprintf(path, "/proc/%d/maps", pid);
-    
+
     FILE* f = fopen(path, "r");
     char line[256];
-    
+
     while (fgets(line, sizeof(line), f)) {
         unsigned long start, end;
         char perms[5];
@@ -120,11 +120,11 @@ void print_memory_layout(pid_t pid) {
         int major, minor;
         unsigned long inode;
         char pathname[128];
-        
+
         sscanf(line, "%lx-%lx %4s %lx %x:%x %lu %s",
                &start, &end, perms, &offset,
                &major, &minor, &inode, pathname);
-        
+
         printf("VMA: 0x%lx-0x%lx %s %s, ",
                start, end, perms, pathname);
     }
@@ -134,7 +134,7 @@ void print_memory_layout(pid_t pid) {
 // VMA: 0x400000-0x401000 r-xp /usr/bin/app     (코드)
 // VMA: 0x601000-0x602000 rw-p /usr/bin/app     (데이터)
 // VMA: 0x7f8a2c000000-0x7f8a2c800000 rw-p [stack:1235]
-```
+```text
 
 ## 페이지 테이블: 가상→물리 변환
 
@@ -167,7 +167,7 @@ void print_memory_layout(pid_t pid) {
     │  │ Flags (R/W/X/D) │  │
     │  └──────────────────┘  │
     └────────────────────────┘
-```
+```text
 
 ### 프로세스별 독립 vs 스레드 공유
 
@@ -182,36 +182,36 @@ void demonstrate_page_tables() {
                         MAP_SHARED | MAP_ANONYMOUS,
                         -1, 0);
     *(int*)shared_memory = 42;
-    
+
     pid_t pid = fork();
     if (pid == 0) {
         // 자식 프로세스: 다른 페이지 테이블
         printf("Child: value=%d at %p, ",
                *(int*)shared_memory, shared_memory);
-        
+
         // 페이지 테이블 엔트리 확인
         unsigned long pte = get_pte(shared_memory);
         printf("Child PTE: 0x%lx, ", pte);
-        
+
         *(int*)shared_memory = 100;
         exit(0);
     }
-    
+
     // 부모: 스레드 생성
     pthread_t thread;
     pthread_create(&thread, NULL, [](void* arg) -> void* {
         // 같은 페이지 테이블 사용!
         printf("Thread: value=%d at %p, ",
                *(int*)shared_memory, shared_memory);
-        
+
         unsigned long pte = get_pte(shared_memory);
         printf("Thread PTE: 0x%lx, ", pte);  // 부모와 동일!
-        
+
         *(int*)shared_memory = 200;
         return NULL;
     }, NULL);
 }
-```
+```text
 
 ## TLS (Thread Local Storage): 공유 속의 격리
 
@@ -225,16 +225,16 @@ thread_local int cpp_tls = 0;  // C++11
 void* thread_func(void* arg) {
     int thread_num = *(int*)arg;
     tls_var = thread_num;
-    
+
     printf("Thread %d: TLS at %p = %d, ",
            thread_num, &tls_var, tls_var);
-    
+
     sleep(1);
-    
+
     // 다른 스레드가 바꿔도 내 값은 유지
     printf("Thread %d: TLS still %d, ",
            thread_num, tls_var);
-    
+
     return NULL;
 }
 
@@ -247,7 +247,7 @@ struct pthread {
 
 // 각 스레드는 %fs (x86_64) 레지스터가 자신의 TLS를 가리킴
 // mov %fs:0x10, %rax  // TLS 변수 접근
-```
+```text
 
 ### TLS 메모리 레이아웃
 
@@ -270,7 +270,7 @@ Process Virtual Memory:
 │   │ TLS Block 2   │ ← %fs:0 │
 │   └───────────────┘         │
 └─────────────────────────────┘
-```
+```text
 
 ## COW 페이지와 실제 공유
 
@@ -279,38 +279,38 @@ Process Virtual Memory:
 void demonstrate_cow() {
     // 1MB 배열
     static char big_array[1024*1024] = {0};
-    
+
     printf("Before fork - RSS: ");
     system("grep VmRSS /proc/self/status");
-    
+
     pid_t pid = fork();
-    
+
     if (pid == 0) {
         // 자식: 읽기만 하면 물리 메모리 공유
         printf("Child after fork - RSS: ");
         system("grep VmRSS /proc/self/status");
-        
+
         int sum = 0;
         for (int i = 0; i < sizeof(big_array); i++) {
             sum += big_array[i];  // 읽기: COW 유지
         }
-        
+
         printf("Child after read - RSS: ");
         system("grep VmRSS /proc/self/status");
-        
+
         // 쓰기: COW 깨짐
         big_array[0] = 1;
-        
+
         printf("Child after write - RSS: ");
         system("grep VmRSS /proc/self/status");
         // RSS 증가!
-        
+
         exit(0);
     }
-    
+
     wait(NULL);
 }
-```
+```text
 
 ### 페이지 폴트 추적
 
@@ -324,17 +324,17 @@ void monitor_page_faults() {
 static int do_cow_fault(struct vm_fault *vmf) {
     // 1. 새 페이지 할당
     new_page = alloc_page();
-    
+
     // 2. 기존 페이지 내용 복사
     copy_user_page(new_page, old_page);
-    
+
     // 3. 페이지 테이블 업데이트
     set_pte(vmf->pte, new_page | VM_WRITE);
-    
+
     // 4. TLB 플러시
     flush_tlb_page(vmf->vma, vmf->address);
 }
-```
+```text
 
 ## 공유 메모리: 명시적 공유
 
@@ -344,31 +344,31 @@ static int do_cow_fault(struct vm_fault *vmf) {
 // 프로세스 간 명시적 메모리 공유
 int setup_sysv_shm() {
     // 1. 공유 메모리 생성
-    int shmid = shmget(IPC_PRIVATE, 1024*1024, 
+    int shmid = shmget(IPC_PRIVATE, 1024*1024,
                        IPC_CREAT | 0666);
-    
+
     // 2. 프로세스 1: attach
     void* addr1 = shmat(shmid, NULL, 0);
-    
+
     pid_t pid = fork();
     if (pid == 0) {
         // 3. 프로세스 2: 같은 물리 메모리 매핑
         void* addr2 = shmat(shmid, NULL, 0);
-        
+
         // addr1과 addr2는 다른 가상 주소
         // 하지만 같은 물리 메모리!
         *(int*)addr2 = 42;
         exit(0);
     }
-    
+
     wait(NULL);
     printf("Parent sees: %d, ", *(int*)addr1);  // 42
-    
+
     // 정리
     shmdt(addr1);
     shmctl(shmid, IPC_RMID, NULL);
 }
-```
+```text
 
 ### POSIX 공유 메모리
 
@@ -378,16 +378,16 @@ int setup_posix_shm() {
     // 1. 공유 메모리 객체 생성
     int fd = shm_open("/myshm", O_CREAT | O_RDWR, 0666);
     ftruncate(fd, 1024*1024);
-    
+
     // 2. 메모리 매핑
     void* addr = mmap(NULL, 1024*1024,
                      PROT_READ | PROT_WRITE,
                      MAP_SHARED, fd, 0);
-    
+
     // 이제 다른 프로세스도 같은 이름으로 접근 가능
     // shm_open("/myshm", O_RDWR, 0666);
 }
-```
+```text
 
 ## mmap: 파일과 메모리의 융합
 
@@ -396,33 +396,33 @@ int setup_posix_shm() {
 void demonstrate_file_mapping() {
     int fd = open("shared.dat", O_RDWR | O_CREAT, 0666);
     ftruncate(fd, 4096);
-    
+
     // 프로세스 1: 파일 매핑
     void* map1 = mmap(NULL, 4096,
                      PROT_READ | PROT_WRITE,
                      MAP_SHARED, fd, 0);
-    
+
     pid_t pid = fork();
     if (pid == 0) {
         // 프로세스 2: 같은 파일 매핑
         void* map2 = mmap(NULL, 4096,
                          PROT_READ | PROT_WRITE,
                          MAP_SHARED, fd, 0);
-        
+
         // 자동으로 같은 물리 메모리 (Page Cache)
         strcpy((char*)map2, "Hello from child");
-        
+
         msync(map2, 4096, MS_SYNC);  // 디스크 동기화
         exit(0);
     }
-    
+
     wait(NULL);
     printf("Parent sees: %s, ", (char*)map1);
-    
+
     munmap(map1, 4096);
     close(fd);
 }
-```
+```text
 
 ## futex: 공유 메모리 기반 동기화
 
@@ -435,7 +435,7 @@ int futex_var = 0;  // 공유 메모리에 위치
 void futex_wait(int* addr, int expected) {
     // 커널에 진입하기 전 사용자 공간에서 체크
     if (*addr != expected) return;
-    
+
     // 값이 expected면 대기
     syscall(SYS_futex, addr, FUTEX_WAIT, expected, NULL, NULL, 0);
 }
@@ -450,7 +450,7 @@ struct pthread_mutex {
     int __lock;      // futex 변수
     // ...
 };
-```
+```text
 
 ## NUMA와 메모리 친화도
 
@@ -459,29 +459,29 @@ struct pthread_mutex {
 void numa_aware_allocation() {
     // CPU 0-7: Node 0
     // CPU 8-15: Node 1
-    
+
     // 현재 CPU 확인
     int cpu = sched_getcpu();
     int node = cpu / 8;
-    
+
     // Node별 메모리 할당
     void* local_mem = numa_alloc_onnode(1024*1024, node);
     void* remote_mem = numa_alloc_onnode(1024*1024, !node);
-    
+
     // 접근 시간 측정
     clock_t start = clock();
     memset(local_mem, 0, 1024*1024);
     clock_t local_time = clock() - start;
-    
+
     start = clock();
     memset(remote_mem, 0, 1024*1024);
     clock_t remote_time = clock() - start;
-    
-    printf("Local: %ld, Remote: %ld, ", 
+
+    printf("Local: %ld, Remote: %ld, ",
            local_time, remote_time);
     // Remote가 약 20-30% 느림
 }
-```
+```text
 
 ## Huge Pages: 대용량 메모리 최적화
 
@@ -493,23 +493,23 @@ void* allocate_huge_pages() {
                      PROT_READ | PROT_WRITE,
                      MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
                      -1, 0);
-    
+
     // THP (Transparent Huge Pages)
     void* normal = mmap(NULL, 2*1024*1024,
                        PROT_READ | PROT_WRITE,
                        MAP_PRIVATE | MAP_ANONYMOUS,
                        -1, 0);
-    
+
     // 힌트: 병합 권장
     madvise(normal, 2*1024*1024, MADV_HUGEPAGE);
-    
+
     return addr;
 }
 
 // 페이지 테이블 항목 감소:
 // 일반: 512개 (4KB * 512 = 2MB)
 // Huge: 1개 (2MB * 1)
-```
+```text
 
 ## 메모리 보호와 시그널
 
@@ -521,31 +521,31 @@ void setup_memory_protection() {
     sa.sa_sigaction = segv_handler;
     sa.sa_flags = SA_SIGINFO;
     sigaction(SIGSEGV, &sa, NULL);
-    
+
     // 읽기 전용 페이지
     void* readonly = mmap(NULL, 4096,
                          PROT_READ,
                          MAP_PRIVATE | MAP_ANONYMOUS,
                          -1, 0);
-    
+
     // 쓰기 시도 → SIGSEGV
     *(int*)readonly = 42;
 }
 
 void segv_handler(int sig, siginfo_t* info, void* context) {
     printf("Segfault at %p, ", info->si_addr);
-    
+
     // 접근 타입
     if (info->si_code == SEGV_MAPERR) {
         printf("Address not mapped, ");
     } else if (info->si_code == SEGV_ACCERR) {
         printf("Permission denied, ");
     }
-    
+
     // 페이지 권한 변경으로 복구 가능
     mprotect(info->si_addr, 4096, PROT_READ | PROT_WRITE);
 }
-```
+```text
 
 ## 실전: 메모리 공유 디버깅
 
@@ -562,7 +562,7 @@ Address           Perm   Offset Device    Inode    Size    Rss   Pss Referenced
 7f8a2c000000      rw-p 00000000  00:00        0    8192      8     4          8
 
 # 공유 페이지 확인 (Pss < Rss면 공유 중)
-```
+```text
 
 ## 정리: 공유와 격리의 스펙트럼
 

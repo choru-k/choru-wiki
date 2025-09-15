@@ -35,7 +35,7 @@ cgroup CPU Accounting:
 │        │  └─ cpuacct.usage      │ ← 실제 데이터 소스
 │        └─ container2/           │
 └─────────────────────────────────┘
-```
+```text
 
 ### container_cpu_usage_seconds_total 메트릭 구조
 
@@ -46,14 +46,14 @@ curl -s http://prometheus:9090/api/v1/label/__name__/values | jq '.data[]' | gre
 # 실제 메트릭 형태
 container_cpu_usage_seconds_total{
   container="application",    # 컨테이너 이름
-  pod="app-abc123",          # Pod 이름  
+  pod="app-abc123",          # Pod 이름
   namespace="production",     # 네임스페이스
   cpu="total",               # CPU 식별자
   id="/kubepods.slice/...",  # cgroup 경로
   instance="node1:10250",    # kubelet 엔드포인트
   job="kubernetes-nodes-cadvisor"
 }
-```
+```text
 
 ## CPU 메트릭 중복 계산 문제
 
@@ -65,19 +65,22 @@ container_cpu_usage_seconds_total{
 # 잘못된 쿼리 - 2배로 계산됨
 sum(rate(container_cpu_usage_seconds_total{
   product=~"application",
-  pod=~"proxysql-.*", 
+  pod=~"proxysql-.*",
   cpu="total"
 }[5m])) by (pod)
-```
+```text
 
 이 쿼리의 문제점:
 
 ```bash
 ```text
+
 # container="" (빈 값)인 메트릭도 포함됨
+
 container_cpu_usage_seconds_total{container="",pod="app-123",cpu="total"} 1.5
 container_cpu_usage_seconds_total{container="app",pod="app-123",cpu="total"} 1.5
-```
+
+```text
 
 ### 정확한 쿼리 방법
 
@@ -85,12 +88,12 @@ container_cpu_usage_seconds_total{container="app",pod="app-123",cpu="total"} 1.5
 # 정확한 쿼리 - 실제 컨테이너만
 sum(rate(container_cpu_usage_seconds_total{
   product=~"application",
-  pod=~"proxysql-.*", 
+  pod=~"proxysql-.*",
   cpu="total",
   container!="",      # 빈 컨테이너 제외
   container!="POD"    # pause 컨테이너 제외
 }[5m])) by (pod)
-```
+```text
 
 ## cAdvisor CPU 데이터 수집 메커니즘
 
@@ -100,7 +103,7 @@ cAdvisor는 다음 커널 파일에서 데이터를 읽습니다:
 
 ```c
 // kernel/cgroup/cpuacct.c (simplified)
-static u64 cpuacct_cpuusage_read(struct cgroup_subsys_state *css, 
+static u64 cpuacct_cpuusage_read(struct cgroup_subsys_state *css,
                                   struct cftype *cft)
 {
     struct cpuacct *ca = css_ca(css);
@@ -110,10 +113,10 @@ static u64 cpuacct_cpuusage_read(struct cgroup_subsys_state *css,
     for_each_possible_cpu(i) {
         totalcpuusage += ca->cpuusage[i];  // 누적된 CPU 사용시간
     }
-    
+
     return totalcpuusage;  // nanoseconds 단위
 }
-```
+```text
 
 실제 파일 경로:
 
@@ -125,7 +128,7 @@ cat /sys/fs/cgroup/cpu,cpuacct/kubepods.slice/kubepods-burstable.slice/kubepods-
 # 개별 컨테이너 CPU 사용량
 cat /sys/fs/cgroup/cpu,cpuacct/kubepods.slice/.../container-abc.scope/cpuacct.usage
 567890123456   # nanoseconds
-```
+```text
 
 ### cAdvisor 수집 로직
 
@@ -133,23 +136,23 @@ cat /sys/fs/cgroup/cpu,cpuacct/kubepods.slice/.../container-abc.scope/cpuacct.us
 // github.com/google/cadvisor (simplified)
 func (c *containerHandler) GetStats() (*info.ContainerStats, error) {
     stats := &info.ContainerStats{}
-    
+
     // cgroup에서 CPU 사용량 읽기
     cpuUsage, err := c.cgroupManager.GetCpuUsage()
     if err != nil {
         return nil, err
     }
-    
+
     stats.Cpu.Usage = info.CpuUsage{
         Total:  cpuUsage.Total,           // container_cpu_usage_seconds_total
         PerCpu: cpuUsage.PerCpu,         // 개별 CPU 코어별
         User:   cpuUsage.User,           // user space 시간
         System: cpuUsage.System,         // kernel space 시간
     }
-    
+
     return stats, nil
 }
-```
+```text
 
 ## Container와 Pod 레벨 메트릭 구분
 
@@ -164,11 +167,11 @@ spec:
   containers:
   - name: application     # container="application" 메트릭
     image: myapp:latest
-  - name: sidecar        # container="sidecar" 메트릭  
+  - name: sidecar        # container="sidecar" 메트릭
     image: proxy:latest
 # 추가로 container="" 메트릭 - Pod 전체 사용량
 # 그리고 container="POD" 메트릭 - pause 컨테이너
-```
+```text
 
 메트릭 예시:
 
@@ -182,7 +185,7 @@ container_cpu_usage_seconds_total{container="sidecar",pod="myapp-pod"} 0.4
 
 # pause 컨테이너 (거의 CPU 사용하지 않음)
 container_cpu_usage_seconds_total{container="POD",pod="myapp-pod"} 0.1
-```
+```text
 
 ### 정확한 모니터링 쿼리 패턴
 
@@ -198,12 +201,12 @@ sum(rate(container_cpu_usage_seconds_total{
 
 # 방법 2: 개별 컨테이너 합계 (더 정확)
 sum(rate(container_cpu_usage_seconds_total{
-  namespace="production", 
+  namespace="production",
   pod=~"myapp-.*",
   container!="",
   container!="POD"
 }[5m])) by (pod)
-```
+```text
 
 #### 2. 컨테이너별 상세 분석
 
@@ -211,7 +214,7 @@ sum(rate(container_cpu_usage_seconds_total{
 # 컨테이너별 CPU 사용량
 sum(rate(container_cpu_usage_seconds_total{
   namespace="production",
-  pod=~"myapp-.*", 
+  pod=~"myapp-.*",
   container!="",
   container!="POD"
 }[5m])) by (pod, container)
@@ -221,7 +224,7 @@ sum(rate(container_cpu_usage_seconds_total{
   namespace="production",
   container=~"istio-proxy|envoy"
 }[5m])) by (pod)
-```
+```text
 
 #### 3. 노드별 집계
 
@@ -229,17 +232,17 @@ sum(rate(container_cpu_usage_seconds_total{
 # 노드별 총 CPU 사용량
 sum(rate(container_cpu_usage_seconds_total{
   container!="",
-  container!="POD"  
+  container!="POD"
 }[5m])) by (instance)
 
 # 노드 CPU 사용률 (전체 코어 대비)
 sum(rate(container_cpu_usage_seconds_total{
   container!="",
   container!="POD"
-}[5m])) by (instance) 
-/ 
+}[5m])) by (instance)
+/
 on(instance) machine_cpu_cores * 100
-```
+```text
 
 ## CPU Throttling 모니터링
 
@@ -262,12 +265,12 @@ sum(rate(container_cpu_cfs_throttled_seconds_total{
   }[5m])
   /
   rate(container_cpu_cfs_periods_total{
-    namespace="production", 
+    namespace="production",
     container!="",
     container!="POD"
   }[5m])
 ) * 100
-```
+```text
 
 ### CFS Quota 설정과 모니터링
 
@@ -283,7 +286,7 @@ spec:
         cpu: "500m"    # 0.5 core limit
       requests:
         cpu: "200m"    # 0.2 core request
-```
+```text
 
 이는 다음 cgroup 설정으로 변환됩니다:
 
@@ -292,7 +295,7 @@ spec:
 cat /sys/fs/cgroup/cpu/kubepods.slice/.../cpu.cfs_quota_us
 50000   # 50000μs per 100000μs = 0.5 core
 
-cat /sys/fs/cgroup/cpu/kubepods.slice/.../cpu.cfs_period_us  
+cat /sys/fs/cgroup/cpu/kubepods.slice/.../cpu.cfs_period_us
 100000  # 100ms period
 
 # Throttling 통계
@@ -300,7 +303,7 @@ cat /sys/fs/cgroup/cpu/kubepods.slice/.../cpu.stat
 nr_periods 12345
 nr_throttled 1234      # throttling이 발생한 period 수
 throttled_time 567890  # 총 throttling 시간 (ns)
-```
+```text
 
 ## Production 모니터링 대시보드
 
@@ -324,7 +327,7 @@ throttled_time 567890  # 총 throttling 시간 (ns)
     }
   ]
 }
-```
+```text
 
 ### 알람 규칙 설정
 
@@ -354,11 +357,11 @@ groups:
       }[5m]) > 0.1
     for: 2m
     labels:
-      severity: warning  
+      severity: warning
     annotations:
       summary: "CPU throttling detected"
       description: "Container {{$labels.namespace}}/{{$labels.pod}}/{{$labels.container}} is being throttled"
-```
+```text
 
 ## 고급 CPU 분석 기법
 
@@ -373,7 +376,7 @@ stddev_over_time(
     container!="POD"
   }[5m])[10m:]
 ) by (pod)
-```
+```text
 
 ### CPU 사용 패턴 분석
 
@@ -382,11 +385,11 @@ stddev_over_time(
 delta(
   container_cpu_usage_seconds_total{
     namespace="production",
-    container!="", 
+    container!="",
     container!="POD"
   }[1m]
 ) > 10  # 1분에 10초 이상 CPU 사용
-```
+```text
 
 ## 트러블슈팅 가이드
 
@@ -399,11 +402,11 @@ curl -s "http://prometheus:9090/api/v1/query?query=container_cpu_usage_seconds_t
 
 # 출력:
 {"container": "", "value": "1.5"}        # Pod 전체
-{"container": "app", "value": "1.2"}     # 메인 컨테이너  
+{"container": "app", "value": "1.2"}     # 메인 컨테이너
 {"container": "POD", "value": "0.3"}     # pause 컨테이너
 
 # 해결책: container 필터링
-```
+```text
 
 ### 2. CPU 사용량이 음수로 나오는 경우
 
@@ -413,7 +416,7 @@ increase(container_cpu_usage_seconds_total{
   container!="",
   container!="POD"
 }[5m]) < 0
-```
+```text
 
 이는 컨테이너 재시작으로 인한 counter reset이 원인입니다.
 
@@ -423,12 +426,12 @@ increase(container_cpu_usage_seconds_total{
 # cAdvisor 상태 확인
 kubectl get --raw "/api/v1/nodes/node1/proxy/metrics/cadvisor" | grep container_cpu
 
-# kubelet 로그 확인  
+# kubelet 로그 확인
 kubectl logs -n kube-system kubelet-node1
 
 # cgroup 마운트 확인
 mount | grep cgroup
-```
+```text
 
 ## 성능 최적화
 
@@ -443,7 +446,7 @@ enableControllerAttachDetach: true
 housekeepingInterval: 10s      # cAdvisor 수집 주기
 maxPods: 110
 metricsBindAddress: "0.0.0.0"  # 메트릭 엔드포인트
-```
+```text
 
 ### Prometheus 저장소 최적화
 
@@ -468,7 +471,7 @@ scrape_configs:
   - source_labels: [container]
     regex: '^$'
     action: drop          # container="" 메트릭 제외 옵션
-```
+```text
 
 ## 정리
 

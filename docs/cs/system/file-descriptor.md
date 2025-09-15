@@ -60,7 +60,7 @@ File descriptor(FD)는 **열린 파일이나 I/O 리소스를 식별하는 음�
    │ ├─ permissions  │ │ ├─ permissions  │
    │ └─ data blocks  │ │ └─ data blocks  │
    └─────────────────┘ └─────────────────┘
-```
+```text
 
 ## 표준 File Descriptor
 
@@ -83,7 +83,7 @@ dr-xr-xr-x 9 user user  0 Jan  1 12:00 ..
 lrwx------ 1 user user 64 Jan  1 12:00 0 -> /dev/pts/0
 lrwx------ 1 user user 64 Jan  1 12:00 1 -> /dev/pts/0
 lrwx------ 1 user user 64 Jan  1 12:00 2 -> /dev/pts/0
-```
+```text
 
 ## File Descriptor Table과 제한
 
@@ -104,7 +104,7 @@ $ cat /proc/sys/fs/file-max
 $ cat /proc/sys/fs/file-nr
 1440 0 1048576
 # 사용중  사용가능  최대값
-```
+```text
 
 ### 제한 변경하기
 
@@ -119,7 +119,7 @@ username hard nofile 8192
 # systemd 서비스의 경우
 [Service]
 LimitNOFILE=8192
-```
+```text
 
 ## 주요 File Descriptor 연산
 
@@ -137,24 +137,24 @@ int main() {
         perror("open failed");
         return 1;
     }
-    
+
     printf("Opened file with FD: %d, ", fd);
-    
+
     // 파일에 데이터 쓰기
     const char *data = "Hello, File Descriptor!, ";
     ssize_t bytes_written = write(fd, data, strlen(data));
-    
+
     if (bytes_written == -1) {
         perror("write failed");
         close(fd);
         return 1;
     }
-    
+
     // 파일 닫기 - 중요! 리소스 해제
     close(fd);
     return 0;
 }
-```
+```text
 
 ### dup()과 dup2() - File Descriptor 복제
 
@@ -164,25 +164,25 @@ int main() {
 
 int main() {
     int fd1 = open("/tmp/output.txt", O_CREAT | O_WRONLY, 0644);
-    
+
     // dup(): 가장 작은 FD 번호로 복제
     int fd2 = dup(fd1);
-    
+
     // dup2(): 지정된 FD 번호로 복제
     int fd3 = dup2(fd1, 10);  // fd1을 FD 10번으로 복제
-    
+
     // 모든 FD가 같은 파일을 가리킴
     write(fd1, "Hello ", 6);
     write(fd2, "from ", 5);
     write(fd3, "FD!, ", 4);
-    
+
     close(fd1);
     close(fd2);
     close(fd3);
-    
+
     return 0;
 }
-```
+```text
 
 ### fcntl() - File Descriptor 제어
 
@@ -191,30 +191,30 @@ int main() {
 
 int main() {
     int fd = open("/tmp/test.txt", O_RDWR | O_CREAT, 0644);
-    
+
     // 현재 플래그 확인
     int flags = fcntl(fd, F_GETFL);
     if (flags == -1) {
         perror("fcntl F_GETFL");
         return 1;
     }
-    
+
     // Non-blocking 모드 설정
     if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
         perror("fcntl F_SETFL");
         return 1;
     }
-    
+
     // Close-on-exec 플래그 설정
     if (fcntl(fd, F_SETFD, FD_CLOEXEC) == -1) {
         perror("fcntl F_SETFD");
         return 1;
     }
-    
+
     close(fd);
     return 0;
 }
-```
+```text
 
 ## File Descriptor 상속과 exec
 
@@ -226,9 +226,9 @@ int main() {
 
 int main() {
     int fd = open("/tmp/shared.txt", O_CREAT | O_WRONLY, 0644);
-    
+
     pid_t pid = fork();
-    
+
     if (pid == 0) {
         // 자식 프로세스 - 부모의 FD 상속
         write(fd, "Child process, ", 14);
@@ -240,10 +240,10 @@ int main() {
         wait(NULL);  // 자식 프로세스 종료 대기
         close(fd);
     }
-    
+
     return 0;
 }
-```
+```text
 
 ### exec()와 FD_CLOEXEC
 
@@ -254,20 +254,20 @@ int main() {
 int main() {
     int fd1 = open("/tmp/inherit.txt", O_CREAT | O_WRONLY, 0644);
     int fd2 = open("/tmp/no_inherit.txt", O_CREAT | O_WRONLY, 0644);
-    
+
     // fd2는 exec 시 자동으로 닫힘
     fcntl(fd2, F_SETFD, FD_CLOEXEC);
-    
+
     if (fork() == 0) {
         // exec 실행 - fd1은 유지, fd2는 닫힘
         execl("/bin/ls", "ls", "-la", "/proc/self/fd/", NULL);
     }
-    
+
     close(fd1);
     close(fd2);
     return 0;
 }
-```
+```text
 
 ## Non-blocking I/O와 O_NONBLOCK
 
@@ -280,10 +280,10 @@ int main() {
 void demonstrate_nonblocking_io() {
     int fd = open("/dev/stdin", O_RDONLY | O_NONBLOCK);
     char buffer[1024];
-    
+
     while (1) {
         ssize_t bytes_read = read(fd, buffer, sizeof(buffer));
-        
+
         if (bytes_read > 0) {
             printf("Read %zd bytes: %.*s", bytes_read, (int)bytes_read, buffer);
         } else if (bytes_read == -1) {
@@ -300,10 +300,10 @@ void demonstrate_nonblocking_io() {
             break;
         }
     }
-    
+
     close(fd);
 }
-```
+```text
 
 ### 소켓에서의 Non-blocking I/O
 
@@ -313,26 +313,26 @@ void demonstrate_nonblocking_io() {
 
 int setup_nonblocking_server(int port) {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    
+
     // Non-blocking 설정
     int flags = fcntl(server_fd, F_GETFL);
     fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
-    
+
     struct sockaddr_in addr = {0};
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(port);
-    
+
     bind(server_fd, (struct sockaddr*)&addr, sizeof(addr));
     listen(server_fd, 128);
-    
+
     return server_fd;
 }
 
 void handle_connections(int server_fd) {
     while (1) {
         int client_fd = accept(server_fd, NULL, NULL);
-        
+
         if (client_fd == -1) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 // 새 연결이 없음
@@ -343,14 +343,14 @@ void handle_connections(int server_fd) {
                 break;
             }
         }
-        
+
         // 클라이언트 처리
         printf("New client connected: FD %d, ", client_fd);
         // ... 처리 로직
         close(client_fd);
     }
 }
-```
+```text
 
 ## File Descriptor 누수 문제
 
@@ -360,11 +360,11 @@ void handle_connections(int server_fd) {
 // ❌ 잘못된 예 - FD 누수 발생
 int bad_function() {
     int fd = open("/tmp/file.txt", O_RDONLY);
-    
+
     if (some_condition) {
         return -1;  // fd를 닫지 않고 반환!
     }
-    
+
     // 다른 처리...
     close(fd);
     return 0;
@@ -374,23 +374,23 @@ int bad_function() {
 int good_function() {
     int fd = open("/tmp/file.txt", O_RDONLY);
     int result = 0;
-    
+
     if (fd == -1) {
         return -1;
     }
-    
+
     if (some_condition) {
         result = -1;
         goto cleanup;  // 정리 코드로 이동
     }
-    
+
     // 다른 처리...
-    
+
 cleanup:
     close(fd);
     return result;
 }
-```
+```text
 
 ### C++에서의 RAII 패턴
 
@@ -403,39 +403,39 @@ private:
     int fd_;
 
 public:
-    FileDescriptor(const char* path, int flags, mode_t mode = 0) 
+    FileDescriptor(const char* path, int flags, mode_t mode = 0)
         : fd_(open(path, flags, mode)) {
         if (fd_ == -1) {
             throw std::runtime_error("Failed to open file");
         }
     }
-    
+
     ~FileDescriptor() {
         if (fd_ != -1) {
             close(fd_);
         }
     }
-    
+
     // 복사 방지
     FileDescriptor(const FileDescriptor&) = delete;
     FileDescriptor& operator=(const FileDescriptor&) = delete;
-    
+
     // 이동 생성자
     FileDescriptor(FileDescriptor&& other) noexcept : fd_(other.fd_) {
         other.fd_ = -1;
     }
-    
+
     int get() const { return fd_; }
 };
 
 // 사용 예
 void safe_file_operation() {
     FileDescriptor fd("/tmp/safe.txt", O_RDWR | O_CREAT, 0644);
-    
+
     // 자동으로 파일이 닫힘 (소멸자에서)
     write(fd.get(), "Safe operation, ", 15);
 }
-```
+```text
 
 ## File Descriptor 디버깅
 
@@ -456,7 +456,7 @@ $ lsof -i :8080
 
 # FD 사용량 모니터링
 $ watch -n 1 'cat /proc/sys/fs/file-nr'
-```
+```text
 
 ### FD 누수 탐지 도구
 
@@ -470,16 +470,16 @@ $ watch -n 1 'cat /proc/sys/fs/file-nr'
 int count_open_fds() {
     DIR *d = opendir("/proc/self/fd");
     if (!d) return -1;
-    
+
     int count = 0;
     struct dirent *entry;
-    
+
     while ((entry = readdir(d)) != NULL) {
         if (entry->d_name[0] != '.') {
             count++;
         }
     }
-    
+
     closedir(d);
     return count;
 }
@@ -487,26 +487,26 @@ int count_open_fds() {
 void monitor_fd_usage(const char* operation) {
     static int last_count = 0;
     int current_count = count_open_fds();
-    
-    printf("[FD Monitor] %s: %d FDs (변화: %+d), ", 
+
+    printf("[FD Monitor] %s: %d FDs (변화: %+d), ",
            operation, current_count, current_count - last_count);
-    
+
     last_count = current_count;
 }
 
 // 사용 예
 int main() {
     monitor_fd_usage("Start");
-    
+
     int fd = open("/tmp/test.txt", O_CREAT | O_WRONLY, 0644);
     monitor_fd_usage("After open");
-    
+
     close(fd);
     monitor_fd_usage("After close");
-    
+
     return 0;
 }
-```
+```text
 
 ## 고급 File Descriptor 사용
 
@@ -521,45 +521,45 @@ int setup_epoll_monitoring() {
         perror("epoll_create1");
         return -1;
     }
-    
+
     // 서버 소켓 설정
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     fcntl(server_fd, F_SETFL, O_NONBLOCK);
-    
+
     // epoll에 서버 소켓 추가
     struct epoll_event ev = {0};
     ev.events = EPOLLIN | EPOLLET;  // Edge Triggered
     ev.data.fd = server_fd;
-    
+
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server_fd, &ev) == -1) {
         perror("epoll_ctl");
         close(epoll_fd);
         close(server_fd);
         return -1;
     }
-    
+
     return epoll_fd;
 }
 
 void event_loop(int epoll_fd) {
     struct epoll_event events[MAX_EVENTS];
-    
+
     while (1) {
         int nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
-        
+
         for (int i = 0; i < nfds; i++) {
             int fd = events[i].data.fd;
-            
+
             if (events[i].events & EPOLLIN) {
                 // 읽기 가능한 데이터 있음
                 handle_read(fd);
             }
-            
+
             if (events[i].events & EPOLLOUT) {
                 // 쓰기 가능
                 handle_write(fd);
             }
-            
+
             if (events[i].events & (EPOLLHUP | EPOLLERR)) {
                 // 연결 종료 또는 에러
                 close(fd);
@@ -568,7 +568,7 @@ void event_loop(int epoll_fd) {
         }
     }
 }
-```
+```text
 
 ### 파이프와 File Descriptor
 
@@ -577,40 +577,40 @@ void event_loop(int epoll_fd) {
 
 void pipe_communication_example() {
     int pipefd[2];
-    
+
     if (pipe(pipefd) == -1) {
         perror("pipe");
         return;
     }
-    
-    printf("Created pipe: read_fd=%d, write_fd=%d, ", 
+
+    printf("Created pipe: read_fd=%d, write_fd=%d, ",
            pipefd[0], pipefd[1]);
-    
+
     pid_t pid = fork();
-    
+
     if (pid == 0) {
         // 자식 프로세스 - 파이프에서 읽기
         close(pipefd[1]);  // 쓰기 끝 닫기
-        
+
         char buffer[1024];
         ssize_t bytes_read = read(pipefd[0], buffer, sizeof(buffer));
-        
+
         printf("Child read: %.*s", (int)bytes_read, buffer);
-        
+
         close(pipefd[0]);
         exit(0);
     } else {
         // 부모 프로세스 - 파이프에 쓰기
         close(pipefd[0]);  // 읽기 끝 닫기
-        
+
         const char *message = "Hello from parent!, ";
         write(pipefd[1], message, strlen(message));
-        
+
         close(pipefd[1]);
         wait(NULL);
     }
 }
-```
+```text
 
 ## 실제 프로덕션 시나리오
 
@@ -632,16 +632,16 @@ void pipe_communication_example() {
        }
        close(client_fd);
    }
-   
+
    // 수정된 코드
    void handle_client(int client_fd) {
        int result = 0;
-       
+
        // ... 처리 로직
        if (error_occurred) {
            result = -1;
        }
-       
+
        close(client_fd);  // 항상 닫기
        return result;
    }
@@ -681,21 +681,21 @@ void pipe_communication_example() {
 void optimize_fd_allocation() {
     // 낮은 번호의 FD를 선호하는 커널의 특성 활용
     int fds[1000];
-    
+
     // 연속적으로 열기
     for (int i = 0; i < 1000; i++) {
         fds[i] = open("/dev/null", O_RDONLY);
     }
-    
+
     // 중간부터 닫기 (FD 번호에 구멍 생성)
     for (int i = 500; i < 600; i++) {
         close(fds[i]);
     }
-    
+
     // 새로 열면 500번대 FD가 재사용됨
     int new_fd = open("/dev/null", O_RDONLY);
     printf("New FD: %d (재사용된 번호), ", new_fd);
-    
+
     // 정리
     for (int i = 0; i < 1000; i++) {
         if (i < 500 || i >= 600) {
@@ -704,7 +704,7 @@ void optimize_fd_allocation() {
     }
     close(new_fd);
 }
-```
+```text
 
 ### 대용량 FD 처리
 
@@ -730,7 +730,7 @@ int add_connection(struct connection_pool *pool, int fd) {
     if (pool->count >= pool->capacity) {
         return -1;  // Pool full
     }
-    
+
     // 빈 슬롯 찾기 (라운드 로빈)
     for (int i = 0; i < pool->capacity; i++) {
         int slot = (pool->next_slot + i) % pool->capacity;
@@ -741,10 +741,10 @@ int add_connection(struct connection_pool *pool, int fd) {
             return slot;
         }
     }
-    
+
     return -1;
 }
-```
+```text
 
 ## 정리
 

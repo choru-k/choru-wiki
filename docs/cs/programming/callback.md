@@ -44,7 +44,7 @@ tags:
 │  │  - 비동기 작업 완료 시 호출         │   │
 │  └─────────────────────────────────────┘   │
 └─────────────────────────────────────────────┘
-```
+```text
 
 ### 내부 동작 원리
 
@@ -55,14 +55,14 @@ sequenceDiagram
     participant Main as Main Thread
     participant EventLoop as Event Loop
     participant Callback as Callback Function
-    
+
     Main->>EventLoop: 함수 등록 (callback 포함)
     Main->>Main: 다른 작업 계속
     EventLoop->>EventLoop: 이벤트 대기
     Note right of EventLoop: I/O 완료, 타이머 만료 등
     EventLoop->>Callback: 콜백 함수 호출
     Callback->>Main: 결과 반환
-```
+```text
 
 ## Language-Specific Callback Patterns
 
@@ -81,7 +81,7 @@ typedef void (*callback_t)(int result, void* userdata);
 void async_operation(int input, callback_t callback, void* userdata) {
     // 실제로는 네트워크 I/O, 파일 I/O 등
     int result = input * 2;
-    
+
     // 작업 완료 후 콜백 호출
     if (callback) {
         callback(result, userdata);
@@ -97,14 +97,14 @@ void on_completion(int result, void* userdata) {
 
 int main() {
     int counter = 0;
-    
+
     // 콜백과 함께 비동기 작업 시작
     async_operation(10, on_completion, &counter);
-    
+
     printf("Counter: %d\n", counter);
     return 0;
 }
-```
+```text
 
 **Production에서의 실제 사용 사례:**
 
@@ -115,7 +115,7 @@ int nfds = epoll_wait(epfd, events, MAX_EVENTS, timeout);
 
 for (int i = 0; i &lt; nfds; i++) {
     struct connection* conn = (struct connection*)events[i].data.ptr;
-    
+
     // 콜백 함수를 통한 이벤트 처리
     if (events[i].events & EPOLLIN) {
         conn->read_callback(conn);
@@ -124,7 +124,7 @@ for (int i = 0; i &lt; nfds; i++) {
         conn->write_callback(conn);
     }
 }
-```
+```text
 
 ### C++: Function Objects and Lambdas
 
@@ -141,16 +141,16 @@ class TaskManager {
 public:
     // std::function을 사용한 콜백 저장
     using Callback = std::function&lt;void(int)&gt;;
-    
+
     void execute_async(int input, Callback callback) {
         // 별도 스레드에서 비동기 실행
         std::thread worker([input, callback]() {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            
+
             int result = input * input;
             callback(result);  // 콜백 호출
         });
-        
+
         worker.detach();
     }
 };
@@ -158,9 +158,9 @@ public:
 // 함수 객체 (Functor)
 struct MultiplyCallback {
     int multiplier;
-    
+
     MultiplyCallback(int m) : multiplier(m) {}
-    
+
     void operator()(int result) {
         std::cout &lt;&lt; "Functor result: " &lt;&lt; result * multiplier &lt;&lt; std::endl;
     }
@@ -168,27 +168,27 @@ struct MultiplyCallback {
 
 int main() {
     TaskManager manager;
-    
+
     // 1. Lambda 콜백
     manager.execute_async(5, [](int result) {
         std::cout &lt;&lt; "Lambda result: " &lt;&lt; result &lt;&lt; std::endl;
     });
-    
+
     // 2. Functor 콜백
     MultiplyCallback callback(3);
     manager.execute_async(7, callback);
-    
+
     // 3. 일반 함수 포인터
     manager.execute_async(9, [](int result) {
         printf("Function pointer result: %d\n", result);
     });
-    
+
     // 메인 스레드 잠시 대기
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    
+
     return 0;
 }
-```
+```text
 
 ### JavaScript: First-Class Functions
 
@@ -199,7 +199,7 @@ JavaScript에서 콜백은 일급 함수로 처리됩니다:
 function fetchData(url, callback) {
     // XMLHttpRequest 또는 fetch API 사용
     const xhr = new XMLHttpRequest();
-    
+
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
@@ -209,7 +209,7 @@ function fetchData(url, callback) {
             }
         }
     };
-    
+
     xhr.open('GET', url);
     xhr.send();
 }
@@ -220,20 +220,20 @@ fetchData('/api/users', function(error, data) {
         console.error('Error:', error.message);
         return;
     }
-    
+
     console.log('Received data:', data);
-    
+
     // 중첩 콜백 (Callback Hell의 시작)
     fetchData(`/api/users/${data[0].id}/posts`, function(error, posts) {
         if (error) {
             console.error('Posts error:', error.message);
             return;
         }
-        
+
         console.log('User posts:', posts);
     });
 });
-```
+```text
 
 **Event-driven Programming 예제:**
 
@@ -251,7 +251,7 @@ fs.readFile('config.json', 'utf8', function(err, data) {
         console.error('File read error:', err);
         return;
     }
-    
+
     try {
         const config = JSON.parse(data);
         console.log('Config loaded:', config);
@@ -259,7 +259,7 @@ fs.readFile('config.json', 'utf8', function(err, data) {
         console.error('JSON parse error:', parseError);
     }
 });
-```
+```text
 
 ### Python: Higher-Order Functions
 
@@ -273,19 +273,19 @@ from typing import Callable, Any, Optional
 class AsyncTaskRunner:
     def __init__(self):
         self.tasks = []
-    
-    def run_async(self, 
+
+    def run_async(self,
                   task_func: Callable[[], Any],
                   callback: Callable[[Any, Optional[Exception]], None]) -> None:
         """비동기 태스크 실행 후 콜백 호출"""
-        
+
         def worker():
             try:
                 result = task_func()
                 callback(result, None)
             except Exception as e:
                 callback(None, e)
-        
+
         thread = threading.Thread(target=worker)
         thread.daemon = True
         thread.start()
@@ -338,7 +338,7 @@ try:
     divide(10, 0)  # Function failed: division by zero
 except ZeroDivisionError:
     pass
-```
+```text
 
 ## Event Loop와 콜백의 관계
 
@@ -356,10 +356,10 @@ graph TD
     F --> G[Event Occurs]
     G --> H[Add Callback to Queue]
     H --> C
-    
+
     I[Web APIs] --> J[Timer, HTTP, DOM Events]
     J --> H
-```
+```text
 
 **실제 Node.js Event Loop 동작:**
 
@@ -382,11 +382,11 @@ console.log('End');  // 1. Call Stack에서 즉시 실행
 
 // 출력 순서:
 // Start
-// End  
+// End
 // NextTick callback
 // Immediate callback
 // Timer callback
-```
+```text
 
 ### 성능 측정 및 최적화
 
@@ -394,14 +394,14 @@ console.log('End');  // 1. Call Stack에서 즉시 실행
 // 콜백 성능 측정
 function measureCallbackPerformance() {
     const iterations = 1000000;
-    
+
     // 직접 함수 호출
     console.time('Direct call');
     for (let i = 0; i &lt; iterations; i++) {
         simpleFunction();
     }
     console.timeEnd('Direct call');
-    
+
     // 콜백을 통한 호출
     console.time('Callback call');
     for (let i = 0; i &lt; iterations; i++) {
@@ -420,7 +420,7 @@ function executeWithCallback(callback) {
 
 measureCallbackPerformance();
 // 결과: 콜백 호출이 약 2-3배 더 느림 (V8 엔진 기준)
-```
+```text
 
 ## Callback Hell과 해결책
 
@@ -431,16 +431,16 @@ measureCallbackPerformance();
 function fetchUserProfile(userId, callback) {
     fetchUser(userId, function(err, user) {
         if (err) return callback(err);
-        
+
         fetchUserPosts(user.id, function(err, posts) {
             if (err) return callback(err);
-            
+
             fetchPostComments(posts[0].id, function(err, comments) {
                 if (err) return callback(err);
-                
+
                 fetchUserFriends(user.id, function(err, friends) {
                     if (err) return callback(err);
-                    
+
                     // 더 깊은 중첩...
                     callback(null, {
                         user: user,
@@ -453,7 +453,7 @@ function fetchUserProfile(userId, callback) {
         });
     });
 }
-```
+```text
 
 **문제점:**
 
@@ -490,7 +490,7 @@ function fetchUserProfile(userId) {
 fetchUserProfile(123)
     .then(profile => console.log(profile))
     .catch(error => console.error(error));
-```
+```text
 
 ### 해결책 2: Async/Await
 
@@ -499,15 +499,15 @@ fetchUserProfile(123)
 async function fetchUserProfile(userId) {
     try {
         const user = await fetchUser(userId);
-        
+
         // 병렬 실행으로 성능 최적화
         const [posts, friends] = await Promise.all([
             fetchUserPosts(user.id),
             fetchUserFriends(user.id)
         ]);
-        
+
         const comments = await fetchPostComments(posts[0].id);
-        
+
         return {
             user,
             posts,
@@ -527,7 +527,7 @@ try {
 } catch (error) {
     console.error(error);
 }
-```
+```text
 
 ## Memory Management와 Performance
 
@@ -542,20 +542,20 @@ class DataProcessor {
         this.cache = new Map();
         this.callbacks = new Set();
     }
-    
+
     // 잘못된 구현 - 메모리 누수 발생
     processData(data, callback) {
         // 콜백이 제거되지 않음
         this.callbacks.add(callback);
-        
+
         // 캐시에 대용량 데이터 저장
         this.cache.set(Date.now(), data);
-        
+
         setTimeout(() => {
             callback(this.transformData(data));
         }, 1000);
     }
-    
+
     // 올바른 구현
     processDataCorrectly(data, callback) {
         const callbackWrapper = (result) => {
@@ -563,17 +563,17 @@ class DataProcessor {
             this.callbacks.delete(callbackWrapper);
             callback(result);
         };
-        
+
         this.callbacks.add(callbackWrapper);
-        
+
         setTimeout(() => {
             callbackWrapper(this.transformData(data));
-            
+
             // 오래된 캐시 정리
             this.cleanupOldCache();
         }, 1000);
     }
-    
+
     cleanupOldCache() {
         const now = Date.now();
         for (const [timestamp, data] of this.cache) {
@@ -583,7 +583,7 @@ class DataProcessor {
         }
     }
 }
-```
+```text
 
 ### Performance Optimization
 
@@ -594,21 +594,21 @@ class OptimizedEventHandler {
         this.eventListeners = new Map();
         this.throttledCallbacks = new Map();
     }
-    
+
     // 디바운싱된 콜백
     addDebouncedCallback(event, callback, delay = 300) {
         const debouncedCallback = this.debounce(callback, delay);
         this.eventListeners.set(event, debouncedCallback);
         return debouncedCallback;
     }
-    
+
     // 쓰로틀링된 콜백
     addThrottledCallback(event, callback, limit = 100) {
         const throttledCallback = this.throttle(callback, limit);
         this.throttledCallbacks.set(event, throttledCallback);
         return throttledCallback;
     }
-    
+
     debounce(func, delay) {
         let timeoutId;
         return (...args) => {
@@ -616,7 +616,7 @@ class OptimizedEventHandler {
             timeoutId = setTimeout(() => func.apply(this, args), delay);
         };
     }
-    
+
     throttle(func, limit) {
         let inThrottle;
         return (...args) => {
@@ -633,11 +633,11 @@ class OptimizedEventHandler {
 const handler = new OptimizedEventHandler();
 
 // 스크롤 이벤트를 100ms마다 한 번만 실행
-const optimizedScrollHandler = handler.addThrottledCallback('scroll', 
+const optimizedScrollHandler = handler.addThrottledCallback('scroll',
     () => console.log('Scroll handled'), 100);
 
 document.addEventListener('scroll', optimizedScrollHandler);
-```
+```text
 
 ### CPU-Intensive Callbacks
 
@@ -651,28 +651,28 @@ if (isMainThread) {
         constructor(workerScript) {
             this.workerScript = workerScript;
         }
-        
+
         async executeAsync(data, callback) {
             const worker = new Worker(__filename, {
                 workerData: data
             });
-            
+
             worker.on('message', (result) => {
                 callback(null, result);
                 worker.terminate();
             });
-            
+
             worker.on('error', (error) => {
                 callback(error, null);
                 worker.terminate();
             });
         }
     }
-    
+
     // 사용
     const workerCallback = new WorkerCallback();
     const heavyData = Array.from({length: 1000000}, (_, i) => i);
-    
+
     console.time('Worker callback');
     workerCallback.executeAsync(heavyData, (error, result) => {
         if (error) {
@@ -682,17 +682,17 @@ if (isMainThread) {
             console.timeEnd('Worker callback');
         }
     });
-    
+
 } else {
     // 워커 스레드
     const data = workerData;
-    
+
     // CPU 집약적 작업
     const result = data.reduce((sum, num) => sum + Math.sqrt(num), 0);
-    
+
     parentPort.postMessage(result);
 }
-```
+```text
 
 ## Production에서의 모니터링
 
@@ -708,28 +708,28 @@ class CallbackMonitor {
             errors: 0,
             slowCalls: 0
         };
-        
+
         this.slowThreshold = 100; // 100ms 이상이면 slow call
     }
-    
+
     wrapCallback(callback, name = 'anonymous') {
         return (...args) => {
             const startTime = process.hrtime.bigint();
             this.metrics.totalCalls++;
-            
+
             try {
                 const result = callback(...args);
-                
+
                 // Promise인 경우 처리
                 if (result && typeof result.then === 'function') {
                     return result.finally(() => {
                         this.recordMetrics(startTime, name);
                     });
                 }
-                
+
                 this.recordMetrics(startTime, name);
                 return result;
-                
+
             } catch (error) {
                 this.metrics.errors++;
                 this.recordMetrics(startTime, name);
@@ -737,30 +737,30 @@ class CallbackMonitor {
             }
         };
     }
-    
+
     recordMetrics(startTime, name) {
         const endTime = process.hrtime.bigint();
         const duration = Number(endTime - startTime) / 1000000; // nanoseconds to ms
-        
+
         this.metrics.totalTime += duration;
-        
+
         if (duration > this.slowThreshold) {
             this.metrics.slowCalls++;
             console.warn(`Slow callback detected: ${name} took ${duration.toFixed(2)}ms`);
         }
     }
-    
+
     getStats() {
         return {
             ...this.metrics,
-            averageTime: this.metrics.totalCalls > 0 
-                ? this.metrics.totalTime / this.metrics.totalCalls 
+            averageTime: this.metrics.totalCalls > 0
+                ? this.metrics.totalTime / this.metrics.totalCalls
                 : 0,
-            errorRate: this.metrics.totalCalls > 0 
-                ? (this.metrics.errors / this.metrics.totalCalls) * 100 
+            errorRate: this.metrics.totalCalls > 0
+                ? (this.metrics.errors / this.metrics.totalCalls) * 100
                 : 0,
-            slowCallRate: this.metrics.totalCalls > 0 
-                ? (this.metrics.slowCalls / this.metrics.totalCalls) * 100 
+            slowCallRate: this.metrics.totalCalls > 0
+                ? (this.metrics.slowCalls / this.metrics.totalCalls) * 100
                 : 0
         };
     }
@@ -785,7 +785,7 @@ app.use('/api/*', (req, res, next) => {
 setInterval(() => {
     console.log('Callback Metrics:', monitor.getStats());
 }, 30000); // 30초마다
-```
+```text
 
 ## 현대적 대안들
 
@@ -798,7 +798,7 @@ import { ajax } from 'rxjs/ajax';
 // 전통적 콜백 방식
 document.getElementById('search').addEventListener('input', function(event) {
     const query = event.target.value;
-    
+
     // 디바운싱 직접 구현
     clearTimeout(this.searchTimeout);
     this.searchTimeout = setTimeout(() => {
@@ -818,14 +818,14 @@ const searchInput$ = fromEvent(document.getElementById('search'), 'input');
 searchInput$.pipe(
     map(event => event.target.value),
     debounceTime(300),
-    switchMap(query => 
+    switchMap(query =>
         ajax.getJSON(`/api/search?q=${encodeURIComponent(query)}`)
     )
 ).subscribe({
     next: results => displayResults(results),
     error: error => console.error('Search failed:', error)
 });
-```
+```text
 
 ### Generator Functions
 
@@ -836,7 +836,7 @@ function* fetchUserData(userId) {
         const user = yield fetchUser(userId);
         const posts = yield fetchUserPosts(user.id);
         const comments = yield fetchPostComments(posts[0].id);
-        
+
         return { user, posts, comments };
     } catch (error) {
         console.error('Fetch failed:', error);
@@ -848,7 +848,7 @@ function* fetchUserData(userId) {
 async function runGenerator(generatorFn, ...args) {
     const generator = generatorFn(...args);
     let result = generator.next();
-    
+
     while (!result.done) {
         try {
             const value = await result.value;
@@ -857,7 +857,7 @@ async function runGenerator(generatorFn, ...args) {
             result = generator.throw(error);
         }
     }
-    
+
     return result.value;
 }
 
@@ -865,7 +865,7 @@ async function runGenerator(generatorFn, ...args) {
 runGenerator(fetchUserData, 123)
     .then(data => console.log(data))
     .catch(error => console.error(error));
-```
+```text
 
 ## Real Production Incident Example
 
@@ -887,11 +887,11 @@ class NotificationService {
     constructor() {
         this.pendingCallbacks = [];
     }
-    
+
     sendNotification(userId, message, callback) {
         // 콜백을 배열에 저장 (문제!)
         this.pendingCallbacks.push(callback);
-        
+
         this.httpClient.post('/api/notify', {
             userId, message
         }, (error, response) => {
@@ -900,7 +900,7 @@ class NotificationService {
         });
     }
 }
-```
+```text
 
 **실제 원인:**
 
@@ -915,13 +915,13 @@ class NotificationService {
     constructor() {
         this.pendingCallbacks = new Map(); // WeakMap 사용 고려
     }
-    
+
     sendNotification(userId, message, callback) {
         const callbackId = this.generateCallbackId();
-        
+
         // 콜백을 Map에 저장 (ID로 관리)
         this.pendingCallbacks.set(callbackId, callback);
-        
+
         this.httpClient.post('/api/notify', {
             userId, message, callbackId
         }, (error, response) => {
@@ -932,7 +932,7 @@ class NotificationService {
                 storedCallback(error, response);
             }
         });
-        
+
         // 타임아웃 처리
         setTimeout(() => {
             if (this.pendingCallbacks.has(callbackId)) {
@@ -941,12 +941,12 @@ class NotificationService {
             }
         }, 30000);
     }
-    
+
     generateCallbackId() {
         return Date.now() + '-' + Math.random().toString(36);
     }
 }
-```
+```text
 
 ## 문제 해결 체크리스트
 
@@ -985,7 +985,7 @@ class NotificationService {
   ```javascript
   // 이벤트 루프 지연 측정
   const { performance } = require('perf_hooks');
-  
+
   let lastTime = performance.now();
   setInterval(() => {
       const now = performance.now();
@@ -1004,7 +1004,7 @@ class NotificationService {
 **핵심 takeaways:**
 
 1. **메모리 관리**: 콜백 참조를 적절히 해제해야 함
-2. **에러 처리**: 모든 콜백에서 에러 케이스를 고려해야 함  
+2. **에러 처리**: 모든 콜백에서 에러 케이스를 고려해야 함
 3. **성능 최적화**: 디바운싱/쓰로틀링으로 과도한 콜백 호출 방지
 4. **모던 대안**: Promise, async/await, RxJS 등을 적절히 활용
 5. **모니터링**: 프로덕션에서 콜백 성능을 지속적으로 모니터링

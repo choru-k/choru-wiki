@@ -118,14 +118,14 @@ strace -c ls                    # 시스템 콜 호출 빈도와 시간 통계
 strace -tt -T -o startup.log ./web-server
 
 # 출력 예시 분석
-```text
+```
+
 $ head -20 startup.log
 11:30:45.123456 execve("./web-server", ["web-server"], [...]) = 0 <0.001234>
 11:30:45.125678 brk(NULL)                = 0x55e8b8c4c000 <0.000012>
 11:30:45.125890 mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f2b8c4a1000 <0.000023>
 11:30:45.126123 access("/etc/ld.so.preload", R_OK) = -1 ENOENT <0.000045>
 11:30:47.234567 connect(3, {sa_family=AF_INET, sin_port=htons(3306), sin_addr=inet_addr("10.0.0.100")}, 16) = -1 ETIMEDOUT <2.108432>
-```
 
 **분석**: 데이터베이스 연결에서 2초 이상 타임아웃 발생!
 
@@ -134,6 +134,7 @@ $ head -20 startup.log
 ```bash
 # 소요 시간 순으로 정렬
 grep -E "<[0-9]+\.[0-9]+" startup.log | sort -k2 -t'<' -nr | head -10
+```
 
 ```text
 # 출력:
@@ -151,8 +152,10 @@ strace -p 12345 -c -S time
 # 5초간 추적 후 통계 출력
 timeout 5 strace -p 12345 -c
 
-```text
-# 예시 출력:
+```
+
+# 예시 출력
+
 % time     seconds  usecs/call     calls    errors syscall
 ------ ----------- ----------- --------- --------- ----------------
  85.67    0.234567          12     19456           write
@@ -160,11 +163,10 @@ timeout 5 strace -p 12345 -c
   2.45    0.006789          15       456       123 stat
   1.23    0.003456           8       432           open
   0.42    0.001234           3       412           close
-```
 
 **분석**: write 시스템 콜이 85%의 시간을 차지 → 과도한 로그 출력이 원인
 
-### 시나리오 3: 메모리 사용량이 계속 증가
+## 시나리오 3: 메모리 사용량이 계속 증가
 
 ```bash
 # 메모리 관련 시스템 콜 추적
@@ -173,13 +175,15 @@ strace -p 12345 -e trace=mmap,munmap,brk,mprotect -o memory.log
 # 메모리 할당 패턴 분석
 grep -E "(mmap|munmap|brk)" memory.log | head -20
 
-```text
-# 출력 예시:
+```
+
+# 출력 예시
+
 mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f123400000
 mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f123401000
 mmap(NULL, 16384, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f123405000
+
 # munmap 호출이 보이지 않음 → 메모리 누수 의심
-```
 
 메모리 할당/해제 균형 확인:
 
@@ -210,8 +214,11 @@ strace -e trace=socket,connect,bind,listen,accept,send,recv -p 12345
 # MySQL 연결 문제 분석
 strace -e trace=network mysql -h db.example.com -u user -p
 
+```
+
+# 출력
+
 ```text
-# 출력:
 socket(AF_INET, SOCK_STREAM, IPPROTO_TCP) = 3
 connect(3, {sa_family=AF_INET, sin_port=htons(3306), sin_addr=inet_addr("10.0.0.100")}, 16) = -1 ECONNREFUSED (Connection refused)
 close(3) = 0
@@ -220,11 +227,12 @@ close(3) = 0
 **분석**: 3306 포트로 연결 시도하지만 거부됨
 **해결책**: 방화벽 확인, MySQL 서비스 상태 확인
 
-### HTTP 요청 분석
+## HTTP 요청 분석
 
 ```bash
 # curl 요청의 내부 동작
 strace -e trace=network curl https://api.example.com/users
+```
 
 ```text
 # 출력에서 확인할 수 있는 정보:
@@ -256,8 +264,10 @@ strace -e trace=file ./application
 # 애플리케이션이 어떤 설정 파일을 읽는지 확인
 strace -e trace=open,openat ./app 2>&1 | grep -E "\.(conf|config|cfg|ini|yaml|json)"
 
+```
+
 ```text
-# 출력:
+# 설정 파일 접근 결과:
 openat(AT_FDCWD, "/etc/app/config.yaml", O_RDONLY) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, "/usr/local/etc/app.conf", O_RDONLY) = 3
 read(3, "database:,   host: localhost,   port: 5432, ", 4096) = 45
@@ -272,8 +282,10 @@ strace -e trace=write -v -s 100 ./app
 # -v: 구조체 내용 자세히 출력
 # -s 100: 문자열을 100바이트까지 출력
 
+```
+
 ```text
-# 출력 예시:
+# 로그 작성 결과:
 write(2, "[2024-01-15 10:30:45] DEBUG: Processing request id=12345, ", 58) = 58
 write(2, "[2024-01-15 10:30:45] DEBUG: Validating user input, ", 51) = 51
 write(2, "[2024-01-15 10:30:45] DEBUG: Database query: SELECT * FROM users WHERE id = 12345, ", 81) = 81
