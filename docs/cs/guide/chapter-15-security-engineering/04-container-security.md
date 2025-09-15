@@ -60,7 +60,7 @@ CMD ["python3", "app.py"]
 - Docker Hub에서 다운로드 10,000회 이상
 - 컨테이너 실행 시 자동으로 암호화폐 채굴
 
-2020년: 정부기관 대상 공격  
+2020년: 정부기관 대상 공격
 - 가짜 OpenSSL 이미지에 백도어
 - CI/CD 파이프라인을 통해 자동 배포
 - 수개월간 탐지되지 않음
@@ -75,7 +75,7 @@ CMD ["python3", "app.py"]
 "컨테이너는 VM처럼 완전히 격리되어 있다"
 → 실제로는 같은 커널을 공유함
 
-"Docker 이미지는 공식이면 안전하다"  
+"Docker 이미지는 공식이면 안전하다"
 → 공식 이미지도 취약점이 있을 수 있음
 
 "컨테이너 안에서는 root가 안전하다"
@@ -101,7 +101,7 @@ IMAGE_NAME="myapp:latest"
 echo "1. Vulnerability Scanning with Trivy..."
 trivy image --severity HIGH,CRITICAL $IMAGE_NAME
 
-# 2. Docker Scout를 사용한 추가 스캔  
+# 2. Docker Scout를 사용한 추가 스캔
 echo "2. Additional scan with Docker Scout..."
 docker scout cves $IMAGE_NAME
 
@@ -231,31 +231,31 @@ services:
       # TLS 설정 (필수)
       REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
       REGISTRY_HTTP_TLS_KEY: /certs/domain.key
-      
+
       # 인증 설정
       REGISTRY_AUTH: htpasswd
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
       REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
-      
+
       # 취약점 스캔 연동
       REGISTRY_NOTIFICATIONS_ENDPOINTS: |
         - name: scanner
           url: https://scanner.company.com/webhook
           headers:
             Authorization: [Bearer <token>]
-    
+
     volumes:
       - registry-data:/var/lib/registry
       - ./certs:/certs:ro
       - ./auth:/auth:ro
-    
+
     # 보안 제약 사항
     security_opt:
       - no-new-privileges:true
     read_only: true
     tmpfs:
       - /tmp
-    
+
   # 취약점 스캐너 (Clair)
   clair:
     image: quay.io/coreos/clair:v2.1.8
@@ -312,30 +312,30 @@ spec:
     seccompProfile:             # seccomp 프로필
       type: RuntimeDefault
     supplementalGroups: [4000]  # 추가 그룹
-  
+
   containers:
   - name: app
     image: myapp:secure
-    
+
     # 컨테이너별 보안 컨텍스트
     securityContext:
       allowPrivilegeEscalation: false  # 권한 상승 금지
       runAsNonRoot: true
       runAsUser: 1000
       readOnlyRootFilesystem: true     # 루트 FS 읽기 전용
-      
+
       # Linux Capabilities 최소화
       capabilities:
         drop:
         - ALL                          # 모든 capability 제거
         add:
         - NET_BIND_SERVICE            # 필요한 것만 추가
-      
+
       # seccomp 프로필 (시스템 콜 제한)
       seccompProfile:
         type: Localhost
         localhostProfile: profiles/restricted.json
-    
+
     # 리소스 제한 (DoS 방지)
     resources:
       limits:
@@ -343,10 +343,10 @@ spec:
         memory: "512Mi"
         ephemeral-storage: "1Gi"
       requests:
-        cpu: "200m" 
+        cpu: "200m"
         memory: "256Mi"
         ephemeral-storage: "500Mi"
-    
+
     # 환경변수 (보안)
     env:
     - name: APP_ENV
@@ -357,7 +357,7 @@ spec:
         secretKeyRef:
           name: app-secrets
           key: db-password
-    
+
     # 볼륨 마운트 (최소한만)
     volumeMounts:
     - name: tmp-volume
@@ -367,20 +367,20 @@ spec:
     - name: config-volume
       mountPath: /app/config
       readOnly: true
-    
+
     # 헬스체크
     livenessProbe:
       httpGet:
         path: /health
         port: 8080
       initialDelaySeconds: 30
-    
+
     readinessProbe:
       httpGet:
         path: /ready
         port: 8080
       initialDelaySeconds: 5
-  
+
   # 볼륨 정의
   volumes:
   - name: tmp-volume
@@ -392,10 +392,10 @@ spec:
   - name: config-volume
     configMap:
       name: app-config
-  
+
   # DNS 정책
   dnsPolicy: ClusterFirst
-  
+
   # 자동 마운트 비활성화
   automountServiceAccountToken: false
 
@@ -412,7 +412,7 @@ spec:
   policyTypes:
   - Ingress
   - Egress
-  
+
   ingress:
   # 특정 네임스페이스의 특정 앱에서만 접근 허용
   - from:
@@ -425,7 +425,7 @@ spec:
     ports:
     - protocol: TCP
       port: 8080
-  
+
   egress:
   # 데이터베이스와 외부 API만 접근 허용
   - to:
@@ -449,26 +449,26 @@ spec:
 - rule: Container Run as Root User
   desc: Detect containers running as root user
   condition: >
-    spawned_process and container and proc.name != pause and 
+    spawned_process and container and proc.name != pause and
     user.uid=0 and not user_known_container_root_programs
   output: >
-    Container running as root user (user=%user.name user_uid=%user.uid 
+    Container running as root user (user=%user.name user_uid=%user.uid
     container=%container.info command=%proc.cmdline)
   priority: WARNING
 
 - rule: Sensitive File Access
   desc: Detect access to sensitive files
   condition: >
-    open_read and container and 
-    (fd.filename startswith /etc/shadow or 
+    open_read and container and
+    (fd.filename startswith /etc/shadow or
      fd.filename startswith /etc/passwd or
      fd.filename startswith /root/.ssh)
   output: >
-    Sensitive file accessed in container (user=%user.name 
+    Sensitive file accessed in container (user=%user.name
     file=%fd.name container=%container.info)
   priority: HIGH
 
-- rule: Container Escape Attempt  
+- rule: Container Escape Attempt
   desc: Detect potential container escape attempts
   condition: >
     spawned_process and container and
@@ -476,7 +476,7 @@ spec:
      proc.cmdline contains "docker run --privileged" or
      proc.cmdline contains "/proc/1/root")
   output: >
-    Container escape attempt detected (user=%user.name 
+    Container escape attempt detected (user=%user.name
     command=%proc.cmdline container=%container.info)
   priority: CRITICAL
 
@@ -488,7 +488,7 @@ spec:
      proc.cmdline contains "stratum" or
      proc.cmdline contains "mining.pool")
   output: >
-    Cryptocurrency mining detected (user=%user.name 
+    Cryptocurrency mining detected (user=%user.name
     command=%proc.cmdline container=%container.info)
   priority: HIGH
 
@@ -499,7 +499,7 @@ spec:
     (fd.rip in ("192.168.1.100", "10.0.0.1") or  # Known bad IPs
      fd.rport in (4444, 5555, 6666))  # Common backdoor ports
   output: >
-    Suspicious network activity (connection=%fd.rip:%fd.rport 
+    Suspicious network activity (connection=%fd.rip:%fd.rport
     container=%container.info)
   priority: HIGH
 ```
@@ -531,9 +531,9 @@ class ContainerSecurityMonitor:
             'docker', 'kubectl',              # 컨테이너 관리 도구
             'mount', 'umount',                # 파일시스템 조작
         ]
-        
+
         self.setup_logging()
-    
+
     def setup_logging(self):
         logging.basicConfig(
             level=logging.INFO,
@@ -544,88 +544,88 @@ class ContainerSecurityMonitor:
             ]
         )
         self.logger = logging.getLogger(__name__)
-    
+
     def monitor_containers(self):
         """실행 중인 모든 컨테이너 모니터링"""
-        
+
         while True:
             try:
                 containers = self.client.containers.list()
-                
+
                 for container in containers:
                     self.analyze_container_security(container)
-                
+
                 time.sleep(10)  # 10초마다 검사
-                
+
             except Exception as e:
                 self.logger.error(f"Monitoring error: {e}")
                 time.sleep(30)
-    
+
     def analyze_container_security(self, container):
         """개별 컨테이너 보안 분석"""
-        
+
         container_name = container.name
         container_id = container.id[:12]
-        
+
         # 1. 권한 검사
         self.check_privileged_container(container)
-        
+
         # 2. 프로세스 검사
         self.check_suspicious_processes(container)
-        
+
         # 3. 네트워크 연결 검사
         self.check_network_connections(container)
-        
+
         # 4. 파일시스템 접근 검사
         self.check_filesystem_access(container)
-        
+
         # 5. 리소스 사용량 검사
         self.check_resource_usage(container)
-    
+
     def check_privileged_container(self, container):
         """특권 컨테이너 검사"""
-        
+
         config = container.attrs.get('HostConfig', {})
-        
+
         # Privileged 모드 체크
         if config.get('Privileged', False):
             self.alert('CRITICAL', 'Privileged Container',
                       f"Container {container.name} is running in privileged mode",
                       container)
-        
+
         # 위험한 Capability 체크
         cap_add = config.get('CapAdd', [])
         dangerous_caps = ['SYS_ADMIN', 'SYS_PTRACE', 'SYS_MODULE', 'DAC_OVERRIDE']
-        
+
         for cap in cap_add:
             if cap in dangerous_caps:
                 self.alert('HIGH', 'Dangerous Capability',
                           f"Container {container.name} has dangerous capability: {cap}",
                           container)
-        
+
         # 호스트 네임스페이스 공유 체크
         if config.get('NetworkMode') == 'host':
             self.alert('HIGH', 'Host Network Mode',
                       f"Container {container.name} shares host network namespace",
                       container)
-        
+
         if config.get('PidMode') == 'host':
             self.alert('CRITICAL', 'Host PID Mode',
                       f"Container {container.name} shares host PID namespace",
                       container)
-    
+
     def check_suspicious_processes(self, container):
         """의심스러운 프로세스 검사"""
-        
+
         try:
             # 컨테이너 내부 프로세스 목록
             top_result = container.top()
             processes = top_result.get('Processes', [])
-            
+
             for process in processes:
                 if len(process) > 7:  # 프로세스 정보가 충분한 경우
                     pid, ppid, c, stime, tty, time, cmd = process[:7]
-                    
+
                     # 의심스러운 명령어 검사
                     for suspicious_cmd in self.suspicious_processes:
                         if suspicious_cmd in cmd.lower():
@@ -633,36 +633,36 @@ class ContainerSecurityMonitor:
                                      f"Suspicious process in container {container.name}: {cmd}",
                                      container)
                             break
-                    
+
                     # 암호화폐 채굴 프로세스 검사
                     mining_keywords = ['xmrig', 'minerd', 'cpuminer', 'stratum']
                     if any(keyword in cmd.lower() for keyword in mining_keywords):
                         self.alert('CRITICAL', 'Cryptocurrency Mining',
                                  f"Mining process detected in container {container.name}: {cmd}",
                                  container)
-        
+
         except Exception as e:
             self.logger.debug(f"Process check error for {container.name}: {e}")
-    
+
     def check_network_connections(self, container):
         """네트워크 연결 검사"""
-        
+
         try:
             # 컨테이너의 네트워크 통계
             stats = container.stats(stream=False)
             network_stats = stats.get('networks', {})
-            
+
             for interface, data in network_stats.items():
                 rx_bytes = data.get('rx_bytes', 0)
                 tx_bytes = data.get('tx_bytes', 0)
-                
+
                 # 비정상적으로 높은 네트워크 사용량
                 if rx_bytes > 100 * 1024 * 1024 or tx_bytes > 100 * 1024 * 1024:  # 100MB
                     self.alert('MEDIUM', 'High Network Usage',
                              f"High network usage in container {container.name}: "
                              f"RX: {rx_bytes/1024/1024:.2f}MB, TX: {tx_bytes/1024/1024:.2f}MB",
                              container)
-            
+
             # 포트 바인딩 검사
             port_bindings = container.attrs.get('HostConfig', {}).get('PortBindings', {})
             for container_port, host_bindings in port_bindings.items():
@@ -675,25 +675,25 @@ class ContainerSecurityMonitor:
                             self.alert('HIGH', 'Dangerous Port Binding',
                                      f"Container {container.name} exposes dangerous port {host_port}",
                                      container)
-        
+
         except Exception as e:
             self.logger.debug(f"Network check error for {container.name}: {e}")
-    
+
     def check_filesystem_access(self, container):
         """파일시스템 접근 검사"""
-        
+
         try:
             # 볼륨 마운트 검사
             mounts = container.attrs.get('Mounts', [])
-            
+
             for mount in mounts:
                 source = mount.get('Source', '')
                 destination = mount.get('Destination', '')
                 mode = mount.get('Mode', '')
-                
+
                 # 위험한 호스트 디렉토리 마운트
                 dangerous_mounts = ['/etc', '/root', '/home', '/var', '/usr', '/bin', '/sbin']
-                
+
                 for dangerous_path in dangerous_mounts:
                     if source.startswith(dangerous_path):
                         severity = 'CRITICAL' if 'rw' in mode else 'HIGH'
@@ -701,63 +701,63 @@ class ContainerSecurityMonitor:
                                  f"Container {container.name} mounts dangerous path: "
                                  f"{source} -> {destination} ({mode})",
                                  container)
-                
+
                 # Docker socket 마운트 (매우 위험)
                 if '/var/run/docker.sock' in source:
                     self.alert('CRITICAL', 'Docker Socket Mount',
                              f"Container {container.name} has access to Docker socket",
                              container)
-        
+
         except Exception as e:
             self.logger.debug(f"Filesystem check error for {container.name}: {e}")
-    
+
     def check_resource_usage(self, container):
         """리소스 사용량 검사"""
-        
+
         try:
             stats = container.stats(stream=False)
-            
+
             # CPU 사용량
             cpu_stats = stats.get('cpu_stats', {})
             precpu_stats = stats.get('precpu_stats', {})
-            
+
             if cpu_stats and precpu_stats:
                 cpu_usage = self.calculate_cpu_usage(cpu_stats, precpu_stats)
                 if cpu_usage > 90:  # 90% 이상 CPU 사용
                     self.alert('MEDIUM', 'High CPU Usage',
                              f"Container {container.name} using {cpu_usage:.2f}% CPU",
                              container)
-            
+
             # 메모리 사용량
             memory_stats = stats.get('memory_stats', {})
             if memory_stats:
                 memory_usage = memory_stats.get('usage', 0)
                 memory_limit = memory_stats.get('limit', 0)
-                
+
                 if memory_limit > 0:
                     memory_percent = (memory_usage / memory_limit) * 100
                     if memory_percent > 90:  # 90% 이상 메모리 사용
                         self.alert('MEDIUM', 'High Memory Usage',
                                  f"Container {container.name} using {memory_percent:.2f}% memory",
                                  container)
-        
+
         except Exception as e:
             self.logger.debug(f"Resource check error for {container.name}: {e}")
-    
+
     def calculate_cpu_usage(self, cpu_stats, precpu_stats):
         """CPU 사용률 계산"""
         cpu_delta = cpu_stats['cpu_usage']['total_usage'] - precpu_stats['cpu_usage']['total_usage']
         system_delta = cpu_stats['system_cpu_usage'] - precpu_stats['system_cpu_usage']
-        
+
         if system_delta > 0:
             cpu_percent = (cpu_delta / system_delta) * len(cpu_stats['cpu_usage']['percpu_usage']) * 100
             return cpu_percent
-        
+
         return 0
-    
+
     def alert(self, severity: str, alert_type: str, message: str, container):
         """보안 알림 발송"""
-        
+
         alert_data = {
             'timestamp': datetime.now().isoformat(),
             'severity': severity,
@@ -767,7 +767,7 @@ class ContainerSecurityMonitor:
             'container_name': container.name,
             'image': container.image.tags[0] if container.image.tags else 'unknown'
         }
-        
+
         if severity == 'CRITICAL':
             self.logger.critical(f"🚨 {alert_type}: {message}")
         elif severity == 'HIGH':
@@ -776,10 +776,10 @@ class ContainerSecurityMonitor:
             self.logger.warning(f"⚠️  {alert_type}: {message}")
         else:
             self.logger.info(f"ℹ️  {alert_type}: {message}")
-        
+
         # 실제 환경에서는 Slack, PagerDuty 등으로 알림
         self.send_alert_notification(alert_data)
-    
+
     def send_alert_notification(self, alert_data):
         """외부 시스템으로 알림 전송"""
         # 실제로는 Webhook, Slack API 등 사용
@@ -789,10 +789,10 @@ class ContainerSecurityMonitor:
 # 사용 예시
 if __name__ == "__main__":
     monitor = ContainerSecurityMonitor()
-    
+
     print("Starting container security monitoring...")
     print("Press Ctrl+C to stop")
-    
+
     try:
         monitor.monitor_containers()
     except KeyboardInterrupt:
@@ -824,7 +824,7 @@ metadata:
 spec:
   privileged: false                    # 특권 컨테이너 금지
   allowPrivilegeEscalation: false      # 권한 상승 금지
-  
+
   # 필수 사용자 설정
   runAsUser:
     rule: MustRunAsNonRoot            # 비root 사용자 필수
@@ -833,10 +833,10 @@ spec:
     ranges:
     - min: 1000
       max: 65535
-  
+
   # 파일시스템
   readOnlyRootFilesystem: true         # 읽기 전용 루트 FS 필수
-  
+
   # 볼륨 제한
   volumes:
   - 'configMap'
@@ -846,17 +846,17 @@ spec:
   - 'downwardAPI'
   - 'persistentVolumeClaim'
   # 위험한 볼륨 타입 제외: hostPath, hostPID, hostNetwork
-  
+
   # 네트워크
   hostNetwork: false                   # 호스트 네트워크 금지
   hostIPC: false                       # 호스트 IPC 금지
   hostPID: false                       # 호스트 PID 금지
-  
+
   # 포트 제한
   hostPorts:
   - min: 0
     max: 0                            # 호스트 포트 바인딩 금지
-  
+
   # Linux 보안
   seLinux:
     rule: RunAsAny
@@ -870,17 +870,17 @@ spec:
     ranges:
     - min: 1000
       max: 65535
-  
+
   # Capabilities 제한
   requiredDropCapabilities:
   - ALL                               # 모든 capability 제거 필수
   allowedCapabilities: []             # 추가 capability 허용 안함
   defaultAddCapabilities: []
-  
+
   # Seccomp
   seccomp:
     defaultProfile: runtime/default
-  
+
   # AppArmor (노드에서 지원하는 경우)
   annotations:
     apparmor.security.beta.kubernetes.io/allowedProfileNames: 'runtime/default'
@@ -943,7 +943,7 @@ docker run --privileged myapp       # 특권 모드 사용
 docker run -v /:/host-root myapp     # 호스트 루트 마운트
 docker run --net=host myapp         # 호스트 네트워크 사용
 
-# ✅ 안전한 설정들  
+# ✅ 안전한 설정들
 FROM node:18-alpine                  # 최소한의 Alpine 이미지
 USER 1000:1000                      # 비특권 사용자
 COPY package*.json ./                # 필요한 파일만 복사
@@ -967,7 +967,7 @@ docker run --read-only \
 ✅ 이미지 서명 및 검증
 ✅ Private Registry 사용
 
-# 런타임 보안  
+# 런타임 보안
 ✅ 비특권 사용자로 실행
 ✅ 읽기 전용 루트 파일시스템
 ✅ Capability 최소화
@@ -976,7 +976,7 @@ docker run --read-only \
 
 # Kubernetes 보안
 ✅ Pod Security Standards 적용
-✅ Network Policy 구성  
+✅ Network Policy 구성
 ✅ Service Account 최소 권한
 ✅ Secrets 암호화 저장
 ✅ 정기적인 보안 감사

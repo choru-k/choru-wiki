@@ -12,7 +12,7 @@ tags:
 ## 이 문서를 읽고 나면 답할 수 있는 질문들
 
 - Buffer Overflow 공격은 정확히 어떻게 이뤄지나요?
-- ASLR, DEP, Stack Canary는 어떤 원리로 작동하나요?  
+- ASLR, DEP, Stack Canary는 어떤 원리로 작동하나요?
 - Use-After-Free 취약점을 어떻게 탐지하고 방어하나요?
 - AddressSanitizer는 어떻게 메모리 오류를 찾아내나요?
 - 언어별로 메모리 안전성이 어떻게 다른가요?
@@ -29,10 +29,10 @@ tags:
 // Microsoft SQL Server의 취약한 코드 (의사 코드)
 void vulnerable_function(char* user_data) {
     char buffer[60];  // 60바이트 버퍼
-    
+
     // 길이 검증 없이 복사! 🚨
-    strcpy(buffer, user_data);  
-    
+    strcpy(buffer, user_data);
+
     // user_data가 60바이트보다 크면?
     // 스택 메모리 오버플로우 발생!
 }
@@ -62,26 +62,26 @@ graph TD
         B1[Buffer Overflow, 스택 오버플로우]
         B2[Return Address 덮어쓰기, 코드 실행 제어]
     end
-    
+
     subgraph "2000년대: 방어 우회"
         B3[ROP/JOP Chain, 기존 코드 조각 활용]
         B4[Heap Spraying, 힙 메모리 조작]
         B5[Format String Attack, printf 취약점 활용]
     end
-    
+
     subgraph "2010년대 이후: 고도화"
         B6[Use-After-Free, 해제된 메모리 재사용]
         B7[Type Confusion, 타입 시스템 우회]
         B8[Speculative Execution, CPU 투기실행 악용]
     end
-    
+
     B1 --> B3
     B2 --> B4
     B1 --> B5
     B3 --> B6
     B4 --> B7
     B5 --> B8
-    
+
     style B1 fill:#ffcdd2
     style B6 fill:#ff8a80
     style B8 fill:#ff5722
@@ -100,7 +100,7 @@ graph TD
 void vulnerable_function(char* input) {
     char buffer[256];           // 256바이트 버퍼
     char status[16] = "SAFE";   // 상태 변수
-    
+
     printf("Status: %s, ", status);
     strcpy(buffer, input);      // 🚨 위험한 복사!
     printf("Buffer: %s, ", buffer);
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
         printf("Usage: %s <input>, ", argv[0]);
         return 1;
     }
-    
+
     vulnerable_function(argv[1]);
     return 0;
 }
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
 # 1. 정상적인 입력 (255바이트 이하)
 $ ./vulnerable "Hello World"
 Status: SAFE
-Buffer: Hello World  
+Buffer: Hello World
 Status after copy: SAFE
 
 # 2. 공격적인 입력 (300바이트)
@@ -174,7 +174,7 @@ shellcode = (
 
 # 메모리 레이아웃 분석
 buffer_size = 256
-status_size = 16  
+status_size = 16
 saved_ebp = 4
 return_addr_offset = buffer_size + status_size + saved_ebp
 
@@ -216,7 +216,7 @@ except Exception as e:
 ```c
 // ASLR 없을 때: 예측 가능한 주소들
 Stack:    0xbffff000 (항상 동일)
-Heap:     0x08048000 (항상 동일)  
+Heap:     0x08048000 (항상 동일)
 Library:  0x40000000 (항상 동일)
 
 // ASLR 있을 때: 랜덤한 주소들
@@ -235,7 +235,7 @@ $ cat /proc/sys/kernel/randomize_va_space
 # 같은 프로그램을 여러 번 실행해서 주소 확인
 $ for i in {1..5}; do ./test_aslr; done
 Stack address: 0xbff8a340
-Stack address: 0xbf9c1340  
+Stack address: 0xbf9c1340
 Stack address: 0xbfea4340
 Stack address: 0xbf872340
 Stack address: 0xbfb19340
@@ -269,7 +269,7 @@ DEP 적용된 메모리:
 // 예시: system("/bin/sh") 호출을 위한 ROP 체인
 
 Gadget 1: pop %eax; ret        # EAX에 값 저장
-Gadget 2: pop %ebx; ret        # EBX에 값 저장  
+Gadget 2: pop %ebx; ret        # EBX에 값 저장
 Gadget 3: int 0x80             # 시스템 콜 호출
 Gadget 4: "/bin/sh" string     # 문자열 데이터
 
@@ -288,18 +288,18 @@ ROP Chain:
 void function_with_canary(char* input) {
     // 1. 카나리 값을 스택에 저장
     uint32_t canary = __stack_chk_guard;  // 랜덤한 값
-    
+
     char buffer[256];
-    
+
     // 2. 사용자 함수 실행
     strcpy(buffer, input);
-    
+
     // 3. 함수 리턴 전에 카나리 값 검증
     if (canary != __stack_chk_guard) {
         __stack_chk_fail();  // 스택 오버플로우 감지!
         abort();
     }
-    
+
     return;  // 카나리가 유효할 때만 리턴
 }
 ```
@@ -310,7 +310,7 @@ void function_with_canary(char* input) {
 # 카나리 보호 없이 컴파일
 $ gcc -fno-stack-protector -o vulnerable vulnerable.c
 
-# 카나리 보호와 함께 컴파일  
+# 카나리 보호와 함께 컴파일
 $ gcc -fstack-protector-all -o protected vulnerable.c
 
 # 공격 테스트
@@ -360,15 +360,15 @@ void delete_user(user_t* user) {
 int main() {
     user_t* user1 = create_user("Alice");
     user1->print_func(user1);  // 정상 작동: "User: Alice"
-    
+
     delete_user(user1);        // 메모리 해제
-    
+
     // 🚨 위험: 해제된 메모리에 접근 (Use-After-Free)
     user1->print_func(user1);  // Undefined Behavior!
-    
+
     // 만약 공격자가 해제된 메모리를 조작했다면?
     // print_func 포인터가 evil_function을 가리킬 수 있음
-    
+
     return 0;
 }
 ```
@@ -380,16 +380,16 @@ int main() {
 int main() {
     user_t* user1 = create_user("Alice");
     delete_user(user1);  // user1 메모리 해제
-    
+
     // 공격자가 같은 크기의 메모리를 할당해서 조작
     user_t* malicious_data = malloc(sizeof(user_t));
     strcpy(malicious_data->name, "Hacker");
     malicious_data->print_func = evil_function;  // 악성 함수로 변경!
-    
+
     // 해제된 메모리가 재할당되어 악성 데이터로 채워짐
     // 이제 user1->print_func는 evil_function을 가리킴
     user1->print_func(user1);  // 💀 악성 코드 실행!
-    
+
     return 0;
 }
 ```
@@ -403,9 +403,9 @@ int main() {
 2. free() 후:
    user1 → [freed memory - garbage data]
 
-3. 공격자의 재할당:  
+3. 공격자의 재할당:
    user1 → [name: "Hacker"][print_func: evil_function]
-   
+
 4. Use-After-Free 접근:
    user1->print_func(user1) → evil_function 실행! 💀
 ```
@@ -426,12 +426,12 @@ $ ./test_asan
 READ of size 8 at 0x602000000010 thread T0
     #0 0x4008a3 in main vulnerable.c:45
     #1 0x7f8b1234567 in __libc_start_main
-    
+
 0x602000000010 is located 0 bytes inside of 40-byte region [0x602000000010,0x602000000038)
 freed by thread T0 here:
     #0 0x4a0b2c in free (/usr/lib/x86_64-linux-gnu/libasan.so)
     #1 0x400876 in delete_user vulnerable.c:32
-    
+
 previously allocated by thread T0 here:
     #0 0x4a0d1e in malloc (/usr/lib/x86_64-linux-gnu/libasan.so)
     #1 0x400823 in create_user vulnerable.c:24
@@ -473,7 +473,7 @@ $ valgrind --tool=memcheck --leak-check=full ./vulnerable
 ==1234== HEAP SUMMARY:
 ==1234==     in use at exit: 40 bytes in 1 blocks
 ==1234==   total heap usage: 2 allocs, 1 frees, 50 bytes allocated
-==1234== 
+==1234==
 ==1234== 40 bytes in 1 block are definitely lost in loss record 1 of 1
 ==1234==    at 0x4C2AB80: malloc (in vgpreload_memcheck.so)
 ==1234==    by 0x400534: create_user (vulnerable.c:24)
@@ -487,7 +487,7 @@ $ valgrind --tool=memcheck --leak-check=full ./vulnerable
 // C: 모든 메모리 관리가 프로그래머 책임
 void risky_c_code() {
     char* buffer = malloc(100);
-    
+
     // 위험 요소들:
     strcpy(buffer, user_input);     // Buffer overflow 가능
     char* ptr2 = buffer;
@@ -502,7 +502,7 @@ void risky_c_code() {
 void safer_cpp_code() {
     auto buffer = std::make_unique<char[]>(100);
     // 자동으로 해제됨, 하지만 여전히 buffer overflow 위험
-    
+
     auto shared_ptr = std::make_shared<MyClass>();
     // 참조 카운팅으로 안전한 해제
 }
@@ -515,11 +515,11 @@ void safer_cpp_code() {
 fn safe_rust_code() {
     let mut buffer = String::with_capacity(100);
     buffer.push_str("Hello");
-    
+
     // 이런 코드는 컴파일 에러!
     let ptr1 = &buffer;
     let ptr2 = &mut buffer;  // ❌ 가변/불변 참조 동시 불가
-    
+
     // Use-after-free도 컴파일 에러!
     let reference;
     {
@@ -532,15 +532,15 @@ fn safe_rust_code() {
 // 안전한 Rust 코드
 fn rust_safety_demo() {
     let data = vec![1, 2, 3, 4, 5];
-    
+
     // 소유권 이동
     let moved_data = data;
     // println!("{:?}", data);  // ❌ 컴파일 에러: data 이미 이동됨
-    
+
     // 빌림 (borrowing)
     let borrowed = &moved_data;
     println!("Borrowed: {:?}", borrowed);  // ✅ 안전함
-    
+
     // 자동 해제 - 개발자가 신경 쓸 필요 없음
 } // moved_data가 여기서 자동으로 해제됨
 ```
@@ -565,10 +565,10 @@ func safeGoCode() {
 
 func unsafeGoCode() {
     data := []int{1, 2, 3}
-    
+
     // unsafe 패키지 사용 시 위험 요소 존재
     ptr := unsafe.Pointer(&data[0])
-    
+
     // 타입 안전성 우회 가능 (위험!)
     str := (*string)(ptr)
     fmt.Println(*str)  // 예측 불가능한 결과
@@ -591,14 +591,14 @@ func unsafeGoCode() {
 void handle_client(int client_socket) {
     char buffer[256];
     char response[512];
-    
+
     // 클라이언트로부터 데이터 수신
     int bytes_received = recv(client_socket, buffer, 1024, 0);  // 🚨 위험!
     buffer[bytes_received] = '\0';
-    
+
     // 응답 생성
     sprintf(response, "Echo: %s", buffer);  // 🚨 또 다른 위험!
-    
+
     send(client_socket, response, strlen(response), 0);
     close(client_socket);
 }
@@ -610,23 +610,23 @@ int main() {
         .sin_addr.s_addr = INADDR_ANY,
         .sin_port = htons(8080)
     };
-    
+
     bind(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr));
     listen(server_socket, 5);
-    
+
     printf("Server listening on port 8080..., ");
-    
+
     while (1) {
         struct sockaddr_in client_addr;
         socklen_t client_len = sizeof(client_addr);
-        
-        int client_socket = accept(server_socket, 
-                                 (struct sockaddr*)&client_addr, 
+
+        int client_socket = accept(server_socket,
+                                 (struct sockaddr*)&client_addr,
                                  &client_len);
-        
+
         handle_client(client_socket);
     }
-    
+
     return 0;
 }
 ```
@@ -648,27 +648,27 @@ int main() {
 void handle_client_secure(int client_socket) {
     char buffer[MAX_BUFFER_SIZE];
     char response[MAX_RESPONSE_SIZE];
-    
+
     // 안전한 데이터 수신
     int bytes_received = recv(client_socket, buffer, MAX_BUFFER_SIZE - 1, 0);
     if (bytes_received < 0) {
         perror("recv failed");
         return;
     }
-    
+
     buffer[bytes_received] = '\0';
-    
+
     // 안전한 문자열 조작
-    int result = snprintf(response, MAX_RESPONSE_SIZE, "Echo: %.*s", 
+    int result = snprintf(response, MAX_RESPONSE_SIZE, "Echo: %.*s",
                          MAX_BUFFER_SIZE - 10, buffer);
-    
+
     if (result < 0 || result >= MAX_RESPONSE_SIZE) {
         const char* error_msg = "Response too long";
         send(client_socket, error_msg, strlen(error_msg), 0);
     } else {
         send(client_socket, response, result, 0);
     }
-    
+
     close(client_socket);
 }
 ```
@@ -699,7 +699,7 @@ static allocation_t* allocations = NULL;
 void* debug_malloc(size_t size, const char* file, int line) {
     void* ptr = malloc(size);
     if (!ptr) return NULL;
-    
+
     allocation_t* alloc = malloc(sizeof(allocation_t));
     alloc->ptr = ptr;
     alloc->size = size;
@@ -708,40 +708,40 @@ void* debug_malloc(size_t size, const char* file, int line) {
     alloc->line = line;
     alloc->next = allocations;
     allocations = alloc;
-    
+
     printf("ALLOC: %p (%zu bytes) at %s:%d, ", ptr, size, file, line);
     return ptr;
 }
 
 void debug_free(void* ptr, const char* file, int line) {
     if (!ptr) return;
-    
+
     allocation_t* alloc = allocations;
     while (alloc) {
         if (alloc->ptr == ptr) {
             if (alloc->is_freed) {
-                printf("🚨 DOUBLE FREE detected: %p at %s:%d, ", 
+                printf("🚨 DOUBLE FREE detected: %p at %s:%d, ",
                       ptr, file, line);
-                printf("   Previously freed at %s:%d, ", 
+                printf("   Previously freed at %s:%d, ",
                       alloc->file, alloc->line);
                 abort();
             }
-            
+
             alloc->is_freed = 1;
             alloc->file = file;
             alloc->line = line;
-            
+
             // 메모리를 특별한 패턴으로 덮어쓰기
             memset(ptr, 0xDE, alloc->size);  // "DEAD" 패턴
-            
+
             printf("FREE: %p at %s:%d, ", ptr, file, line);
             free(ptr);
             return;
         }
         alloc = alloc->next;
     }
-    
-    printf("🚨 INVALID FREE detected: %p at %s:%d (not allocated), ", 
+
+    printf("🚨 INVALID FREE detected: %p at %s:%d (not allocated), ",
           ptr, file, line);
     abort();
 }
@@ -750,7 +750,7 @@ void check_use_after_free(void* ptr, const char* file, int line) {
     allocation_t* alloc = allocations;
     while (alloc) {
         if (alloc->ptr == ptr && alloc->is_freed) {
-            printf("🚨 USE-AFTER-FREE detected: %p at %s:%d, ", 
+            printf("🚨 USE-AFTER-FREE detected: %p at %s:%d, ",
                   ptr, file, line);
             printf("   Memory was freed at %s:%d, ", alloc->file, alloc->line);
             abort();
@@ -763,20 +763,20 @@ void check_use_after_free(void* ptr, const char* file, int line) {
 int main() {
     char* buffer1 = safe_malloc(100);
     char* buffer2 = safe_malloc(200);
-    
+
     strcpy(buffer1, "Hello");
     printf("Buffer1: %s, ", buffer1);
-    
+
     safe_free(buffer1);
     // buffer1은 이제 해제됨
-    
+
     // Use-after-free 시도 탐지
     check_use_after_free(buffer1, __FILE__, __LINE__);
     // printf("Buffer1: %s, ", buffer1);  // 이 줄 주석 해제하면 탐지됨
-    
+
     safe_free(buffer2);
     // safe_free(buffer2);  // 이 줄 주석 해제하면 double free 탐지
-    
+
     return 0;
 }
 ```
@@ -823,7 +823,7 @@ if command -v checksec &> /dev/null; then
     echo "Basic binary:"
     checksec --file=vulnerable_basic
     echo ""
-    echo "Secure binary:"  
+    echo "Secure binary:"
     checksec --file=vulnerable_secure
 else
     echo "checksec 도구가 설치되지 않음. 'apt install checksec' 설치 권장"
@@ -888,13 +888,13 @@ int safe_array_access(int* array, size_t array_size, size_t index) {
         fprintf(stderr, "Error: NULL array pointer, ");
         return -1;
     }
-    
+
     if (index >= array_size) {
-        fprintf(stderr, "Error: Index %zu out of bounds (size: %zu), ", 
+        fprintf(stderr, "Error: Index %zu out of bounds (size: %zu), ",
                 index, array_size);
         return -1;
     }
-    
+
     return array[index];
 }
 
@@ -903,16 +903,16 @@ int safe_string_copy(char* dest, size_t dest_size, const char* src) {
     if (!dest || !src) {
         return -1;  // NULL 포인터 체크
     }
-    
+
     if (dest_size == 0) {
         return -1;  // 대상 버퍼 크기 체크
     }
-    
+
     size_t src_len = strlen(src);
     if (src_len >= dest_size) {
         return -1;  // 소스가 너무 김
     }
-    
+
     memcpy(dest, src, src_len + 1);  // 널 터미네이터 포함
     return 0;
 }

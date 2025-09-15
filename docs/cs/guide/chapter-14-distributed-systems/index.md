@@ -38,7 +38,7 @@ tags:
 
 # 모든 게 완벽했음
 - 트랜잭션 완벽 지원 ✅
-- 데이터 일관성 보장 ✅  
+- 데이터 일관성 보장 ✅
 - 간단한 배포와 디버깅 ✅
 ```
 
@@ -91,7 +91,7 @@ lock_waiting_queries: 234개
     │    └─────────┘
     │         │
     │    ┌────▼────┐
-    │    │ Slave   │◄─── 읽기 요청  
+    │    │ Slave   │◄─── 읽기 요청
     │    │  DB     │
     │    └─────────┘
     │
@@ -103,7 +103,7 @@ lock_waiting_queries: 234개
 **9월: CAP 정리의 현실적 충격**
 
 ```text
-🎯 우리가 원했던 것: 
+🎯 우리가 원했던 것:
 Consistency + Availability + Partition tolerance (모든 것!)
 
 💥 현실:
@@ -114,7 +114,7 @@ Consistency + Availability + Partition tolerance (모든 것!)
 → Master DB 다운 시 읽기/쓰기 모두 중단
 → 사용자: "사이트가 안 돼요!"
 
-선택 2: Availability 우선  
+선택 2: Availability 우선
 → 분할된 DB들이 서로 다른 데이터 제공
 → 사용자: "데이터가 이상해요!"
 
@@ -139,7 +139,7 @@ try {
     result = remoteService.processOrder(order);
     // 타임아웃 발생... 이게 뭘 의미하는가?
     // 1. 네트워크가 느려서 응답이 늦은 것?
-    // 2. 서비스가 다운된 것?  
+    // 2. 서비스가 다운된 것?
     // 3. 주문은 처리됐는데 응답만 못 받은 것?
 } catch (TimeoutException e) {
     // 어떻게 처리해야 할까? 🤔
@@ -165,14 +165,14 @@ Event 2 (Server B): purchase_item at 14:30:45.890
 ```bash
 # 네트워크 장애의 다양한 형태
 1. 패킷 손실 (Packet Loss)
-2. 네트워크 분할 (Network Partition)  
+2. 네트워크 분할 (Network Partition)
 3. 높은 지연시간 (High Latency)
 4. 패킷 중복 (Packet Duplication)
 5. 패킷 순서 바뀜 (Out-of-order Delivery)
 
 # Fallacies of Distributed Computing
 1. 네트워크는 안정적이다 ❌
-2. 지연시간은 0이다 ❌  
+2. 지연시간은 0이다 ❌
 3. 대역폭은 무한하다 ❌
 4. 네트워크는 안전하다 ❌
 5. 토폴로지는 바뀌지 않는다 ❌
@@ -187,42 +187,42 @@ Event 2 (Server B): purchase_item at 14:30:45.890
 graph TD
     subgraph "분산 시스템 도전과제"
         SF[부분적 실패, Partial Failures]
-        NC[네트워크 신뢰성, Network Unreliability]  
+        NC[네트워크 신뢰성, Network Unreliability]
         CT[시계 동기화, Clock Synchronization]
         CS[데이터 일관성, Data Consistency]
     end
-    
+
     subgraph "핵심 해결 기법"
         FT[장애 허용, Fault Tolerance]
         RC[복제와 합의, Replication & Consensus]
         EC[최종 일관성, Eventual Consistency]
         PT[분산 트랜잭션, Distributed Transactions]
     end
-    
+
     subgraph "실전 패턴"
         CB[Circuit Breaker]
         RT[Retry & Timeout]
         BH[Bulkhead]
         SG[Saga Pattern]
     end
-    
+
     SF --> FT
     NC --> RC
-    CT --> EC  
+    CT --> EC
     CS --> PT
-    
+
     FT --> CB
     FT --> RT
     RC --> BH
     PT --> SG
-    
+
     style SF fill:#ffcdd2
     style NC fill:#ffcdd2
     style CT fill:#ffcdd2
     style CS fill:#ffcdd2
-    
+
     style FT fill:#c8e6c9
-    style RC fill:#c8e6c9  
+    style RC fill:#c8e6c9
     style EC fill:#c8e6c9
     style PT fill:#c8e6c9
 ```
@@ -253,7 +253,7 @@ CAP 정리의 실제 적용:
 
 **"분산된 노드들이 어떻게 합의에 도달하는가?"**
 
-- 🗳️ **Raft Algorithm**: 이해하기 쉬운 합의 알고리즘  
+- 🗳️ **Raft Algorithm**: 이해하기 쉬운 합의 알고리즘
 - 👑 **Leader Election**: 리더 선출 과정과 장애 처리
 - 📝 **Log Replication**: 명령어 순서 보장과 상태 동기화
 - 🏛️ **Byzantine Fault Tolerance**: 악의적 노드까지 고려한 합의
@@ -274,16 +274,16 @@ func (n *RaftNode) StartElection() {
     n.state = Candidate
     n.currentTerm++
     n.votedFor = n.id
-    
+
     votes := 1  // 자기 자신에게 투표
-    
+
     // 다른 노드들에게 투표 요청
     for _, peer := range n.peers {
         if peer.RequestVote(n.currentTerm, n.id) {
             votes++
         }
     }
-    
+
     // 과반수 득표 시 리더가 됨
     if votes > len(n.peers)/2 {
         n.state = Leader
@@ -312,39 +312,39 @@ class ConsistentHash:
         self.replicas = replicas  # 가상 노드 개수
         self.ring = {}
         self.sorted_keys = []
-        
+
         if nodes:
             for node in nodes:
                 self.add_node(node)
-    
+
     def add_node(self, node):
         """새 노드 추가 (리밸런싱 최소화)"""
         for i in range(self.replicas):
             virtual_key = self.hash(f"{node}:{i}")
             self.ring[virtual_key] = node
             bisect.insort(self.sorted_keys, virtual_key)
-    
+
     def remove_node(self, node):
         """노드 제거"""
         for i in range(self.replicas):
             virtual_key = self.hash(f"{node}:{i}")
             del self.ring[virtual_key]
             self.sorted_keys.remove(virtual_key)
-    
+
     def get_node(self, key):
         """키에 해당하는 노드 찾기"""
         if not self.ring:
             return None
-            
+
         hash_key = self.hash(key)
         idx = bisect.bisect_right(self.sorted_keys, hash_key)
-        
+
         # 링의 끝에 도달하면 처음으로 돌아감
         if idx == len(self.sorted_keys):
             idx = 0
-            
+
         return self.ring[self.sorted_keys[idx]]
-    
+
     def hash(self, key):
         return int(hashlib.md5(key.encode()).hexdigest(), 16)
 
@@ -362,7 +362,7 @@ ch.add_node('server4')
 **"실전에서 사용하는 분산 아키텍처 패턴들"**
 
 - ⚡ **Circuit Breaker**: 연쇄 장애 방지 패턴
-- 🔄 **Saga Pattern**: 분산 트랜잭션을 위한 보상 패턴  
+- 🔄 **Saga Pattern**: 분산 트랜잭션을 위한 보상 패턴
 - 🏗️ **CQRS**: Command와 Query 분리 아키텍처
 - 📨 **Event Sourcing**: 이벤트 기반 상태 관리
 
@@ -371,13 +371,13 @@ ch.add_node('server4')
 ```java
 public class CircuitBreaker {
     private enum State { CLOSED, OPEN, HALF_OPEN }
-    
+
     private State state = State.CLOSED;
     private int failureCount = 0;
     private long lastFailureTime = 0;
     private final int failureThreshold = 5;
     private final long timeout = 60000; // 60초
-    
+
     public <T> T call(Supplier<T> supplier) throws Exception {
         if (state == State.OPEN) {
             if (System.currentTimeMillis() - lastFailureTime > timeout) {
@@ -387,7 +387,7 @@ public class CircuitBreaker {
                 throw new RuntimeException("Circuit breaker is OPEN");
             }
         }
-        
+
         try {
             T result = supplier.get();
             onSuccess();
@@ -397,16 +397,16 @@ public class CircuitBreaker {
             throw e;
         }
     }
-    
+
     private void onSuccess() {
         failureCount = 0;
         state = State.CLOSED;
     }
-    
+
     private void onFailure() {
         failureCount++;
         lastFailureTime = System.currentTimeMillis();
-        
+
         if (failureCount >= failureThreshold) {
             state = State.OPEN;
         }
@@ -451,7 +451,7 @@ $ ./raft-simulator --nodes=5
 $ curl localhost:8080/status
 {
   "node_id": 1,
-  "state": "leader", 
+  "state": "leader",
   "term": 3,
   "cluster_size": 5
 }
@@ -473,14 +473,14 @@ type DistributedKV struct {
 func (dkv *DistributedKV) Put(key, value string) error {
     // 복제본 3개 저장
     nodes := dkv.hash.GetNodes(key, 3)
-    
+
     var errors []error
     for _, node := range nodes {
         if err := node.Put(key, value); err != nil {
             errors = append(errors, err)
         }
     }
-    
+
     // Quorum Write: 과반수 성공하면 성공
     if len(errors) <= len(nodes)/2 {
         return nil
@@ -490,7 +490,7 @@ func (dkv *DistributedKV) Put(key, value string) error {
 
 func (dkv *DistributedKV) Get(key string) (string, error) {
     nodes := dkv.hash.GetNodes(key, 3)
-    
+
     // Read Repair: 모든 복제본에서 읽어서 일관성 확인
     values := make(map[string]int)
     for _, node := range nodes {
@@ -498,7 +498,7 @@ func (dkv *DistributedKV) Get(key string) (string, error) {
             values[value]++
         }
     }
-    
+
     // 가장 많이 나타나는 값 반환 (과반수)
     var mostCommon string
     var maxCount int
@@ -508,7 +508,7 @@ func (dkv *DistributedKV) Get(key string) (string, error) {
             maxCount = count
         }
     }
-    
+
     return mostCommon, nil
 }
 ```
@@ -523,26 +523,26 @@ services:
     image: confluentinc/cp-zookeeper:7.4.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      
+
   kafka:
-    image: confluentinc/cp-kafka:7.4.0  
+    image: confluentinc/cp-kafka:7.4.0
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      
+
   # 마이크로서비스들
   user-service:
     build: ./services/user
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      
+
   order-service:
     build: ./services/order
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      
+
   payment-service:
-    build: ./services/payment  
+    build: ./services/payment
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 ```
@@ -558,7 +558,7 @@ $ chaos-monkey \
 
 # 결과 관찰:
 # - Circuit Breaker 동작 확인
-# - 데이터 일관성 검증  
+# - 데이터 일관성 검증
 # - 성능 지표 모니터링
 # - 복구 시간 측정
 
@@ -595,7 +595,7 @@ const payments = await paymentService.getPayments(orders);
 // ✅ 비동기적 사고
 Promise.all([
     userService.getUser(userId),
-    orderService.getOrders(userId), 
+    orderService.getOrders(userId),
     paymentService.getPayments(userId)
 ]).then(([user, orders, payments]) => {
     // 병렬 처리로 지연시간 최소화
@@ -609,7 +609,7 @@ Promise.all([
 사용자 경험: "사이트가 너무 자주 안 돼요" 😡
 비즈니스 영향: 매출 손실
 
-# 최종 일관성 (Eventual Consistency)  
+# 최종 일관성 (Eventual Consistency)
 사용자 경험: "가끔 데이터가 약간 이상해요" 🤔
 비즈니스 영향: 매출 유지
 
@@ -632,7 +632,7 @@ PUT /api/orders/550e8400-e29b-41d4-a716-446655440000
 {
   "user_id": 123,
   "amount": 100
-}  
+}
 # idempotency_key로 중복 방지
 ```
 
@@ -658,7 +658,7 @@ PUT /api/orders/550e8400-e29b-41d4-a716-446655440000
 특징:
 - 서비스별 독립적 데이터베이스
 - 비동기 통신 (Event-driven)
-- Circuit Breaker 패턴 적용  
+- Circuit Breaker 패턴 적용
 - 개별 서비스 배포 가능
 ```
 
@@ -670,16 +670,16 @@ PUT /api/orders/550e8400-e29b-41d4-a716-446655440000
 특징:
 - 자동 장애 감지 및 복구
 - 적응형 리소스 할당
-- AI 기반 이상 탐지  
+- AI 기반 이상 탐지
 - Zero-downtime 운영
 ```
 
 ## 🎯 이 장을 마스터하면
 
-✅ **CAP 정리 이해**: 분산 시스템의 근본적 제약을 이해하고 적절한 트레이드오프를 선택할 수 있습니다  
-✅ **합의 알고리즘 활용**: Raft, PBFT 등을 이해하고 실제 시스템에 적용할 수 있습니다  
-✅ **분산 데이터 관리**: 샤딩, 복제, 일관성 모델을 적절히 설계할 수 있습니다  
-✅ **장애 허용 설계**: Circuit Breaker, Bulkhead 등 패턴으로 안정적 시스템을 구축할 수 있습니다  
+✅ **CAP 정리 이해**: 분산 시스템의 근본적 제약을 이해하고 적절한 트레이드오프를 선택할 수 있습니다
+✅ **합의 알고리즘 활용**: Raft, PBFT 등을 이해하고 실제 시스템에 적용할 수 있습니다
+✅ **분산 데이터 관리**: 샤딩, 복제, 일관성 모델을 적절히 설계할 수 있습니다
+✅ **장애 허용 설계**: Circuit Breaker, Bulkhead 등 패턴으로 안정적 시스템을 구축할 수 있습니다
 
 ## 다음 단계
 

@@ -46,7 +46,7 @@ Load Average: 16.24, 18.33, 20.45
 **문제는**: 어디서부터 봐야 할지 모르겠다는 것이었습니다.
 
 - CPU가 뭘 하는지 알 수 없음
-- 메모리 누수인지 확신 없음  
+- 메모리 누수인지 확신 없음
 - Database가 문제인지 애플리케이션이 문제인지 불분명
 - **"일단 서버를 늘려보자"** ← 최악의 선택
 
@@ -58,7 +58,7 @@ Load Average: 16.24, 18.33, 20.45
 # 1단계: 전체 시스템 상황 파악 (2분)
 $ htop && iostat -x 1 && ss -tuln
 
-# 2단계: CPU 병목점 식별 (5분)  
+# 2단계: CPU 병목점 식별 (5분)
 $ perf top
 # 결과: image_resize_function이 87% CPU 사용!
 
@@ -83,7 +83,7 @@ $ perf script | flamegraph.pl > flame.svg
 이런 상황들 겪어보셨나요?
 
 - 🐌 **"어제까지 빨랐는데 오늘 갑자기 느려졌어요"**
-- 💥 **"서버를 늘렸는데도 여전히 느려요"**  
+- 💥 **"서버를 늘렸는데도 여전히 느려요"**
 - 🤔 **"개발 환경에서는 빠른데 운영에서만 느려요"**
 - 📊 **"어떤 부분을 최적화해야 할지 모르겠어요"**
 - 🔄 **"최적화했는데 별로 빨라지지 않았어요"**
@@ -98,26 +98,26 @@ graph TD
         A[사용자 불만, '느려요!'] --> B[시스템 모니터링, htop, iostat]
         B --> C[증상 분류, CPU/Memory/I/O/Network]
     end
-    
-    subgraph "2단계: 병목점 발견" 
+
+    subgraph "2단계: 병목점 발견"
         C --> D[프로파일링, perf, flamegraph]
         D --> E[Hot Path 식별, 80/20 법칙]
         E --> F[근본 원인 분석, 알고리즘, 아키텍처]
     end
-    
+
     subgraph "3단계: 최적화 실행"
         F --> G[최적화 전략 선택, 알고리즘 vs 하드웨어]
-        G --> H[코드 개선, 측정 기반 최적화]  
+        G --> H[코드 개선, 측정 기반 최적화]
         H --> I[성능 검증, Before/After 비교]
     end
-    
+
     subgraph "4단계: 지속적 관리"
         I --> J[모니터링 구축, 성능 회귀 방지]
         J --> K[팀 지식 공유, 최적화 노하우 전수]
     end
-    
+
     style A fill:#ffcccb
-    style E fill:#fff2cc  
+    style E fill:#fff2cc
     style H fill:#d4edda
     style J fill:#cce5ff
 ```
@@ -129,7 +129,7 @@ graph TD
 **"어디서부터 시작해야 할까?"**
 
 - 🎯 **USE Method**: Utilization, Saturation, Errors - 체계적 분석의 시작점
-- 🛠 **도구 체인**: top → htop → perf → flamegraph 의 단계적 활용  
+- 🛠 **도구 체인**: top → htop → perf → flamegraph 의 단계적 활용
 - 📏 **성능 목표**: P50, P95, P99 - 무엇을 측정할 것인가?
 - ⚖️ **Trade-off 이해**: Latency vs Throughput, 무엇을 선택할까?
 
@@ -137,12 +137,12 @@ graph TD
 graph LR
     subgraph "성능 분석 3단계"
         L1[Level 1, 전체 시스템, htop, glances]
-        L2[Level 2, 리소스별 분석, perf, iostat]  
+        L2[Level 2, 리소스별 분석, perf, iostat]
         L3[Level 3, 심층 프로파일링, flamegraph, strace]
     end
-    
+
     L1 --> L2 --> L3
-    
+
     style L1 fill:#e1f5fe
     style L2 fill:#fff3e0
     style L3 fill:#f3e5f5
@@ -180,7 +180,7 @@ graph LR
 **"언어/프레임워크별 특화 최적화"**
 
 - ☕ **JVM 튜닝**: GC 최적화, JIT 컴파일러 활용법
-- 🐹 **Go 최적화**: goroutine profiling, garbage collector 튜닝  
+- 🐹 **Go 최적화**: goroutine profiling, garbage collector 튜닝
 - 🟨 **Node.js**: V8 엔진 최적화, Worker threads 활용
 - 🗃 **Database**: 쿼리 최적화, 인덱스 전략, Connection pooling
 
@@ -196,7 +196,7 @@ $ time ./slow-app
 
 # 도구 체인 연습
 $ perf record -g ./slow-app
-$ perf script | flamegraph.pl > flame.svg  
+$ perf script | flamegraph.pl > flame.svg
 $ firefox flame.svg
 ```
 
@@ -209,7 +209,7 @@ for (int i = 0; i < N; i++) {
     result += data[random_index[i]];
 }
 
-// After: Sequential access (cache hit 많음)  
+// After: Sequential access (cache hit 많음)
 for (int i = 0; i < N; i++) {
     result += data[i];
 }
@@ -225,7 +225,7 @@ $ dd if=/dev/zero of=test bs=4K count=100K
 $ time cat test > /dev/null     # Sequential: 0.1초
 $ time shuf test > /dev/null    # Random: 5.2초
 
-# Network I/O 최적화  
+# Network I/O 최적화
 $ wrk -t12 -c400 -d30s http://localhost:8080/
 # 목표: 1000 RPS → 10000 RPS
 ```
@@ -242,7 +242,7 @@ $ wrk -t12 -c400 -d30s http://localhost:8080/
 # ❌ 틀린 접근
 "이 부분이 느릴 것 같으니까 최적화하자"
 
-# ✅ 올바른 접근  
+# ✅ 올바른 접근
 $ perf record -g ./app
 $ perf report  # 데이터 기반 최적화
 ```
@@ -264,10 +264,10 @@ $ perf report  # 데이터 기반 최적화
 
 ## 🎯 이 장을 마스터하면
 
-✅ **성능 문제 진단**: 체계적인 방법론으로 병목점을 빠르게 찾을 수 있습니다  
-✅ **최적화 도구 활용**: perf, flamegraph, strace 등을 자유자재로 사용할 수 있습니다  
-✅ **측정 기반 개선**: 추측이 아닌 데이터로 성능을 개선할 수 있습니다  
-✅ **비용 효율적 확장**: 서버 추가 없이 10배 성능 향상을 달성할 수 있습니다  
+✅ **성능 문제 진단**: 체계적인 방법론으로 병목점을 빠르게 찾을 수 있습니다
+✅ **최적화 도구 활용**: perf, flamegraph, strace 등을 자유자재로 사용할 수 있습니다
+✅ **측정 기반 개선**: 추측이 아닌 데이터로 성능을 개선할 수 있습니다
+✅ **비용 효율적 확장**: 서버 추가 없이 10배 성능 향상을 달성할 수 있습니다
 
 ## 실습 환경 준비
 
@@ -278,7 +278,7 @@ $ perf report  # 데이터 기반 최적화
 $ sudo apt-get update
 $ sudo apt-get install linux-tools-generic htop iotop sysstat
 
-# FlameGraph 도구 설치  
+# FlameGraph 도구 설치
 $ git clone https://github.com/brendangregg/FlameGraph
 $ export PATH=$PATH:$PWD/FlameGraph
 
