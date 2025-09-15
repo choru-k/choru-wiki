@@ -84,7 +84,7 @@ some avg10=2.00 avg60=1.50 avg300=1.00
 # → PSI 2%: 정상 동작, 대부분 cache
 
 # Pod B: 메모리 4GB/5GB (80% 사용)
-$ cat /sys/fs/cgroup/pod-b/memory.current  
+$ cat /sys/fs/cgroup/pod-b/memory.current
 4294967296  # 4GB
 
 $ cat /sys/fs/cgroup/pod-b/memory.pressure
@@ -106,7 +106,7 @@ def monitor_database_psi():
         line = f.readline()
         # some avg10=35.67 형식 파싱
         psi_value = float(line.split()[0].split('=')[1])
-        
+
         if psi_value > 10:
             print(f"WARNING: Database memory pressure: {psi_value}%")
             # 캐시 크기 조정 또는 쿼리 최적화 필요
@@ -129,17 +129,17 @@ PSI는 임계값 기반 트리거를 지원합니다:
 int setup_psi_trigger() {
     // memory.pressure 파일 열기
     int fd = open("/proc/pressure/memory", O_RDWR | O_NONBLOCK);
-    
+
     // 트리거 설정: 1초 동안 150ms 이상 stall
     const char trigger[] = "some 150000 1000000";
     write(fd, trigger, strlen(trigger) + 1);
-    
+
     // 이벤트 대기
     struct pollfd fds = {
         .fd = fd,
         .events = POLLPRI
     };
-    
+
     while (1) {
         if (poll(&fds, 1, -1) > 0) {
             if (fds.revents & POLLPRI) {
@@ -188,9 +188,9 @@ done
 for pod in $(kubectl get pods -o name); do
     POD_NAME=$(echo $pod | cut -d/ -f2)
     POD_UID=$(kubectl get $pod -o jsonpath='{.metadata.uid}')
-    
+
     CGROUP_PATH="/sys/fs/cgroup/memory/kubepods/pod${POD_UID}"
-    
+
     if [ -f "$CGROUP_PATH/memory.pressure" ]; then
         PSI=$(cat $CGROUP_PATH/memory.pressure | head -1 | awk '{print $2}' | cut -d= -f2)
         echo "$POD_NAME: $PSI%"
@@ -221,7 +221,7 @@ data:
 # 메모리 압력 비율
 rate(node_pressure_memory_waiting_seconds_total[5m]) * 100
 
-# CPU 압력 비율  
+# CPU 압력 비율
 rate(node_pressure_cpu_waiting_seconds_total[5m]) * 100
 
 # Alert 규칙
@@ -273,12 +273,12 @@ Facebook은 대규모 프로덕션 환경에서 다음 임계값을 사용합니
 realtime:
   memory_pressure_threshold: 5%
   action: scale_out
-  
+
 # 웹 애플리케이션 (균형)
 web:
   memory_pressure_threshold: 20%
   action: restart_or_scale
-  
+
 # 배치 작업 (처리량 중요)
 batch:
   memory_pressure_threshold: 50%
@@ -326,7 +326,7 @@ import (
 func GetMemoryPressure(cgroupPath string) float64 {
     data, _ := ioutil.ReadFile(cgroupPath + "/memory.pressure")
     lines := strings.Split(string(data), ", ")
-    
+
     // "some avg10=12.34" 파싱
     parts := strings.Split(lines[0], " ")
     for _, part := range parts {
@@ -406,21 +406,21 @@ THRESHOLD_CRITICAL=25
 
 while true; do
     PSI=$(cat /proc/pressure/memory | grep some | awk '{print $2}' | cut -d= -f2)
-    
+
     if (( $(echo "$PSI > $THRESHOLD_CRITICAL" | bc -l) )); then
         # 긴급 조치
         echo "CRITICAL: Memory pressure at $PSI%"
         # 캐시 비우기, 불필요한 서비스 중단
         sync && echo 1 > /proc/sys/vm/drop_caches
         systemctl stop non-critical-service
-        
+
     elif (( $(echo "$PSI > $THRESHOLD_WARNING" | bc -l) )); then
         # 경고
         echo "WARNING: Memory pressure at $PSI%"
         # 로그 로테이션, 임시 파일 정리
         find /tmp -mtime +1 -delete
     fi
-    
+
     sleep 5
 done
 ```
@@ -431,17 +431,17 @@ done
 def schedule_workload_by_psi():
     nodes = get_all_nodes()
     workload = get_pending_workload()
-    
+
     # PSI가 가장 낮은 노드 선택
     best_node = None
     lowest_psi = 100
-    
+
     for node in nodes:
         psi = get_node_psi(node)
         if psi < lowest_psi:
             lowest_psi = psi
             best_node = node
-    
+
     if lowest_psi > 30:
         # 모든 노드가 압력 상태
         scale_out_cluster()
@@ -459,7 +459,7 @@ DECLARE
 BEGIN
     -- PSI 확인 (외부 스크립트 통해)
     SELECT get_system_psi() INTO current_psi;
-    
+
     IF current_psi > 20 THEN
         -- 메모리 압력 높음: work_mem 감소
         ALTER SYSTEM SET work_mem = '4MB';
@@ -467,7 +467,7 @@ BEGIN
         -- 메모리 여유: work_mem 증가
         ALTER SYSTEM SET work_mem = '16MB';
     END IF;
-    
+
     SELECT pg_reload_conf();
 END $$;
 ```
