@@ -42,41 +42,41 @@ graph TB
         ARENA[Arena Allocator]
         SLAB[Slab Allocator]
     end
-    
+
     subgraph "Automatic Memory Management"
         REFCOUNT[Reference Counting]
         MARKSWEEP[Mark & Sweep]
         COPYING[Copying GC]
         GENERATIONAL[Generational GC]
     end
-    
+
     subgraph "Hybrid Approaches"
         RAII[RAII/Smart Pointers]
         OWNERSHIP[Ownership System]
         REGION[Region-based]
         ESCAPE[Escape Analysis]
     end
-    
+
     subgraph "Memory Issues"
         LEAK[Memory Leaks]
         FRAG[Fragmentation]
         DANGLING[Dangling Pointers]
         CYCLE[Circular References]
     end
-    
+
     MALLOC --> LEAK
     MALLOC --> DANGLING
     REFCOUNT --> CYCLE
     MARKSWEEP --> FRAG
-    
+
     RAII --> MALLOC
     OWNERSHIP --> REGION
     GENERATIONAL --> COPYING
-    
+
     style MALLOC fill:#FFE082
     style GENERATIONAL fill:#81C784
     style OWNERSHIP fill:#64B5F6
-```text
+```
 
 ## 이 장의 구성
 
@@ -148,15 +148,15 @@ $ GODEBUG=gctrace=1 ./app   # Go GC 추적
 $ htop                       # 메모리 사용량 모니터링
 $ vmstat 1                   # 가상 메모리 통계
 $ /proc/<pid>/status        # 상세 메모리 정보
-```text
+```
 
 ## 이 장을 읽고 나면
 
-✅ **메모리 할당자 이해**: malloc/free의 내부 동작 원리 파악  
-✅ **GC 알고리즘 마스터**: 다양한 가비지 컬렉션 전략 이해  
-✅ **언어별 특성 파악**: 각 언어의 메모리 관리 방식 비교  
-✅ **메모리 누수 해결**: 디버깅 도구 활용과 문제 진단  
-✅ **성능 최적화**: 메모리 효율적인 코드 작성 능력  
+✅ **메모리 할당자 이해**: malloc/free의 내부 동작 원리 파악
+✅ **GC 알고리즘 마스터**: 다양한 가비지 컬렉션 전략 이해
+✅ **언어별 특성 파악**: 각 언어의 메모리 관리 방식 비교
+✅ **메모리 누수 해결**: 디버깅 도구 활용과 문제 진단
+✅ **성능 최적화**: 메모리 효율적인 코드 작성 능력
 
 ## 핵심 개념 미리보기
 
@@ -212,30 +212,30 @@ mindmap
         Heap Profiler
         Allocation Tracker
         Memory Snapshot
-```text
+```
 
 ## 메모리 문제 진단 플로우차트
 
 ```mermaid
 graph TD
     Start[메모리 문제 발생] --> Type{문제 유형?}
-    
+
     Type -->|메모리 누수| Leak[누수 분석]
     Leak --> Valgrind[Valgrind 실행]
     Valgrind --> FixLeak[누수 지점 수정]
-    
+
     Type -->|성능 저하| Perf[성능 분석]
     Perf --> Profile[힙 프로파일링]
     Profile --> Optimize[할당 패턴 최적화]
-    
+
     Type -->|GC 일시정지| GC[GC 분석]
     GC --> Logs[GC 로그 확인]
     Logs --> Tuning[GC 파라미터 튜닝]
-    
+
     Type -->|세그폴트| Crash[크래시 분석]
     Crash --> Core[코어 덤프 분석]
     Core --> Fix[메모리 접근 수정]
-```text
+```
 
 ## 다음 단계
 
