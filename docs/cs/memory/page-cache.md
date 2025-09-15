@@ -122,7 +122,7 @@ $ docker pull ubuntu:latest
 $ kubectl get pods -o wide
 NAME     READY   STATUS    NODE
 pod-a    1/1     Running   node1  # ubuntu:latest 사용
-pod-b    1/1     Running   node1  # ubuntu:latest 사용  
+pod-b    1/1     Running   node1  # ubuntu:latest 사용
 pod-c    1/1     Running   node1  # ubuntu:latest 사용
 
 # Page Cache 상태
@@ -140,7 +140,7 @@ start = time.time()
 model = load_model("/shared/model.bin")  # 5GB 모델, 디스크에서 읽기
 print(f"Load time: {time.time() - start}s")  # 30초
 
-# Pod B - 두 번째 실행 (빠름)  
+# Pod B - 두 번째 실행 (빠름)
 start = time.time()
 model = load_model("/shared/model.bin")  # Page Cache에서 읽기
 print(f"Load time: {time.time() - start}s")  # 2초
@@ -227,7 +227,7 @@ spec:
       initContainers:
       - name: warm-cache
         image: busybox
-        command: 
+        command:
         - sh
         - -c
         - |
@@ -336,7 +336,7 @@ while true; do
         CACHE=$(cat $CGROUP_PATH/memory.stat | grep "^cache" | awk '{print $2}')
         RSS=$(cat $CGROUP_PATH/memory.stat | grep "^rss" | awk '{print $2}')
         TOTAL=$(cat $CGROUP_PATH/memory.usage_in_bytes)
-        
+
         echo "$(date): RSS=$((RSS/1024/1024))MB, Cache=$((CACHE/1024/1024))MB, Total=$((TOTAL/1024/1024))MB"
     fi
     sleep 1

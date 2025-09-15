@@ -44,7 +44,7 @@ $ python manage.py runserver
 
 ```bash
 # 운영팀: "Python 업그레이드는 안 됩니다"
-$ python --version  
+$ python --version
 Python 2.4.3  # 😱 버전이 다름
 
 $ yum install python-django
@@ -53,7 +53,7 @@ $ yum install python-django
 $ python manage.py runserver
 # ImportError: No module named 'requests'
 # 의존성 지옥의 시작...
-```
+```text
 
 **밤 12시: 여전히 안 되는 배포**
 
@@ -90,12 +90,12 @@ $ docker build -t myapp:latest .
 $ docker run myapp:latest
 # 완벽하게 동작!
 
-# 스테이징 서버  
+# 스테이징 서버
 $ docker run myapp:latest
 # 똑같이 동작!
 
 # 운영 서버
-$ docker run myapp:latest  
+$ docker run myapp:latest
 # 여전히 똑같이 동작! 🎉
 
 # 개발자: "드디어 금요일 6시에 퇴근할 수 있다!" 🍺
@@ -106,7 +106,7 @@ $ docker run myapp:latest
 하지만 컨테이너는 단순한 패키징 도구가 아닙니다. 그 뒤에는 **Linux 커널의 고급 기능들**이 숨어 있습니다:
 
 - **Namespace**: 각 컨테이너가 독립된 세계를 보도록
-- **Cgroup**: 리소스 사용량을 통제  
+- **Cgroup**: 리소스 사용량을 통제
 - **Union FS**: 레이어 기반 효율적 저장
 - **네트워크 격리**: 가상 네트워크 스택
 
@@ -126,7 +126,7 @@ $ docker run -d app999  # 😱
 $ docker ps | grep Exited  # 수십 개 컨테이너가 죽어있음
 $ docker start app42 app67 app123 app456...  # 하나씩 재시작
 
-# 트래픽 급증하면?  
+# 트래픽 급증하면?
 $ docker run -d app1  # 수동으로 스케일링
 $ docker run -d app1
 $ docker run -d app1  # 언제까지 수동으로 할 거야? 😭
@@ -147,10 +147,10 @@ spec:
       containers:
       - name: myapp
         image: myapp:latest
-        
+
 # Kubernetes가 자동으로:
 # 1. 10개 인스턴스 실행
-# 2. 죽은 인스턴스 자동 재시작  
+# 2. 죽은 인스턴스 자동 재시작
 # 3. 트래픽에 따른 자동 스케일링
 # 4. 무중단 배포
 ```
@@ -164,43 +164,43 @@ graph TD
         C[Control Groups, CPU, Memory, I/O 제한]
         U[Union Filesystem, OverlayFS, AUFS]
     end
-    
+
     subgraph "Container Runtime"
         D[Docker Engine]
-        CT[containerd] 
+        CT[containerd]
         R[runc]
         P[Podman]
     end
-    
+
     subgraph "Kubernetes Core"
         AP[API Server, 중앙 제어점]
         ET[etcd, 분산 저장소]
         SC[Scheduler, 파드 배치]
         CM[Controller Manager, 상태 관리]
     end
-    
-    subgraph "Workload Management"  
+
+    subgraph "Workload Management"
         PO[Pods, 최소 실행 단위]
         DP[Deployments, 앱 배포 관리]
         SV[Services, 네트워크 추상화]
         IN[Ingress, 외부 트래픽 라우팅]
     end
-    
+
     N --> D
     C --> D
     U --> D
-    
+
     D --> CT
     CT --> R
-    
+
     AP --> SC
     AP --> CM
     ET --> AP
-    
+
     PO --> DP
     DP --> SV
     SV --> IN
-    
+
     style N fill:#e1f5fe
     style C fill:#fff3e0
     style U fill:#f3e5f5
@@ -214,7 +214,7 @@ graph TD
 **"Docker는 어떻게 격리를 만드는가?"**
 
 - 🏠 **Linux Namespace**: 각 컨테이너가 독립된 세계를 보는 방법
-- 🎛️ **Control Groups**: CPU, 메모리, I/O 리소스 제한의 원리  
+- 🎛️ **Control Groups**: CPU, 메모리, I/O 리소스 제한의 원리
 - 📁 **Union Filesystem**: 레이어 기반 이미지 시스템의 마법
 - 🔧 **Container Runtime**: Docker vs containerd vs Podman의 차이점
 
@@ -223,7 +223,7 @@ graph TD
 ```bash
 # namespace와 cgroup만으로 간단한 컨테이너 구현
 $ sudo unshare -p -f --mount-proc chroot rootfs /bin/bash
-# 내가 만든 미니 컨테이너에서 실행 중! 
+# 내가 만든 미니 컨테이너에서 실행 중!
 ```
 
 ### [12.2 Docker 오케스트레이션](02-docker-orchestration.md)
@@ -242,7 +242,7 @@ $ sudo unshare -p -f --mount-proc chroot rootfs /bin/bash
 **"k8s 클러스터는 어떻게 동작하는가?"**
 
 - 🎯 **Control Plane**: API Server, etcd, Scheduler, Controller Manager
-- 💪 **Node Components**: kubelet, kube-proxy, Container Runtime  
+- 💪 **Node Components**: kubelet, kube-proxy, Container Runtime
 - 📦 **Workload Resources**: Pod, Deployment, Service, ConfigMap
 - 🌐 **네트워킹**: CNI, Service Mesh, Ingress Controller
 
@@ -262,7 +262,7 @@ $ sudo unshare -p -f --mount-proc chroot rootfs /bin/bash
 **"대규모 클러스터 운영 노하우"**
 
 - ⚖️ **Auto Scaling**: HPA, VPA, Cluster Autoscaler 완전 정복
-- 📈 **Service Mesh**: Istio를 활용한 마이크로서비스 관리  
+- 📈 **Service Mesh**: Istio를 활용한 마이크로서비스 관리
 - 🗃️ **Stateful Applications**: 데이터베이스, 메시지큐 운영
 - 🔄 **GitOps**: ArgoCD를 활용한 선언적 배포
 
@@ -276,7 +276,7 @@ $ git clone container-lab/build-your-own-container
 $ make build
 # 목표: namespace, cgroup, chroot만으로 컨테이너 구현
 
-# 미션 2: Docker 최적화 챌린지  
+# 미션 2: Docker 최적화 챌린지
 $ docker build -t myapp:fat .   # Before: 1.2GB
 $ docker build -t myapp:slim .  # After: 45MB
 # 목표: 이미지 크기 95% 감소
@@ -287,7 +287,7 @@ $ docker build -t myapp:slim .  # After: 45MB
 ```bash
 # 로컬 k8s 클러스터 설치 (3가지 방법 비교)
 $ kind create cluster --name dev-cluster
-$ minikube start --driver=docker  
+$ minikube start --driver=docker
 $ k3s server --write-kubeconfig-mode 644
 
 # 첫 애플리케이션 배포
@@ -323,7 +323,7 @@ spec:
       steps:
       - setWeight: 10  # 10% 트래픽
       - pause: {duration: 30s}
-      - setWeight: 50  # 50% 트래픽  
+      - setWeight: 50  # 50% 트래픽
       - pause: {duration: 30s}
       - setWeight: 100 # 100% 트래픽
 ```
@@ -351,7 +351,7 @@ $ docker run -it ubuntu
 root@container:/# echo "hello" > /tmp/test.txt
 root@container:/# exit
 
-$ docker run -it ubuntu  
+$ docker run -it ubuntu
 root@container:/# cat /tmp/test.txt  # 파일이 없음!
 # 각 컨테이너는 새로운 쓰기 가능 레이어를 가짐
 ```
@@ -365,7 +365,7 @@ spec:
 
 # Kubernetes 내부:
 # 1. 현재 상태 확인 (2개 실행 중)
-# 2. 차이 계산 (1개 부족)  
+# 2. 차이 계산 (1개 부족)
 # 3. 액션 실행 (1개 추가 생성)
 # 4. 지속적 모니터링
 ```
@@ -380,14 +380,14 @@ spec:
 │  ┌───────────────────────┐  │
 │  │    Monolithic App     │  │
 │  │  ┌─────┬─────┬─────┐  │  │
-│  │  │ Web │ API │ DB  │  │  │  
+│  │  │ Web │ API │ DB  │  │  │
 │  │  └─────┴─────┴─────┘  │  │
 │  └───────────────────────┘  │
 └─────────────────────────────┘
 
 문제점:
 - 하나 장애시 전체 다운
-- 스케일링 어려움  
+- 스케일링 어려움
 - 배포 위험성 높음
 - 리소스 낭비
 ```
@@ -416,10 +416,10 @@ spec:
 
 ## 🎯 이 장을 마스터하면
 
-✅ **컨테이너 원리 이해**: Linux namespace, cgroup의 동작 원리를 깊이 있게 알 수 있습니다  
-✅ **Docker 최적화**: 이미지 크기 최적화, 보안 강화, 성능 튜닝을 할 수 있습니다  
-✅ **Kubernetes 운영**: Production 클러스터를 안정적으로 운영할 수 있습니다  
-✅ **현대 DevOps**: CI/CD 파이프라인과 GitOps 워크플로우를 구축할 수 있습니다  
+✅ **컨테이너 원리 이해**: Linux namespace, cgroup의 동작 원리를 깊이 있게 알 수 있습니다
+✅ **Docker 최적화**: 이미지 크기 최적화, 보안 강화, 성능 튜닝을 할 수 있습니다
+✅ **Kubernetes 운영**: Production 클러스터를 안정적으로 운영할 수 있습니다
+✅ **현대 DevOps**: CI/CD 파이프라인과 GitOps 워크플로우를 구축할 수 있습니다
 
 ## 실습 환경 준비
 
@@ -453,7 +453,7 @@ $ kubectl cluster-info
 
 2010년, 프랑스의 작은 PaaS 회사 dotCloud에서 내부 도구로 시작된 Docker가 세상을 바꿨습니다.
 
-### Brendan Burns - Kubernetes 공동 창시자  
+### Brendan Burns - Kubernetes 공동 창시자
 >
 > **"Kubernetes is the Linux of the cloud"**
 
@@ -472,7 +472,7 @@ Google의 10년간 컨테이너 운영 노하우를 모든 개발자가 쓸 수 
 Docker = "Dock Worker" (항구 노동자)
 컨테이너를 효율적으로 옮기는 항구 노동자에서 영감을 받았습니다.
 
-### Kubernetes의 이름 유래  
+### Kubernetes의 이름 유래
 
 Kubernetes = 그리스어로 "키잡이, 조타수"
 컨테이너라는 배를 조종하는 선장의 의미입니다. (그래서 로고가 배 키 모양 ⚓)
@@ -481,7 +481,7 @@ Kubernetes = 그리스어로 "키잡이, 조타수"
 
 - 1979년: Unix chroot (파일시스템 격리)
 - 2000년: FreeBSD Jails (완전한 격리)
-- 2005년: Solaris Zones  
+- 2005년: Solaris Zones
 - 2008년: LXC (Linux Containers)
 - 2013년: Docker (사용자 친화적 인터페이스)
 
@@ -501,7 +501,7 @@ Kubernetes = 그리스어로 "키잡이, 조타수"
 - [Chapter 13: Observability & Debugging](../chapter-13-observability-debugging/index.md) - 컨테이너 환경 모니터링과 디버깅
 - [Chapter 15: Security Engineering](../chapter-15-security-engineering/index.md) - 컨테이너 보안과 Zero Trust 아키텍처
 
-### 고급 주제  
+### 고급 주제
 
 - [Chapter 14: Distributed Systems](../chapter-14-distributed-systems/index.md) - 마이크로서비스와 분산 시스템 설계
 - [Chapter 16: System Design Patterns](../chapter-16-system-design-patterns/index.md) - 클라우드 네이티브 아키텍처 패턴

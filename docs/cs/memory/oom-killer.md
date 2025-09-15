@@ -49,7 +49,7 @@ if (memory_usage > memory.high) {
     reclaim_page_cache();        // 깨끗한 페이지 먼저
     reclaim_dirty_pages();        // 더티 페이지 writeback 후 회수
     reclaim_anonymous_pages();    // 스왑 활성화 시 anonymous 페이지
-    
+
     // 2. 회수 목표량
     reclaim_target = memory_usage - (memory.high * 0.9);
 }
@@ -62,7 +62,7 @@ if (memory_usage > memory.high) {
 if (memory_usage > memory.high) {
     overage = memory_usage - memory.high;
     max_overage = memory.max - memory.high;
-    
+
     // 초과량에 비례하여 지연 증가
     delay_ms = (overage / max_overage) * MAX_DELAY;
     sleep(delay_ms);  // 프로세스가 잠시 멈춤!
@@ -180,16 +180,16 @@ func GetContainerOOMScoreAdjust(pod *v1.Pod, container *v1.Container) int {
     case v1.PodQOSGuaranteed:
         // Guaranteed: -998 (거의 안 죽음)
         return -998
-    
+
     case v1.PodQOSBestEffort:
         // BestEffort: 1000 (가장 먼저 죽음)
         return 1000
-    
+
     case v1.PodQOSBurstable:
         // Burstable: request 비율에 따라 계산
         memoryRequest := container.Resources.Requests.Memory()
         machineMemory := node.Status.Capacity.Memory()
-        
+
         // score = 1000 - (1000 * request / nodeCapacity)
         score := 1000 - int(1000 * memoryRequest / machineMemory)
         return min(max(score, 2), 999)
@@ -369,7 +369,7 @@ memory.oom.group 설정 시, OOM 발생하면 전체 그룹이 함께 종료되�
 DefaultMemoryPressureLimitPercent=60%
 DefaultMemoryPressureDurationSec=20s
 
-# 메모리 압력이 20초 동안 60% 이상이면 
+# 메모리 압력이 20초 동안 60% 이상이면
 # OOM Score가 높은 프로세스부터 종료
 ```
 
@@ -387,7 +387,7 @@ spec:
         memory: "1Gi"
       limits:
         memory: "1Gi"  # Guaranteed QoS
-        
+
 # 버스트 허용 워크로드
   - name: batch
     resources:
@@ -455,7 +455,7 @@ cat /sys/fs/cgroup/*/memory.pressure
 
 ```bash
 # OOM Score 높은 프로세스 찾기
-for pid in $(ls /proc | grep '^[0-9]'); do 
+for pid in $(ls /proc | grep '^[0-9]'); do
     if [ -r /proc/$pid/oom_score ]; then
         echo "$pid $(cat /proc/$pid/oom_score) $(cat /proc/$pid/comm)"
     fi

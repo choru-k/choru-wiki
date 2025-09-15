@@ -27,8 +27,8 @@ Physical Memory without Virtual Memory:
 ┌─────────────────────────────────────┐ 0xFFFFFFFF
 │     Process C (Crashed!)            │ ← 프로세스 종료시 메모리 구멍
 ├─────────────────────────────────────┤
-│     Process B                       │ 
-├─────────────────────────────────────┤ 
+│     Process B                       │
+├─────────────────────────────────────┤
 │     Process A (Fragmented)          │ ← 연속된 메모리 찾기 어려움
 ├─────────────────────────────────────┤
 │     OS Kernel                       │
@@ -36,7 +36,7 @@ Physical Memory without Virtual Memory:
 
 문제점:
 1. 메모리 보호 없음 - 프로세스간 침범 가능
-2. 외부 단편화 - 연속된 큰 메모리 할당 어려움  
+2. 외부 단편화 - 연속된 큰 메모리 할당 어려움
 3. 물리 주소 직접 사용 - 프로그램 위치 의존성
 4. 스와핑 복잡 - 전체 프로세스만 교체 가능
 ```
@@ -91,7 +91,7 @@ Virtual Address Space Layout (x86_64):
 │                                     │
 │     Stack (grows down)              │ ↓
 │     ↕ Memory Mapped Region          │
-│     Heap (grows up)                 │ ↑ 
+│     Heap (grows up)                 │ ↑
 │     BSS (uninitialized data)        │
 │     Data (initialized globals)      │
 │     Text (code)                     │
@@ -110,24 +110,24 @@ int uninitialized_var;                  // BSS segment
 
 int main() {
     int stack_var = 10;                 // Stack
-    
+
     // 동적 할당 (Heap)
     void* heap_ptr = malloc(1024);
-    
+
     // Memory mapped file
     void* mmap_ptr = mmap(NULL, 4096, PROT_READ | PROT_WRITE,
                          MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-    
+
     printf("Code (text):    %p, ", main);
     printf("Data:           %p, ", &global_var);
-    printf("BSS:            %p, ", &uninitialized_var);  
+    printf("BSS:            %p, ", &uninitialized_var);
     printf("Stack:          %p, ", &stack_var);
     printf("Heap:           %p, ", heap_ptr);
     printf("Mmap:           %p, ", mmap_ptr);
-    
+
     // 실제 출력 예시:
     // Code (text):    0x000055b8c2f4d149
-    // Data:           0x000055b8c2f4f010  
+    // Data:           0x000055b8c2f4f010
     // BSS:            0x000055b8c2f4f014
     // Stack:          0x00007ffe8b9e5b8c
     // Heap:           0x000055b8c3d70260
@@ -146,10 +146,10 @@ MemTotal:       32947404 kB    # 32GB 물리 RAM
 MemFree:         1248752 kB    # 1.2GB 사용 가능
 MemAvailable:   25589544 kB    # 25GB 실제 사용 가능
 
-# 물리 메모리 맵 확인 
+# 물리 메모리 맵 확인
 $ cat /proc/iomem
 00000000-00000fff : System RAM
-00001000-0009fbff : System RAM  
+00001000-0009fbff : System RAM
 000a0000-000bffff : PCI Bus 0000:00
 ...
 100000000-83fffffff : System RAM    # 32GB 주소 범위
@@ -161,7 +161,7 @@ $ cat /proc/iomem
 Physical Memory Layout:
 ┌─────────────────────────────────────┐ 32GB
 │        Available RAM                │
-├─────────────────────────────────────┤ 
+├─────────────────────────────────────┤
 │        Kernel Direct Map            │ ← 커널이 직접 매핑
 ├─────────────────────────────────────┤
 │        DMA Zone                     │ ← 하드웨어 DMA용
@@ -182,11 +182,11 @@ Physical Memory Layout:
 Virtual Address (64-bit):
 ┌─────┬─────┬─────┬─────┬─────┬─────────────┐
 │ --- │PML4 │PDPT │ PD  │ PT  │   Offset    │
-│16bit│9bit │9bit │9bit │9bit │   12bit     │  
+│16bit│9bit │9bit │9bit │9bit │   12bit     │
 └─────┴─────┴─────┴─────┴─────┴─────────────┘
   |     |     |     |     |         |
   |     |     |     |     |         └─ 4KB Page 내 offset
-  |     |     |     |     └─ Page Table index  
+  |     |     |     |     └─ Page Table index
   |     |     |     └─ Page Directory index
   |     |     └─ Page Directory Pointer Table index
   |     └─ Page Map Level 4 index
@@ -200,7 +200,7 @@ CR3 Register ──┐
           │  PML4   │ ────────────┐
           │ Table   │             │
           └─────────┘             ▼
-               │               ┌─────────┐  PDPT Index  
+               │               ┌─────────┐  PDPT Index
                │               │  PDPT   │ ────────────┐
                │               │ Table   │             │
                │               └─────────┘             ▼
@@ -231,7 +231,7 @@ typedef unsigned long pte_t;
 #define _PAGE_RW         (1UL << 1)  // RW: 읽기/쓰기 권한
 #define _PAGE_USER       (1UL << 2)  // U:  사용자 모드 접근 허용
 #define _PAGE_PWT        (1UL << 3)  // PWT: Page Write Through
-#define _PAGE_PCD        (1UL << 4)  // PCD: Page Cache Disable  
+#define _PAGE_PCD        (1UL << 4)  // PCD: Page Cache Disable
 #define _PAGE_ACCESSED   (1UL << 5)  // A:  접근됨 (하드웨어가 설정)
 #define _PAGE_DIRTY      (1UL << 6)  // D:  수정됨 (쓰기시 하드웨어가 설정)
 #define _PAGE_PSE        (1UL << 7)  // PS: Page Size (large page)
@@ -278,7 +278,7 @@ MMU는 CPU와 메모리 사이에서 가상 주소를 물리 주소로 변환합
 
 ```text
 CPU Address Translation Flow:
-                    
+
 CPU Core            MMU                     Physical Memory
 ┌─────────┐        ┌─────────────────┐        ┌─────────────┐
 │ Virtual │───────→│     TLB         │        │             │
@@ -331,35 +331,35 @@ int offset     = vaddr & 0xfff;          // bits 11-0:  0x123
 
 pte_t *page_table_walk(struct mm_struct *mm, unsigned long vaddr) {
     pgd_t *pgd;    // Page Global Directory (PML4)
-    p4d_t *p4d;    // Page 4th Directory  
+    p4d_t *p4d;    // Page 4th Directory
     pud_t *pud;    // Page Upper Directory (PDPT)
     pmd_t *pmd;    // Page Middle Directory (PD)
     pte_t *pte;    // Page Table Entry (PT)
-    
+
     // 1. PML4 테이블 접근 (CR3 레지스터에서 base address)
     pgd = pgd_offset(mm, vaddr);
     if (pgd_none(*pgd) || pgd_bad(*pgd))
         return NULL;
-    
+
     // 2. PDPT 테이블 접근
     p4d = p4d_offset(pgd, vaddr);
     if (p4d_none(*p4d) || p4d_bad(*p4d))
         return NULL;
-        
+
     pud = pud_offset(p4d, vaddr);
     if (pud_none(*pud) || pud_bad(*pud))
         return NULL;
-    
+
     // 3. PD 테이블 접근
     pmd = pmd_offset(pud, vaddr);
     if (pmd_none(*pmd) || pmd_bad(*pmd))
         return NULL;
-        
+
     // 4. PT 테이블 접근
     pte = pte_offset_map(pmd, vaddr);
     if (!pte || pte_none(*pte))
         return NULL;
-        
+
     return pte;
 }
 ```
@@ -371,13 +371,13 @@ pte_t *page_table_walk(struct mm_struct *mm, unsigned long vaddr) {
 unsigned long get_physical_address(pte_t *pte, unsigned long vaddr) {
     // PTE에서 Physical Frame Number 추출
     unsigned long pfn = pte_pfn(*pte);
-    
+
     // Physical Frame 주소 = PFN * PAGE_SIZE
     unsigned long page_base = pfn << PAGE_SHIFT;  // PAGE_SIZE = 4096
-    
+
     // 최종 물리 주소 = 페이지 베이스 + 오프셋
     unsigned long paddr = page_base + (vaddr & (PAGE_SIZE - 1));
-    
+
     return paddr;
 }
 ```
@@ -432,22 +432,22 @@ $ cpuid | grep -i tlb
 void tlb_miss_test() {
     const int pages = 1024 * 1024;  // 1M 페이지 (4GB)
     const int page_size = 4096;
-    char *memory = mmap(NULL, pages * page_size, 
+    char *memory = mmap(NULL, pages * page_size,
                        PROT_READ | PROT_WRITE,
                        MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-    
+
     struct timespec start, end;
-    
+
     // Sequential access (TLB friendly)
     clock_gettime(CLOCK_MONOTONIC, &start);
     for (int i = 0; i < pages; i++) {
         memory[i * page_size] = 1;  // 각 페이지의 첫 바이트 접근
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
-    
-    long sequential_time = (end.tv_sec - start.tv_sec) * 1000000000 + 
+
+    long sequential_time = (end.tv_sec - start.tv_sec) * 1000000000 +
                           (end.tv_nsec - start.tv_nsec);
-    
+
     // Random access (TLB unfriendly)
     srand(time(NULL));
     clock_gettime(CLOCK_MONOTONIC, &start);
@@ -456,10 +456,10 @@ void tlb_miss_test() {
         memory[page * page_size] = 1;  // 임의 페이지 접근
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
-    
-    long random_time = (end.tv_sec - start.tv_sec) * 1000000000 + 
+
+    long random_time = (end.tv_sec - start.tv_sec) * 1000000000 +
                       (end.tv_nsec - start.tv_nsec);
-    
+
     printf("Sequential: %ld ns, ", sequential_time);  // ~100ms
     printf("Random: %ld ns, ", random_time);         // ~500ms
     printf("TLB penalty: %.2fx, ", (double)random_time / sequential_time);
@@ -475,7 +475,7 @@ $ perf stat -e dtlb-loads,dtlb-load-misses,itlb-loads,itlb-load-misses ./program
 Performance counter stats:
     1,250,000,000      dtlb-loads           # Data TLB loads
        15,623,456      dtlb-load-misses     # 1.25% miss rate
-       890,123,456      itlb-loads           # Instruction TLB loads  
+       890,123,456      itlb-loads           # Instruction TLB loads
         2,345,678      itlb-load-misses     # 0.26% miss rate
 
 # Context switch로 인한 TLB flush 확인
@@ -494,13 +494,13 @@ Page Size Options:
 │ Page Type       │ Size        │ TLB Entries │ Coverage     │
 ├─────────────────┼─────────────┼─────────────┼──────────────┤
 │ Standard Page   │ 4KB         │ ~64         │ 256KB        │
-│ Large Page      │ 2MB         │ ~32         │ 64MB         │  
+│ Large Page      │ 2MB         │ ~32         │ 64MB         │
 │ Huge Page       │ 1GB         │ ~4          │ 4GB          │
 └─────────────────┴─────────────┴─────────────┴──────────────┘
 
 TLB Coverage Calculation:
 - 4KB pages: 64 entries × 4KB = 256KB coverage
-- 2MB pages: 32 entries × 2MB = 64MB coverage  
+- 2MB pages: 32 entries × 2MB = 64MB coverage
 - 1GB pages: 4 entries × 1GB = 4GB coverage
 ```
 
@@ -513,7 +513,7 @@ AnonHugePages:         0 kB      # Transparent Huge Pages
 ShmemHugePages:        0 kB      # 공유 메모리 Huge Pages
 HugePages_Total:       0         # 정적 Huge Pages 총 개수
 HugePages_Free:        0         # 사용 가능한 Huge Pages
-HugePages_Rsvd:        0         # 예약된 Huge Pages  
+HugePages_Rsvd:        0         # 예약된 Huge Pages
 HugePages_Surp:        0         # 여분의 Huge Pages
 Hugepagesize:       2048 kB      # 기본 Huge Page 크기 (2MB)
 
@@ -547,7 +547,7 @@ LOG:  using 4000 huge pages out of 4000 huge pages allocated
 MySQL에서 Large Pages:
 
 ```ini
-[mysqld] 
+[mysqld]
 innodb_buffer_pool_size = 16G
 large_pages = ON                 # Large Pages 활성화
 innodb_use_native_aio = ON       # 비동기 I/O와 함께 사용
@@ -559,38 +559,38 @@ innodb_use_native_aio = ON       # 비동기 I/O와 함께 사용
 // Huge Pages 성능 테스트
 void hugepage_benchmark() {
     const size_t size = 1UL << 30;  // 1GB
-    
+
     // 일반 페이지 할당
     void *normal_mem = mmap(NULL, size, PROT_READ | PROT_WRITE,
                            MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-    
+
     // Huge Pages 할당
     void *huge_mem = mmap(NULL, size, PROT_READ | PROT_WRITE,
                          MAP_ANONYMOUS | MAP_PRIVATE | MAP_HUGETLB, -1, 0);
-    
+
     // 성능 측정: 메모리 순차 접근
     struct timespec start, end;
-    
+
     // Normal pages
     clock_gettime(CLOCK_MONOTONIC, &start);
     for (size_t i = 0; i < size; i += 4096) {
         ((char*)normal_mem)[i] = 1;
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
-    long normal_time = (end.tv_sec - start.tv_sec) * 1000000000 + 
+    long normal_time = (end.tv_sec - start.tv_sec) * 1000000000 +
                       (end.tv_nsec - start.tv_nsec);
-    
-    // Huge pages  
+
+    // Huge pages
     clock_gettime(CLOCK_MONOTONIC, &start);
     for (size_t i = 0; i < size; i += 4096) {
         ((char*)huge_mem)[i] = 1;
     }
     clock_gettime(CLOCK_MONOTONIC, &end);
-    long huge_time = (end.tv_sec - start.tv_sec) * 1000000000 + 
+    long huge_time = (end.tv_sec - start.tv_sec) * 1000000000 +
                     (end.tv_nsec - start.tv_nsec);
-    
+
     printf("Normal pages: %ld ns, ", normal_time);
-    printf("Huge pages: %ld ns, ", huge_time); 
+    printf("Huge pages: %ld ns, ", huge_time);
     printf("Speedup: %.2fx, ", (double)normal_time / huge_time);
     // 일반적으로 10-30% 성능 향상
 }
@@ -610,20 +610,20 @@ void page_fault_scenarios() {
                      MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     // mmap 호출 시점에는 Page Table entry 없음
     *(char*)mem1 = 'A';  // ← Minor page fault 발생
-    
-    // 2. Major Page Fault - 디스크에서 로드 필요  
+
+    // 2. Major Page Fault - 디스크에서 로드 필요
     int fd = open("largefile.txt", O_RDONLY);
     void *mem2 = mmap(NULL, 1024*1024, PROT_READ, MAP_PRIVATE, fd, 0);
     // 파일이 페이지 캐시에 없다면
     char data = *(char*)mem2;  // ← Major page fault 발생
-    
+
     // 3. Copy-on-Write Page Fault
     pid_t pid = fork();
     if (pid == 0) {
         // 자식 프로세스에서 쓰기 시도
         *(char*)mem1 = 'B';  // ← COW page fault 발생
     }
-    
+
     // 4. Stack Growth Page Fault
     char large_array[8192];  // 2 페이지 스택 확장
     large_array[0] = 'C';    // ← Stack growth page fault
@@ -641,7 +641,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
     struct mm_struct *mm = current->mm;
     struct vm_area_struct *vma;
     int fault;
-    
+
     // 1. VMA 찾기 - 주소가 유효한 메모리 영역인가?
     vma = find_vma(mm, address);
     if (!vma || vma->vm_start > address) {
@@ -649,7 +649,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
         send_signal(SIGSEGV, current);
         return;
     }
-    
+
     // 2. 권한 확인 - 읽기/쓰기/실행 권한이 있는가?
     if (error_code & PF_WRITE) {
         if (!(vma->vm_flags & VM_WRITE))
@@ -658,11 +658,11 @@ void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
         if (!(vma->vm_flags & (VM_READ | VM_EXEC)))
             goto bad_area;
     }
-    
+
     // 3. Page Fault 처리
-    fault = handle_mm_fault(vma, address, 
+    fault = handle_mm_fault(vma, address,
                            (error_code & PF_WRITE) ? FAULT_FLAG_WRITE : 0);
-    
+
     if (fault & VM_FAULT_ERROR) {
         // OOM 또는 기타 오류
         if (fault & VM_FAULT_OOM)
@@ -672,7 +672,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long error_code) {
     }
 }
 
-static int handle_mm_fault(struct vm_area_struct *vma, 
+static int handle_mm_fault(struct vm_area_struct *vma,
                           unsigned long address, unsigned int flags) {
     // Anonymous mapping (heap, stack)
     if (vma->vm_ops == NULL) {
@@ -698,7 +698,7 @@ $ sar -B 1
 # majflt/s: Major page faults per second (디스크 I/O 필요)
 # fault/s:  Total page faults per second
 
-# 애플리케이션별 Page Fault 확인  
+# 애플리케이션별 Page Fault 확인
 $ cat /proc/[pid]/stat | awk '{print "Minor faults: " $10 ", Major faults: " $12}'
 ```
 
@@ -708,13 +708,13 @@ $ cat /proc/[pid]/stat | awk '{print "Minor faults: " $10 ", Major faults: " $12
 // 메모리 예열로 Page Fault 방지
 void memory_warmup(void *addr, size_t size) {
     char *ptr = (char*)addr;
-    
+
     // 모든 페이지에 접근하여 Page Fault 미리 발생
     for (size_t i = 0; i < size; i += 4096) {
         volatile char dummy = ptr[i];  // 읽기 접근
         ptr[i] = dummy;                // 쓰기 접근 (COW 트리거)
     }
-    
+
     // 또는 mlock으로 메모리 고정
     if (mlock(addr, size) == 0) {
         printf("Memory locked in RAM, ");
@@ -726,7 +726,7 @@ void* allocate_and_warmup(size_t size) {
     void *mem = mmap(NULL, size, PROT_READ | PROT_WRITE,
                     MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     if (mem == MAP_FAILED) return NULL;
-    
+
     memory_warmup(mem, size);  // 미리 모든 페이지 접근
     return mem;
 }
@@ -740,23 +740,23 @@ void* allocate_and_warmup(size_t size) {
 // 메모리 보호 기능 테스트
 void memory_protection_demo() {
     size_t page_size = getpagesize();  // 4096
-    
+
     // 1. 읽기 전용 페이지
     void *readonly = mmap(NULL, page_size, PROT_READ,
                          MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     *(char*)readonly = 'A';  // ← SIGSEGV 발생!
-    
+
     // 2. 실행 불가 페이지 (NX bit)
     void *noexec = mmap(NULL, page_size, PROT_READ | PROT_WRITE,
                        MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-    
+
     // 실행 가능한 코드를 작성한 후
     char shellcode[] = {0xc3};  // ret instruction
     memcpy(noexec, shellcode, 1);
-    
+
     void (*func)() = (void(*)())noexec;
     func();  // ← SIGSEGV 발생! (NX bit로 인해)
-    
+
     // 3. 권한 변경
     if (mprotect(noexec, page_size, PROT_READ | PROT_WRITE | PROT_EXEC) == 0) {
         func();  // 이제 실행 가능
@@ -773,7 +773,7 @@ void memory_protection_demo() {
 $ cat /proc/cpuinfo | grep -E "smep|smap"
 flags: ... smep smap ...
 
-# SMEP (Supervisor Mode Execution Prevention): 
+# SMEP (Supervisor Mode Execution Prevention):
 # - 커널이 사용자 공간 코드를 실행하지 못하도록 방지
 # - ROP/JOP 공격 방어
 
@@ -803,7 +803,7 @@ Mitigation: PTI
 $ cat /proc/self/maps
 address           perms offset  dev   inode    pathname
 00400000-00452000 r-xp  00000000 08:01 1234567  /bin/bash
-00651000-00652000 r--p  00051000 08:01 1234567  /bin/bash  
+00651000-00652000 r--p  00051000 08:01 1234567  /bin/bash
 00652000-0065b000 rw-p  00052000 08:01 1234567  /bin/bash
 0065b000-00666000 rw-p  00000000 00:00 0        [heap]
 7ffff7a1c000-7ffff7bd2000 r-xp 00000000 08:01 2345678 /lib/x86_64-linux-gnu/libc.so.6
@@ -811,7 +811,7 @@ address           perms offset  dev   inode    pathname
 
 # 권한 필드 해석:
 # r = 읽기 가능
-# w = 쓰기 가능  
+# w = 쓰기 가능
 # x = 실행 가능
 # p = private (COW), s = shared
 ```
@@ -828,22 +828,22 @@ address           perms offset  dev   inode    pathname
 uint64_t get_physical_address(void *virtual_addr) {
     int pagemap_fd = open("/proc/self/pagemap", O_RDONLY);
     if (pagemap_fd < 0) return 0;
-    
+
     // 가상 주소를 페이지 인덱스로 변환
     uintptr_t vaddr = (uintptr_t)virtual_addr;
     uint64_t page_index = vaddr / 4096;
-    
+
     // pagemap 파일에서 해당 엔트리 읽기
     uint64_t pagemap_entry;
     lseek(pagemap_fd, page_index * sizeof(uint64_t), SEEK_SET);
     read(pagemap_fd, &pagemap_entry, sizeof(uint64_t));
     close(pagemap_fd);
-    
+
     // Physical Frame Number 추출 (bits 0-54)
     uint64_t pfn = pagemap_entry & ((1ULL << 55) - 1);
-    
+
     if (pfn == 0) return 0;  // 페이지가 메모리에 없음
-    
+
     // 물리 주소 = PFN * PAGE_SIZE + offset
     uint64_t physical_addr = (pfn * 4096) + (vaddr % 4096);
     return physical_addr;
@@ -853,16 +853,16 @@ uint64_t get_physical_address(void *virtual_addr) {
 void test_address_translation() {
     char *buffer = malloc(4096);
     strcpy(buffer, "Hello, World!");
-    
+
     printf("Virtual address: %p, ", buffer);
     printf("Physical address: 0x%lx, ", get_physical_address(buffer));
-    
+
     // 같은 데이터에 대한 다른 가상 주소
-    char *mmaped = mmap(NULL, 4096, PROT_READ | PROT_WRITE, 
+    char *mmaped = mmap(NULL, 4096, PROT_READ | PROT_WRITE,
                         MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     strcpy(mmaped, "Hello, World!");
-    
-    printf("Mmaped virtual: %p, ", mmaped);  
+
+    printf("Mmaped virtual: %p, ", mmaped);
     printf("Mmaped physical: 0x%lx, ", get_physical_address(mmaped));
     // 다른 물리 페이지에 매핑됨
 }
@@ -878,7 +878,7 @@ struct vm_area_struct {
     struct mm_struct *vm_mm;    // 소유자 프로세스의 mm_struct
     pgprot_t vm_page_prot;      // 페이지 보호 속성
     unsigned long vm_flags;     // VMA 플래그 (VM_READ, VM_WRITE 등)
-    
+
     struct vm_operations_struct *vm_ops;  // VMA 연산
     unsigned long vm_pgoff;     // 파일 오프셋 (페이지 단위)
     struct file *vm_file;       // 매핑된 파일 (있는 경우)
@@ -888,14 +888,14 @@ struct mm_struct {
     struct vm_area_struct *mmap;        // VMA 연결 리스트
     struct rb_root mm_rb;               // VMA red-black tree
     pgd_t *pgd;                        // Page Global Directory
-    
+
     unsigned long start_code, end_code; // 코드 영역
-    unsigned long start_data, end_data; // 데이터 영역  
+    unsigned long start_data, end_data; // 데이터 영역
     unsigned long start_brk, brk;       // 힙 영역
     unsigned long start_stack;          // 스택 시작
-    
+
     unsigned long total_vm;             // 총 가상 메모리 페이지
-    unsigned long locked_vm;            // mlock된 페이지  
+    unsigned long locked_vm;            // mlock된 페이지
     unsigned long pinned_vm;            // pin된 페이지
     unsigned long data_vm;              // 데이터 페이지
     unsigned long exec_vm;              // 실행 가능 페이지
@@ -941,19 +941,19 @@ struct memory_pool {
 
 struct memory_pool* create_pool(size_t size) {
     struct memory_pool *pool = malloc(sizeof(struct memory_pool));
-    
+
     // 대용량 메모리를 한 번에 할당하여 TLB 효율성 증대
     pool->base = mmap(NULL, size, PROT_READ | PROT_WRITE,
                      MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     pool->size = size;
     pool->offset = 0;
-    
+
     return pool;
 }
 
 void* pool_alloc(struct memory_pool *pool, size_t size) {
     if (pool->offset + size > pool->size) return NULL;
-    
+
     void *ptr = (char*)pool->base + pool->offset;
     pool->offset += size;
     return ptr;
@@ -970,7 +970,7 @@ $ numactl --hardware
 available: 2 nodes (0-1)
 node 0 cpus: 0 1 2 3 8 9 10 11
 node 0 size: 16384 MB
-node 1 cpus: 4 5 6 7 12 13 14 15  
+node 1 cpus: 4 5 6 7 12 13 14 15
 node 1 size: 16384 MB
 
 # 프로세스의 NUMA 메모리 사용량
@@ -991,17 +991,17 @@ void numa_aware_allocation() {
         printf("NUMA not available, ");
         return;
     }
-    
+
     // 현재 노드에 메모리 할당
     int node = numa_node_of_cpu(sched_getcpu());
     void *mem = numa_alloc_onnode(1024*1024, node);  // 1MB
-    
+
     if (mem) {
         printf("Allocated on NUMA node %d, ", node);
-        
+
         // 메모리 사용 (first-touch policy에 의해 로컬 노드에 할당)
         memset(mem, 0, 1024*1024);
-        
+
         numa_free(mem, 1024*1024);
     }
 }
@@ -1046,7 +1046,7 @@ void container_memory_optimization() {
         printf("Memory limit: %lu bytes, ", limit);
         fclose(limit_file);
     }
-    
+
     // 2. Huge Pages 사용 가능 여부 확인
     if (access("/hugepages", F_OK) == 0) {
         // Huge Pages 마운트 포인트 사용
@@ -1060,7 +1060,7 @@ void container_memory_optimization() {
             }
         }
     }
-    
+
     // 3. NUMA 노드 확인 (컨테이너에서도 영향 있음)
     cpu_set_t cpuset;
     sched_getaffinity(0, sizeof(cpuset), &cpuset);
@@ -1088,7 +1088,7 @@ Performance counter stats:
      12,345,678      dTLB-load-misses    # 매우 높은 Data TLB miss!
       3,456,789      iTLB-load-misses    # Instruction TLB miss도 높음
 
-# 프로세스 메모리 분산도 확인  
+# 프로세스 메모리 분산도 확인
 $ pmap -x [pid] | head -20
 Address           Kbytes     RSS   Dirty Mode  Mapping
 00400000               4       4       0 r-x-- /usr/bin/app
@@ -1113,7 +1113,7 @@ void* optimized_malloc(size_t size) {
         // 풀이 가득참, 별도 처리 필요
         return malloc(size);
     }
-    
+
     void *ptr = memory_pool + pool_offset;
     pool_offset += (size + 7) & ~7;  // 8바이트 정렬
     return ptr;
@@ -1170,7 +1170,7 @@ active_file 1073741824    # 1GB는 active
 resources:
   limits:
     memory: "6Gi"  # Page cache 고려하여 증가
-  requests:  
+  requests:
     memory: "2Gi"
 
 # 2. 또는 Direct I/O 사용으로 page cache 우회
@@ -1204,7 +1204,7 @@ if (huge_malloc == NULL) {
 $ cat /proc/sys/vm/overcommit_memory
 0   # 휴리스틱 기반 overcommit
 
-$ cat /proc/sys/vm/overcommit_ratio  
+$ cat /proc/sys/vm/overcommit_ratio
 50  # 물리 메모리의 50%까지만 overcommit
 
 # 현재 커밋된 메모리
@@ -1279,7 +1279,7 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
  2  0      0 1048576  12345 8765432  0    0     0     5    50  100 25  5 70  0  0
 
 # free: 사용 가능한 물리 메모리
-# buff: 버퍼 캐시  
+# buff: 버퍼 캐시
 # cache: 페이지 캐시
 # si/so: 스왑 in/out (페이지 단위)
 # bi/bo: 블록 디바이스 I/O
@@ -1305,7 +1305,7 @@ $ kubectl exec -it myapp-pod -- cat /proc/1/cgroup
 
 $ cat /sys/fs/cgroup/memory/kubepods/burstable/pod12345/container67890/memory.stat
 cache 1073741824        # 1GB page cache
-rss 536870912          # 512MB RSS  
+rss 536870912          # 512MB RSS
 mapped_file 268435456   # 256MB memory-mapped files
 pgpgin 1234567         # pages read from disk
 pgpgout 234567         # pages written to disk
