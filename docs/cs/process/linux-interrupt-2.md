@@ -29,7 +29,7 @@ tags:
 - 다른 인터럽트 처리 못 함
 - CPU는 인터럽트 모드에서 갇힘
 - 시스템 전체가 멈춘 것처럼 보임
-```
+```text
 
 ### 해결책: 작업 분할
 
@@ -44,7 +44,7 @@ Bottom-half (나중에 처리):
 1. 화면에 출력: 1000 마이크로초
 2. 로그 파일에 기록: 5000 마이크로초
 → 일반 컨텍스트에서 천천히 처리
-```
+```text
 
 ## Top-half: 긴급 처리
 
@@ -60,7 +60,7 @@ Top-half가 실행되는 동안:
 │ ✓ Spinlock만 사용 가능          │
 │ ✓ 매우 빠르게 실행해야 함       │
 └─────────────────────────────────┘
-```
+```text
 
 ### 실제 Top-half 코드 예시
 
@@ -69,19 +69,19 @@ Top-half가 실행되는 동안:
 irqreturn_t network_interrupt_handler(int irq, void *dev_id)
 {
     struct net_device *dev = dev_id;
-    
+
     // 1. 인터럽트 원인 확인 (빠름)
     u32 status = read_register(INTERRUPT_STATUS);
-    
+
     // 2. 하드웨어 인터럽트 비활성화 (빠름)
     write_register(INTERRUPT_DISABLE, 0xFF);
-    
+
     // 3. Bottom-half 스케줄링 (빠름)
     napi_schedule(&dev->napi);  // NAPI 큐에 추가
-    
+
     return IRQ_HANDLED;  // 2-3 마이크로초 내 완료!
 }
-```
+```text
 
 ### Top-half 모니터링
 
@@ -94,7 +94,7 @@ $ sudo perf script | head -20
 swapper     0 [000]  1234.567890: irq:irq_handler_entry: irq=24
 swapper     0 [000]  1234.567892: irq:irq_handler_exit: irq=24 ret=1
 # 시간 차이 = 2 마이크로초 (좋음!)
-```
+```text
 
 ## Bottom-half의 진화
 
@@ -116,7 +116,7 @@ enum {
     NET_BH,
     // ... 최대 32개
 };
-```
+```text
 
 ### 2. 개선: Tasklet
 
@@ -140,7 +140,7 @@ irqreturn_t interrupt_handler(int irq, void *dev_id)
     tasklet_schedule(&my_tasklet);  // Bottom-half 예약
     return IRQ_HANDLED;
 }
-```
+```text
 
 ### 3. 현재: Softirq
 
@@ -162,7 +162,7 @@ enum {
     RCU_SOFTIRQ,         // RCU
     NR_SOFTIRQS          // 총 10개
 };
-```
+```text
 
 ## Softirq 실행 시점
 
@@ -180,7 +180,7 @@ enum {
 
 4. 명시적 호출
    local_bh_enable() 호출 시
-```
+```text
 
 ### 실제 동작 관찰
 
@@ -200,7 +200,7 @@ $ cat /proc/softirqs
          RCU:      98765      87654      76543      65432
 
 # NET_RX가 가장 많음 = 네트워크 수신 부하
-```
+```text
 
 ## ksoftirqd: Softirq 전담 처리자
 
@@ -209,14 +209,14 @@ $ cat /proc/softirqs
 ```text
 문제 상황: Softirq 폭풍
 
-패킷 도착 → Softirq 실행 → 처리 중 더 많은 패킷 도착 
+패킷 도착 → Softirq 실행 → 처리 중 더 많은 패킷 도착
 → 또 Softirq → 무한 반복 → 일반 프로세스 실행 못 함!
 
 해결책:
 - 일정 횟수(10번) 이상 반복하면 ksoftirqd에게 위임
 - ksoftirqd는 일반 프로세스처럼 스케줄링됨
 - 다른 프로세스도 실행 기회를 가짐
-```
+```text
 
 ### ksoftirqd 관찰
 
@@ -235,7 +235,7 @@ $ top -p $(pgrep -d, ksoftirqd)
    16 root      20   0   2.0  ksoftirqd/1
    22 root      20   0   1.5  ksoftirqd/2
    28 root      20   0   1.8  ksoftirqd/3
-```
+```text
 
 ### ksoftirqd 부하 원인 분석
 
@@ -257,8 +257,8 @@ paste /tmp/softirqs1 /tmp/softirqs2 | awk '
         cpu1_diff = $7 - $3
         cpu2_diff = $8 - $4
         cpu3_diff = $9 - $5
-        
-        if (cpu0_diff > 10000 || cpu1_diff > 10000 || 
+
+        if (cpu0_diff > 10000 || cpu1_diff > 10000 ||
             cpu2_diff > 10000 || cpu3_diff > 10000) {
             printf "%-10s CPU0:%-8d CPU1:%-8d CPU2:%-8d CPU3:%-8d, ",
                    name, cpu0_diff, cpu1_diff, cpu2_diff, cpu3_diff
@@ -269,7 +269,7 @@ paste /tmp/softirqs1 /tmp/softirqs2 | awk '
 # 결과 예시:
 # NET_RX:    CPU0:95432   CPU1:2341    CPU2:1234    CPU3:987
 # → CPU0에서 네트워크 수신 폭증!
-```
+```text
 
 ## 실전: 네트워크 성능 문제 해결
 
@@ -297,7 +297,7 @@ $ ethtool -K eth0 ntuple on   # 흐름 제어 활성화
 $ for i in {0..3}; do
     echo $i > /proc/irq/$((24+i))/smp_affinity_list
 done
-```
+```text
 
 ### 사례 2: Softirq 처리 시간 초과
 
@@ -315,7 +315,7 @@ $ sysctl -w net.core.netdev_budget_usecs=4000 # 시간 증가 (4ms)
 
 # GRO(Generic Receive Offload) 활성화로 패킷 합치기
 $ ethtool -K eth0 gro on
-```
+```text
 
 ### 사례 3: NAPI와 인터럽트 모드 전환
 
@@ -334,7 +334,7 @@ $ ethtool -C eth0 rx-usecs 100  # 100 마이크로초마다
 $ ethtool -C eth0 rx-frames 64  # 또는 64 프레임마다
 
 # 효과: 인터럽트 감소, Softirq 배치 처리
-```
+```text
 
 ## Workqueue: 더 무거운 작업
 
@@ -352,7 +352,7 @@ Workqueue:
 - Sleep 가능
 - 무거운 작업 가능
 - 스케줄링 가능
-```
+```text
 
 ### Workqueue 사용 예
 
@@ -364,7 +364,7 @@ void my_work_handler(struct work_struct *work)
 {
     // Sleep 가능한 무거운 작업
     msleep(10);
-    
+
     // 파일 I/O 가능
     struct file *f = filp_open("/var/log/driver.log", O_WRONLY, 0);
     // ...
@@ -377,13 +377,13 @@ INIT_WORK(&my_work, my_work_handler);
 irqreturn_t interrupt_handler(int irq, void *dev_id)
 {
     // 긴급 처리...
-    
+
     // 무거운 작업은 Workqueue로
     schedule_work(&my_work);
-    
+
     return IRQ_HANDLED;
 }
-```
+```text
 
 ### Workqueue 모니터링
 
@@ -398,7 +398,7 @@ root       567  0.0  0.0      0     0 ?        I    10:02   0:01 [kworker/1:2]
 $ cat /sys/devices/virtual/workqueue/*/per_cpu/cpu0/stats
 executed: 12345     # 실행된 작업 수
 max_active: 256     # 최대 동시 작업
-```
+```text
 
 ## 성능 튜닝 체크리스트
 
@@ -411,7 +411,7 @@ $ awk '{if(NR>1){for(i=2;i<=NF-2;i++)a[i]+=$i}}END{for(i in a)print "CPU"i-2": "
 # 불균형 시 재분배
 $ systemctl restart irqbalance
 # 또는 수동 설정
-```
+```text
 
 ### 2. Softirq 부하 분석
 
@@ -423,7 +423,7 @@ $ mpstat -P ALL 1 | grep -E "CPU|all"
 # - 네트워크: RSS/RPS 확인
 # - 디스크: I/O 스케줄러 확인
 # - 타이머: 고해상도 타이머 확인
-```
+```text
 
 ### 3. ksoftirqd 최적화
 
@@ -436,7 +436,7 @@ $ taskset -cp 0 $(pgrep ksoftirqd/0)
 
 # Real-time 우선순위 설정 (주의!)
 $ chrt -f -p 50 $(pgrep ksoftirqd/0)
-```
+```text
 
 ## 실전 트러블슈팅 플로우
 
@@ -451,15 +451,15 @@ $ chrt -f -p 50 $(pgrep ksoftirqd/0)
    - ethtool -S 확인
    - RSS/RPS 설정
    - Coalescing 조정
-   
+
    TIMER 높음 → 타이머 문제
    - /proc/timer_stats 확인
    - 불필요한 타이머 제거
-   
+
    BLOCK 높음 → I/O 문제
    - iostat 확인
    - I/O 스케줄러 변경
-```
+```text
 
 ## 정리
 

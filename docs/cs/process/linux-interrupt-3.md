@@ -28,15 +28,15 @@ Linux가 관리하는 시간들:
 2. Monotonic Time (단조 시간)
    - 부팅 후 경과 시간
    - 거꾸로 가지 않음 (NTP 조정에도)
-   
+
 3. CPU Time (프로세스 시간)
    - User time: 사용자 모드 실행 시간
    - System time: 커널 모드 실행 시간
-   
+
 4. Jiffies (시스템 틱)
    - 커널 내부 시간 단위
    - HZ값에 따라 다름 (100, 250, 1000Hz)
-```
+```text
 
 ### 실습: 다양한 시간 확인
 
@@ -62,7 +62,7 @@ CONFIG_HZ=250  # 4ms마다 틱
 # 프로세스 CPU 시간
 $ cat /proc/self/stat | awk '{print "user:", $14/100, "sys:", $15/100}'
 user: 0.12 sys: 0.03
-```
+```text
 
 ## Jiffies: 전통적 시간 관리
 
@@ -86,7 +86,7 @@ unsigned long timeout = jiffies + msecs_to_jiffies(100);
 while (time_before(jiffies, timeout)) {
     // 100ms 동안 대기
 }
-```
+```text
 
 ### Timer Wheel: O(1) 타이머 관리
 
@@ -110,7 +110,7 @@ Timer Wheel 구조:
 1. TV1[current] 실행
 2. current++
 3. current == 256이면 TV2에서 TV1로 cascade
-```
+```text
 
 ### 문제: 정확도 한계
 
@@ -125,13 +125,13 @@ cat > test_jiffy.c << 'EOF'
 
 int main() {
     struct timespec start, end;
-    
+
     for (int ms = 1; ms <= 10; ms++) {
         clock_gettime(CLOCK_MONOTONIC, &start);
         usleep(ms * 1000);  // ms 밀리초 요청
         clock_gettime(CLOCK_MONOTONIC, &end);
-        
-        long actual = (end.tv_sec - start.tv_sec) * 1000 + 
+
+        long actual = (end.tv_sec - start.tv_sec) * 1000 +
                      (end.tv_nsec - start.tv_nsec) / 1000000;
         printf("요청: %dms, 실제: %ldms, ", ms, actual);
     }
@@ -147,7 +147,7 @@ gcc test_jiffy.c -o test_jiffy
 # 요청: 3ms, 실제: 4ms
 # 요청: 4ms, 실제: 4ms
 # 요청: 5ms, 실제: 8ms    # 2 jiffy
-```
+```text
 
 ## 고해상도 타이머 (hrtimer)
 
@@ -163,7 +163,7 @@ hrtimer의 장점:
 - 나노초 단위 정확도
 - 틱리스 동작 가능
 - 동적 틱 (필요할 때만)
-```
+```text
 
 ### hrtimer 구현
 
@@ -179,7 +179,7 @@ enum hrtimer_restart timer_callback(struct hrtimer *timer)
     // 정확한 시간에 실행됨
     ktime_t now = ktime_get();
     printk("Timer fired at %lld ns, ", ktime_to_ns(now));
-    
+
     // 다음 타이머 설정
     hrtimer_forward_now(timer, period);
     return HRTIMER_RESTART;
@@ -189,12 +189,12 @@ void setup_hrtimer(void)
 {
     // 100 마이크로초마다
     period = ktime_set(0, 100000);  // 0초 + 100,000 나노초
-    
+
     hrtimer_init(&my_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
     my_timer.function = timer_callback;
     hrtimer_start(&my_timer, period, HRTIMER_MODE_REL);
 }
-```
+```text
 
 ### 실습: hrtimer 정확도 확인
 
@@ -219,7 +219,7 @@ tsc  # Time Stamp Counter (가장 빠름)
 $ cyclictest -p 90 -t 4 -n -I 1000 -l 10000
 # T: 0 ( 1234) P:90 I:1000 C:  10000 Min:      2 Act:    4 Avg:    3 Max:     15
 # 1ms 간격 요청 → 평균 3us 오차 (매우 정확!)
-```
+```text
 
 ## Tickless Kernel (NO_HZ)
 
@@ -237,7 +237,7 @@ Tickless (NO_HZ_IDLE):
 └─────────┴───┴─────────────┴────
 필요할 때만 인터럽트 (이벤트 기반)
 CPU idle 시 인터럽트 없음 → 전력 절약
-```
+```text
 
 ### NO_HZ 종류
 
@@ -257,7 +257,7 @@ CONFIG_NO_HZ_IDLE=y    # Idle 시 틱 중단
 - 지정된 CPU는 항상 틱리스
 - 단일 태스크 실행 시 인터럽트 최소화
 - 실시간/저지연 목적
-```
+```text
 
 ### NO_HZ_FULL 설정
 
@@ -278,7 +278,7 @@ $ cat /sys/devices/system/cpu/nohz_full
 $ perf stat -a -e irq_vectors:local_timer_entry sleep 1
 # CPU 0-1: 많은 타이머 인터럽트
 # CPU 2-7: 거의 없음
-```
+```text
 
 ## CPU Isolation: 완벽한 독점
 
@@ -303,7 +303,7 @@ pid 1234's current affinity mask: f  # 0x0f = CPU 0-3만
 
 # 격리된 CPU에 수동 할당
 $ taskset -c 4 ./realtime_app  # CPU 4에서만 실행
-```
+```text
 
 ### 실전: 저지연 트레이딩 시스템
 
@@ -339,7 +339,7 @@ for cpu in 4 5 6 7; do
     cat /sys/devices/system/cpu/cpu$cpu/cpufreq/cpuinfo_max_freq > \
         /sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_min_freq
 done
-```
+```text
 
 ### 지연 시간 측정
 
@@ -354,7 +354,7 @@ $ cyclictest -p 90 -t 1 -n -I 1000 -l 10000 -a 4
 T: 0 ( 5679) P:90 I:1000 C:  10000 Min:      1 Act:    2 Avg:    2 Max:      8
 
 # 결과: 최대 지연 234us → 8us (29배 개선!)
-```
+```text
 
 ## 실전 문제 해결
 
@@ -375,12 +375,12 @@ active timers:
  expires at 139562884000000-139562884000000 nsecs [in 3996000 to 3996000 nsecs]
  #1: <ffff880037a33e40>, hrtimer_wakeup, S:01
  expires at 139562894567890-139562894617890 nsecs [in 14563890 to 14613890 nsecs]
- 
+
 # 너무 많은 타이머 발견!
 
 # 해결: 불필요한 타이머 제거
 $ echo 0 > /proc/sys/kernel/timer_migration  # 타이머 마이그레이션 비활성화
-```
+```text
 
 ### 사례 2: 주기적 작업 지터
 
@@ -422,7 +422,7 @@ while True:
     select.select([fd], [], [])
     os.read(fd, 8)  # 타이머 이벤트 소비
     work()
-```
+```text
 
 ### 사례 3: 실시간 오디오 처리
 
@@ -435,27 +435,27 @@ void setup_realtime_audio() {
     struct sched_param param;
     param.sched_priority = 90;
     pthread_setschedparam(pthread_self(), SCHED_FIFO, &param);
-    
+
     // 2. CPU 친화도
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
     CPU_SET(4, &cpuset);  // 격리된 CPU 4
     pthread_setaffinity_np(pthread_self(), sizeof(cpuset), &cpuset);
-    
+
     // 3. 메모리 잠금
     mlockall(MCL_CURRENT | MCL_FUTURE);
-    
+
     // 4. 타이머 설정
     struct itimerspec its;
     its.it_value.tv_sec = 0;
     its.it_value.tv_nsec = 5000000;  // 5ms (오디오 버퍼)
     its.it_interval = its.it_value;
-    
+
     timer_t timerid;
     timer_create(CLOCK_MONOTONIC, NULL, &timerid);
     timer_settime(timerid, 0, &its, NULL);
 }
-```
+```text
 
 ## 모니터링과 디버깅
 
@@ -475,7 +475,7 @@ $ perf script | awk '{print $4}' | sort | uniq -c | sort -rn
 # 어떤 함수가 타이머를 많이 쓰는지
 $ perf record -e timer:timer_start -a -g sleep 10
 $ perf report --stdio
-```
+```text
 
 ### 인터럽트 지연 추적
 
@@ -488,7 +488,7 @@ $ cat /sys/kernel/debug/tracing/trace_pipe
 # 특정 CPU의 타이머 인터럽트
 $ trace-cmd record -e irq_vectors:local_timer_entry -C 4
 $ trace-cmd report
-```
+```text
 
 ## 성능 튜닝 체크리스트
 
@@ -502,7 +502,7 @@ $ trace-cmd report
 □ 실시간 우선순위 설정
 □ CPU 주파수 고정
 □ C-state 비활성화
-```
+```text
 
 ### 2. 고처리량 시스템
 
@@ -516,7 +516,7 @@ systemctl stop cron  # 필요시만
 
 # Interrupt coalescing
 ethtool -C eth0 rx-usecs 100
-```
+```text
 
 ### 3. 전력 효율
 
@@ -528,7 +528,7 @@ echo 1 > /sys/devices/system/cpu/cpuidle/current_governor
 for i in /sys/devices/system/cpu/cpu*/cpuidle/state*/disable; do
     echo 0 > $i
 done
-```
+```text
 
 ## 정리
 

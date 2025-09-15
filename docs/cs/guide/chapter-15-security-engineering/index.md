@@ -81,7 +81,7 @@ POST /api/admin/create_user HTTP/1.1
 Content-Type: application/json
 {
   "username": "h4cker_temp",
-  "email": "temp@hacker.com", 
+  "email": "temp@hacker.com",
   "password": "temp123",
   "role": "admin"  # 🔥 권한 상승 취약점!
 }
@@ -119,7 +119,7 @@ WAF (Web Application Firewall):
   - XSS 패턴 필터링
   - Rate limiting (IP당 100 req/min)
 
-# 2. 애플리케이션 레벨  
+# 2. 애플리케이션 레벨
 API Gateway:
   - JWT 토큰 검증
   - 역할 기반 접근 제어 (RBAC)
@@ -161,7 +161,7 @@ graph TD
         T5[😱 보안 사고 발생]
         T6[🚨 긴급 패치]
     end
-    
+
     subgraph "Security by Design (안전)"
         S1[보안 요구사항 정의]
         S2[위협 모델링]
@@ -171,20 +171,20 @@ graph TD
         S6[보안 모니터링]
         S7[🛡️ 안전한 운영]
     end
-    
+
     T1 --> T2
     T2 --> T3
     T3 --> T4
     T4 --> T5
     T5 --> T6
-    
+
     S1 --> S2
     S2 --> S3
     S3 --> S4
     S4 --> S5
     S5 --> S6
     S6 --> S7
-    
+
     style T5 fill:#ffcdd2
     style S7 fill:#c8e6c9
 ```
@@ -197,12 +197,12 @@ graph TD
 graph TD
     subgraph "OWASP Top 10 2021"
         A01[A01: Broken Access Control, 잘못된 접근 제어]
-        A02[A02: Cryptographic Failures, 암호화 실패]  
+        A02[A02: Cryptographic Failures, 암호화 실패]
         A03[A03: Injection, 인젝션]
         A04[A04: Insecure Design, 안전하지 않은 설계]
         A05[A05: Security Misconfiguration, 보안 설정 오류]
     end
-    
+
     subgraph "실무 대응 방안"
         R1[RBAC 구현, Zero Trust 모델]
         R2[종단간 암호화, Key 관리]
@@ -210,13 +210,13 @@ graph TD
         R4[Threat Modeling, Security Reviews]
         R5[보안 체크리스트, 자동화 검증]
     end
-    
+
     A01 --> R1
     A02 --> R2
     A03 --> R3
     A04 --> R4
     A05 --> R5
-    
+
     style A01 fill:#ffebee
     style R1 fill:#e8f5e8
 ```
@@ -307,22 +307,22 @@ function verifyToken(token) {
     try {
         // 1. 서명 검증 (비밀키 또는 공개키)
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
+
         // 2. 필수 클레임 검증
         if (!decoded.sub || !decoded.exp || !decoded.iat) {
             throw new Error('Missing required claims');
         }
-        
+
         // 3. 토큰 만료 시간 검증 (라이브러리가 자동으로 해주지만 명시)
         if (decoded.exp < Date.now() / 1000) {
             throw new Error('Token expired');
         }
-        
+
         // 4. 발급자 검증
         if (decoded.iss !== 'https://your-auth-server.com') {
             throw new Error('Invalid issuer');
         }
-        
+
         return decoded;
     } catch (error) {
         throw new Error(`Token validation failed: ${error.message}`);
@@ -385,18 +385,18 @@ func encrypt(plaintext, key []byte) ([]byte, error) {
     if err != nil {
         return nil, err
     }
-    
+
     gcm, err := cipher.NewGCM(block)
     if err != nil {
         return nil, err
     }
-    
+
     // 랜덤 nonce 생성 (매우 중요!)
     nonce := make([]byte, gcm.NonceSize())
     if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
         return nil, err
     }
-    
+
     // 암호화
     ciphertext := gcm.Seal(nonce, nonce, plaintext, nil)
     return ciphertext, nil
@@ -413,7 +413,7 @@ $ npm audit
 $ go mod download
 $ govulncheck ./...
 
-# 코드 취약점 스캔  
+# 코드 취약점 스캔
 $ semgrep --config=p/security-audit .
 $ bandit -r python_project/
 $ gosec ./...
@@ -461,7 +461,7 @@ services:
 # 통합 보안 모니터링 구축
 $ helm install security-stack ./security-stack
 # - Falco (런타임 보안 모니터링)
-# - OPA (정책 엔진)  
+# - OPA (정책 엔진)
 # - Cert-Manager (인증서 자동 관리)
 # - External Secrets (보안 정보 관리)
 ```
@@ -473,7 +473,7 @@ $ helm install security-stack ./security-stack
 ```bash
 # 단일 보안 장치에 의존하지 않기
 Layer 1: 네트워크 방화벽 + WAF
-Layer 2: API Gateway + Rate Limiting  
+Layer 2: API Gateway + Rate Limiting
 Layer 3: 애플리케이션 Input Validation
 Layer 4: 데이터베이스 접근 제어
 Layer 5: 암호화 + 키 관리
@@ -508,7 +508,7 @@ spec:
 ```bash
 # 완전한 암호화 구현
 1. 전송 중 (In Transit): TLS 1.3
-2. 저장 중 (At Rest): AES-256 disk encryption  
+2. 저장 중 (At Rest): AES-256 disk encryption
 3. 사용 중 (In Use): Intel SGX, Homomorphic encryption
 ```
 
@@ -526,7 +526,7 @@ spec:
 - 개발 완료 후 보안 검토
 ```
 
-### Level 2: Proactive Security (예방적)  
+### Level 2: Proactive Security (예방적)
 
 ```text
 🟡 현재 상황: "보안을 미리 고려"
@@ -561,7 +561,7 @@ spec:
 ✅ 네트워크 세분화 설계
 ✅ 인증/인가 흐름 설계
 
-# 구현 레벨  
+# 구현 레벨
 ✅ Input validation 모든 곳에 적용
 ✅ Output encoding/sanitization
 ✅ 민감한 데이터 암호화
@@ -580,23 +580,23 @@ spec:
 1. 탐지 (Detection)
    - 자동화된 위협 탐지
    - 이상 행위 모니터링
-   
-2. 분석 (Analysis)  
+
+2. 분석 (Analysis)
    - 공격 벡터 파악
    - 영향 범위 조사
-   
+
 3. 억제 (Containment)
    - 공격 차단
    - 추가 피해 방지
-   
+
 4. 근절 (Eradication)
    - 취약점 패치
    - 악성 코드 제거
-   
+
 5. 복구 (Recovery)
    - 시스템 정상화
    - 서비스 재개
-   
+
 6. 사후 검토 (Post-Incident)
    - 근본 원인 분석
    - 보안 강화 방안 도출
@@ -604,10 +604,10 @@ spec:
 
 ## 🎯 이 장을 마스터하면
 
-✅ **위협 모델링**: 시스템의 보안 위험을 체계적으로 분석할 수 있습니다  
-✅ **보안 코딩**: 안전한 코드를 작성하고 취약점을 사전에 방지할 수 있습니다  
-✅ **암호화 구현**: 적절한 암호화 알고리즘을 선택하고 안전하게 구현할 수 있습니다  
-✅ **보안 아키텍처**: 확장 가능하고 안전한 시스템 아키텍처를 설계할 수 있습니다  
+✅ **위협 모델링**: 시스템의 보안 위험을 체계적으로 분석할 수 있습니다
+✅ **보안 코딩**: 안전한 코드를 작성하고 취약점을 사전에 방지할 수 있습니다
+✅ **암호화 구현**: 적절한 암호화 알고리즘을 선택하고 안전하게 구현할 수 있습니다
+✅ **보안 아키텍처**: 확장 가능하고 안전한 시스템 아키텍처를 설계할 수 있습니다
 
 ## 보안 전문가들의 명언
 

@@ -49,17 +49,17 @@ while (1) {
         char key = read_keyboard();  // 데이터 읽기
         process_key(key);
     }
-    
+
     if (network_has_packet()) {     // 계속 확인
         packet = read_network();
         process_packet(packet);
     }
-    
+
     if (disk_io_complete()) {       // 계속 확인
         data = read_disk_result();
         process_data(data);
     }
-    
+
     // CPU 100% 사용 중... 다른 일 못 함!
 }
 ```text
@@ -295,7 +295,7 @@ x86 인터럽트 벡터 (0-255):
 ```bash
 # 현재 벡터 사용 현황
 $ cat /proc/interrupts | head -20
-           CPU0       CPU1       
+           CPU0       CPU1
   0:         19          0   IO-APIC   2-edge      timer
   8:          1          0   IO-APIC   8-edge      rtc0
   9:          0          0   IO-APIC   9-fasteoi   acpi

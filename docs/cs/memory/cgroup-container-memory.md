@@ -245,7 +245,7 @@ file_writeback 0             # Writeback 중인 페이지
 
 # 파생 메트릭
 inactive_anon 614400000      # 비활성 anonymous
-active_anon 620167890        # 활성 anonymous  
+active_anon 620167890        # 활성 anonymous
 inactive_file 1145678901     # 비활성 file cache
 active_file 1200000000       # 활성 file cache
 
@@ -260,7 +260,7 @@ pgmajfault 12345            # Major fault (디스크 읽기)
 def calculate_working_set(cgroup_path):
     """실제 필요한 메모리 계산"""
     stats = parse_memory_stat(f"{cgroup_path}/memory.stat")
-    
+
     # Working Set = Active + Recently Used
     working_set = (
         stats['active_anon'] +
@@ -269,13 +269,13 @@ def calculate_working_set(cgroup_path):
         stats['pagetables'] +
         stats['sock']
     )
-    
+
     # Reclaimable 메모리
     reclaimable = (
         stats['inactive_file'] +  # 쉽게 회수 가능
         stats['slab_reclaimable']
     )
-    
+
     return {
         'working_set': working_set,
         'reclaimable': reclaimable,
@@ -368,13 +368,13 @@ oom_kill 2   # 실제 프로세스 kill 횟수
 int setup_oom_notification(const char* cgroup_path) {
     char event_path[256];
     sprintf(event_path, "%s/memory.events", cgroup_path);
-    
+
     int event_fd = eventfd(0, EFD_CLOEXEC);
     int control_fd = open(event_path, O_RDONLY);
-    
+
     // OOM 이벤트 등록
     write(control_fd, &event_fd, sizeof(event_fd));
-    
+
     // 이벤트 대기
     uint64_t val;
     while (read(event_fd, &val, sizeof(val)) == sizeof(val)) {
@@ -415,14 +415,14 @@ THRESHOLD=90  # 90% 사용 시 경고
 while true; do
     STATS=$(docker stats --no-stream --format "{{json .}}" $CONTAINER)
     MEM_PERCENT=$(echo $STATS | jq -r '.MemPerc' | tr -d '%')
-    
+
     if (( $(echo "$MEM_PERCENT > $THRESHOLD" | bc -l) )); then
         echo "WARNING: Memory usage at ${MEM_PERCENT}%"
-        
+
         # 힙 덤프 생성 (Java 앱의 경우)
         docker exec $CONTAINER jmap -dump:format=b,file=/tmp/heap.bin 1
     fi
-    
+
     sleep 30
 done
 ```
@@ -491,7 +491,7 @@ def adjust_cache_size():
         # Cgroup v1
         with open('/sys/fs/cgroup/memory/memory.limit_in_bytes') as f:
             limit = int(f.read().strip())
-    
+
     # 제한의 50%를 캐시로 사용
     cache_size = limit * 0.5
     return cache_size

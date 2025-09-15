@@ -36,7 +36,7 @@ tags:
 Linux CFS: 공정하게 (Completely Fair)
 - 각 주문이 받은 서비스 시간을 추적
 - 가장 적게 받은 주문을 우선 처리
-```
+```text
 
 ### CPU와 프로세스
 
@@ -50,7 +50,7 @@ Linux CFS: 공정하게 (Completely Fair)
 2. 얼마나 오래 실행할지 결정
 3. 어느 CPU에서 실행할지 배치
 4. 우선순위 고려
-```
+```text
 
 ## 프로세스 상태와 스케줄링
 
@@ -71,7 +71,7 @@ Linux CFS: 공정하게 (Completely Fair)
   - TASK_UNINTERRUPTIBLE     (I/O 대기)
   - TASK_STOPPED             (SIGSTOP)
   - TASK_ZOMBIE              (종료, 부모 대기)
-```
+```text
 
 ### 실습: 프로세스 상태 확인
 
@@ -100,7 +100,7 @@ $ sar -q 1 3
 10:30:02              2       456      0.52      0.48      0.45
 10:30:03              0       456      0.52      0.48      0.45
 10:30:04              1       456      0.52      0.48      0.45
-```
+```text
 
 ### 런큐(Run Queue) 구조
 
@@ -109,18 +109,18 @@ $ sar -q 1 3
 struct rq {
     unsigned int nr_running;    // 실행 가능한 태스크 수
     u64 nr_switches;            // 컨텍스트 스위치 횟수
-    
+
     struct cfs_rq cfs;          // CFS 스케줄러 큐
     struct rt_rq rt;            // 실시간 스케줄러 큐
     struct dl_rq dl;            // 데드라인 스케줄러 큐
-    
+
     struct task_struct *curr;    // 현재 실행 중인 태스크
     struct task_struct *idle;    // idle 태스크
-    
+
     u64 clock;                  // 런큐 클럭
     // ... 더 많은 필드
 };
-```
+```text
 
 ## 스케줄러의 진화
 
@@ -132,7 +132,7 @@ for (each process) {
     calculate_goodness();  // 우선순위 계산
 }
 select_best();  // O(n) 복잡도
-```
+```text
 
 ### 2. Linux 2.6: O(1) 스케줄러
 
@@ -146,7 +146,7 @@ struct prio_array {
 // 가장 높은 우선순위 찾기: O(1)
 idx = find_first_bit(bitmap);
 next = list_first_entry(&queue[idx]);
-```
+```text
 
 ### 3. Linux 2.6.23+: CFS (현재)
 
@@ -159,7 +159,7 @@ struct sched_entity {
 
 // 가장 작은 vruntime 선택: O(log n)
 leftmost = rb_first(&cfs_rq->tasks_timeline);
-```
+```text
 
 ### 실습: 스케줄러 버전 확인
 
@@ -183,7 +183,7 @@ ktime                                   : 1234567890.123456
 sched_clk                               : 1234567890.123456
 cpu_clk                                 : 1234567890.123456
 jiffies                                 : 4295678901
-```
+```text
 
 ## 컨텍스트 스위칭
 
@@ -207,7 +207,7 @@ jiffies                                 : 4295678901
    - 프로그램 카운터 복원
 
 4. B 실행 시작
-```
+```text
 
 ### 컨텍스트 스위칭 비용 측정
 
@@ -222,11 +222,11 @@ jiffies                                 : 4295678901
 int main() {
     int pipe1[2], pipe2[2];
     pipe(pipe1); pipe(pipe2);
-    
+
     struct timespec start, end;
     char buf = 'x';
     int iterations = 1000000;
-    
+
     if (fork() == 0) {
         // Child: ping-pong
         for (int i = 0; i < iterations; i++) {
@@ -235,25 +235,25 @@ int main() {
         }
         return 0;
     }
-    
+
     // Parent: measure
     clock_gettime(CLOCK_MONOTONIC, &start);
-    
+
     for (int i = 0; i < iterations; i++) {
         write(pipe1[1], &buf, 1);
         read(pipe2[0], &buf, 1);
     }
-    
+
     clock_gettime(CLOCK_MONOTONIC, &end);
     wait(NULL);
-    
-    long ns = (end.tv_sec - start.tv_sec) * 1000000000 + 
+
+    long ns = (end.tv_sec - start.tv_sec) * 1000000000 +
               (end.tv_nsec - start.tv_nsec);
-    
+
     printf("컨텍스트 스위치: %ld ns, ", ns / (iterations * 2));
     return 0;
 }
-```
+```text
 
 ```bash
 $ gcc -O2 context_switch_bench.c -o csw_bench
@@ -275,7 +275,7 @@ $ pidstat -w 1
 10:45:02        0      5678     234.00     12.00  mysql
 # cswch/s: 자발적 스위치 (I/O 대기 등)
 # nvcswch/s: 비자발적 스위치 (시간 할당 소진)
-```
+```text
 
 ## 스케줄링 기본 매개변수
 
@@ -317,7 +317,7 @@ se.sum_exec_runtime                          :          1234.567890
 nr_switches                                  :                  234
 nr_voluntary_switches                        :                    0
 nr_involuntary_switches                      :                  234
-```
+```text
 
 ### Nice 값과 우선순위
 
@@ -363,7 +363,7 @@ High (nice -10): 12345678
 Normal (nice 0): 4567890
 Low (nice 10): 1234567
 # Nice 값에 따라 작업량 차이 확인
-```
+```text
 
 ## Load Average의 진실
 
@@ -379,7 +379,7 @@ $ uptime
 해석:
 - CPU 4개 시스템에서 2.45 = 61% 활용
 - CPU 1개 시스템에서 2.45 = 245% 과부하 (1.45개 태스크 대기)
-```
+```text
 
 ### Load Average 계산
 
@@ -397,7 +397,7 @@ done
 # 출력: load_1m load_5m load_15m running/total last_pid
 # 2.45 1.93 1.65 3/456 12345
 #                ↑ 현재 실행 중/전체 태스크
-```
+```text
 
 ### Load vs CPU 사용률
 
@@ -414,7 +414,7 @@ $ mpstat  # CPU: 50% (하나는 CPU, 하나는 I/O)
 $ ps aux | awk '$8 ~ /D/'
 USER  PID %CPU %MEM    VSZ   RSS TTY STAT START   TIME COMMAND
 root 1234  0.0  0.0   7360   680 ?   D    11:20   0:00 [flush-8:0]
-```
+```text
 
 ## 스케줄러 통계와 모니터링
 
@@ -434,7 +434,7 @@ domain0 0f 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ...
 
 # 더 읽기 쉬운 형태
 $ cat /proc/sched_debug | grep -A 10 "cpu#0"
-```
+```text
 
 ### 실시간 모니터링 스크립트
 
@@ -450,11 +450,11 @@ while true; do
     clear
     echo "시간: $(date +%H:%M:%S)"
     echo ""
-    
+
     # Load Average
     echo "Load Average: $(cat /proc/loadavg | cut -d' ' -f1-3)"
     echo ""
-    
+
     # 런큐 길이
     echo "런큐 길이:"
     for cpu in /sys/devices/system/cpu/cpu[0-9]*; do
@@ -466,17 +466,17 @@ while true; do
         echo "  CPU$cpu_num: $runnable"
     done
     echo ""
-    
+
     # 컨텍스트 스위치
     echo "컨텍스트 스위치/초:"
     cs1=$(awk '/^ctxt/ {print $2}' /proc/stat)
     sleep 1
     cs2=$(awk '/^ctxt/ {print $2}' /proc/stat)
     echo "  $((cs2 - cs1))"
-    
+
     sleep 4
 done
-```
+```text
 
 ## 실전 트러블슈팅
 
@@ -499,7 +499,7 @@ $ pidstat -wt 1
 
 # 높은 nvcswch = CPU 경쟁
 # 해결: CPU 추가 또는 프로세스 수 감소
-```
+```text
 
 ### 케이스 2: 특정 프로세스 우선순위 조정
 
@@ -515,7 +515,7 @@ $ sudo renice -n -10 -p 12345
 $ sudo cgcreate -g cpu:/db_group
 $ echo 8192 > /sys/fs/cgroup/cpu/db_group/cpu.shares  # 기본값의 8배
 $ echo 12345 > /sys/fs/cgroup/cpu/db_group/cgroup.procs
-```
+```text
 
 ## 정리
 

@@ -29,9 +29,9 @@ Task C: ████████████████████████
 Task D: ████████████████████████ (25%)
 
 현실 CPU (한 번에 하나만):
-Task A: ████    ████    ████    
+Task A: ████    ████    ████
 Task B:     ████    ████    ████
-Task C:         ████    ████    
+Task C:         ████    ████
 Task D:             ████    ████
 
 CFS 목표: 현실을 이상에 최대한 가깝게!
@@ -76,9 +76,9 @@ cat > vruntime_test.c << 'EOF'
 int main(int argc, char *argv[]) {
     int nice_val = argc > 1 ? atoi(argv[1]) : 0;
     setpriority(PRIO_PROCESS, 0, nice_val);
-    
+
     printf("PID: %d, Nice: %d, ", getpid(), nice_val);
-    
+
     while(1) {
         // CPU 집약 작업
         for(volatile int i = 0; i < 1000000; i++);
@@ -206,10 +206,10 @@ struct cfs_rq {
     struct sched_entity *next;              // 다음 실행 예정
     struct sched_entity *last;              // 마지막 실행
     struct sched_entity *skip;              // 건너뛸 태스크
-    
+
     u64 min_vruntime;                      // 최소 vruntime
     unsigned int nr_running;               // 실행 가능 태스크 수
-    
+
     struct rb_node *rb_leftmost;           // 캐시된 leftmost
 };
 ```text
@@ -284,21 +284,21 @@ $ cat /proc/sys/kernel/sched_wakeup_granularity_ns
 test_timeslice() {
     local n=$1
     echo "=== $n 태스크 실행 ==="
-    
+
     # n개 CPU 버너 시작
     for i in $(seq 1 $n); do
         taskset -c 0 nice -n 0 bash -c 'while true; do :; done' &
         pids="$pids $!"
     done
-    
+
     sleep 3
-    
+
     # 각 태스크의 스위치 횟수 측정
     for pid in $pids; do
         switches=$(cat /proc/$pid/sched 2>/dev/null | grep nr_switches | awk '{print $3}')
         echo "  PID $pid: $switches switches"
     done
-    
+
     # 정리
     kill $pids 2>/dev/null
     wait $pids 2>/dev/null
@@ -361,7 +361,7 @@ void io_simulator() {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) return 1;
-    
+
     if (argv[1][0] == 'c') {
         printf("CPU burner (PID %d), ", getpid());
         cpu_burner();
@@ -369,7 +369,7 @@ int main(int argc, char *argv[]) {
         printf("I/O simulator (PID %d), ", getpid());
         io_simulator();
     }
-    
+
     return 0;
 }
 ```text
@@ -488,10 +488,10 @@ sudo sysctl -w kernel.sched_migration_cost_ns=5000000  # 5ms
 benchmark() {
     local desc=$1
     echo "=== $desc ==="
-    
+
     # 테스트 워크로드
     sysbench cpu --cpu-max-prime=10000 --threads=8 run | grep "events per second"
-    
+
     # 레이턴시 테스트
     hackbench -s 512 -l 200 -g 15 -f 25 -P
     echo
