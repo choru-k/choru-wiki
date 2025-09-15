@@ -64,7 +64,7 @@ public class MemoryCalculator {
     public static void main(String[] args) {
         // Heap
         long heap = Runtime.getRuntime().maxMemory();
-        
+
         // Metaspace (JMX로 확인)
         long metaspace = ManagementFactory
             .getPlatformMXBeans(MemoryPoolMXBean.class)
@@ -72,21 +72,21 @@ public class MemoryCalculator {
             .filter(pool -> pool.getName().contains("Metaspace"))
             .mapToLong(pool -> pool.getUsage().getUsed())
             .sum();
-        
+
         // Thread stacks
         int threads = Thread.activeCount();
         long threadStacks = threads * 1024 * 1024; // 1MB per thread
-        
+
         // Direct memory
         long directMemory = sun.misc.VM.maxDirectMemory();
-        
+
         System.out.println("Memory Breakdown:");
         System.out.println("Heap: " + heap / 1024 / 1024 + " MB");
         System.out.println("Metaspace: " + metaspace / 1024 / 1024 + " MB");
-        System.out.println("Threads: " + threads + " * 1MB = " + 
+        System.out.println("Threads: " + threads + " * 1MB = " +
                           threadStacks / 1024 / 1024 + " MB");
         System.out.println("Direct: " + directMemory / 1024 / 1024 + " MB");
-        
+
         long total = heap + metaspace + threadStacks + directMemory;
         System.out.println("Minimum Total: " + total / 1024 / 1024 + " MB");
         // 실제로는 JVM 오버헤드로 더 많이 사용
@@ -136,7 +136,7 @@ class TLAB {
     byte[] buffer;      // Eden의 일부
     int top;           // 현재 위치
     int end;           // 버퍼 끝
-    
+
     Object allocate(int size) {
         if (top + size <= end) {
             // Fast path: 동기화 없음
@@ -325,7 +325,7 @@ JDK 7 (PermGen):                JDK 8+ (Metaspace):
 │ ┌──────────┐ │                │              │
 │ │ PermGen  │ │                │  (No PermGen)│
 │ └──────────┘ │                └──────────────┘
-└──────────────┘                
+└──────────────┘
                                 ┌──────────────┐
                                 │Native Memory │
                                 │ ┌──────────┐ │
@@ -343,7 +343,7 @@ JDK 7 (PermGen):                JDK 8+ (Metaspace):
 public class ClassLoaderLeak {
     // 잘못된 패턴
     static List<ClassLoader> loaders = new ArrayList<>();
-    
+
     void deployApp() {
         URLClassLoader loader = new URLClassLoader(...);
         loaders.add(loader);  // 클래스로더 유지 → Metaspace 누수
@@ -457,7 +457,7 @@ public static void main(String[] args) {
     new JvmGcMetrics().bindTo(registry);
     new JvmMemoryMetrics().bindTo(registry);
     new JvmThreadMetrics().bindTo(registry);
-    
+
     // 메트릭 엔드포인트
     // GET /actuator/prometheus
 }
