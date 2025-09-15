@@ -13,7 +13,7 @@ tags:
 
 - 시스템이 느려졌을 때 어디서부터 분석을 시작해야 할까요?
 - USE Method는 무엇이고 어떻게 활용하나요?
-- 성능 분석 도구들을 어떤 순서로 사용해야 할까요?  
+- 성능 분석 도구들을 어떤 순서로 사용해야 할까요?
 - Latency와 Throughput 중 무엇을 우선시해야 할까요?
 - Amdahl's Law가 실제 최적화에 어떤 의미를 가질까요?
 
@@ -27,7 +27,7 @@ tags:
 
 ```text
 💥 CEO: "사이트가 너무 느린데요?"
-💥 마케팅팀: "광고 효과가 떨어져요!"  
+💥 마케팅팀: "광고 효과가 떨어져요!"
 💥 고객지원팀: "고객 불만이 쏟아져요!"
 💥 개발팀: "...어디가 문제일까요?" 😅
 ```
@@ -35,7 +35,7 @@ tags:
 **당시 우리의 "최적화" 시도들**:
 
 ```bash
-# 🤡 개발자 A: "데이터베이스가 문제인 것 같아요"  
+# 🤡 개발자 A: "데이터베이스가 문제인 것 같아요"
 $ mysql -e "SHOW PROCESSLIST"  # 쿼리는 빨라 보임
 
 # 🤡 개발자 B: "서버 메모리가 부족한가요?"
@@ -81,33 +81,33 @@ $ perf top
 graph TD
     subgraph "리소스별 분석"
         CPU[CPU]
-        Memory[Memory] 
+        Memory[Memory]
         Network[Network]
         Storage[Storage]
     end
-    
+
     subgraph "USE 관점"
         U[Utilization 사용률]
-        S[Saturation 포화도]  
+        S[Saturation 포화도]
         E[Errors 오류율]
     end
-    
+
     CPU --> U
-    CPU --> S  
+    CPU --> S
     CPU --> E
-    
+
     Memory --> U
     Memory --> S
     Memory --> E
-    
+
     Network --> U
     Network --> S
     Network --> E
-    
+
     Storage --> U
-    Storage --> S  
+    Storage --> S
     Storage --> E
-    
+
     style U fill:#e1f5fe
     style S fill:#fff3e0
     style E fill:#ffcdd2
@@ -127,14 +127,14 @@ $ top -p $(pgrep myapp)
 $ perf top  # 어떤 함수가 CPU를 많이 쓰는지 확인
 ```
 
-```bash  
+```bash
 # 🚦 Saturation: CPU 대기 큐
 $ cat /proc/loadavg
 # 8.24 7.33 6.98 2/156 1234
 # ↑ 4코어 시스템에서 8.24 = 200% 포화!
 
 # Load Average 해석:
-# < 코어 수: 여유 있음  
+# < 코어 수: 여유 있음
 # = 코어 수: 적정 수준
 # > 코어 수: 포화 상태 (작업이 대기 중)
 ```
@@ -151,7 +151,7 @@ $ perf stat -e context-switches ./myapp
 #### 2단계: Memory 분석
 
 ```bash
-# 🔍 Utilization: 메모리 사용률  
+# 🔍 Utilization: 메모리 사용률
 $ free -h
 #               total   used   free   shared  buff/cache  available
 # Mem:          7.8Gi   4.2Gi  0.9Gi  45Mi    2.7Gi       3.3Gi
@@ -168,7 +168,7 @@ $ vmstat 1
 # 1024 2048 ← 나쁨! 메모리가 부족해 스왑 사용 중
 ```
 
-```bash  
+```bash
 # ❌ Errors: OOM (Out of Memory)
 $ dmesg | grep -i "killed process\|out of memory"
 # Out of memory: Kill process 1234 (myapp) score 902 or sacrifice child
@@ -197,7 +197,7 @@ $ netstat -i
 # ❌ Errors: 네트워크 오류
 $ ethtool -S eth0 | grep error
 # rx_crc_errors: 0
-# rx_frame_errors: 0  
+# rx_frame_errors: 0
 # tx_aborted_errors: 0
 ```
 
@@ -260,12 +260,12 @@ $ iostat -x 1
 
 ### Level 2: 리소스별 상세 분석 (5분 진단)
 
-```bash  
+```bash
 # 🔍 CPU 상세 분석
 $ perf top                    # 실시간 CPU 핫스팟
 $ pidstat -u 1               # 프로세스별 CPU 사용률
 
-# 🧠 Memory 상세 분석  
+# 🧠 Memory 상세 분석
 $ pmap -x PID                # 프로세스 메모리 맵
 $ smem -P python             # 언어별 메모리 사용량
 
@@ -331,21 +331,21 @@ graph TD
         L3[P99 &lt; 500ms]
         L4[사용자 체감 향상]
     end
-    
-    subgraph "Throughput 최적화"  
+
+    subgraph "Throughput 최적화"
         T1[처리량 최대화]
         T2[10,000 RPS]
         T3[리소스 효율성]
         T4[비용 최적화]
     end
-    
+
     subgraph "Trade-off"
         VS[VS]
     end
-    
+
     L4 -.-> VS
     T4 -.-> VS
-    
+
     style L1 fill:#e8f5e8
     style T1 fill:#fff3e0
     style VS fill:#ffebee
@@ -358,7 +358,7 @@ graph TD
 ```bash
 # 웹 사이트 응답시간 목표
 P50: < 100ms   # 50%의 요청이 100ms 이내
-P95: < 300ms   # 95%의 요청이 300ms 이내  
+P95: < 300ms   # 95%의 요청이 300ms 이내
 P99: < 1000ms  # 99%의 요청이 1초 이내
 
 # 측정 방법
@@ -373,7 +373,7 @@ $ wrk -t12 -c100 -d30s http://localhost:8080/
 #### Case 2: 배치 처리 → Throughput 우선
 
 ```bash
-# 데이터 처리 시스템 목표  
+# 데이터 처리 시스템 목표
 목표: 1시간에 1억건 처리
 = 27,777 records/second
 
@@ -429,7 +429,7 @@ void process_images() {
     for (int i = 0; i < image_count; i++) {
         apply_filter(images[i]);     // CPU 집약적
     }
-    
+
     // 20%: 파일 I/O (병렬화 어려움)
     for (int i = 0; i < image_count; i++) {
         save_image(images[i]);       // 순차적 파일 쓰기
@@ -445,7 +445,7 @@ void process_images() {
 # 4코어 서버에서의 이론적 최대 성능향상
 Speedup = 1 / ((1-0.8) + 0.8/4) = 1 / (0.2 + 0.2) = 2.5배
 
-# 8코어 서버에서의 이론적 최대 성능향상  
+# 8코어 서버에서의 이론적 최대 성능향상
 Speedup = 1 / ((1-0.8) + 0.8/8) = 1 / (0.2 + 0.1) = 3.33배
 
 # 16코어 서버에서의 이론적 최대 성능향상
@@ -482,7 +482,7 @@ $ perf report --sort=dso,symbol
 
 # 2. 각 함수의 실행 시간 비율 계산
 # parallel_work(): 75% (병렬화 가능)
-# serial_setup(): 15% (병렬화 불가)  
+# serial_setup(): 15% (병렬화 불가)
 # file_io(): 10% (병렬화 어려움)
 
 # 3. P = 0.75로 Amdahl's Law 적용
@@ -504,7 +504,7 @@ $ ss -tuln | wc -l        # 네트워크 연결 수
 # 2. 빠른 병목점 식별
 $ perf top -p $(pgrep myapp)  # 실시간 CPU 핫스팟
 
-# 3. 긴급 조치 판단  
+# 3. 긴급 조치 판단
 # CPU > 90%: 프로세스 우선순위 조정 (nice)
 # Memory > 90%: 메모리 사용량 큰 프로세스 확인
 # Disk %util > 90%: I/O 집약적 작업 일시 중단
@@ -538,7 +538,7 @@ $ objdump -S ./myapp             # 소스-어셈블리 매핑
 $ time complexity analysis
 $ benchmark different algorithms
 
-# 3. 의존성 분석  
+# 3. 의존성 분석
 $ ldd ./myapp                    # 동적 라이브러리 의존성
 $ nm -D ./myapp | grep UNDEFINED # 외부 심볼 의존성
 ```
@@ -555,7 +555,7 @@ echo "=== CPU Analysis ==="
 echo "Utilization:"
 top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'%' -f1
 
-echo "Saturation:"  
+echo "Saturation:"
 cat /proc/loadavg | awk '{print "Load: " $1 " " $2 " " $3}'
 
 echo "Errors:"
@@ -568,7 +568,7 @@ free -h | grep "Mem:" | awk '{print "Used: " $3 "/" $2}'
 echo "Saturation:"
 vmstat 1 2 | tail -1 | awk '{print "Swap I/O: " $7 " " $8}'
 
-echo "Errors:"  
+echo "Errors:"
 dmesg | grep -c -i "out of memory\|oom"
 
 echo -e ", === Storage Analysis ==="
@@ -597,11 +597,11 @@ char* slow_string_concat(int n) {
     // 초기 1바이트만 할당하여 매번 realloc을 강제로 발생시킴
     char* result = malloc(1);
     result[0] = '\0';
-    
+
     for (int i = 0; i < n; i++) {
         char temp[20];
         sprintf(temp, "item_%d_", i);
-        
+
         // ⭐ 2단계: 성능 킬러 - 매번 전체 문자열 크기 재계산 및 메모리 재할당
         // strlen(result): O(현재 길이) 시간 복잡도로 이미 연결된 모든 문자열 스캔
         // realloc: 기존 데이터를 새 메모리 위치로 복사 (O(현재 길이))
@@ -610,7 +610,7 @@ char* slow_string_concat(int n) {
         result = realloc(result, strlen(result) + strlen(temp) + 1);
         strcat(result, temp);
     }
-    
+
     // 최종 결과: n=10,000일 때 약 100MB 메모리 복사 및 10억 번 문자 비교 발생
     return result;
 }
@@ -619,7 +619,7 @@ char* slow_string_concat(int n) {
 // 실제 사용: 해시 테이블 순회, 그래프 탐색, 랜덤 인덱싱에서 흔히 발생
 long cache_unfriendly_sum(int* arr, int n) {
     long sum = 0;
-    
+
     // ⭐ CPU 캐시 계층구조 무시한 메모리 접근 패턴
     // L1 캐시: 64바이트 라인 단위로 메모리 로드 (연속된 16개 int 동시 캐시)
     // L2/L3 캐시: 공간 지역성(spatial locality)으로 인접 데이터 미리 적재
@@ -631,7 +631,7 @@ long cache_unfriendly_sum(int* arr, int n) {
         // 연속 접근 대비 20-50배 느린 성능 (RAM 속도로 제한됨)
         sum += arr[(i * 7919) % n];  // 소수로 random access
     }
-    
+
     // 최적화 힌트: 순차 접근 시 캐시 히트율 > 95%, 3-5배 성능 향상 가능
     return sum;
 }
@@ -641,14 +641,14 @@ int main() {
     char* str = slow_string_concat(10000);
     printf("String length: %zu, ", strlen(str));
     free(str);
-    
+
     // 테스트 2: 캐시 미스
     int* arr = malloc(1000000 * sizeof(int));
     for (int i = 0; i < 1000000; i++) arr[i] = i;
-    
+
     long sum = cache_unfriendly_sum(arr, 1000000);
     printf("Sum: %ld, ", sum);
-    
+
     free(arr);
     return 0;
 }
@@ -682,7 +682,7 @@ $ firefox slow.svg
 ### 🎯 성능 분석의 원칙들
 
 1. **측정이 먼저**: 추측하지 말고 측정하라
-2. **체계적 접근**: USE Method로 빠짐없이 분석  
+2. **체계적 접근**: USE Method로 빠짐없이 분석
 3. **도구 체인**: Level 1 → 2 → 3 순서로 깊이 있게
 4. **병목점 우선**: 80/20 법칙으로 효과적 최적화
 5. **목표 설정**: Latency vs Throughput 명확히 구분
@@ -696,7 +696,7 @@ $ firefox slow.svg
 "데이터베이스가 느린 것 같으니 인덱스 추가"   # 실제로는 애플리케이션 병목
 "캐시를 더 많이 쓰면 빨라질 거야"           # 캐시 히트율 확인 없이
 
-# ✅ 올바른 접근들  
+# ✅ 올바른 접근들
 $ perf top                                   # 실제 CPU 사용 함수 확인
 $ free -h && cat /proc/meminfo              # 메모리 상태 정확히 파악
 $ EXPLAIN ANALYZE SELECT ...                # 쿼리 실행 계획 확인
