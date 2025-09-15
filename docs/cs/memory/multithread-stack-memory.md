@@ -74,7 +74,7 @@ void* worker_thread(void* arg) {
 int main(int argc, char* argv[], char* envp[]) {
     pthread_t thread;
     pthread_create(&thread, NULL, worker_thread, NULL);
-    
+
     // 메인 스레드가 종료하면?
     return 0;  // 프로세스 전체 종료! Worker도 강제 종료
 }
@@ -87,17 +87,17 @@ int main(int argc, char* argv[], char* envp[]) {
 ```c
 int main(int argc, char* argv[], char* envp[]) {
     // 메인 스레드 스택에는 특별한 데이터가 있음
-    
+
     // 1. 프로그램 인자
     for (int i = 0; i < argc; i++) {
         printf("argv[%d]: %s at %p, ", i, argv[i], argv[i]);
     }
-    
+
     // 2. 환경 변수
     for (char** env = envp; *env != NULL; env++) {
         printf("env: %s at %p, ", *env, *env);
     }
-    
+
     // 3. Auxiliary Vector (시스템 정보)
     // 스택 최상단에 위치
 }
@@ -119,10 +119,10 @@ int main(int argc, char* argv[], char* envp[]) {
 void compare_stack_locations() {
     pthread_t thread;
     int main_stack_var;
-    
+
     printf("Main thread stack: %p, ", &main_stack_var);
     // 0x7fffffffXXXX (높은 주소, 스택 영역)
-    
+
     pthread_create(&thread, NULL, [](void* arg) -> void* {
         int worker_stack_var;
         printf("Worker thread stack: %p, ", &worker_stack_var);
@@ -147,17 +147,17 @@ void compare_stack_locations() {
 void print_memory_usage(const char* label) {
     struct rusage usage;
     getrusage(RUSAGE_SELF, &usage);
-    
+
     FILE* status = fopen("/proc/self/status", "r");
     char line[256];
     long vmsize = 0, vmrss = 0;
-    
+
     while (fgets(line, sizeof(line), status)) {
         if (sscanf(line, "VmSize: %ld kB", &vmsize) == 1) continue;
         if (sscanf(line, "VmRSS: %ld kB", &vmrss) == 1) continue;
     }
     fclose(status);
-    
+
     printf("%s:, ", label);
     printf("  Virtual Memory: %ld MB, ", vmsize / 1024);
     printf("  Physical Memory (RSS): %ld MB, ", vmrss / 1024);
@@ -171,15 +171,15 @@ void* minimal_thread(void* arg) {
 
 int main() {
     print_memory_usage("Before creating threads");
-    
+
     pthread_t threads[100];
     for (int i = 0; i < 100; i++) {
         pthread_create(&threads[i], NULL, minimal_thread, NULL);
     }
-    
+
     sleep(1);  // 스레드 생성 대기
     print_memory_usage("After creating 100 threads");
-    
+
     return 0;
 }
 ```
@@ -208,7 +208,7 @@ Linux는 "게으른 할당(Lazy Allocation)"을 사용합니다:
 스레드 생성 시 메모리 할당 과정:
 
 Step 1: pthread_create() 호출
-├─> mmap(8MB, ...) 
+├─> mmap(8MB, ...)
 └─> 가상 주소 공간만 예약 (물리 메모리 X)
 
 Step 2: 스택 첫 접근
@@ -259,15 +259,15 @@ void* heavy_stack_user(void* arg) {
     // 재귀 호출로 스택 사용
     void recursive(int depth) {
         char large_array[4096];  // 4KB 로컬 배열
-        
+
         // 배열 실제 사용 (Page Fault 유발)
         memset(large_array, 0, sizeof(large_array));
-        
+
         if (depth > 0) {
             recursive(depth - 1);
         }
     }
-    
+
     recursive(1000);  // 4MB 스택 사용!
     return NULL;
 }
@@ -295,7 +295,7 @@ void* heavy_stack_user(void* arg) {
 $ cat /proc/sys/kernel/threads-max
 63704  # 시스템 전체 최대 스레드
 
-$ cat /proc/sys/vm/max_map_count  
+$ cat /proc/sys/vm/max_map_count
 65530  # 프로세스당 최대 메모리 맵
 
 $ ulimit -u
@@ -310,11 +310,11 @@ $ ulimit -u
 void demonstrate_guard_page() {
     pthread_attr_t attr;
     pthread_attr_init(&attr);
-    
+
     size_t guard_size;
     pthread_attr_getguardsize(&attr, &guard_size);
     printf("Guard page size: %zu bytes, ", guard_size);  // 보통 4096
-    
+
     // Guard page 비활성화 (위험!)
     pthread_attr_setguardsize(&attr, 0);
 }
@@ -365,15 +365,15 @@ void* monitored_thread(void* arg) {
     // 스택 시작 주소 저장
     char stack_top;
     *(char**)arg = &stack_top;
-    
+
     // 실제 작업
     do_work();
-    
+
     // 스택 끝 확인
     char stack_bottom;
     size_t stack_used = &stack_top - &stack_bottom;
     printf("Stack used: %zu bytes, ", stack_used);
-    
+
     return NULL;
 }
 ```
@@ -389,7 +389,7 @@ def calculate_stack_size(task_type):
     """작업 유형에 따른 스택 크기 계산"""
     sizes = {
         'io_bound': 256 * 1024,      # 256KB
-        'cpu_bound': 512 * 1024,     # 512KB  
+        'cpu_bound': 512 * 1024,     # 512KB
         'recursive': 2 * 1024 * 1024, # 2MB
         'default': 1024 * 1024        # 1MB
     }
@@ -429,14 +429,14 @@ spec:
 void setup_thread_pool() {
     // cgroup 메모리 제한 확인
     long memory_limit = get_cgroup_memory_limit();
-    
+
     // 안전한 스레드 수 계산
     size_t stack_size = 256 * 1024;  // 256KB
     size_t overhead = 100 * 1024 * 1024;  // 100MB for heap/etc
-    
+
     int max_threads = (memory_limit - overhead) / stack_size;
     max_threads = min(max_threads, 500);  // 상한선
-    
+
     printf("Creating thread pool with %d threads, ", max_threads);
 }
 ```
