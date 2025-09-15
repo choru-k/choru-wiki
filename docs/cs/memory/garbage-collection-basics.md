@@ -88,10 +88,10 @@ GC Root부터 시작한 객체 그래프:
 class Object:
     def __init__(self):
         self.ref_count = 0
-        
+
     def add_reference(self):
         self.ref_count += 1
-        
+
     def remove_reference(self):
         self.ref_count -= 1
         if self.ref_count == 0:
@@ -190,7 +190,7 @@ STW 발생:
 class Problem {
     Object a = new Object();
     Object b = new Object();
-    
+
     // Thread 1: GC가 a를 마킹 중
     // Thread 2: 동시에 실행
     void concurrent() {
