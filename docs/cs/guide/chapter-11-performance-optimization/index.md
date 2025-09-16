@@ -353,6 +353,26 @@ Doom, Quake 같은 게임을 386 CPU에서 60fps로 실행하게 만든 최적�
 
 `FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
 
+## 🔗 관련 챕터
+
+### 📚 시스템 프로그래밍 기초
+
+- [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
+- [Chapter 2: CPU와 인터럽트](../chapter-02-cpu-interrupt/index.md)
+- [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
+- [Chapter 6: 파일 시스템과 I/O](../chapter-06-file-io/index.md)
+
+### 🚀 고급 최적화
+
+- [Chapter 8: 메모리 할당자와 가비지 컬렉션](../chapter-08-memory-allocator-gc/index.md)
+- [Chapter 9: 고급 메모리 관리](../chapter-09-advanced-memory-management/index.md)
+- [Chapter 10: 비동기 프로그래밍](../chapter-10-async-programming/index.md)
+
+### 🔧 운영 및 모니터링
+
+- [Chapter 12: 관찰 가능성과 디버깅](../chapter-12-observability-debugging/index.md)
+- [Chapter 13: 컨테이너와 Kubernetes](../chapter-13-container-kubernetes/index.md)
+
 ### ⏭️ 다음 단계 가이드
 
 - 실무 적용을 염두에 두고 프로젝트에 적용해보세요

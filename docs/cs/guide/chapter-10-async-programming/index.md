@@ -9,7 +9,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter 04: 비동기 프로그래밍 - 효율성의 새로운 패러다임
+# Chapter 10: 비동기 프로그래밍 - 효율성의 새로운 패러다임
 
 ## 이 장에서 다루는 내용
 
@@ -37,7 +37,7 @@ Promise, Future, 코루틴부터 분산 비동기 패턴까지, 현대적 비동
 
 ## 📚 이 챕터의 구성
 
-### 7.1 Promise와 Future
+### 10.1 Promise와 Future
 
 - [08-01: Promise Future Basics](./08-01-promise-future-basics.md)
 - [08-02: Coroutine Fundamentals](./08-02-coroutine-fundamentals.md)
@@ -49,7 +49,7 @@ Promise, Future, 코루틴부터 분산 비동기 패턴까지, 현대적 비동
 - [08-44: Promise Performance Analysis Tools](./08-44-promise-performance-analysis-tools.md)
 - [08-45: Promise Performance Analysis](./08-45-promise-performance-analysis.md)
 
-### 7.2 이벤트 루프와 코루틴
+### 10.2 이벤트 루프와 코루틴
 
 - [05c-javascript: Analyzer](./05c-javascript-analyzer.md)
 - [08-02: Coroutine Fundamentals](./08-02-coroutine-fundamentals.md)
@@ -61,7 +61,7 @@ Promise, Future, 코루틴부터 분산 비동기 패턴까지, 현대적 비동
 - [08-17: Java Virtual Threads](./08-17-java-virtual-threads.md)
 - [08-42: Event Loop Debugging](./08-42-event-loop-debugging.md)
 
-### 7.3 분산 비동기 패턴
+### 10.3 분산 비동기 패턴
 
 - [04b-event: Sourcing Cqrs](./04b-event-sourcing-cqrs.md)
 - [04c-message: Streaming](./04c-message-streaming.md)
@@ -75,8 +75,9 @@ Promise, Future, 코루틴부터 분산 비동기 패턴까지, 현대적 비동
 
 ### 📚 시스템 프로그래밍 기초
 
-- [Chapter 1: 컴파일러와 링커](../chapter-05-compiler-linker/index.md)
-- [Chapter 2: 메모리 시스템](../chapter-03-memory-system/index.md)
+- [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
+- [Chapter 6: 파일 시스템과 I/O](../chapter-06-file-io/index.md)
+- [Chapter 7: 네트워크 프로그래밍](../chapter-07-network-programming/index.md)
 
 ### 🚀 성능 관련  
 
@@ -84,5 +85,6 @@ Promise, Future, 코루틴부터 분산 비동기 패턴까지, 현대적 비동
 
 ### 🔧 고급 주제
 
-- [Chapter 04: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
-- [Chapter 17: 보안 엔지니어링](../chapter-17-security-engineering/index.md)
+- [Chapter 4: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
+- [Chapter 14: 분산 시스템](../chapter-14-distributed-systems/index.md)
+- [Chapter 16: 분산 시스템 패턴](../chapter-16-distributed-system-patterns/index.md)

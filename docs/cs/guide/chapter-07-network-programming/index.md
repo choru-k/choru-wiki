@@ -9,7 +9,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter 10: 네트워크 프로그래밍 - 연결된 세상을 만드는 기술
+# Chapter 7: 네트워크 프로그래밍 - 연결된 세상을 만드는 기술
 
 ## 이 장에서 다루는 내용
 
@@ -37,7 +37,7 @@ priority_score: 4
 
 ## 📚 이 챕터의 구성
 
-### 6.1 소켓과 TCP/IP 스택
+### 7.1 소켓과 TCP/IP 스택
 
 - [07-01: Socket Basics](./07-01-socket-basics.md)
 - [07-02: Socket Fundamentals](./07-02-socket-fundamentals.md)
@@ -53,7 +53,7 @@ priority_score: 4
 - [07-41: Tcp Analysis Tools](./07-41-tcp-analysis-tools.md)
 - [07-42: Tcp Diagnostic Tools](./07-42-tcp-diagnostic-tools.md)
 
-### 6.2 보안 네트워킹
+### 7.2 보안 네트워킹
 
 - [04b-certificates: Pki](./04b-certificates-pki.md)
 - [04e-secure: Programming](./04e-secure-programming.md)
@@ -62,7 +62,7 @@ priority_score: 4
 - [07-33: Crypto Performance](./07-33-crypto-performance.md)
 - [07-34: Tls Optimization](./07-34-tls-optimization.md)
 
-### 6.3 고성능 네트워킹
+### 7.3 고성능 네트워킹
 
 - [07-05: High Performance Architecture](./07-05-high-performance-architecture.md)
 - [07-17: C10k Scaling Solutions](./07-17-c10k-scaling-solutions.md)
@@ -79,8 +79,9 @@ priority_score: 4
 
 ### 📚 시스템 프로그래밍 기초
 
-- [Chapter 1: 컴파일러와 링커](../chapter-05-compiler-linker/index.md)
-- [Chapter 2: 메모리 시스템](../chapter-03-memory-system/index.md)
+- [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
+- [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
+- [Chapter 6: 파일 시스템과 I/O](../chapter-06-file-io/index.md)
 
 ### 🚀 성능 관련  
 
@@ -88,5 +89,5 @@ priority_score: 4
 
 ### 🔧 고급 주제
 
-- [Chapter 04: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
-- [Chapter 17: 보안 엔지니어링](../chapter-17-security-engineering/index.md)
+- [Chapter 10: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
+- [Chapter 15: 보안 엔지니어링](../chapter-15-security-engineering/index.md)
