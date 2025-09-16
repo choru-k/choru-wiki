@@ -1,12 +1,9 @@
 ---
 tags:
-  - balanced
-  - copy-on-write
-  - fork
+  - Compiler
+  - Compilation
   - intermediate
   - medium-read
-  - multiprocessing
-  - process-creation
   - system-call
   - 시스템프로그래밍
 difficulty: INTERMEDIATE
@@ -15,7 +12,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 5.1: 컴파일은 어떻게 동작하는가
+# 5.1.1: 컴파일은 어떻게 동작하는가
 
 ## 이 문서를 읽으면 답할 수 있는 질문들
 
@@ -584,7 +581,7 @@ main:
 
 ## 다음 섹션 예고
 
-다음 섹션([1-2: 링킹은 어떻게 동작하는가](05-11-linking.md))에서는 **링킹(Linking)** 과정을 자세히 다룹니다:
+다음 섹션([5.2: 링킹은 어떻게 동작하는가](05-02-01-linking.md))에서는 **링킹(Linking)** 과정을 자세히 다룹니다:
 
 - 여러 오브젝트 파일이 어떻게 하나가 되는가?
 - 심볼 해결과 재배치는 어떻게 동작하는가?
@@ -595,13 +592,13 @@ main:
 
 ### 직접 연관 문서
 
-- [1-2: 링킹은 어떻게 동작하는가](05-11-linking.md) - 컴파일 후 링킹 과정
-- [1-4: 컴파일러 최적화](05-30-compiler-optimization.md) - 컴파일러의 최적화 기법
+- [5.2: 링킹은 어떻게 동작하는가](05-02-01-linking.md) - 컴파일 후 링킹 과정
+- [5.4: 컴파일러 최적화](05-04-01-compiler-optimization.md) - 컴파일러의 최적화 기법
 
 ### 고급 주제
 
-- [1-5: 빌드 시스템 디버깅](05-40-build-debugging.md) - 컴파일 성능 최적화
-- [1-6: 링커 에러 해결](05-41-linking-debugging.md) - 컴파일/링킹 문제 해결
+- [5.5: 빌드 시스템 디버깅](05-05-01-build-debugging.md) - 컴파일 성능 최적화
+- [5.6: 링커 에러 해결](05-05-02-linking-debugging.md) - 컴파일/링킹 문제 해결
 
 ### 관련 시스템 개념
 
@@ -624,11 +621,11 @@ main:
 
 ### 📂 같은 챕터 (chapter-01-compiler-linker)
 
-- [Chapter 1-2: 링킹은 어떻게 동작하는가](./05-11-linking.md)
-- [Chapter 1-3: 로딩과 실행은 어떻게 동작하는가](./05-12-loading-execution.md)
-- [Chapter 1-4: 컴파일러 최적화는 어떻게 동작하는가](./05-30-compiler-optimization.md)
-- [1-5: 빌드 시스템 디버깅 - "왜 빌드가 이렇게 느리지?"](./05-40-build-debugging.md)
-- [1-6: 링커 에러 해결 - "undefined reference가 계속 나요"](./05-41-linking-debugging.md)
+- [5.2: 링킹은 어떻게 동작하는가](./05-02-01-linking.md)
+- [5.3: 로딩과 실행은 어떻게 동작하는가](./05-03-01-loading-execution.md)
+- [5.4: 컴파일러 최적화는 어떻게 동작하는가](./05-04-01-compiler-optimization.md)
+- [5.5: 빌드 시스템 디버깅 - "왜 빌드가 이렇게 느리지?"](./05-05-01-build-debugging.md)
+- [5.6: 링커 에러 해결 - "undefined reference가 계속 나요"](./05-05-02-linking-debugging.md)
 
 ### 🏷️ 관련 키워드
 

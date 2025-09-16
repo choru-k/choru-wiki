@@ -4,11 +4,11 @@
 
 ### FUNDAMENTALS
 
-1. [13.5 디버깅 기법 및 문제 해결 개요](./13-41-debugging-troubleshooting.md)
+1. [13.5 디버깅 기법 및 문제 해결 개요](./chapter-12-observability-debugging/13-41-debugging-troubleshooting.md)
    - ⏱️ 1-2시간
    - 🎯 주니어 개발자, 신입 DevOps 엔지니어
 
-2. [Chapter 3-2: 스택과 힙은 어떻게 동작하는가 개요](./chapter-03-memory-system/02-11-stack-heap.md)
+2. [Chapter 3-2: 스택과 힙은 어떻게 동작하는가 개요](./chapter-03-memory-system/03-61-stack-heap.md)
    - ⏱️ 1-2시간
    - 🎯 컴퓨터과학 입문자, 프로그래밍 초급자
 
@@ -24,11 +24,11 @@
    - ⏱️ 2-3시간
    - 🎯 컴퓨터공학 전공 학생, 프로그래밍 입문자, GC 언어 학습자
 
-6. [분산 시스템 기초 이론 - CAP 정리와 일관성의 과학](./14-01-distributed-fundamentals.md)
+6. [분산 시스템 기초 이론 - CAP 정리와 일관성의 과학](./chapter-14-distributed-systems/14-14-01-distributed-fundamentals.md)
    - ⏱️ 4-6시간
    - 🎯 백엔드 개발자 (1-3년차), 시스템 설계를 처음 배우는 개발자
 
-7. [Chapter 15-2a: 네트워크 보안 기초와 위협 환경](./chapter-17-security-engineering/15-01-network-fundamentals.md)
+7. [Chapter 15-2a: 네트워크 보안 기초와 위협 환경](./chapter-17-security-engineering/17-01-network-fundamentals.md)
    - ⏱️ 6-8시간
    - 🎯 네트워크 보안 입문자, 시스템 관리 초보자, 개발자
 
@@ -53,11 +53,11 @@
    - ⏱️ 2-5시간
    - 🎯 마이크로서비스 환경에서 데이터 일관성 문제를 겪고 있는 백엔드 개발자, 시스템 아키텍트
 
-2. [코루틴과 Green Thread 구현 개요](./chapter-10-async-programming/08-15-coroutine.md)
+2. [코루틴과 Green Thread 구현 개요](./chapter-10-async-programming/10-15-coroutine.md)
    - ⏱️ 3-5시간
    - 🎯 백엔드 개발자, 시스템 아키텍트
 
-3. [Chapter 15-4: 컨테이너 보안 - 격리된 것처럼 보이지만 실제로는](./chapter-17-security-engineering/15-18-container-security.md)
+3. [Chapter 15-4: 컨테이너 보안 - 격리된 것처럼 보이지만 실제로는](./chapter-17-security-engineering/17-18-container-security.md)
    - ⏱️ 4-6시간
    - 🎯 DevSecOps 엔지니어, 컨테이너 플랫폼 운영자, 보안 엔지니어
 
@@ -69,7 +69,7 @@
    - ⏱️ 4-6시간
    - 🎯 시니어 개발자, 보안 엔지니어, DevOps 엔지니어, 시스템 아키텍트
 
-6. [8.1e 에러 처리 패턴](./chapter-10-async-programming/08-40-error-handling.md)
+6. [8.1e 에러 처리 패턴](./chapter-10-async-programming/10-40-error-handling.md)
    - ⏱️ 5-7시간
    - 🎯 백엔드 개발자, 시스템 아키텍트 (중급-고급 2-5년 경력)
 
@@ -77,7 +77,7 @@
    - ⏱️ 5-7시간
    - 🎯 시스템 관리자, DevOps 엔지니어
 
-8. [Chapter 1-3: 로딩과 실행은 어떻게 동작하는가](./01-12-loading-execution.md)
+8. [Chapter 1-3: 로딩과 실행은 어떻게 동작하는가](./chapter-01-process-thread/04-12-program-replacement-exec.md)
    - ⏱️ 5-7시간
    - 🎯 중급 시스템 프로그래머, 임베디드 개발자, 성능 엔지니어
 
@@ -98,7 +98,7 @@
    - ⏱️ 4-6시간
    - 🎯 시니어 백엔드 개발자, 시스템 아키텍트, DevOps 엔지니어
 
-2. [운영체제 및 커널 튜닝](./11-37-os-kernel-tuning.md)
+2. [운영체제 및 커널 튜닝](./chapter-11-performance-optimization/11-37-os-kernel-tuning.md)
    - ⏱️ 6-10시간
    - 🎯 시스템 관리자, 성능 엔지니어, DevOps 엔지니어
 
@@ -106,19 +106,19 @@
    - ⏱️ 6-8시간
    - 🎯 시니어 개발자, 시스템 아키텍트, DevOps/플랫폼 엔지니어
 
-4. [Chapter 10-2A: 커널 설계 철학과 아키텍처 기초](./chapter-04-syscall-kernel/10-10-kernel-design-philosophy.md)
+4. [Chapter 10-2A: 커널 설계 철학과 아키텍처 기초](./chapter-04-syscall-kernel/04-10-kernel-design-philosophy.md)
    - ⏱️ 6-10시간
    - 🎯 시스템 프로그래머, 커널 개발자, 임베디드 시스템 개발자
 
-5. [고급 이벤트 메커니즘 - timerfd와 signalfd](./10-20-3-advanced-event-mechanisms.md)
+5. [고급 이벤트 메커니즘 - timerfd와 signalfd](./chapter-10-async-programming/10-20-3-advanced-event-mechanisms.md)
    - ⏱️ 6-10시간
    - 🎯 고급 시스템 프로그래머, 실시간 시스템 개발자
 
-6. [Chapter 5-3B: 컨텍스트 스위칭 구현 - 0.001초의 예술](./chapter-02-cpu-interrupt/05-17-context-switching-implementation.md)
+6. [Chapter 5-3B: 컨텍스트 스위칭 구현 - 0.001초의 예술](./chapter-02-cpu-interrupt/02-17-context-switching-implementation.md)
    - ⏱️ 8-12시간
    - 🎯 시스템 프로그래머, 커널 개발자, 성능 엔지니어
 
-7. [13.5b 분산 시스템 디버깅](./13-43-distributed-debugging.md)
+7. [13.5b 분산 시스템 디버깅](./chapter-12-observability-debugging/13-43-distributed-debugging.md)
    - ⏱️ 8-12시간
    - 🎯 SRE 엔지니어, 마이크로서비스 아키텍트, 분산 시스템 전문가
 
@@ -130,7 +130,7 @@
    - ⏱️ 8-12시간
    - 🎯 시니어 백엔드 개발자 및 시스템 아키텍트
 
-10. [14.3A Sharding 전략과 구현](./14-12-sharding-strategies.md)
+10. [14.3A Sharding 전략과 구현](./chapter-14-distributed-systems/14-12-sharding-strategies.md)
 
 - ⏱️ 8-12시간
 - 🎯 시니어 백엔드 개발자, 데이터베이스 아키텍트, 분산 시스템 엔지니어
@@ -143,25 +143,25 @@
 
 - [Chapter 7-1: 소켓 프로그래밍의 기초 개요](./chapter-07-network-programming/07-01-socket-basics.md)
 - [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./chapter-01-process-thread/04-11-process-creation-fork.md)
-- [Chapter 10-2A: 커널 설계 철학과 전체 구조](./10-11-kernel-design-structure.md)
-- [분기 예측과 Out-of-Order 실행](./chapter-02-cpu-interrupt/05-10-prediction-ooo.md)
-- [CPU 기본 구조와 명령어 실행](./chapter-02-cpu-interrupt/05-02-cpu-fundamentals.md)
+- [Chapter 10-2A: 커널 설계 철학과 전체 구조](./chapter-04-syscall-kernel/04-11-kernel-design-structure.md)
+- [분기 예측과 Out-of-Order 실행](./chapter-02-cpu-interrupt/02-10-prediction-ooo.md)
+- [CPU 기본 구조와 명령어 실행](./chapter-02-cpu-interrupt/02-02-cpu-fundamentals.md)
 ... 총 228개 문서
 
 ### 애플리케이션 개발
 
 - [Python GC 프로덕션 최적화 사례](./chapter-08-memory-allocator-gc/09-50-3-python-gc-production.md)
-- [Chapter 15-3: 인증과 인가 개요](./chapter-17-security-engineering/15-14-authentication-authorization.md)
+- [Chapter 15-3: 인증과 인가 개요](./chapter-17-security-engineering/17-14-authentication-authorization.md)
 - [API Gateway 기본 개념: 마이크로서비스의 관문지기](./chapter-16-distributed-system-patterns/16-07-api-gateway-fundamentals.md)
-- [Promise 성능 최적화: "비동기 코드가 느려요" 개요](./chapter-10-async-programming/08-30-promise-performance-optimization.md)
+- [Promise 성능 최적화: "비동기 코드가 느려요" 개요](./chapter-10-async-programming/10-30-promise-performance-optimization.md)
 - [Chapter 7-3: 고성능 네트워크 서버 구현 개요](./chapter-07-network-programming/07-30-high-performance-networking.md)
 ... 총 81개 문서
 
 ### 인프라스트럭처
 
-- [분산 시스템의 비동기 패턴 개요](./chapter-10-async-programming/08-18-distributed-async.md)
+- [분산 시스템의 비동기 패턴 개요](./chapter-10-async-programming/10-18-distributed-async.md)
 - [16.1D3 Kubernetes에서 마이크로서비스 프로덕션 배포](./chapter-16-distributed-system-patterns/16-51-3-kubernetes-production-deployment.md)
-- [13.1b 메트릭 수집 - 시스템 건강도 측정](./13-12-metrics-collection.md)
+- [13.1b 메트릭 수집 - 시스템 건강도 측정](./chapter-12-observability-debugging/13-12-metrics-collection.md)
 - [통신 패턴 선택과 실전 최적화 가이드](./chapter-16-distributed-system-patterns/16-50-3-communication-patterns-best-practices.md)
 - [16.5D API Gateway Rate Limiting과 트래픽 제어](./chapter-16-distributed-system-patterns/16-42-rate-limiting-monitoring.md)
 ... 총 104개 문서

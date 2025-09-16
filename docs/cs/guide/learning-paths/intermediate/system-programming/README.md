@@ -16,7 +16,7 @@
    - 키워드: filesystem_debugging, storage_troubleshooting, disk_health
    - 대상: 시스템 관리자, DevOps 엔지니어
 
-3. **[Chapter 1-3: 로딩과 실행은 어떻게 동작하는가](../../../../chapter-05-compiler-linker/01-12-loading-execution.md)** (5-7시간)
+3. **[Chapter 1-3: 로딩과 실행은 어떻게 동작하는가](../../../../chapter-05-compiler-linker/05-03-01-loading-execution.md)** (5-7시간)
    - 키워드: loader, virtual-memory, dynamic-linking
    - 대상: 중급 시스템 프로그래머, 임베디드 개발자, 성능 엔지니어
 
@@ -49,7 +49,7 @@
 - 키워드: OOM, 메모리관리, 프로세스관리
 - 대상: Linux 시스템 관리자, 백엔드 개발자
 
-1. **[Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](../../docs/cs/guide/chapter-02-cpu-interrupt-05-05-01-cpu-architecture.md)** (2-3시간)
+1. **[Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](../../docs/cs/guide/chapter-02-cpu-interrupt-05-02-01-cpu-architecture.md)** (2-3시간)
 
 - 키워드: cpu-architecture, performance-optimization, pipeline
 - 대상: 시스템 프로그래머, 성능 엔지니어, 컴퓨터 과학 전공 학생
@@ -79,7 +79,7 @@
 - 키워드: kernel, monolithic, microkernel
 - 대상: 시스템 프로그래머, 리눅스 시스템 관리자
 
-1. **[Chapter 1-4: 컴파일러 최적화는 어떻게 동작하는가](../../../../chapter-05-compiler-linker/01-30-compiler-optimization.md)** (3-4시간)
+1. **[Chapter 1-4: 컴파일러 최적화는 어떻게 동작하는가](../../../../chapter-05-compiler-linker/05-04-01-compiler-optimization.md)** (3-4시간)
 
 - 키워드: compiler-optimization, performance, vectorization
 - 대상: C/C++ 개발자, 시스템 프로그래머
@@ -134,7 +134,7 @@
 - 키워드: exec, process_control, system_call
 - 대상: 시스템 프로그래머, 백엔드 개발자
 
-1. **[파일 디스크립터의 내부 구조](../../../../chapter-06-file-io/06-10-file-descriptor.md)** (3-5시간)
+1. **[파일 디스크립터의 내부 구조](../../../../chapter-06-file-io/06-02-01-file-descriptor.md)** (3-5시간)
 
 - 키워드: file_descriptor, VFS, kernel_structures
 - 대상: 시스템 프로그래머, 백엔드 개발자, DevOps 엔지니어
@@ -174,7 +174,7 @@
 - 키워드: fork, Copy-on-Write, 프로세스 생성
 - 대상: 시스템 프로그래머, 백엔드 개발자
 
-1. **[Chapter 10-2A: 커널 설계 철학과 전체 구조](../../../../chapter-04-syscall-kernel/10-11-kernel-design-structure.md)** (4-6시간)
+1. **[Chapter 10-2A: 커널 설계 철학과 전체 구조](../../../../chapter-04-syscall-kernel/04-11-kernel-design-structure.md)** (4-6시간)
 
 - 키워드: kernel-architecture, monolithic-kernel, microkernel
 - 대상: 시스템 프로그래머, 리눅스 커널 개발 입문자
@@ -344,7 +344,7 @@
 - 키워드: CFS, Nice값, Weight시스템
 - 대상: 시스템 관리자, 성능 엔지니어, 백엔드 개발자
 
-1. **[Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](../../../../chapter-05-compiler-linker/01-10-compilation.md)** (4-6시간)
+1. **[Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](../../../../chapter-05-compiler-linker/05-01-01-compilation.md)** (4-6시간)
 
 - 키워드: fork, process-creation, copy-on-write
 - 대상: 시스템 프로그래밍을 배우는 중급 개발자
@@ -364,7 +364,7 @@
 - 키워드: thread-debugging, synchronization, performance-optimization
 - 대상: 1-3년차 시스템 프로그래머, 백엔드 개발자
 
-1. **[Chapter 5-3: 컨텍스트 스위칭은 어떻게 일어나는가 개요](../../../../chapter-02-cpu-interrupt/05-16-context-switching.md)** (4-6시간)
+1. **[Chapter 5-3: 컨텍스트 스위칭은 어떻게 일어나는가 개요](../../../../chapter-02-cpu-interrupt/02-16-context-switching.md)** (4-6시간)
 
 - 키워드: context-switching, cpu-scheduling, performance-optimization
 - 대상: 중급 시스템 프로그래머, 성능 최적화에 관심 있는 개발자
@@ -399,7 +399,7 @@
 - 키워드: mutex, futex, deadlock
 - 대상: 시스템 프로그래밍을 배우는 중급 개발자
 
-1. **[Chapter 5-2: 인터럽트와 예외 개요](../../../../chapter-02-cpu-interrupt/05-12-interrupt-exception.md)** (4-6시간)
+1. **[Chapter 5-2: 인터럽트와 예외 개요](../../../../chapter-02-cpu-interrupt/02-12-interrupt-exception.md)** (4-6시간)
 
 - 키워드: interrupt, exception, CPU
 - 대상: 시스템 프로그래머, 게임 개발자, 임베디드 개발자
@@ -754,7 +754,7 @@
 - 키워드: filesystem, debugging, C-programming
 - 대상: 중급 레벨의 시스템 관리자 및 백엔드 개발자
 
-1. **[1-6: 링커 에러 해결 - "undefined reference가 계속 나요"](../../../../chapter-05-compiler-linker/01-41-linking-debugging.md)** (6-10시간)
+1. **[1-6: 링커 에러 해결 - "undefined reference가 계속 나요"](../../../../chapter-05-compiler-linker/05-05-02-linking-debugging.md)** (6-10시간)
 
 - 키워드: linking, debugging, nm
 - 대상: 1-3년차 C/C++ 개발자, 시스템 프로그래머

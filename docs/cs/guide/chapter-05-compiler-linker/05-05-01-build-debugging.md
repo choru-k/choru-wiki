@@ -15,7 +15,7 @@ main_topic: "인프라스트럭처"
 priority_score: 4
 ---
 
-# 1-5: 빌드 시스템 디버깅 - "왜 빌드가 이렇게 느리지?"
+# 5.5.1: 빌드 시스템 디버깅
 
 ## 이 문서를 읽으면 답할 수 있는 질문들
 
@@ -768,7 +768,7 @@ $ make -j8
 
 ## 다음 단계
 
-빌드 시스템 최적화를 마스터했다면, 이제 [1-6: 링커 에러 해결](05-41-linking-debugging.md)에서 복잡한 링킹 문제들을 해결하는 방법을 배워봅시다.
+빌드 시스템 최적화를 마스터했다면, 이제 [5.6: 링커 에러 해결](05-05-02-linking-debugging.md)에서 복잡한 링킹 문제들을 해결하는 방법을 배워봅시다.
 
 빌드가 빨라지면 개발자의 생산성도 함께 향상됩니다! 🚀
 
@@ -788,11 +788,11 @@ $ make -j8
 
 ### 📂 같은 챕터 (chapter-01-compiler-linker)
 
-- [Chapter 1-1: 컴파일은 어떻게 동작하는가](./05-10-compilation.md)
-- [Chapter 1-2: 링킹은 어떻게 동작하는가](./05-11-linking.md)
-- [Chapter 1-3: 로딩과 실행은 어떻게 동작하는가](./05-12-loading-execution.md)
-- [Chapter 1-4: 컴파일러 최적화는 어떻게 동작하는가](./05-30-compiler-optimization.md)
-- [1-6: 링커 에러 해결 - "undefined reference가 계속 나요"](./05-41-linking-debugging.md)
+- [5.1: 컴파일은 어떻게 동작하는가](./05-01-01-compilation.md)
+- [5.2: 링킹은 어떻게 동작하는가](./05-02-01-linking.md)
+- [5.3: 로딩과 실행은 어떻게 동작하는가](./05-03-01-loading-execution.md)
+- [5.4: 컴파일러 최적화는 어떻게 동작하는가](./05-04-01-compiler-optimization.md)
+- [5.6: 링커 에러 해결 - "undefined reference가 계속 나요"](./05-05-02-linking-debugging.md)
 
 ### 🏷️ 관련 키워드
 

@@ -84,7 +84,7 @@
 - 키워드: CPU, instruction_execution, pipeline
 - 대상: 컴퓨터 과학 전공 학생, 시스템 프로그래밍 입문자
 
-1. **[Chapter 1-2: 링킹은 어떻게 동작하는가](../../../../chapter-05-compiler-linker/01-11-linking.md)** (3-4시간)
+1. **[Chapter 1-2: 링킹은 어떻게 동작하는가](../../../../chapter-05-compiler-linker/05-02-01-linking.md)** (3-4시간)
 
 - 키워드: linking, symbol-resolution, relocation
 - 대상: C/C++ 초급 개발자, 컴퓨터과학 학부생
@@ -134,7 +134,7 @@
 - 키워드: context-switching, task-struct, cpu-registers
 - 대상: 컴퓨터과학 학생, 신입 시스템 프로그래머
 
-1. **[Chapter 5-4a: 전력 관리 기본 개념과 아키텍처](../../../../chapter-02-cpu-interrupt/05-06-power-fundamentals.md)** (3-5시간)
+1. **[Chapter 5-4a: 전력 관리 기본 개념과 아키텍처](../../../../chapter-02-cpu-interrupt/02-06-power-fundamentals.md)** (3-5시간)
 
 - 키워드: power-management, p-state, c-state
 - 대상: 시스템 프로그래밍 입문자, 컴퓨터 공학 학부생

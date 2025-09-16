@@ -154,7 +154,7 @@
 - 키워드: kafka, event-sourcing, cqrs
 - 대상: 시니어 개발자, 솔루션 아키텍트, 플랫폼 엔지니어
 
-1. **[분산 시스템의 비동기 패턴 개요](../../../../chapter-10-async-programming/08-18-distributed-async.md)** (15-25시간)
+1. **[분산 시스템의 비동기 패턴 개요](../../../../chapter-10-async-programming/10-18-distributed-async.md)** (15-25시간)
 
 - 키워드: distributed-systems, event-sourcing, cqrs
 - 대상: 시니어 백엔드 개발자, 솔루션 아키텍트, 플랫폼 엔지니어

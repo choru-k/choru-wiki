@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 5.2: 링킹은 어떻게 동작하는가
+# 5.2.1: 링킹은 어떻게 동작하는가
 
 ## 이 문서를 읽으면 답할 수 있는 질문들
 
@@ -874,7 +874,7 @@ graph LR
 
 ## 다음 섹션 예고
 
-다음 섹션([1-3: 로딩과 실행은 어떻게 동작하는가](05-12-loading-execution.md))에서는 **로더(Loader)와 프로그램 실행** 과정을 다룹니다:
+다음 섹션([5.3: 로딩과 실행은 어떻게 동작하는가](05-03-01-loading-execution.md))에서는 **로더(Loader)와 프로그램 실행** 과정을 다룹니다:
 
 - 실행 파일이 메모리에 어떻게 로드되는가?
 - 동적 링킹은 실행 시점에 어떻게 일어나는가?
@@ -899,11 +899,11 @@ graph LR
 
 ### 📂 같은 챕터 (chapter-01-compiler-linker)
 
-- [Chapter 1-1: 컴파일은 어떻게 동작하는가](./05-10-compilation.md)
-- [Chapter 1-3: 로딩과 실행은 어떻게 동작하는가](./05-12-loading-execution.md)
-- [Chapter 1-4: 컴파일러 최적화는 어떻게 동작하는가](./05-30-compiler-optimization.md)
-- [1-5: 빌드 시스템 디버깅 - "왜 빌드가 이렇게 느리지?"](./05-40-build-debugging.md)
-- [1-6: 링커 에러 해결 - "undefined reference가 계속 나요"](./05-41-linking-debugging.md)
+- [5.1: 컴파일은 어떻게 동작하는가](./05-01-01-compilation.md)
+- [5.3: 로딩과 실행은 어떻게 동작하는가](./05-03-01-loading-execution.md)
+- [5.4: 컴파일러 최적화는 어떻게 동작하는가](./05-04-01-compiler-optimization.md)
+- [5.5: 빌드 시스템 디버깅 - "왜 빌드가 이렇게 느리지?"](./05-05-01-build-debugging.md)
+- [5.6: 링커 에러 해결 - "undefined reference가 계속 나요"](./05-05-02-linking-debugging.md)
 
 ### 🏷️ 관련 키워드
 

@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 0
 ---
 
-# 1-6: 링커 에러 해결 - "undefined reference가 계속 나요"
+# 5.5.2: 링커 에러 해결
 
 ## 이 문서를 읽으면 답할 수 있는 질문들
 
@@ -612,9 +612,13 @@ if __name__ == '__main__':
 
 ## 다음 단계
 
-링커 문제 해결을 마스터했다면, [1-7: 바이너리 분석](07-binary-analysis.md)에서 실행 파일 내부를 깊이 들여다보는 방법을 배워봅시다.
+링커 문제 해결을 마스터했다면, 이제 다른 챕터들로 넘어가서 시스템 프로그래밍의 다양한 측면을 탐구해봅시다:
 
-디버깅 도구들을 활용해 "블랙박스" 같던 실행 파일의 비밀을 파헤쳐보겠습니다! 🔍
+- [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md) - 메모리 관리와 가상 메모리
+- [Chapter 4: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md) - 커널 프로그래밍
+- [Chapter 11: 성능 최적화](../chapter-11-performance-optimization/index.md) - 시스템 성능 튜닝
+
+디버깅 도구들을 활용해 실행 파일의 내부를 분석하는 능력을 갖추었으니, 이제 더 깊은 시스템 프로그래밍의 세계로 나아가 봅시다! 🔍
 
 ## 📚 관련 문서
 
@@ -632,11 +636,11 @@ if __name__ == '__main__':
 
 ### 📂 같은 챕터 (chapter-01-compiler-linker)
 
-- [Chapter 1-1: 컴파일은 어떻게 동작하는가](./05-10-compilation.md)
-- [Chapter 1-2: 링킹은 어떻게 동작하는가](./05-11-linking.md)
-- [Chapter 1-3: 로딩과 실행은 어떻게 동작하는가](./05-12-loading-execution.md)
-- [Chapter 1-4: 컴파일러 최적화는 어떻게 동작하는가](./05-30-compiler-optimization.md)
-- [1-5: 빌드 시스템 디버깅 - "왜 빌드가 이렇게 느리지?"](./05-40-build-debugging.md)
+- [5.1: 컴파일은 어떻게 동작하는가](./05-01-01-compilation.md)
+- [5.2: 링킹은 어떻게 동작하는가](./05-02-01-linking.md)
+- [5.3: 로딩과 실행은 어떻게 동작하는가](./05-03-01-loading-execution.md)
+- [5.4: 컴파일러 최적화는 어떻게 동작하는가](./05-04-01-compiler-optimization.md)
+- [5.5: 빌드 시스템 디버깅 - "왜 빌드가 이렇게 느리지?"](./05-05-01-build-debugging.md)
 
 ### 🏷️ 관련 키워드
 

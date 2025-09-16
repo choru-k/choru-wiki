@@ -74,61 +74,53 @@ graph LR
     style EXE fill:#FF8A65
 ```
 
-## 이 장의 구성
+## 📚 이 장의 구성
 
-### [1-1: 컴파일은 어떻게 동작하는가](01-10-compilation.md)
+### 5.1 기초 개념
 
-**"Hello, World"에서 기계어까지**
+- [05-01-01: 컴파일은 어떻게 동작하는가](05-01-01-compilation.md)
+  - **"Hello, World"에서 기계어까지**
+  - 🔄 인간의 언어 → 기계의 언어: 소스 코드가 CPU 명령어가 되는 과정
+  - 🏗️ 컴파일러의 내부 구조: 렉싱, 파싱, 의미 분석, 코드 생성의 4단계
+  - 🎯 타겟 아키텍처: x86, ARM, RISC-V - 왜 다른 CPU용으로 컴파일해야 하는가?
 
-- 🔄 **인간의 언어 → 기계의 언어**: 소스 코드가 CPU 명령어가 되는 과정
-- 🏗️ **컴파일러의 내부 구조**: 렉싱, 파싱, 의미 분석, 코드 생성의 4단계
-- 🎯 **타겟 아키텍처**: x86, ARM, RISC-V - 왜 다른 CPU용으로 컴파일해야 하는가?
-- 💡 **실전 예제**: 간단한 C 코드가 어셈블리로 변환되는 과정 직접 확인
+### 5.2 핵심 구현
 
-### [1-2: 링킹은 어떻게 동작하는가](01-11-linking.md)
+- [05-02-01: 링킹은 어떻게 동작하는가](05-02-01-linking.md)
+  - **"조각들을 하나로 - 링커의 역할"**
+  - 🧩 심볼 해결(Symbol Resolution): 함수와 변수를 어떻게 찾아 연결하는가?
+  - 📍 재배치(Relocation): 각 모듈의 주소를 어떻게 조정하는가?
+  - 📚 정적 vs 동적 링킹: 실행 파일 크기와 메모리 효율성의 트레이드오프
 
-**"조각들을 하나로 - 링커의 역할"**
+### 5.3 고급 기법
 
-- 🧩 **심볼 해결(Symbol Resolution)**: 함수와 변수를 어떻게 찾아 연결하는가?
-- 📍 **재배치(Relocation)**: 각 모듈의 주소를 어떻게 조정하는가?
-- 📚 **정적 vs 동적 링킹**: 실행 파일 크기와 메모리 효율성의 트레이드오프
-- 🔍 **링킹 에러 디버깅**: undefined reference, multiple definition 해결하기
+- [05-03-01: 로딩과 실행은 어떻게 동작하는가](05-03-01-loading-execution.md)
+  - **"더블클릭에서 실행까지"**
+  - 🚀 프로그램 로딩: 운영체제가 실행 파일을 메모리에 올리는 과정
+  - 🗺️ 가상 주소 공간: 모든 프로그램이 같은 주소를 사용해도 충돌하지 않는 이유
+  - 🔗 동적 링킹의 실제: PLT와 GOT를 통한 라이브러리 함수 호출
 
-### [1-3: 로딩과 실행은 어떻게 동작하는가](01-12-loading-execution.md)
+### 5.4 성능 최적화
 
-**"더블클릭에서 실행까지"**
+- [05-04-01: 컴파일러 최적화](05-04-01-compiler-optimization.md)
+  - **"더 빠르게, 더 작게 - 컴파일러의 마법"**
+  - ⚡ 최적화 레벨: -O0, -O1, -O2, -O3, -Os의 차이점과 선택 기준
+  - 🔄 주요 최적화 기법: 인라이닝, 루프 언롤링, 벡터화, 데드 코드 제거
+  - ⚠️ 최적화의 함정: volatile, 메모리 배리어, undefined behavior
 
-- 🚀 **프로그램 로딩**: 운영체제가 실행 파일을 메모리에 올리는 과정
-- 🗺️ **가상 주소 공간**: 모든 프로그램이 같은 주소를 사용해도 충돌하지 않는 이유
-- 🔗 **동적 링킹의 실제**: PLT와 GOT를 통한 라이브러리 함수 호출
-- 🛡️ **보안 메커니즘**: ASLR, DEP, 스택 카나리가 프로그램을 보호하는 방법
+### 5.5 디버깅과 분석
 
-### [1-4: 컴파일러 최적화](01-30-compiler-optimization.md)
+- [05-05-01: 빌드 시스템 디버깅](05-05-01-build-debugging.md)
+  - **"왜 빌드가 이렇게 느리지? - 빌드 성능 최적화"**
+  - 🚀 빌드 캐싱: ccache, sccache를 활용한 컴파일 시간 단축
+  - 🐳 Docker 빌드 최적화: 레이어 캐싱과 멀티스테이지 빌드
+  - ⚡ 병렬 빌드: make -j, ninja를 활용한 빌드 시간 최적화
 
-**"더 빠르게, 더 작게 - 컴파일러의 마법"**
-
-- ⚡ **최적화 레벨**: -O0, -O1, -O2, -O3, -Os의 차이점과 선택 기준
-- 🔄 **주요 최적화 기법**: 인라이닝, 루프 언롤링, 벡터화, 데드 코드 제거
-- ⚠️ **최적화의 함정**: volatile, 메모리 배리어, undefined behavior
-- 📊 **성능 측정과 분석**: 최적화 효과를 정량적으로 확인하는 방법
-
-### [1-5: 빌드 시스템 디버깅](01-40-build-debugging.md)
-
-**"왜 빌드가 이렇게 느리지? - 빌드 성능 최적화"**
-
-- 🚀 **빌드 캐싱**: ccache, sccache를 활용한 컴파일 시간 단축
-- 🐳 **Docker 빌드 최적화**: 레이어 캐싱과 멀티스테이지 빌드
-- ⚡ **병렬 빌드**: make -j, ninja를 활용한 빌드 시간 최적화
-- 🔧 **링커 최적화**: lld, gold 링커를 통한 링킹 성능 개선
-
-### [1-6: 링커 에러 해결](01-41-linking-debugging.md)
-
-**"undefined reference가 계속 나요 - 링커 디버깅"**
-
-- 🔍 **심볼 분석**: nm, objdump, readelf를 활용한 심볼 테이블 분석
-- 🐛 **링커 에러 해결**: undefined reference, multiple definition 해결법
-- 📚 **라이브러리 디버깅**: 동적 라이브러리 로딩 문제 해결
-- 🔧 **멀티플랫폼 빌드**: 크로스 컴파일과 심볼 충돌 해결
+- [05-05-02: 링커 에러 해결](05-05-02-linking-debugging.md)
+  - **"undefined reference가 계속 나요 - 링커 디버깅"**
+  - 🔍 심볼 분석: nm, objdump, readelf를 활용한 심볼 테이블 분석
+  - 🐛 링커 에러 해결: undefined reference, multiple definition 해결법
+  - 📚 라이브러리 디버깅: 동적 라이브러리 로딩 문제 해결
 
 ## 실습 환경 준비
 
@@ -199,7 +191,7 @@ mindmap
 
 ## 다음 단계
 
-이제 [1-1: 컴파일은 어떻게 동작하는가](01-10-compilation.md)부터 시작해서 소스 코드가 실행 파일이 되기까지의 여정을 함께 떠나봅시다.
+이제 [5.1: 컴파일은 어떻게 동작하는가](05-01-01-compilation.md)부터 시작해서 소스 코드가 실행 파일이 되기까지의 여정을 함께 떠나봅시다.
 
 우리 코드가 어떻게 생명을 얻는지, 그 신비로운 과정을 하나씩 밝혀나가겠습니다.
 
@@ -217,18 +209,9 @@ mindmap
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-01-compiler-linker)
-
-- [Chapter 01-10: Compilation](./01-10-compilation.md)
-- [Chapter 01-11: Linking](./01-11-linking.md)
-- [Chapter 01-12: Loading Execution](./01-12-loading-execution.md)
-- [Chapter 01-30: Compiler Optimization](./01-30-compiler-optimization.md)
-- [Chapter 01-40: Build Debugging](./01-40-build-debugging.md)
-- [Chapter 01-41: Linking Debugging](./01-41-linking-debugging.md)
-
 ### 🏷️ 관련 키워드
 
-`FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+`Compiler`, `Linker`, `BuildSystem`, `SystemProgramming`, `Optimization`
 
 ## 🔗 관련 챕터
 
@@ -244,10 +227,5 @@ mindmap
 
 ### 🔧 고급 주제
 
-- [Chapter 10: 시스템콜과 커널](../chapter-10-syscall-kernel/index.md)
-- [Chapter 15: 보안 엔지니어링](../chapter-15-security-engineering/index.md)
-
-### ⏭️ 다음 단계 가이드
-
-- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
-- 관련 도구들을 직접 사용해보는 것이 중요합니다
+- [Chapter 4: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
+- [Chapter 17: 보안 엔지니어링](../chapter-17-security-engineering/index.md)

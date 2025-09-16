@@ -8,7 +8,7 @@
 
 ## 📚 문서 목록
 
-1. **[Chapter 15-2a: 네트워크 보안 기초와 위협 환경](../../../../chapter-17-security-engineering/15-01-network-fundamentals.md)** (6-8시간)
+1. **[Chapter 15-2a: 네트워크 보안 기초와 위협 환경](../../../../chapter-17-security-engineering/17-01-network-fundamentals.md)** (6-8시간)
    - 키워드: network-security, mirai-botnet, firewall
    - 대상: 네트워크 보안 입문자, 시스템 관리 초보자, 개발자
 

@@ -12,11 +12,11 @@
    - 키워드: coroutine, green-thread, async-programming
    - 대상: 백엔드 개발자, 시스템 아키텍트
 
-2. **[8.1e 에러 처리 패턴](../../../../chapter-10-async-programming/08-40-error-handling.md)** (5-7시간)
+2. **[8.1e 에러 처리 패턴](../../../../chapter-10-async-programming/10-40-error-handling.md)** (5-7시간)
    - 키워드: circuit_breaker, bulkhead_pattern, error_handling
    - 대상: 백엔드 개발자, 시스템 아키텍트 (중급-고급 2-5년 경력)
 
-3. **[Chapter 15-3: 인증과 인가 개요](../../../../chapter-17-security-engineering/15-14-authentication-authorization.md)** (12-16시간)
+3. **[Chapter 15-3: 인증과 인가 개요](../../../../chapter-17-security-engineering/17-14-authentication-authorization.md)** (12-16시간)
    - 키워드: authentication, authorization, oauth2
    - 대상: 웹 개발자, 백엔드 개발자, 보안 엔지니어
 
@@ -74,7 +74,7 @@
 - 키워드: profiling, performance, optimization
 - 대상: 성능 최적화를 담당하는 백엔드 개발자, 시스템 성능 엔지니어
 
-1. **[8.1 Promise/Future 패턴 개요](../../../../chapter-10-async-programming/08-10-promise-future.md)** (4-6시간)
+1. **[8.1 Promise/Future 패턴 개요](../../../../chapter-10-async-programming/10-10-promise-future.md)** (4-6시간)
 
 - 키워드: async, promise, future
 - 대상: 비동기 프로그래밍을 체계적으로 학습하려는 중급 개발자
@@ -164,7 +164,7 @@
 - 키워드: MFA, TOTP, 2FA
 - 대상: 백엔드 개발자, 보안 엔지니어, 풀스택 개발자
 
-1. **[Promise/Future 기본 개념과 구현](../../../../chapter-10-async-programming/08-01-promise-future-basics.md)** (4-6시간)
+1. **[Promise/Future 기본 개념과 구현](../../../../chapter-10-async-programming/10-01-promise-future-basics.md)** (4-6시간)
 
 - 키워드: Promise, Future, async
 - 대상: 1-3년차 개발자 (비동기 프로그래밍 학습 단계)
