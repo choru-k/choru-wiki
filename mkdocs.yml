@@ -180,121 +180,61 @@ nav:
       - cs/index.md
       - CS Mastery Guide:
           - cs/guide/index.md
-          - "Chapter 1: Compiler & Linker":
-              - "Overview": cs/guide/chapter-01-compiler-linker/index.md
-              - "1-1: How Compilation Works": cs/guide/chapter-01-compiler-linker/01-compilation.md
-              - "1-2: How Linking Works": cs/guide/chapter-01-compiler-linker/02-linking.md
-              - "1-3: Loading and Execution": cs/guide/chapter-01-compiler-linker/03-loading-execution.md
-              - "1-4: Compiler Optimization": cs/guide/chapter-01-compiler-linker/04-optimization.md
-              - "1-5: Build System Debugging": cs/guide/chapter-01-compiler-linker/05-build-debugging.md
-              - "1-6: Linking Error Resolution": cs/guide/chapter-01-compiler-linker/06-linking-debugging.md
-          - "Chapter 2: Memory Architecture":
-              - "Overview": cs/guide/chapter-02-memory/index.md
-              - "2-1: Process Memory Structure": cs/guide/chapter-02-memory/01-process-memory.md
-              - "2-2: Stack and Heap Internals": cs/guide/chapter-02-memory/02-stack-heap.md
-              - "2-3: Virtual Memory and Paging": cs/guide/chapter-02-memory/03-virtual-memory.md
-              - "2-4: Memory Mapping and Shared Memory": cs/guide/chapter-02-memory/04-memory-mapping.md
-              - "2-5: Memory Leak Debugging": cs/guide/chapter-02-memory/05-memory-leak-debugging.md
-              - "2-6: Memory Allocator Optimization": cs/guide/chapter-02-memory/06-memory-allocator.md
-              - "2-7: Memory Usage Analysis": cs/guide/chapter-02-memory/07-memory-usage-analysis.md
-              - "2-8: Stack Problem Debugging": cs/guide/chapter-02-memory/08-stack-debugging.md
-          - "Chapter 3: Virtual Memory":
-              - "Overview": cs/guide/chapter-03-virtual-memory/index.md
-              - "3-1: Address Translation": cs/guide/chapter-03-virtual-memory/01-address-translation.md
-              - "3-2: TLB and Caching": cs/guide/chapter-03-virtual-memory/02-tlb-caching.md
-              - "3-3: Page Fault and Memory Management": cs/guide/chapter-03-virtual-memory/03-page-fault.md
-              - "3-4: Memory Compression and Deduplication": cs/guide/chapter-03-virtual-memory/04-compression-deduplication.md
-              - "3-5: Page Fault Analysis": cs/guide/chapter-03-virtual-memory/05-page-fault-analysis.md
-              - "3-6: Memory Mapping Optimization": cs/guide/chapter-03-virtual-memory/06-memory-mapping-optimization.md
-              - "3-7: Swap Management": cs/guide/chapter-03-virtual-memory/07-swap-management.md
-              - "3-8: OOM Debugging": cs/guide/chapter-03-virtual-memory/08-oom-debugging.md
-          - "Chapter 4: Process & Thread":
-              - "Overview": cs/guide/chapter-04-process-thread/index.md
-              - "4-1: Process Creation and Termination": cs/guide/chapter-04-process-thread/01-process-creation.md
-              - "4-2: Thread and Synchronization": cs/guide/chapter-04-process-thread/02-thread-sync.md
-              - "4-3: Scheduling and Priority": cs/guide/chapter-04-process-thread/03-scheduling.md
-              - "4-4: Signal and IPC": cs/guide/chapter-04-process-thread/04-signal-ipc.md
-              - "4-5: Process State Analysis": cs/guide/chapter-04-process-thread/05-process-state-analysis.md
-              - "4-6: Thread Synchronization Debugging": cs/guide/chapter-04-process-thread/06-thread-synchronization-debugging.md
-              - "4-7: CPU Affinity Optimization": cs/guide/chapter-04-process-thread/07-cpu-affinity-optimization.md
-              - "4-8: Signal Handling Debugging": cs/guide/chapter-04-process-thread/08-signal-handling-debugging.md
-          - "Chapter 5: CPU & Interrupt":
-              - "Overview": cs/guide/chapter-05-cpu-interrupt/index.md
-              - "5-1: CPU Architecture and Execution": cs/guide/chapter-05-cpu-interrupt/01-cpu-architecture.md
-              - "5-2: Interrupt and Exception": cs/guide/chapter-05-cpu-interrupt/02-interrupt-exception.md
-              - "5-3: Context Switching": cs/guide/chapter-05-cpu-interrupt/03-context-switching.md
-              - "5-4: Power Management": cs/guide/chapter-05-cpu-interrupt/04-power-management.md
-          - "Chapter 6: File Descriptor & I/O":
+          - "Chapter 1: Process & Thread":
+              - "Overview": cs/guide/chapter-01-process-thread/index.md
+          - "Chapter 2: CPU & Interrupt":
+              - "Overview": cs/guide/chapter-02-cpu-interrupt/index.md
+          - "Chapter 3: Memory System":
+              - "Overview": cs/guide/chapter-03-memory-system/index.md
+          - "Chapter 4: System Call & Kernel":
+              - "Overview": cs/guide/chapter-04-syscall-kernel/index.md
+          - "Chapter 5: Compiler & Linker":
+              - "Overview": cs/guide/chapter-05-compiler-linker/index.md
+          - "Chapter 6: File I/O":
               - "Overview": cs/guide/chapter-06-file-io/index.md
-              - "6-1: File Descriptor Internals": cs/guide/chapter-06-file-io/01-file-descriptor.md
-              - "6-2: VFS and Filesystem Abstraction": cs/guide/chapter-06-file-io/02-vfs-filesystem.md
-              - "6-3: Block I/O and Disk Scheduling": cs/guide/chapter-06-file-io/03-block-io.md
-              - "6-4: Async I/O and Event Programming": cs/guide/chapter-06-file-io/04-async-io.md
-              - "6-5: I/O Performance Analysis": cs/guide/chapter-06-file-io/05-io-performance-analysis.md
-              - "6-6: Filesystem Debugging": cs/guide/chapter-06-file-io/06-filesystem-debugging.md
-              - "6-7: Network Filesystem Optimization": cs/guide/chapter-06-file-io/07-network-filesystem-optimization.md
           - "Chapter 7: Network Programming":
               - "Overview": cs/guide/chapter-07-network-programming/index.md
-              - "7-1: Socket Programming Basics": cs/guide/chapter-07-network-programming/01-socket-basics.md
-              - "7-2: TCP/IP Stack Internals": cs/guide/chapter-07-network-programming/02-tcp-ip-stack.md
-              - "7-3: High Performance Network Server": cs/guide/chapter-07-network-programming/03-high-performance.md
-              - "7-4: Secure Networking and TLS": cs/guide/chapter-07-network-programming/04-secure-networking.md
-              - "7-5: TCP Connection Debugging": cs/guide/chapter-07-network-programming/05-tcp-connection-debugging.md
-              - "7-6: Network Latency Optimization": cs/guide/chapter-07-network-programming/06-network-latency-optimization.md
-              - "7-7: High Performance Networking": cs/guide/chapter-07-network-programming/07-high-performance-networking.md
-          - "Chapter 8: Async & Event Programming":
-              - "Overview": cs/guide/chapter-08-async-programming/index.md
-              - "8-1: Promise and Future Patterns": cs/guide/chapter-08-async-programming/01-promise-future.md
-              - "8-2: Event Loop and Concurrency": cs/guide/chapter-08-async-programming/02-event-loop.md
-              - "8-3: Coroutine and Green Thread": cs/guide/chapter-08-async-programming/03-coroutine.md
-              - "8-4: Distributed Async Patterns": cs/guide/chapter-08-async-programming/04-distributed-async.md
-              - "8-5: Event Loop Debugging": cs/guide/chapter-08-async-programming/05-event-loop-debugging.md
-              - "8-6: Promise Performance Optimization": cs/guide/chapter-08-async-programming/06-promise-performance-optimization.md
-          - "Chapter 9: Memory & GC":
-              - "Overview": cs/guide/chapter-09-memory-gc/index.md
-              - "9-1: Memory Allocator Internals": cs/guide/chapter-09-memory-gc/01-memory-allocator.md
-              - "9-2: GC Algorithms": cs/guide/chapter-09-memory-gc/02-gc-algorithms.md
-              - "9-3: Language-specific GC": cs/guide/chapter-09-memory-gc/03-language-gc.md
-              - "9-4: Memory Optimization": cs/guide/chapter-09-memory-gc/04-memory-optimization.md
-              - "9-5: Memory Leak Detection": cs/guide/chapter-09-memory-gc/05-memory-leak-detection.md
-          - "Chapter 10: Syscall & Kernel":
-              - "Overview": cs/guide/chapter-10-syscall-kernel/index.md
-              - "10-1: System Call Basics": cs/guide/chapter-10-syscall-kernel/01-system-call-basics.md
-              - "10-2: Kernel Architecture": cs/guide/chapter-10-syscall-kernel/02-kernel-architecture.md
-              - "10-3: System Call Implementation": cs/guide/chapter-10-syscall-kernel/03-system-call-implementation.md
-              - "10-4: Communication Mechanisms": cs/guide/chapter-10-syscall-kernel/04-communication-mechanisms.md
-              - "10-5: System Call Tracing": cs/guide/chapter-10-syscall-kernel/05-system-call-tracing.md
-              - "10-6: Kernel Debugging Techniques": cs/guide/chapter-10-syscall-kernel/06-kernel-debugging-techniques.md
-              - "10-7: Performance Profiling Tools": cs/guide/chapter-10-syscall-kernel/07-performance-profiling-tools.md
+          - "Chapter 8: Memory Allocator & GC":
+              - "Overview": cs/guide/chapter-08-memory-allocator-gc/index.md
+          - "Chapter 9: Advanced Memory Management":
+              - "Overview": cs/guide/chapter-09-advanced-memory-management/index.md
+          - "Chapter 10: Async Programming":
+              - "Overview": cs/guide/chapter-10-async-programming/index.md
           - "Chapter 11: Performance Optimization":
               - "Overview": cs/guide/chapter-11-performance-optimization/index.md
-              - "11-1: Performance Methodology": cs/guide/chapter-11-performance-optimization/01-performance-methodology.md
-              - "11-2: CPU Optimization": cs/guide/chapter-11-performance-optimization/02-cpu-optimization.md
-              - "11-3: Memory Optimization": cs/guide/chapter-11-performance-optimization/03-memory-optimization.md
-              - "11-4: I/O Optimization": cs/guide/chapter-11-performance-optimization/04-io-optimization.md
-              - "11-5: System Tuning": cs/guide/chapter-11-performance-optimization/05-system-tuning.md
-          - "Chapter 12: Container & Kubernetes":
-              - "Overview": cs/guide/chapter-12-container-kubernetes/index.md
-              - "12-1: Container Internals": cs/guide/chapter-12-container-kubernetes/01-container-internals.md
-              - "12-2: Docker Orchestration": cs/guide/chapter-12-container-kubernetes/02-docker-orchestration.md
-              - "12-3: Kubernetes Fundamentals": cs/guide/chapter-12-container-kubernetes/03-kubernetes-fundamentals.md
-              - "12-4: Kubernetes Advanced": cs/guide/chapter-12-container-kubernetes/04-kubernetes-advanced.md
-              - "12-5: Kubernetes Operations": cs/guide/chapter-12-container-kubernetes/05-kubernetes-operations.md
-          - "Chapter 13: Distributed Systems": cs/guide/chapter-13-distributed-systems.md
-          - "Chapter 14: Security Engineering":
-              - "Overview": cs/guide/chapter-14-security-engineering/index.md
-              - "14-1: Memory Security": cs/guide/chapter-14-security-engineering/01-memory-security.md
-              - "14-2: Network Security": cs/guide/chapter-14-security-engineering/02-network-security.md
-              - "14-3: Authentication & Authorization": cs/guide/chapter-14-security-engineering/03-authentication-authorization.md
-              - "14-4: Container Security": cs/guide/chapter-14-security-engineering/04-container-security.md
-              - "14-5: Cryptography & Key Management": cs/guide/chapter-14-security-engineering/05-cryptography-key-management.md
-          - "Chapter 15: System Design Patterns":
-              - "Overview": cs/guide/chapter-15-system-design-patterns/index.md
-              - "15-1: Microservices Architecture": cs/guide/chapter-15-system-design-patterns/01-microservices-architecture.md
-              - "15-2: Event-Driven Architecture": cs/guide/chapter-15-system-design-patterns/02-event-driven-architecture.md
-              - "15-3: CQRS & Event Sourcing": cs/guide/chapter-15-system-design-patterns/03-cqrs-event-sourcing.md
-              - "15-4: Saga Pattern": cs/guide/chapter-15-system-design-patterns/04-saga-pattern.md
-              - "15-5: API Gateway Patterns": cs/guide/chapter-15-system-design-patterns/05-api-gateway-patterns.md
+          - "Chapter 12: Observability & Debugging":
+              - "Overview": cs/guide/chapter-12-observability-debugging/index.md
+          - "Chapter 13: Container & Kubernetes":
+              - "Overview": cs/guide/chapter-13-container-kubernetes/index.md
+          - "Chapter 14: Distributed Systems":
+              - "Overview": cs/guide/chapter-14-distributed-systems/index.md
+          - "Chapter 15: Microservices Architecture":
+              - "Overview": cs/guide/chapter-15-microservices-architecture/index.md
+          - "Chapter 16: Distributed System Patterns":
+              - "Overview": cs/guide/chapter-16-distributed-system-patterns/index.md
+          - "Chapter 17: Security Engineering":
+              - "Overview": cs/guide/chapter-17-security-engineering/index.md
+          - "Learning Paths":
+              - "Overview": cs/guide/learning-paths/README.md
+              - "Fundamentals":
+                  - "Main": cs/guide/learning-paths/fundamentals/README.md
+                  - "Application Development": cs/guide/learning-paths/fundamentals/application-development/README.md
+                  - "System Programming": cs/guide/learning-paths/fundamentals/system-programming/README.md
+                  - "Infrastructure": cs/guide/learning-paths/fundamentals/infrastructure/README.md
+                  - "Distributed Systems": cs/guide/learning-paths/fundamentals/distributed-systems/README.md
+              - "Intermediate":
+                  - "Main": cs/guide/learning-paths/intermediate/README.md
+                  - "Application Development": cs/guide/learning-paths/intermediate/application-development/README.md
+                  - "System Programming": cs/guide/learning-paths/intermediate/system-programming/README.md
+                  - "Infrastructure": cs/guide/learning-paths/intermediate/infrastructure/README.md
+                  - "Network Programming": cs/guide/learning-paths/intermediate/network-programming/README.md
+                  - "Distributed Systems": cs/guide/learning-paths/intermediate/distributed-systems/README.md
+              - "Advanced":
+                  - "Main": cs/guide/learning-paths/advanced/README.md
+                  - "Application Development": cs/guide/learning-paths/advanced/application-development/README.md
+                  - "System Programming": cs/guide/learning-paths/advanced/system-programming/README.md
+                  - "Infrastructure": cs/guide/learning-paths/advanced/infrastructure/README.md
+                  - "Distributed Systems": cs/guide/learning-paths/advanced/distributed-systems/README.md
       - Memory Management:
           - cs/memory/index.md
           - Process Memory Structure: cs/memory/process-memory-structure.md

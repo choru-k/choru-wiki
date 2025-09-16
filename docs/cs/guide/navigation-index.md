@@ -3,6 +3,7 @@
 ## 🎯 난이도별 탐색
 
 ### FUNDAMENTALS
+
 1. [13.5 디버깅 기법 및 문제 해결 개요](./13-41-debugging-troubleshooting.md)
    - ⏱️ 1-2시간
    - 🎯 주니어 개발자, 신입 DevOps 엔지니어
@@ -40,12 +41,14 @@
    - 🎯 마이크로서비스 아키텍처를 처음 접하는 개발자, 아키텍처 전환을 고려중인 팀
 
 10. [Chapter 7-1: 소켓 프로그래밍의 기초 개요](./chapter-07-network-programming/07-01-socket-basics.md)
-   - ⏱️ 2-3시간
-   - 🎯 네트워크 프로그래밍을 처음 배우는 개발자
+
+- ⏱️ 2-3시간
+- 🎯 네트워크 프로그래밍을 처음 배우는 개발자
 
 ... 외 31개 문서
 
 ### INTERMEDIATE
+
 1. [Saga 패턴 - 실전 비즈니스 사례와 문제 정의](./chapter-16-distributed-system-patterns/04a-saga-business-case.md)
    - ⏱️ 2-5시간
    - 🎯 마이크로서비스 환경에서 데이터 일관성 문제를 겪고 있는 백엔드 개발자, 시스템 아키텍트
@@ -83,12 +86,14 @@
    - 🎯 시스템 아키텍트, 시니어 백엔드 개발자, 기술 리드
 
 10. [16.1D1 Docker 컨테이너화](./chapter-15-microservices-architecture/01d1-docker-containerization.md)
-   - ⏱️ 6-8시간
-   - 🎯 백엔드 개발자, DevOps 엔지니어
+
+- ⏱️ 6-8시간
+- 🎯 백엔드 개발자, DevOps 엔지니어
 
 ... 외 262개 문서
 
 ### ADVANCED
+
 1. [16.3e 성공 요인과 모범 사례](./chapter-16-distributed-system-patterns/16-53-success-factors-best-practices.md)
    - ⏱️ 4-6시간
    - 🎯 시니어 백엔드 개발자, 시스템 아키텍트, DevOps 엔지니어
@@ -126,15 +131,16 @@
    - 🎯 시니어 백엔드 개발자 및 시스템 아키텍트
 
 10. [14.3A Sharding 전략과 구현](./14-12-sharding-strategies.md)
-   - ⏱️ 8-12시간
-   - 🎯 시니어 백엔드 개발자, 데이터베이스 아키텍트, 분산 시스템 엔지니어
+
+- ⏱️ 8-12시간
+- 🎯 시니어 백엔드 개발자, 데이터베이스 아키텍트, 분산 시스템 엔지니어
 
 ... 외 98개 문서
-
 
 ## 🏷️ 주제별 탐색
 
 ### 시스템 프로그래밍
+
 - [Chapter 7-1: 소켓 프로그래밍의 기초 개요](./chapter-07-network-programming/07-01-socket-basics.md)
 - [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./chapter-01-process-thread/04-11-process-creation-fork.md)
 - [Chapter 10-2A: 커널 설계 철학과 전체 구조](./10-11-kernel-design-structure.md)
@@ -143,6 +149,7 @@
 ... 총 228개 문서
 
 ### 애플리케이션 개발
+
 - [Python GC 프로덕션 최적화 사례](./chapter-08-memory-allocator-gc/09-50-3-python-gc-production.md)
 - [Chapter 15-3: 인증과 인가 개요](./chapter-17-security-engineering/15-14-authentication-authorization.md)
 - [API Gateway 기본 개념: 마이크로서비스의 관문지기](./chapter-16-distributed-system-patterns/16-07-api-gateway-fundamentals.md)
@@ -151,10 +158,10 @@
 ... 총 81개 문서
 
 ### 인프라스트럭처
+
 - [분산 시스템의 비동기 패턴 개요](./chapter-10-async-programming/08-18-distributed-async.md)
 - [16.1D3 Kubernetes에서 마이크로서비스 프로덕션 배포](./chapter-16-distributed-system-patterns/16-51-3-kubernetes-production-deployment.md)
 - [13.1b 메트릭 수집 - 시스템 건강도 측정](./13-12-metrics-collection.md)
 - [통신 패턴 선택과 실전 최적화 가이드](./chapter-16-distributed-system-patterns/16-50-3-communication-patterns-best-practices.md)
 - [16.5D API Gateway Rate Limiting과 트래픽 제어](./chapter-16-distributed-system-patterns/16-42-rate-limiting-monitoring.md)
 ... 총 104개 문서
-
