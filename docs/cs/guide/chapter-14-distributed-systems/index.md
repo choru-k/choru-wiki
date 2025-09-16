@@ -1,22 +1,25 @@
 ---
 tags:
-  - DistributedSystems
-  - CAP
-  - Consistency
-  - Microservices
-  - Guide
-  - Architecture
+  - FileDescriptor
+  - FileSystem
+  - IO
+  - SystemProgramming
+  - VFS
+  - deep-study
+  - hands-on
+  - intermediate
+  - 시스템프로그래밍
+difficulty: INTERMEDIATE
+learning_time: "12-20시간"
+main_topic: "시스템 프로그래밍"
+priority_score: 4
 ---
 
-# Chapter 14: Distributed Systems - 분산의 복잡성을 다루는 기술
+# Chapter 14: 분산 시스템 - 확장 가능한 시스템 설계
 
 ## 이 장에서 다루는 내용
 
-"단일 서버로는 더 이상 처리할 수 없어요" - 성장하는 서비스가 맞닥뜨리는 현실입니다.
-
-분산 시스템은 현대 소프트웨어의 필수 요소가 되었습니다. 하지만 분산 환경에서는 네트워크 장애, 부분적 실패, 데이터 일관성 등 단일 서버에서는 경험하지 못했던 새로운 문제들이 등장합니다.
-
-이 장에서는 **분산 시스템의 핵심 원리**부터 **실전 아키텍처 패턴**까지, 안정적이고 확장 가능한 분산 시스템을 설계하고 운영하는 방법을 배웁니다.
+분산 시스템의 기본 원리부터 합의 알고리즘, 분산 데이터까지 확장 가능한 시스템 설계를 다룹니다.
 
 ## 왜 이것을 알아야 하는가?
 
@@ -229,7 +232,7 @@ graph TD
 
 ## 이 장의 구성
 
-### [14.1 분산 시스템 기초 이론](01-distributed-fundamentals.md)
+### [14.1 분산 시스템 기초 이론](14-14-01-distributed-fundamentals.md)
 
 **"분산 시스템의 본질을 이해하기"**
 
@@ -249,7 +252,7 @@ CAP 정리의 실제 적용:
 └─────────────────┴─────────────────┴─────────────────┘
 ```
 
-### [14.2 합의 알고리즘 (Consensus)](02-consensus-algorithms.md)
+### [14.2 합의 알고리즘 (Consensus)](14-10-consensus-algorithms.md)
 
 **"분산된 노드들이 어떻게 합의에 도달하는가?"**
 
@@ -292,7 +295,7 @@ func (n *RaftNode) StartElection() {
 }
 ```
 
-### [14.3 분산 데이터 관리](03-distributed-data.md)
+### [14.3 분산 데이터 관리](14-11-distributed-data.md)
 
 **"데이터를 어떻게 분산 저장하고 관리하나?"**
 
@@ -357,7 +360,7 @@ print(ch.get_node('user456'))  # server1
 ch.add_node('server4')
 ```
 
-### [14.4 분산 시스템 패턴](04-distributed-patterns.md)
+### [14.4 분산 시스템 패턴](14-52-distributed-patterns.md)
 
 **"실전에서 사용하는 분산 아키텍처 패턴들"**
 
@@ -425,7 +428,7 @@ try {
 }
 ```
 
-### [14.5 Event-Driven Architecture](05-event-driven-architecture.md)
+### [14.5 Event-Driven Architecture](14-16-03-event-driven-architecture.md)
 
 **"이벤트로 연결되는 느슨한 결합 시스템"**
 
@@ -683,6 +686,49 @@ PUT /api/orders/550e8400-e29b-41d4-a716-446655440000
 
 ## 다음 단계
 
-준비되셨나요? [14.1 분산 시스템 기초 이론](01-distributed-fundamentals.md)에서 CAP 정리부터 시작해 분산 시스템의 이론적 기반을 탄탄히 다져보겠습니다.
+준비되셨나요? [14.1 분산 시스템 기초 이론](14-14-01-distributed-fundamentals.md)에서 CAP 정리부터 시작해 분산 시스템의 이론적 기반을 탄탄히 다져보겠습니다.
 
 "분산 시스템은 어렵지만 피할 수 없는 현실입니다." 복잡성을 받아들이고 우아하게 다루는 방법을 함께 배워봅시다! 🌐⚡
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: INTERMEDIATE
+- **주제**: 시스템 프로그래밍
+- **예상 시간**: 12-20시간
+
+### 🎯 학습 경로
+
+- [📚 INTERMEDIATE 레벨 전체 보기](../learning-paths/intermediate/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-14-distributed-systems)
+
+- [Chapter 14-01: Distributed Fundamentals](./14-14-01-distributed-fundamentals.md)
+- [Chapter 14-02: Event Driven Architecture](./14-16-03-event-driven-architecture.md)
+- [Chapter 14-03: Event Driven Fundamentals](./14-03-event-driven-fundamentals.md)
+- [Chapter 14-04: Practical Implementation Guide](./14-04-practical-implementation-guide.md)
+- [Chapter 14-10: Consensus Algorithms](./14-10-consensus-algorithms.md)
+- [Chapter 14-11: Distributed Data](./14-11-distributed-data.md)
+- [Chapter 14-12: Sharding Strategies](./14-12-sharding-strategies.md)
+- [Chapter 14-13: Vector Clocks](./14-13-vector-clocks.md)
+- [Chapter 14-14: Circuit Breaker](./14-14-circuit-breaker.md)
+- [Chapter 14-15: Bulkhead Pattern](./14-15-bulkhead-pattern.md)
+- [Chapter 14-16: Saga Pattern](./14-16-saga-pattern.md)
+- [Chapter 14-17: Cqrs Pattern](./14-17-cqrs-pattern.md)
+- [Chapter 14-18: Message Queue Implementation](./14-18-message-queue-implementation.md)
+- [Chapter 14-19: Event Streaming Sourcing](./14-19-event-streaming-sourcing.md)
+- [Chapter 14-50: Replication Patterns](./14-50-replication-patterns.md)
+- [Chapter 14-51: Distributed Data Production](./14-51-distributed-data-production.md)
+- [Chapter 14-52: Distributed Patterns](./14-52-distributed-patterns.md)
+
+### 🏷️ 관련 키워드
+
+`FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+
+### ⏭️ 다음 단계 가이드
+
+- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
+- 관련 도구들을 직접 사용해보는 것이 중요합니다

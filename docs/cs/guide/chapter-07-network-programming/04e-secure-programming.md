@@ -1,12 +1,18 @@
 ---
 tags:
-  - Network
-  - Security
-  - Programming
-  - Vulnerability
-  - Buffer
-  - Authentication
-  - Monitoring
+  - advanced
+  - buffer_overflow
+  - deep-study
+  - hands-on
+  - memory_security
+  - secure_programming
+  - sql_injection
+  - timing_attack
+  - 시스템프로그래밍
+difficulty: ADVANCED
+learning_time: "25-35시간"
+main_topic: "시스템 프로그래밍"
+priority_score: 5
 ---
 
 # Chapter 7-4E: 보안 프로그래밍 실습
@@ -890,5 +896,36 @@ void run_security_tests() {
 
 ---
 
-**이전**: [TLS 성능 튜닝](04d-tls-optimization.md)  
-**다음**: [비동기 프로그래밍](../chapter-08-async-programming/01-promise-future.md)에서 Promise/Future 패턴과 비동기 프로그래밍의 핵심을 학습합니다.
+**이전**: [TLS 성능 튜닝](chapter-07-network-programming/07-34-tls-optimization.md)  
+**다음**: [비동기 프로그래밍](../chapter-10-async-programming/08-10-promise-future.md)에서 Promise/Future 패턴과 비동기 프로그래밍의 핵심을 학습합니다.
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: ADVANCED
+- **주제**: 시스템 프로그래밍
+- **예상 시간**: 25-35시간
+
+### 🎯 학습 경로
+
+- [📚 ADVANCED 레벨 전체 보기](../learning-paths/advanced/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-07-network-programming)
+
+- [Chapter 7-1: 소켓 프로그래밍의 기초 개요](./07-01-socket-basics.md)
+- [Chapter 7-1A: 소켓의 개념과 기본 구조](./07-02-socket-fundamentals.md)
+- [Chapter 7-1B: TCP 소켓 프로그래밍](./07-10-tcp-programming.md)
+- [Chapter 7-1C: UDP와 Raw 소켓 프로그래밍](./07-11-udp-raw-sockets.md)
+- [Chapter 7-1D: 소켓 옵션과 Unix 도메인 소켓](./07-12-socket-options-unix.md)
+
+### 🏷️ 관련 키워드
+
+`secure_programming`, `memory_security`, `buffer_overflow`, `timing_attack`, `sql_injection`
+
+### ⏭️ 다음 단계 가이드
+
+- 시스템 전체의 관점에서 이해하려 노력하세요
+- 다른 고급 주제들과의 연관성을 파악해보세요

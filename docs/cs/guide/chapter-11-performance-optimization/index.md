@@ -1,21 +1,25 @@
 ---
 tags:
-  - Performance
-  - Optimization
-  - Profiling
-  - Guide
+  - FileDescriptor
+  - FileSystem
+  - IO
   - SystemProgramming
+  - VFS
+  - deep-study
+  - hands-on
+  - intermediate
+  - 시스템프로그래밍
+difficulty: INTERMEDIATE
+learning_time: "12-20시간"
+main_topic: "시스템 프로그래밍"
+priority_score: 4
 ---
 
-# Chapter 11: 성능 최적화 - 느린 시스템을 빠르게 만드는 기술
+# Chapter 11: 성능 최적화 - 시스템 성능의 극한 추구
 
 ## 이 장에서 다루는 내용
 
-"왜 이렇게 느리죠?" - 개발자라면 누구나 들어본 질문입니다.
-
-사용자는 1초도 기다리기 싫어하고, 서버는 CPU 100%로 죽어가고, 관리자는 "최적화해주세요"라고 재촉합니다. 하지만 어디서부터 어떻게 시작해야 할까요?
-
-이 장에서는 **측정 기반의 체계적인 성능 최적화**를 다룹니다. 추측이 아닌 데이터로, 감에 의존하지 않는 과학적 접근법으로 시스템을 빠르게 만드는 방법을 배웁니다.
+CPU, 메모리, I/O 최적화부터 시스템 튜닝까지 성능 최적화의 체계적 접근법을 학습합니다.
 
 ## 왜 이것을 알아야 하는가?
 
@@ -124,7 +128,7 @@ graph TD
 
 ## 이 장의 구성
 
-### [11.1 성능 분석 방법론](01-performance-methodology.md)
+### [11.1 성능 분석 방법론](11-30-performance-methodology.md)
 
 **"어디서부터 시작해야 할까?"**
 
@@ -148,7 +152,7 @@ graph LR
     style L3 fill:#f3e5f5
 ```
 
-### [11.2 CPU 성능 최적화](02-cpu-optimization.md)
+### [11.2 CPU 성능 최적화](11-31-cpu-optimization.md)
 
 **"CPU 100%인데 뭘 하는지 모르겠어요"**
 
@@ -157,7 +161,7 @@ graph LR
 - ⚡ **알고리즘 최적화**: O(n²) → O(n log n) 개선으로 100배 빨라지기
 - 🏗 **컴파일러 활용**: -O2, LTO, PGO로 무료 성능 향상 얻기
 
-### [11.3 메모리 성능 최적화](03-memory-optimization.md)
+### [11.3 메모리 성능 최적화](11-32-memory-optimization.md)
 
 **"같은 연산인데 왜 100배 차이가 날까?"**
 
@@ -166,7 +170,7 @@ graph LR
 - 🏃 **Memory Access Pattern**: Sequential vs Random, 어떤 게 빠를까?
 - 🗺 **NUMA 최적화**: 대용량 서버에서의 메모리 지역성
 
-### [11.4 I/O 성능 최적화](04-io-optimization.md)
+### [11.4 I/O 성능 최적화](11-33-io-optimization.md)
 
 **"Database는 빠른데 애플리케이션이 느려요"**
 
@@ -175,7 +179,7 @@ graph LR
 - ⚡ **Async I/O**: epoll, io_uring을 활용한 고성능 서버 구현
 - 🔧 **Buffer 튜닝**: 커널 버퍼 크기 최적화로 처리량 향상
 
-### [11.5 시스템 튜닝](05-system-tuning.md)
+### [11.5 시스템 튜닝](11-36-system-tuning.md)
 
 **"언어/프레임워크별 특화 최적화"**
 
@@ -307,6 +311,49 @@ Doom, Quake 같은 게임을 386 CPU에서 60fps로 실행하게 만든 최적�
 
 ## 다음 단계
 
-준비되셨나요? [11.1 성능 분석 방법론](01-performance-methodology.md)에서 체계적인 성능 분석의 여정을 시작합니다.
+준비되셨나요? [11.1 성능 분석 방법론](11-30-performance-methodology.md)에서 체계적인 성능 분석의 여정을 시작합니다.
 
 "느려서 못 쓰겠다"는 시스템을 "너무 빨라서 놀랍다"는 시스템으로 바꿔보겠습니다! 🚀
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: INTERMEDIATE
+- **주제**: 시스템 프로그래밍
+- **예상 시간**: 12-20시간
+
+### 🎯 학습 경로
+
+- [📚 INTERMEDIATE 레벨 전체 보기](../learning-paths/intermediate/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-11-performance-optimization)
+
+- [Chapter 11-01: Io Fundamentals](./11-01-io-fundamentals.md)
+- [Chapter 11-10: Memory Hierarchy Cache](./11-10-memory-hierarchy-cache.md)
+- [Chapter 11-11: Memory Allocation](./11-11-memory-allocation.md)
+- [Chapter 11-12: Memory Leak Detection](./11-12-memory-leak-detection.md)
+- [Chapter 11-13: Load Balancing Caching](./11-13-load-balancing-caching.md)
+- [Chapter 11-20: Advanced Memory Libs](./11-20-advanced-memory-libs.md)
+- [Chapter 11-30: Performance Methodology](./11-30-performance-methodology.md)
+- [Chapter 11-31: Cpu Optimization](./11-31-cpu-optimization.md)
+- [Chapter 11-32: Memory Optimization](./11-32-memory-optimization.md)
+- [Chapter 11-33: Io Optimization](./11-33-io-optimization.md)
+- [Chapter 11-34: Async Io Optimization](./11-34-async-io-optimization.md)
+- [Chapter 11-35: Network Io Optimization](./11-35-network-io-optimization.md)
+- [Chapter 11-36: System Tuning](./11-36-system-tuning.md)
+- [Chapter 11-37: Os Kernel Tuning](./11-37-os-kernel-tuning.md)
+- [Chapter 11-38: Application Optimization](./11-38-application-optimization.md)
+- [Chapter 11-40: Disk Io Monitoring](./11-40-disk-io-monitoring.md)
+- [Chapter 11-41: System Performance Analysis](./11-41-system-performance-analysis.md)
+
+### 🏷️ 관련 키워드
+
+`FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+
+### ⏭️ 다음 단계 가이드
+
+- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
+- 관련 도구들을 직접 사용해보는 것이 중요합니다

@@ -1,11 +1,18 @@
 ---
 tags:
-  - NVMe
+  - advanced
+  - async_io
+  - deep-study
+  - hands-on
   - io_uring
-  - Asynchronous I/O
-  - High Performance
-  - Storage
-  - Linux
+  - kernel_optimization
+  - nvme
+  - polling
+  - 시스템프로그래밍
+difficulty: ADVANCED
+learning_time: "20-30시간"
+main_topic: "시스템 프로그래밍"
+priority_score: 0
 ---
 
 # Chapter 6-3D: NVMe 최적화와 io_uring
@@ -647,5 +654,36 @@ void zns_optimized_write(int fd, void *data, size_t size, off_t zone_start) {
 
 ---
 
-**이전**: [멀티큐 블록 계층](03c-multiqueue-block-layer.md)  
-**다음**: [성능 모니터링과 튜닝](03e-performance-monitoring-tuning.md)에서 실전 최적화 기법을 학습합니다.
+**이전**: [멀티큐 블록 계층](chapter-06-file-io/03c-multiqueue-block-layer.md)  
+**다음**: [성능 모니터링과 튜닝](chapter-06-file-io/06-40-performance-monitoring-tuning.md)에서 실전 최적화 기법을 학습합니다.
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: ADVANCED
+- **주제**: 시스템 프로그래밍
+- **예상 시간**: 20-30시간
+
+### 🎯 학습 경로
+
+- [📚 ADVANCED 레벨 전체 보기](../learning-paths/advanced/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-06-file-io)
+
+- [Chapter 6-1: 파일 디스크립터의 내부 구조](./06-10-file-descriptor.md)
+- [Chapter 6-1A: 파일 디스크립터 기본 개념과 3단계 구조](./06-01-fd-basics-structure.md)
+- [Chapter 6-1B: 파일 디스크립터 할당과 공유 메커니즘](./06-11-fd-allocation-management.md)
+- [Chapter 6-1C: 파일 연산과 VFS 다형성](./06-12-file-operations-vfs.md)
+- [Chapter 6-2: VFS와 파일 시스템 추상화 개요](./06-13-vfs-filesystem.md)
+
+### 🏷️ 관련 키워드
+
+`nvme`, `io_uring`, `async_io`, `polling`, `kernel_optimization`
+
+### ⏭️ 다음 단계 가이드
+
+- 시스템 전체의 관점에서 이해하려 노력하세요
+- 다른 고급 주제들과의 연관성을 파악해보세요

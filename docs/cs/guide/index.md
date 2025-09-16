@@ -1,9 +1,18 @@
 ---
 tags:
-  - Guide
-  - CS
+  - FileDescriptor
+  - FileSystem
+  - IO
   - SystemProgramming
-  - Learning
+  - VFS
+  - deep-study
+  - hands-on
+  - intermediate
+  - 시스템프로그래밍
+difficulty: INTERMEDIATE
+learning_time: "12-20시간"
+main_topic: "시스템 프로그래밍"
+priority_score: 4
 ---
 
 # CS 마스터리: Senior Backend Engineer를 위한 시스템 프로그래밍 완벽 가이드
@@ -32,7 +41,7 @@ tags:
 
 ### **제1부: 프로그램의 탄생과 실행**
 
-#### [Chapter 1: 컴파일러와 링커의 세계](chapter-01-compiler-linker/index.md)
+#### [Chapter 1: 컴파일러와 링커의 세계](chapter-05-compiler-linker/index.md)
 
 - 소스 코드에서 실행 파일까지의 여정
 - 왜 헤더 파일 수정이 전체 재컴파일을 유발하는가?
@@ -40,7 +49,7 @@ tags:
 - Link-time Optimization의 마법
 - **읽기 시간**: 30-40분
 
-#### [Chapter 2: Memory Management](chapter-02-memory/index.md)
+#### [Chapter 2: Memory Management](chapter-03-memory-system/index.md)
 
 - ./program 실행 시 일어나는 일들
 - Stack과 Heap의 성장 방향이 반대인 이유
@@ -237,7 +246,7 @@ git clone https://github.com/your-repo/cs-mastery-examples.git
 
 ## 🚀 시작하기
 
-준비되셨나요? [Chapter 1: 컴파일러와 링커의 세계](chapter-01-compiler-linker.md)부터 시작해봅시다!
+준비되셨나요? [Chapter 1: 컴파일러와 링커의 세계](chapter-05-compiler-linker.md)부터 시작해봅시다!
 
 > "The best way to understand a system is to build it from scratch."  
 > — Richard Feynman (adapted)
@@ -245,3 +254,31 @@ git clone https://github.com/your-repo/cs-mastery-examples.git
 ---
 
 *이 가이드는 지속적으로 업데이트됩니다. 피드백과 기여를 환영합니다!*
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: INTERMEDIATE
+- **주제**: 시스템 프로그래밍
+- **예상 시간**: 12-20시간
+
+### 🎯 학습 경로
+
+- [📚 INTERMEDIATE 레벨 전체 보기](../learning-paths/intermediate/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (guide)
+
+- [📚 컴퓨터 시스템 종합 가이드](./README.md)
+- [📚 문서 네비게이션 인덱스](./navigation-index.md)
+
+### 🏷️ 관련 키워드
+
+`FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+
+### ⏭️ 다음 단계 가이드
+
+- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
+- 관련 도구들을 직접 사용해보는 것이 중요합니다

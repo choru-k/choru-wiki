@@ -1,11 +1,18 @@
 ---
 tags:
-  - Network
-  - Security
-  - TLS
+  - ACME
+  - Certificate Pinning
+  - OCSP
   - PKI
-  - X509
-  - Certificates
+  - X.509
+  - hands-on
+  - intermediate
+  - medium-read
+  - 애플리케이션개발
+difficulty: INTERMEDIATE
+learning_time: "4-6시간"
+main_topic: "애플리케이션 개발"
+priority_score: 4
 ---
 
 # Chapter 7-4B: X.509 인증서와 PKI 시스템
@@ -610,5 +617,36 @@ char* generate_certificate_report_json(CertMonitor* monitor) {
 
 ---
 
-**이전**: [TLS 프로토콜 기초](04a-tls-protocol-fundamentals.md)
-**다음**: [암호화 알고리즘과 성능 최적화](04c-crypto-performance.md)에서 암호화 성능 벤치마킹을 학습합니다.
+**이전**: [TLS 프로토콜 기초](chapter-07-network-programming/07-04-tls-protocol-fundamentals.md)
+**다음**: [암호화 알고리즘과 성능 최적화](chapter-07-network-programming/07-33-crypto-performance.md)에서 암호화 성능 벤치마킹을 학습합니다.
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: INTERMEDIATE
+- **주제**: 애플리케이션 개발
+- **예상 시간**: 4-6시간
+
+### 🎯 학습 경로
+
+- [📚 INTERMEDIATE 레벨 전체 보기](../learning-paths/intermediate/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-07-network-programming)
+
+- [Chapter 7-1: 소켓 프로그래밍의 기초 개요](./07-01-socket-basics.md)
+- [Chapter 7-1A: 소켓의 개념과 기본 구조](./07-02-socket-fundamentals.md)
+- [Chapter 7-1B: TCP 소켓 프로그래밍](./07-10-tcp-programming.md)
+- [Chapter 7-1C: UDP와 Raw 소켓 프로그래밍](./07-11-udp-raw-sockets.md)
+- [Chapter 7-1D: 소켓 옵션과 Unix 도메인 소켓](./07-12-socket-options-unix.md)
+
+### 🏷️ 관련 키워드
+
+`X.509`, `PKI`, `Certificate Pinning`, `OCSP`, `ACME`
+
+### ⏭️ 다음 단계 가이드
+
+- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
+- 관련 도구들을 직접 사용해보는 것이 중요합니다

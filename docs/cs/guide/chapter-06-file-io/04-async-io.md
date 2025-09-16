@@ -1,11 +1,18 @@
 ---
 tags:
-  - Async I/O
-  - Event-driven
+  - async-io
+  - c10k
   - epoll
+  - event-driven
+  - hands-on
+  - intermediate
   - io_uring
-  - Reactor Pattern
-  - Overview
+  - medium-read
+  - 시스템프로그래밍
+difficulty: INTERMEDIATE
+learning_time: "4-6시간"
+main_topic: "시스템 프로그래밍"
+priority_score: 4
 ---
 
 # Chapter 6-4: 비동기 I/O와 이벤트 기반 프로그래밍 개요
@@ -18,14 +25,14 @@ tags:
 
 이 섹션은 6개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [기본 개념과 C10K 문제](04a-async-io-fundamentals.md)
+### 1️⃣ [기본 개념과 C10K 문제](chapter-06-file-io/06-04-async-io-fundamentals.md)
 
 - 동기 vs 비동기 I/O의 근본적 차이점
 - C10K 문제의 배경과 해결 필요성  
 - nginx vs Apache 성능 비교 실례
 - 이벤트 기반 아키텍처의 등장 배경
 
-### 2️⃣ [I/O 멀티플렉싱: select, poll, epoll](04b-io-multiplexing-evolution.md)
+### 2️⃣ [I/O 멀티플렉싱: select, poll, epoll](chapter-06-file-io/04b-io-multiplexing-evolution.md)
 
 - select: 1983년 BSD의 혁명적 아이디어
 - poll: System V의 select 개선점
@@ -33,7 +40,7 @@ tags:
 - Edge-Triggered vs Level-Triggered 모드
 - 실제 성능 벤치마크와 구현 예제
 
-### 3️⃣ [io_uring: 차세대 비동기 I/O](04c-io-uring-implementation.md)
+### 3️⃣ [io_uring: 차세대 비동기 I/O](chapter-06-file-io/04c-io-uring-implementation.md)
 
 - io_uring 아키텍처와 설계 철학
 - Submission Queue와 Completion Queue 메커니즘
@@ -41,7 +48,7 @@ tags:
 - 버퍼 선택과 zero-copy 구현
 - 고성능 서버 구현 실예
 
-### 4️⃣ [리액터 패턴 구현](04d-reactor-pattern.md)
+### 4️⃣ [리액터 패턴 구현](chapter-06-file-io/04d-reactor-pattern.md)
 
 - 리액터 패턴의 핵심 아키텍처
 - 이벤트 핸들러와 Demultiplexer 설계
@@ -49,7 +56,7 @@ tags:
 - HTTP 서버 구현 예제
 - 실제 프로덕션 최적화 기법
 
-### 5️⃣ [프로액터 패턴과 Windows IOCP](04e-proactor-iocp.md)
+### 5️⃣ [프로액터 패턴과 Windows IOCP](chapter-06-file-io/04e-proactor-iocp.md)
 
 - 프로액터 vs 리액터 패턴 비교
 - Windows I/O Completion Port 구현
@@ -57,7 +64,7 @@ tags:
 - 워커 스레드 관리 전략
 - 크로스 플랫폼 비동기 I/O 설계
 
-### 6️⃣ [고성능 네트워크 최적화](04f-network-optimization.md)
+### 6️⃣ [고성능 네트워크 최적화](chapter-06-file-io/06-31-network-optimization.md)
 
 - Zero-copy 기법: sendfile, splice
 - TCP 최적화와 소켓 튜닝
@@ -97,15 +104,15 @@ tags:
 
 ### 초보자 (추천 순서)
 
-1. [기본 개념](04a-async-io-fundamentals.md) → 동기/비동기 차이 이해
-2. [select/poll/epoll](04b-io-multiplexing-evolution.md) → 기본적 이벤트 루프 구현
-3. [리액터 패턴](04d-reactor-pattern.md) → 실용적 서버 아키텍처
+1. [기본 개념](chapter-06-file-io/06-04-async-io-fundamentals.md) → 동기/비동기 차이 이해
+2. [select/poll/epoll](chapter-06-file-io/04b-io-multiplexing-evolution.md) → 기본적 이벤트 루프 구현
+3. [리액터 패턴](chapter-06-file-io/04d-reactor-pattern.md) → 실용적 서버 아키텍처
 
 ### 중급자 (심화 학습)
 
-1. [io_uring](04c-io-uring-implementation.md) → 최신 비동기 I/O 기법
-2. [프로액터 패턴](04e-proactor-iocp.md) → 고급 비동기 아키텍처
-3. [네트워크 최적화](04f-network-optimization.md) → 성능 튜닝 기법
+1. [io_uring](chapter-06-file-io/04c-io-uring-implementation.md) → 최신 비동기 I/O 기법
+2. [프로액터 패턴](chapter-06-file-io/04e-proactor-iocp.md) → 고급 비동기 아키텍처
+3. [네트워크 최적화](chapter-06-file-io/06-31-network-optimization.md) → 성능 튜닝 기법
 
 ### 전문가 (마스터리)
 
@@ -117,14 +124,45 @@ tags:
 
 ### 선행 학습
 
-- [Chapter 6-1: 파일 디스크립터와 I/O](01-file-descriptor.md)
-- [Chapter 6-2: VFS와 파일시스템](02-vfs-filesystem.md)
+- [Chapter 6-1: 파일 디스크립터와 I/O](chapter-06-file-io/06-10-file-descriptor.md)
+- [Chapter 6-2: VFS와 파일시스템](chapter-06-file-io/06-13-vfs-filesystem.md)
 
 ### 후속 학습  
 
-- [Chapter 7: 네트워크 프로그래밍](../chapter-07-network-programming/01-socket-basics.md)
-- [Chapter 8: 비동기 프로그래밍](../chapter-08-async-programming/01-promise-future.md)
+- [Chapter 7: 네트워크 프로그래밍](../chapter-07-network-programming/07-01-socket-basics.md)
+- [Chapter 8: 비동기 프로그래밍](../chapter-10-async-programming/08-10-promise-future.md)
 
 ---
 
-**다음**: [기본 개념과 C10K 문제](04a-async-io-fundamentals.md)에서 비동기 I/O의 기초를 학습합니다.
+**다음**: [기본 개념과 C10K 문제](chapter-06-file-io/06-04-async-io-fundamentals.md)에서 비동기 I/O의 기초를 학습합니다.
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: INTERMEDIATE
+- **주제**: 시스템 프로그래밍
+- **예상 시간**: 4-6시간
+
+### 🎯 학습 경로
+
+- [📚 INTERMEDIATE 레벨 전체 보기](../learning-paths/intermediate/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-06-file-io)
+
+- [Chapter 6-1: 파일 디스크립터의 내부 구조](./06-10-file-descriptor.md)
+- [Chapter 6-1A: 파일 디스크립터 기본 개념과 3단계 구조](./06-01-fd-basics-structure.md)
+- [Chapter 6-1B: 파일 디스크립터 할당과 공유 메커니즘](./06-11-fd-allocation-management.md)
+- [Chapter 6-1C: 파일 연산과 VFS 다형성](./06-12-file-operations-vfs.md)
+- [Chapter 6-2: VFS와 파일 시스템 추상화 개요](./06-13-vfs-filesystem.md)
+
+### 🏷️ 관련 키워드
+
+`async-io`, `event-driven`, `c10k`, `epoll`, `io_uring`
+
+### ⏭️ 다음 단계 가이드
+
+- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
+- 관련 도구들을 직접 사용해보는 것이 중요합니다

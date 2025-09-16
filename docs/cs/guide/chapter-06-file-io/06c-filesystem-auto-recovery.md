@@ -1,12 +1,18 @@
 ---
 tags:
-  - Filesystem
-  - Debugging
-  - Linux
-  - Storage
-  - Troubleshooting
-  - Automation
-  - Bash-Script
+  - automation
+  - bash-scripting
+  - filesystem-recovery
+  - hands-on
+  - intermediate
+  - medium-read
+  - monitoring
+  - systemd
+  - 인프라스트럭처
+difficulty: INTERMEDIATE
+learning_time: "4-6시간"
+main_topic: "인프라스트럭처"
+priority_score: 4
 ---
 
 # 06C. 자동 파일시스템 복구 시스템 구축
@@ -816,5 +822,36 @@ analyze_recovery_logs() {
 
 ---
 
-**이전**: [파일시스템 진단 도구 구현](06b-filesystem-diagnostic-tools.md)  
-**다음**: [I/O 성능 분석](05-io-performance-analysis.md)에서 파일시스템 성능 최적화 방법을 학습합니다.
+**이전**: [파일시스템 진단 도구 구현](chapter-06-file-io/06-45-filesystem-diagnostic-tools.md)  
+**다음**: [I/O 성능 분석](chapter-06-file-io/06-41-io-performance.md)에서 파일시스템 성능 최적화 방법을 학습합니다.
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: INTERMEDIATE
+- **주제**: 인프라스트럭처
+- **예상 시간**: 4-6시간
+
+### 🎯 학습 경로
+
+- [📚 INTERMEDIATE 레벨 전체 보기](../learning-paths/intermediate/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-06-file-io)
+
+- [Chapter 6-1: 파일 디스크립터의 내부 구조](./06-10-file-descriptor.md)
+- [Chapter 6-1A: 파일 디스크립터 기본 개념과 3단계 구조](./06-01-fd-basics-structure.md)
+- [Chapter 6-1B: 파일 디스크립터 할당과 공유 메커니즘](./06-11-fd-allocation-management.md)
+- [Chapter 6-1C: 파일 연산과 VFS 다형성](./06-12-file-operations-vfs.md)
+- [Chapter 6-2: VFS와 파일 시스템 추상화 개요](./06-13-vfs-filesystem.md)
+
+### 🏷️ 관련 키워드
+
+`filesystem-recovery`, `automation`, `monitoring`, `bash-scripting`, `systemd`
+
+### ⏭️ 다음 단계 가이드
+
+- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
+- 관련 도구들을 직접 사용해보는 것이 중요합니다

@@ -1,9 +1,18 @@
 ---
 tags:
   - DPDK
-  - High Performance Networking
-  - Kernel Bypass
-  - Network Device Driver
+  - advanced
+  - deep-study
+  - hands-on
+  - high-performance-networking
+  - hugepages
+  - kernel-bypass
+  - userspace-networking
+  - 인프라스트럭처
+difficulty: ADVANCED
+learning_time: "20-30시간"
+main_topic: "인프라스트럭처"
+priority_score: 4
 ---
 
 # DPDK 통합: "커널 바이패스로 극한 성능 달성"
@@ -618,5 +627,36 @@ DPDK는 커널을 우회하여 직접 네트워크 카드를 제어하는 고성
 
 ---
 
-**이전**: [고성능 분석 도구](07b-high-performance-analysis-tool.md)  
-**다음**: [고성능 네트워킹 개요](07-high-performance-networking.md)로 돌아가서 전체 내용을 검토할 수 있습니다.
+**이전**: [고성능 분석 도구](chapter-07-network-programming/07-45-high-performance-analysis-tool.md)  
+**다음**: [고성능 네트워킹 개요](chapter-07-network-programming/07-38-high-performance-networking.md)로 돌아가서 전체 내용을 검토할 수 있습니다.
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: ADVANCED
+- **주제**: 인프라스트럭처
+- **예상 시간**: 20-30시간
+
+### 🎯 학습 경로
+
+- [📚 ADVANCED 레벨 전체 보기](../learning-paths/advanced/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-07-network-programming)
+
+- [Chapter 7-1: 소켓 프로그래밍의 기초 개요](./07-01-socket-basics.md)
+- [Chapter 7-1A: 소켓의 개념과 기본 구조](./07-02-socket-fundamentals.md)
+- [Chapter 7-1B: TCP 소켓 프로그래밍](./07-10-tcp-programming.md)
+- [Chapter 7-1C: UDP와 Raw 소켓 프로그래밍](./07-11-udp-raw-sockets.md)
+- [Chapter 7-1D: 소켓 옵션과 Unix 도메인 소켓](./07-12-socket-options-unix.md)
+
+### 🏷️ 관련 키워드
+
+`DPDK`, `kernel-bypass`, `high-performance-networking`, `hugepages`, `userspace-networking`
+
+### ⏭️ 다음 단계 가이드
+
+- 시스템 전체의 관점에서 이해하려 노력하세요
+- 다른 고급 주제들과의 연관성을 파악해보세요

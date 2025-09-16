@@ -1,11 +1,18 @@
 ---
 tags:
-  - Multi-queue
-  - blk-mq
   - NVMe
-  - Performance
-  - Parallel Processing
-  - Linux
+  - balanced
+  - blk-mq
+  - deep-study
+  - intermediate
+  - io-performance
+  - multi-queue
+  - numa-optimization
+  - 시스템프로그래밍
+difficulty: INTERMEDIATE
+learning_time: "6-10시간"
+main_topic: "시스템 프로그래밍"
+priority_score: 4
 ---
 
 # Chapter 6-3C: 멀티큐 블록 계층
@@ -537,5 +544,36 @@ $ echo 0 > /sys/block/nvme0n1/queue/io_poll
 
 ---
 
-**이전**: [I/O 스케줄러 알고리즘](03b-io-schedulers.md)  
-**다음**: [NVMe 최적화와 io_uring](03d-nvme-io-uring.md)에서 차세대 I/O 기술을 학습합니다.
+**이전**: [I/O 스케줄러 알고리즘](chapter-06-file-io/06-19-io-schedulers.md)  
+**다음**: [NVMe 최적화와 io_uring](chapter-06-file-io/03d-nvme-io-uring.md)에서 차세대 I/O 기술을 학습합니다.
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: INTERMEDIATE
+- **주제**: 시스템 프로그래밍
+- **예상 시간**: 6-10시간
+
+### 🎯 학습 경로
+
+- [📚 INTERMEDIATE 레벨 전체 보기](../learning-paths/intermediate/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-06-file-io)
+
+- [Chapter 6-1: 파일 디스크립터의 내부 구조](./06-10-file-descriptor.md)
+- [Chapter 6-1A: 파일 디스크립터 기본 개념과 3단계 구조](./06-01-fd-basics-structure.md)
+- [Chapter 6-1B: 파일 디스크립터 할당과 공유 메커니즘](./06-11-fd-allocation-management.md)
+- [Chapter 6-1C: 파일 연산과 VFS 다형성](./06-12-file-operations-vfs.md)
+- [Chapter 6-2: VFS와 파일 시스템 추상화 개요](./06-13-vfs-filesystem.md)
+
+### 🏷️ 관련 키워드
+
+`blk-mq`, `NVMe`, `multi-queue`, `numa-optimization`, `io-performance`
+
+### ⏭️ 다음 단계 가이드
+
+- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
+- 관련 도구들을 직접 사용해보는 것이 중요합니다
