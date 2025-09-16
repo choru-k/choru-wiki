@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 4.4d1: 기본 신호 통신
+# 4.2.2: 기본 시그널 통신
 
 ## 📋 학습 목표
 
@@ -309,9 +309,9 @@ kill -USR2 $!
 
 신호 통신의 기본을 익혔다면, 다음 문서에서 더 효율적인 eventfd 통신을 학습하세요:
 
-- [Chapter 10-4d2: eventfd 기본 통신](04d2-eventfd-communication.md)
-- [Chapter 10-4d3: 고급 이벤트 메커니즘](04-20-3-advanced-event-mechanisms.md)
-- [Chapter 10-4d4: 통합 이벤트 시스템](04d4-integrated-event-system.md)
+- [Chapter 4.2.9: eventfd 기본 통신](04-02-09-eventfd-communication.md)
+- [Chapter 4.3.4: 고급 이벤트 메커니즘](04-03-04-advanced-event-mechanisms.md)
+- [Chapter 4.2.10: 통합 이벤트 시스템](04-02-10-integrated-event-system.md)
 
 ## 📚 관련 문서
 
@@ -327,13 +327,13 @@ kill -USR2 $!
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-10-syscall-kernel)
+### 📂 같은 챕터 (chapter-04-syscall-kernel)
 
-- [Chapter 10-1: 시스템 호출 기초와 인터페이스](./04-01-system-call-basics.md)
-- [Chapter 10-2: 리눅스 커널 아키텍처 개요](./04-02-kernel-architecture.md)
-- [Chapter 10-2A: 커널 설계 철학과 아키텍처 기초](./04-10-kernel-design-philosophy.md)
-- [Chapter 10-2A: 커널 설계 철학과 전체 구조](./04-11-kernel-design-structure.md)
-- [Chapter 10-2B: 핵심 서브시스템 탐구](./04-12-core-subsystems.md)
+- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-01-system-call-basics.md)
+- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-01-02-kernel-architecture.md)
+- [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-01-03-kernel-design-philosophy.md)
+- [Chapter 4-1-3: 커널 설계 철학과 전체 구조](./04-01-04-kernel-design-structure.md)
+- [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-01-05-core-subsystems.md)
 
 ### 🏷️ 관련 키워드
 

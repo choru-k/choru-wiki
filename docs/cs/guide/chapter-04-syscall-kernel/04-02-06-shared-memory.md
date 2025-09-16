@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 4.4c: 공유 메모리와 mmap - 고성능 커널 통신
+# 4.2.6: 공유 메모리 고급
 
 ## 🎯 이 문서를 읽고 나면 얻을 수 있는 것들
 
@@ -104,7 +104,7 @@ struct __attribute__((aligned(CACHE_LINE_SIZE))) cache_aligned_counter {
 
 ---
 
-**다음**: [10-4d: 신호와 eventfd](04d-signal-eventfd.md)에서 가벼운 이벤트 기반 통신을 학습합니다.
+**다음**: [10-4d: 신호와 eventfd](04-02-08-signal-eventfd.md)에서 가벼운 이벤트 기반 통신을 학습합니다.
 
 ## 참고 자료
 
@@ -127,13 +127,13 @@ struct __attribute__((aligned(CACHE_LINE_SIZE))) cache_aligned_counter {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-10-syscall-kernel)
+### 📂 같은 챕터 (chapter-04-syscall-kernel)
 
-- [Chapter 10-1: 시스템 호출 기초와 인터페이스](./04-01-system-call-basics.md)
-- [Chapter 10-2: 리눅스 커널 아키텍처 개요](./04-02-kernel-architecture.md)
-- [Chapter 10-2A: 커널 설계 철학과 아키텍처 기초](./04-10-kernel-design-philosophy.md)
-- [Chapter 10-2A: 커널 설계 철학과 전체 구조](./04-11-kernel-design-structure.md)
-- [Chapter 10-2B: 핵심 서브시스템 탐구](./04-12-core-subsystems.md)
+- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-01-system-call-basics.md)
+- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-01-02-kernel-architecture.md)
+- [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-01-03-kernel-design-philosophy.md)
+- [Chapter 4-1-3: 커널 설계 철학과 전체 구조](./04-01-04-kernel-design-structure.md)
+- [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-01-05-core-subsystems.md)
 
 ### 🏷️ 관련 키워드
 

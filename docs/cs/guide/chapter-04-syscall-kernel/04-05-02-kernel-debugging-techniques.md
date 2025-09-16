@@ -8,7 +8,7 @@ tags:
   - Overview
 ---
 
-# 커널 디버깅 기법 개요
+# 4.5.2: 커널 디버깅 기법
 
 ## 🎯 "커널 패닉이 발생해요"
 
@@ -20,7 +20,7 @@ tags:
 
 이 섹션은 3개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [종합 커널 진단 시스템](04-42-comprehensive-diagnostic-system.md)
+### 1️⃣ [종합 커널 진단 시스템](04-05-03-comprehensive-diagnostic-system.md)
 
 - 통합적인 커널 상태 분석 도구 개발
 - 커널 버전 및 디버깅 기능 확인
@@ -30,7 +30,7 @@ tags:
 - ftrace와 perf를 활용한 커널 함수 추적
 - 하드웨어 오류 감지 (MCE, EDAC)
 
-### 2️⃣ [eBPF 기반 고급 추적 시스템](04-21-ebpf-advanced-tracing.md)
+### 2️⃣ [eBPF 기반 고급 추적 시스템](04-03-03-ebpf-advanced-tracing.md)
 
 - 시스템 호출 지연시간 실시간 분석
 - 커널 메모리 누수 감지 및 추적
@@ -39,7 +39,7 @@ tags:
 - 고성능 eBPF 프로그램 작성 기법
 - BCC와 bpftrace를 활용한 동적 추적
 
-### 3️⃣ [실무 적용 사례 및 추가 리소스](04-51-practical-cases-resources.md)
+### 3️⃣ [실무 적용 사례 및 추가 리소스](04-06-02-practical-cases-resources.md)
 
 - 실제 프로덕션 환경 디버깅 사례
   - 간헐적 응답 지연 문제 해결
@@ -133,32 +133,12 @@ graph TD
 - **핵심 이점**: 나노초 단위 락 대기 시간 측정
 - **해결 과정**: 시스템 호출 → 락 경합 → 최적화 포인트
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. [종합 커널 진단 시스템](04-42-comprehensive-diagnostic-system.md) → 기본 도구와 진단 방법
-2. [실무 적용 사례](04-51-practical-cases-resources.md) → 실제 문제 해결 경험
-3. 간단한 커널 문제 직접 디버깅 연습
-
-### 중급자 (심화 학습)
-
-1. [eBPF 기반 고급 추적](04-21-ebpf-advanced-tracing.md) → 고성능 실시간 추적
-2. [종합 진단 시스템](04-42-comprehensive-diagnostic-system.md) → 자동화 도구 개발
-3. 실제 프로덕션 환경 문제 해결
-
-### 고급자 (전문성 강화)
-
-1. 모든 섹션 통합 학습
-2. 커널 소스 코드 분석과 패치 작성
-3. 고급 디버깅 도구 개발과 기여
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [시스템 호출과 커널](01-syscalls.md) - 커널 인터페이스 기초
-- [커널 아키텍처](04-02-kernel-architecture.md) - 커널 내부 구조 이해
+- [시스템 호출과 커널](04-01-01-system-call-basics.md) - 커널 인터페이스 기초
+- [커널 아키텍처](04-01-02-kernel-architecture.md) - 커널 내부 구조 이해
 
 ### 후속 학습
 
@@ -178,4 +158,4 @@ graph TD
 
 ---
 
-**다음**: [종합 커널 진단 시스템](04-42-comprehensive-diagnostic-system.md)으로 시작하여 단계별 학습을 진행하세요.
+**다음**: [종합 커널 진단 시스템](04-05-03-comprehensive-diagnostic-system.md)으로 시작하여 단계별 학습을 진행하세요.

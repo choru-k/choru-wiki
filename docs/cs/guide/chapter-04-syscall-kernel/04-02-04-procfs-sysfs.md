@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 0
 ---
 
-# 4.4a: procfs와 sysfs - 파일시스템을 통한 커널 정보 접근
+# 4.2.4: procfs와 sysfs
 
 ## 🎯 이 문서를 읽고 나면 얻을 수 있는 것들
 
@@ -658,10 +658,10 @@ MODULE_DESCRIPTION("sysfs example module");
 
 이제 기본적인 파일시스템 기반 통신을 이해했으니, 다음 문서에서는 더 고급 통신 메커니즘들을 살펴보겠습니다:
 
-- [10-4b: netlink 소켓](04-17-netlink-socket.md) - 실시간 커널 이벤트 통신
-- [10-4c: 공유 메모리](04-18-shared-memory.md) - 고성능 데이터 교환
-- [10-4d: 신호와 eventfd](04d-signal-eventfd.md) - 간단한 이벤트 통신
-- [10-4e: eBPF 프로그래밍](04e-ebpf-programming.md) - 커널 내 프로그래밍
+- [10-4b: netlink 소켓](04-02-05-netlink-socket.md) - 실시간 커널 이벤트 통신
+- [10-4c: 공유 메모리](04-02-06-shared-memory.md) - 고성능 데이터 교환
+- [10-4d: 신호와 eventfd](04-02-08-signal-eventfd.md) - 간단한 이벤트 통신
+- [10-4e: eBPF 프로그래밍](04-03-02-ebpf-programming.md) - 커널 내 프로그래밍
 
 procfs와 sysfs는 리눅스 시스템의 투명성을 보장하는 핵심 메커니즘입니다. 이를 통해 복잡한 커널 내부 상태를 간단한 파일 읽기/쓰기로 접근할 수 있습니다!
 
@@ -686,13 +686,13 @@ procfs와 sysfs는 리눅스 시스템의 투명성을 보장하는 핵심 메�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-10-syscall-kernel)
+### 📂 같은 챕터 (chapter-04-syscall-kernel)
 
-- [Chapter 10-1: 시스템 호출 기초와 인터페이스](./04-01-system-call-basics.md)
-- [Chapter 10-2: 리눅스 커널 아키텍처 개요](./04-02-kernel-architecture.md)
-- [Chapter 10-2A: 커널 설계 철학과 아키텍처 기초](./04-10-kernel-design-philosophy.md)
-- [Chapter 10-2A: 커널 설계 철학과 전체 구조](./04-11-kernel-design-structure.md)
-- [Chapter 10-2B: 핵심 서브시스템 탐구](./04-12-core-subsystems.md)
+- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-01-system-call-basics.md)
+- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-01-02-kernel-architecture.md)
+- [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-01-03-kernel-design-philosophy.md)
+- [Chapter 4-1-3: 커널 설계 철학과 전체 구조](./04-01-04-kernel-design-structure.md)
+- [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-01-05-core-subsystems.md)
 
 ### 🏷️ 관련 키워드
 

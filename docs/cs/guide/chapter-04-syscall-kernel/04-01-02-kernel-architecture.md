@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 4.2: 리눅스 커널 아키텍처 개요
+# 4.1.2: 커널 아키텍처 개요
 
 ## 🎯 리눅스 커널의 심장을 들여다보기
 
@@ -27,7 +27,7 @@ priority_score: 4
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [커널 설계 철학과 전체 구조](04-10-kernel-design-philosophy.md)
+### 1️⃣ [커널 설계 철학과 전체 구조](./04-01-03-kernel-design-philosophy.md)
 
 - 모놀리식 vs 마이크로커널 설계 철학
 - 유명한 Torvalds vs Tanenbaum 논쟁
@@ -35,7 +35,7 @@ priority_score: 4
 - 커널 공간의 메모리 레이아웃
 - 커널 심볼 테이블 관리
 
-### 2️⃣ [핵심 서브시스템 탐구](04-12-core-subsystems.md)
+### 2️⃣ [핵심 서브시스템 탐구](./04-01-05-core-subsystems.md)
 
 - CFS(Completely Fair Scheduler) 동작 원리
 - 메모리 관리: VMA와 페이지 테이블
@@ -43,7 +43,7 @@ priority_score: 4
 - 네트워크 스택의 계층화된 프로토콜 처리
 - sk_buff를 통한 패킷 표현
 
-### 3️⃣ [인터럽트 처리와 모듈 시스템](04-13-interrupt-module-system.md)
+### 3️⃣ [인터럽트 처리와 모듈 시스템](./04-01-06-interrupt-module-system.md)
 
 - 하드/소프트 인터럽트 처리 메커니즘
 - IDT(Interrupt Descriptor Table) 구조
@@ -51,7 +51,7 @@ priority_score: 4
 - 모듈 의존성과 심볼 해결
 - 타이머, 네트워크, 블록 I/O 인터럽트 처리
 
-### 4️⃣ [동기화, 메모리 관리, 디버깅](04-40-sync-memory-debug.md)
+### 4️⃣ [동기화, 메모리 관리, 디버깅](./04-05-01-sync-memory-debug.md)
 
 - 다양한 락 메커니즘 (스핀락, 뮤텍스, RCU)
 - 커널 메모리 할당 (kmalloc, vmalloc, slab)
@@ -59,7 +59,7 @@ priority_score: 4
 - 커널 OOPS와 패닉 처리
 - 안전한 리소스 관리 패턴
 
-### 5️⃣ [실전 커널 모듈 개발](04-50-practical-kernel-module.md)
+### 5️⃣ [실전 커널 모듈 개발](./04-06-01-practical-kernel-module.md)
 
 - "Hello World" 커널 모듈 완전 구현
 - proc 파일시스템을 통한 사용자 인터페이스
@@ -96,42 +96,19 @@ priority_score: 4
 - 시스템 호출 기반 보안 모델 설계
 - 컨테이너 격리 기술의 커널 수준 구현
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. [02a: 커널 설계와 구조](04-10-kernel-design-philosophy.md) → 전체 그림 이해
-2. [02b: 핵심 서브시스템](04-12-core-subsystems.md) → 주요 구성 요소 학습
-3. [02e: 실전 모듈 개발](04-50-practical-kernel-module.md) → 실습으로 체화
-4. 간단한 "Hello World" 모듈 개발 실습
-
-### 중급자 (심화 학습)
-
-1. [02c: 인터럽트와 모듈](04-13-interrupt-module-system.md) → 동적 로딩 이해
-2. [02d: 동기화와 디버깅](04-40-sync-memory-debug.md) → 고급 기법 습득
-3. 실제 하드웨어 디바이스 드라이버 개발
-4. 커널 패치 작성과 기여 활동
-
-### 고급자 (전문가 과정)
-
-1. 모든 섹션의 심화 내용 마스터
-2. 커널 소스코드 직접 분석
-3. 새로운 서브시스템 설계 및 구현
-4. 커널 성능 최적화 및 벤치마킹
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [Chapter 4: 프로세스와 스레드](../chapter-04-process-thread/) - 프로세스 관리 기초
-- [Chapter 5: CPU와 인터럽트](../chapter-05-cpu-interrupt/) - 하드웨어 이해
+- [Chapter 4: 프로세스와 스레드](../chapter-01-process-thread/) - 프로세스 관리 기초
+- [Chapter 5: CPU와 인터럽트](../chapter-02-cpu-interrupt/) - 하드웨어 이해
 - [Chapter 6: 파일 I/O](../chapter-06-file-io/) - 파일시스템 기본
 
 ### 후속 학습
 
-- [10-3: 시스템 호출 내부 구현](04-14-system-call-implementation.md) - 커널-사용자 공간 인터페이스
-- [10-4: 커널 보안과 권한 관리](04-kernel-security.md) - 보안 메커니즘
-- [10-5: 커널 성능 최적화](05-kernel-performance.md) - 고성능 시스템 구현
+- [4.1.7: 시스템 호출 내부 구현](./04-01-07-system-call-implementation.md) - 커널-사용자 공간 인터페이스
+- [Chapter 17: 보안 엔지니어링](../chapter-17-security-engineering/) - 보안 메커니즘
+- [Chapter 11: 성능 최적화](../chapter-11-performance-optimization/) - 고성능 시스템 구현
 
 ## 💡 학습 효과 극대화 팁
 
@@ -142,7 +119,7 @@ priority_score: 4
 
 ---
 
-**시작**: [02a: 커널 설계 철학과 전체 구조](04-10-kernel-design-philosophy.md)에서 리눅스 커널의 설계 철학부터 시작합니다.
+**시작**: [4.1.3: 커널 설계 철학과 전체 구조](./04-01-03-kernel-design-philosophy.md)에서 리눅스 커널의 설계 철학부터 시작합니다.
 
 ## 📚 관련 문서
 
@@ -158,13 +135,13 @@ priority_score: 4
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-10-syscall-kernel)
+### 📂 같은 챕터 (chapter-04-syscall-kernel)
 
-- [Chapter 10-1: 시스템 호출 기초와 인터페이스](./04-01-system-call-basics.md)
-- [Chapter 10-2A: 커널 설계 철학과 아키텍처 기초](./04-10-kernel-design-philosophy.md)
-- [Chapter 10-2A: 커널 설계 철학과 전체 구조](./04-11-kernel-design-structure.md)
-- [Chapter 10-2B: 핵심 서브시스템 탐구](./04-12-core-subsystems.md)
-- [Chapter 10-2C: 인터럽트 처리와 모듈 시스템](./04-13-interrupt-module-system.md)
+- [Chapter 4.1.1: 시스템 호출 기초와 인터페이스](./04-01-01-system-call-basics.md)
+- [Chapter 4.1.3: 커널 설계 철학과 아키텍처 기초](./04-01-03-kernel-design-philosophy.md)
+- [Chapter 4.1.4: 커널 설계 구조](./04-01-04-kernel-design-structure.md)
+- [Chapter 4.1.5: 핵심 서브시스템 탐구](./04-01-05-core-subsystems.md)
+- [Chapter 4.1.6: 인터럽트 처리와 모듈 시스템](./04-01-06-interrupt-module-system.md)
 
 ### 🏷️ 관련 키워드
 
