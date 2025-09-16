@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 3
 ---
 
-# 2.3A: CPU 컨텍스트 기초
+# 2.3.1: 컨텍스트 기초
 
 ## 도입: 멀티태스킹의 핵심 메커니즘
 
@@ -186,8 +186,8 @@ CPU 레지스터, 메모리 맵핑, 권한 정보 등 프로세스 실행에 필
 
 ---
 
-**이전**: [컨텍스트 스위칭 개요](./02-16-context-switching.md)
-**다음**: [컨텍스트 스위칭 메커니즘](./02-18-switching-mechanisms.md)에서 실제 전환 과정을 살펴보겠습니다.
+**이전**: [컨텍스트 스위칭 개요](./02-03-03-context-switching.md)
+**다음**: [컨텍스트 스위칭 메커니즘](./02-03-05-switching-mechanisms.md)에서 실제 전환 과정을 살펴보겠습니다.
 
 ## 📚 관련 문서
 
@@ -205,11 +205,11 @@ CPU 레지스터, 메모리 맵핑, 권한 정보 등 프로세스 실행에 필
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

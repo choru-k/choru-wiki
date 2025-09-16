@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.1: CPU 아키텍처와 명령어 실행 개요
+# 2.1.1: CPU 아키텍처 개요
 
 ## 🎯 CPU 아키텍처: 나노초 오케스트라의 비밀
 
@@ -27,28 +27,28 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
+### 1️⃣ [CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
 
 - CPU 구성 요소와 레지스터 구조
 - 명령어 페치, 디코드, 실행 과정
 - 파이프라인의 원리와 하자드 처리
 - x86 명령어 형식과 마이크로 옵 변환
 
-### 2️⃣ [분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
+### 2️⃣ [분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
 
 - 분기 예측기의 학습 알고리즘
 - Spectre/Meltdown 공격과 보안 이슈
 - Tomasulo 알고리즘과 Reservation Station
 - ROB(Reorder Buffer)를 통한 순서 보장
 
-### 3️⃣ [CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
+### 3️⃣ [CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
 
 - 캐시 계층 구조와 일관성 프로토콜
 - 캐시 최적화 기법과 False Sharing 방지
 - SIMD 명령어와 실제 활용 사례
 - 자동 벡터화와 수동 최적화
 
-### 4️⃣ [성능 측정과 실전 최적화](./02-30-performance-optimization.md)
+### 4️⃣ [성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 - CPU 성능 카운터와 프로파일링
 - perf 도구를 활용한 병목 지점 분석
@@ -85,37 +85,18 @@ priority_score: 4
 - **최적화**: SoA 데이터 구조, 브랜치리스 코드
 - **개선**: 쿼리 처리 속도 5-10배 향상
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. [CPU 기본 구조](./02-02-cpu-fundamentals.md) → CPU가 명령어를 처리하는 기본 원리 이해
-2. [분기 예측](./02-10-prediction-ooo.md) → 현대 CPU의 똑똑한 예측 메커니즘 학습
-3. 간단한 성능 측정 도구로 실습
-
-### 중급자 (심화 학습)
-
-1. [캐시와 SIMD](./02-11-cache-simd.md) → 메모리 계층과 병렬 처리 최적화
-2. [성능 최적화](./02-30-performance-optimization.md) → 실전 프로파일링과 튜닝
-3. 실제 프로덕션 코드에 최적화 기법 적용
-
-### 고급자 (아키텍처 전문가)
-
-- 전체 문서 순차 학습 후 다른 시스템 구성요소와의 상호작용 이해
-- [인터럽트와 예외 처리](./02-12-interrupt-exception.md)로 연계 학습
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [메모리 관리 기초](../chapter-02-memory/) - 가상 메모리와 페이지 테이블
-- [프로세스와 스레드](../chapter-04-process-thread/) - 컨텍스트 스위칭 기초
+- [메모리 관리 기초](../chapter-03-memory-system/) - 가상 메모리와 페이지 테이블
+- [프로세스와 스레드](../chapter-01-process-thread/) - 컨텍스트 스위칭 기초
 
 ### 후속 학습  
 
-- [인터럽트와 예외 처리](./02-12-interrupt-exception.md) - CPU 모드 전환
-- [컨텍스트 스위칭](./02-16-context-switching.md) - 프로세스 간 전환 메커니즘
-- [전력 관리](./04-power-management.md) - CPU 상태와 절전 모드
+- [인터럽트와 예외 처리](./02-02-02-interrupt-exception.md) - CPU 모드 전환
+- [컨텍스트 스위칭](./02-03-03-context-switching.md) - 프로세스 간 전환 메커니즘
+- [전력 관리](./02-05-02-power-management.md) - CPU 상태와 절전 모드
 
 ## 🎬 이 여행에서 얻을 수 있는 것
 
@@ -131,7 +112,7 @@ priority_score: 4
 
 ---
 
-**다음**: [CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)에서 CPU의 내부 구조와 명령어 처리 과정부터 시작합니다.
+**다음**: [CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)에서 CPU의 내부 구조와 명령어 처리 과정부터 시작합니다.
 
 ## 📚 관련 문서
 
@@ -149,11 +130,11 @@ priority_score: 4
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
-- [Chapter 5-2: 인터럽트와 예외 개요](./02-12-interrupt-exception.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
+- [Chapter 2-2-2: 인터럽트와 예외 개요](./02-02-02-interrupt-exception.md)
 
 ### 🏷️ 관련 키워드
 

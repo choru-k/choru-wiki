@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.3D: 실전 최적화 사례 - 크롬, nginx, 그리고 SQL Server
+# 2.4.1: 컨텍스트 스위칭 최적화
 
 ## 🎯 실제 프로덕션 환경의 컨텍스트 스위칭 최적화
 
@@ -358,8 +358,8 @@ nginx는 단일 프로세스 이벤트 루프 모델로 Apache대비 90% 적은 
 
 ---
 
-**이전**: [컨텍스트 스위칭 오버헤드](./02-19-context-switching-overhead.md)에서 레이턴시 분석과 최적화 기법을 학습했습니다.
-**다음**: [전력 관리](./04-power-management.md)에서 CPU의 전력 효율성과 주파수 스케일링을 학습합니다.
+**이전**: [컨텍스트 스위칭 오버헤드](./02-03-06-context-switching-overhead.md)에서 레이턴시 분석과 최적화 기법을 학습했습니다.
+**다음**: [전력 관리](./02-05-02-power-management.md)에서 CPU의 전력 효율성과 주파수 스케일링을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -377,11 +377,11 @@ nginx는 단일 프로세스 이벤트 루프 모델로 Apache대비 90% 적은 
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 3
 ---
 
-# 2.4a: 전력 관리 기본 개념과 아키텍처
+# 2.5.1: 전력 관리 기초
 
 ## 전력 관리의 실제 임팩트
 
@@ -391,8 +391,8 @@ CPU 전력 관리는 러시아 마트료시카처럼 계층적으로 구성됩�
 
 ---
 
-**이전**: [컨텍스트 스위칭](./02-16-context-switching.md)  
-**다음**: [DVFS와 동적 주파수 조절](./04b-dvfs-frequency-scaling.md)에서 실제 주파수 변경 메커니즘을 학습합니다.
+**이전**: [컨텍스트 스위칭](./02-03-03-context-switching.md)  
+**다음**: [DVFS와 동적 주파수 조절](./02-05-03-dvfs-frequency-scaling.md)에서 실제 주파수 변경 메커니즘을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -410,11 +410,11 @@ CPU 전력 관리는 러시아 마트료시카처럼 계층적으로 구성됩�
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.4: CPU 전력 관리와 주파수 스케일링 개요
+# 2.5.2: 전력 관리
 
 ## 🎯 CPU 전력 관리의 핵심 개념
 
@@ -25,35 +25,35 @@ CPU 전력 관리는 현대 컴퓨팅 시스템에서 가장 중요한 기술 �
 
 이 섹션은 **5개의 전문화된 문서**로 구성되어 있습니다:
 
-### 1️⃣ [기본 개념과 아키텍처](./05-06-power-fundamentals.md)
+### 1️⃣ [기본 개념과 아키텍처](./02-05-01-power-fundamentals.md)
 
 - 전력 상태 계층 구조 (P-State, C-State)
 - ACPI 전력 관리 인터페이스
 - 마트료시카 전략: CPU의 계층적 전력 관리
 - 전력 소비 공식과 물리적 원리
 
-### 2️⃣ [DVFS와 동적 주파수 조절](./04b-dvfs-frequency-scaling.md)
+### 2️⃣ [DVFS와 동적 주파수 조절](./02-05-03-dvfs-frequency-scaling.md)
 
 - Dynamic Voltage and Frequency Scaling 구현
 - PLL 기반 주파수 전환 메커니즘
 - Linux CPUFreq 거버너 시스템
 - 전자공학 원리와 실제 구현
 
-### 3️⃣ [C-State와 절전 모드](./04c-cstate-idle-management.md)
+### 3️⃣ [C-State와 절전 모드](./02-05-04-cstate-idle-management.md)
 
 - 유휴 상태별 전력 소비 특성
 - C-State 진입과 탈출 메커니즘
 - Package C-State 조정 시스템
 - 넷플릭스 서버의 야간 절전 전략
 
-### 4️⃣ [터보 부스트와 동적 오버클럭](04d-turbo-boost.md)
+### 4️⃣ 터보 부스트와 동적 오버클럭
 
 - Intel Turbo Boost 구현 원리
 - AMD Precision Boost 2 기술
 - 열 제한과 전력 제한 관리
 - 동적 오버클럭 제어 시스템
 
-### 5️⃣ [실전 최적화와 모니터링](04e-optimization-monitoring.md)
+### 5️⃣ 실전 최적화와 모니터링
 
 - Race-to-Idle vs Race-to-Sleep 전략
 - 워크로드별 최적화 기법
@@ -89,32 +89,12 @@ CPU 전력 관리는 현대 컴퓨팅 시스템에서 가장 중요한 기술 �
 - **열 관리**: 지속적인 성능 유지
 - **결과**: 끊김 없는 고성능 게임 플레이
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. [기본 개념](./05-06-power-fundamentals.md) → 전력 관리 기초 이해
-2. [C-State](./04c-cstate-idle-management.md) → 절전 모드 원리
-3. 간단한 전력 모니터링 실습
-
-### 중급자 (심화 학습)
-
-1. [DVFS](./04b-dvfs-frequency-scaling.md) → 고급 주파수 제어
-2. [터보 부스트](04d-turbo-boost.md) → 성능 최적화 기법
-3. 실제 시스템에서 거버너 튜닝 경험
-
-### 고급자 (전문가 과정)
-
-1. [실전 최적화](04e-optimization-monitoring.md) → 산업 현장 사례
-2. 커널 전력 관리 코드 분석
-3. 하드웨어 전력 관리 설계
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [CPU 아키텍처](./05-01-cpu-architecture.md) - 기본 CPU 구조 이해
-- [인터럽트 처리](./05-12-interrupt-exception.md) - 하드웨어 제어 메커니즘
+- [CPU 아키텍처](./02-01-01-cpu-architecture.md) - 기본 CPU 구조 이해
+- [인터럽트 처리](./02-02-02-interrupt-exception.md) - 하드웨어 제어 메커니즘
 
 ### 후속 학습
 
@@ -123,7 +103,7 @@ CPU 전력 관리는 현대 컴퓨팅 시스템에서 가장 중요한 기술 �
 
 ---
 
-**다음**: 먼저 [전력 관리 기본 개념](./05-06-power-fundamentals.md)에서 P-State와 C-State의 기초를 학습하세요.
+**다음**: 먼저 [전력 관리 기본 개념](./02-05-01-power-fundamentals.md)에서 P-State와 C-State의 기초를 학습하세요.
 
 ## 도입: 전력 효율의 중요성
 
@@ -1371,16 +1351,16 @@ power_management_wisdom = {
 
 ### 이전 단계
 
-- [CPU 아키텍처와 실행 모드](./05-01-cpu-architecture.md) - CPU 기초 구조와 Protection Ring
-- [인터럽트와 예외 처리](./05-12-interrupt-exception.md) - 인터럽트 메커니즘
-- [컨텍스트 스위칭](./05-16-context-switching.md) - 프로세스 전환과 CPU 상태
+- [CPU 아키텍처와 실행 모드](./02-01-01-cpu-architecture.md) - CPU 기초 구조와 Protection Ring
+- [인터럽트와 예외 처리](./02-02-02-interrupt-exception.md) - 인터럽트 메커니즘
+- [컨텍스트 스위칭](./02-03-03-context-switching.md) - 프로세스 전환과 CPU 상태
 
 ### File I/O와 연결
 
-- [파일 디스크립터의 내부 구조](../chapter-06-file-io/06-10-file-descriptor.md) - I/O 성능과 전력 최적화
-- [VFS와 파일 시스템 추상화](../chapter-06-file-io/06-13-vfs-filesystem.md) - 사용자 모드와 커널 모드 전환
-- [블록 I/O와 디스크 스케줄링](../chapter-06-file-io/06-18-block-io.md) - 전력 효율적인 I/O 처리
-- [비동기 I/O와 이벤트 기반 프로그래밍](../chapter-06-file-io/04-async-io.md) - CPU 전력 절약을 위한 비동기 처리
+- [파일 디스크립터의 내부 구조](../chapter-06-file-io/06-02-01-file-descriptor.md) - I/O 성능과 전력 최적화
+- [VFS와 파일 시스템 추상화](../chapter-06-file-io/index.md) - 사용자 모드와 커널 모드 전환
+- [블록 I/O와 디스크 스케줄링](../chapter-06-file-io/index.md) - 전력 효율적인 I/O 처리
+- [비동기 I/O와 이벤트 기반 프로그래밍](../chapter-06-file-io/06-03-01-async-io-fundamentals.md) - CPU 전력 절약을 위한 비동기 처리
 
 다음 장에서는 파일 디스크립터와 I/O가 어떻게 운영체제의 핵심이 되었는지 알아봅시다! 💾
 
@@ -1404,11 +1384,11 @@ Chapter 6에서는 "파일 디스크립터와 I/O는 어떻게 동작하는가"�
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./05-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./05-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./05-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./05-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./05-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

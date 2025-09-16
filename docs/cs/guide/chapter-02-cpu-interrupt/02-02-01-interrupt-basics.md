@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.2A: 인터럽트 기초와 개념 이해
+# 2.2.1: 인터럽트 기초
 
 ## 들어가며: CPU의 긴급 호출
 
@@ -246,7 +246,7 @@ void set_idt_entry(int vector, void* handler, int type, int dpl) {
 
 ---
 
-**다음**: [인터럽트 처리 과정과 예외](./02-13-interrupt-processing.md)에서 인터럽트의 실제 처리 메커니즘을 학습합니다.
+**다음**: [인터럽트 처리 과정과 예외](./02-02-03-interrupt-processing.md)에서 인터럽트의 실제 처리 메커니즘을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -264,11 +264,11 @@ void set_idt_entry(int vector, void* handler, int type, int dpl) {
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

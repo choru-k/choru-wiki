@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.1D: 성능 측정과 실전 최적화
+# 2.1.5: 성능 최적화
 
 ## 7. CPU 성능 측정
 
@@ -331,15 +331,15 @@ Jim Keller (AMD Zen 설계자)의 말:
 
 ### 다음 단계
 
-- [인터럽트와 예외 처리](./02-12-interrupt-exception.md) - CPU 모드 전환 메커니즘
-- [컨텍스트 스위칭](./02-16-context-switching.md) - Ring 전환과 상태 저장
-- [전력 관리](./04-power-management.md) - CPU 상태 전환과 전력 최적화
+- [인터럽트와 예외 처리](./02-02-02-interrupt-exception.md) - CPU 모드 전환 메커니즘
+- [컨텍스트 스위칭](./02-03-03-context-switching.md) - Ring 전환과 상태 저장
+- [전력 관리](./02-05-02-power-management.md) - CPU 상태 전환과 전력 최적화
 
 ### 연관 주제
 
-- [파일 디스크립터의 내부 구조](../chapter-06-file-io/06-10-file-descriptor.md) - 시스템 콜과 모드 전환
-- [블록 I/O와 디스크 스케줄링](../chapter-06-file-io/06-18-block-io.md) - 하드웨어 인터럽트와 CPU 처리 예정
-- [비동기 I/O와 이벤트 기반 프로그래밍](../chapter-06-file-io/04-async-io.md) - 비동기 처리에서 CPU 효율성
+- [파일 디스크립터의 내부 구조](../chapter-06-file-io/06-02-01-file-descriptor.md) - 시스템 콜과 모드 전환
+- [블록 I/O와 디스크 스케줄링](../chapter-06-file-io/index.md) - 하드웨어 인터럽트와 CPU 처리 예정
+- [비동기 I/O와 이벤트 기반 프로그래밍](../chapter-06-file-io/06-03-01-async-io-fundamentals.md) - 비동기 처리에서 CPU 효율성
 
 ## 다음 섹션 예고
 
@@ -354,8 +354,8 @@ CPU가 외부 이벤트를 처리하는 메커니즘을 탐구해봅시다!
 
 ---
 
-**이전**: [CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)  
-**다음**: CPU 아키텍처 시리즈를 모두 완료했습니다! [인터럽트와 예외 처리](./02-12-interrupt-exception.md)로 넘어가거나 [CPU 아키텍처 개요](./02-01-cpu-architecture.md)에서 전체 내용을 다시 확인하세요.
+**이전**: [CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)  
+**다음**: CPU 아키텍처 시리즈를 모두 완료했습니다! [인터럽트와 예외 처리](./02-02-02-interrupt-exception.md)로 넘어가거나 [CPU 아키텍처 개요](./02-01-01-cpu-architecture.md)에서 전체 내용을 다시 확인하세요.
 
 ## 📚 관련 문서
 
@@ -373,11 +373,11 @@ CPU가 외부 이벤트를 처리하는 메커니즘을 탐구해봅시다!
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-2: 인터럽트와 예외 개요](./02-12-interrupt-exception.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-2-2: 인터럽트와 예외 개요](./02-02-02-interrupt-exception.md)
 
 ### 🏷️ 관련 키워드
 

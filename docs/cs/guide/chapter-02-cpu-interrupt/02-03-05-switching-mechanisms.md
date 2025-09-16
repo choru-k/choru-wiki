@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.3B: 컨텍스트 스위칭 메커니즘
+# 2.3.5: 스위칭 메커니즘
 
 ## 게임이 60 FPS를 유지하는 비밀
 
@@ -159,7 +159,7 @@ do {                                                    \
         /* 스택 프레임을 완전히 보존 */                  \
         "pushq %%rbp \n\t"                            \
         /* 현재 RSP를 task_struct에 저장 - "중단 지점" 기록 */ \
-        "movq %%rsp, %P[thread_sp](%[prev]) \n\t"     \
+        "movq %%rsp, %P[thread_sp](%[next]) \n\t"     \
         /* 이 순간 현재 프로세스는 "정지" 상태! */         \
                                                        \
         /* === 2단계: 시공간 이동 - 다른 프로세스로 점프 === */ \
@@ -290,8 +290,8 @@ void switch_fpu_finish(struct task_struct *new, int cpu) {
 
 ---
 
-**이전**: [CPU 컨텍스트 기초](./02-04-context-fundamentals.md)
-**다음**: [성능 오버헤드 분석](./02-40-overhead-analysis.md)에서 컨텍스트 스위칭의 실제 비용을 분석해보겠습니다.
+**이전**: [CPU 컨텍스트 기초](./02-03-01-context-fundamentals.md)
+**다음**: [성능 오버헤드 분석](./02-04-03-overhead-analysis.md)에서 컨텍스트 스위칭의 실제 비용을 분석해보겠습니다.
 
 ## 📚 관련 문서
 
@@ -309,11 +309,11 @@ void switch_fpu_finish(struct task_struct *new, int cpu) {
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

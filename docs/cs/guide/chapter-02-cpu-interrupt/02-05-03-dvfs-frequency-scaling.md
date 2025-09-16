@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.4b: DVFS와 동적 주파수 조절
+# 2.5.3: DVFS와 주파수 조절
 
 ## Dynamic Voltage and Frequency Scaling (DVFS)
 
@@ -500,8 +500,8 @@ Phase-Locked Loop는 안정적인 주파수 전환을 보장합니다:
 
 ---
 
-**이전**: [전력 관리 기본 개념](./05-06-power-fundamentals.md)  
-**다음**: [C-State와 절전 모드](./04c-cstate-idle-management.md)에서 유휴 상태 전력 관리를 학습합니다.
+**이전**: [전력 관리 기본 개념](./02-05-01-power-fundamentals.md)  
+**다음**: [C-State와 절전 모드](./02-05-04-cstate-idle-management.md)에서 유휴 상태 전력 관리를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -519,11 +519,11 @@ Phase-Locked Loop는 안정적인 주파수 전환을 보장합니다:
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./05-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./05-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./05-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./05-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./05-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.1A: CPU 기본 구조와 명령어 실행
+# 2.1.2: CPU 기본 구조
 
 ## 들어가며: 나노초의 오케스트라
 
@@ -487,8 +487,8 @@ void forwarding_unit(pipeline_t* pipe) {
 
 ---
 
-**이전**: [CPU 아키텍처 개요](./02-01-cpu-architecture.md)  
-**다음**: [분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)에서 CPU가 미래를 예측하는 놀라운 메커니즘을 학습합니다.
+**이전**: [CPU 아키텍처 개요](./02-01-01-cpu-architecture.md)  
+**다음**: [분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)에서 CPU가 미래를 예측하는 놀라운 메커니즘을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -506,11 +506,11 @@ void forwarding_unit(pipeline_t* pipe) {
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
-- [Chapter 5-2: 인터럽트와 예외 개요](./02-12-interrupt-exception.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
+- [Chapter 2-2-2: 인터럽트와 예외 개요](./02-02-02-interrupt-exception.md)
 
 ### 🏷️ 관련 키워드
 

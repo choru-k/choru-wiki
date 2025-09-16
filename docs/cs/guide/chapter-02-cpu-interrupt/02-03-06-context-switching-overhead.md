@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.3C: 컨텍스트 스위칭 오버헤드 - 보이지 않는 비용
+# 2.3.6: 컨텍스트 스위칭 오버헤드
 
 ## 🎯 컨텍스트 스위칭 비용 분석과 최적화
 
@@ -480,8 +480,8 @@ coroutine_t* coroutine_create(void (*func)(void*), void *arg) {
 
 ---
 
-**이전**: [컨텍스트 스위칭 구현](./02-17-context-switching-implementation.md)에서 상세한 구현 과정을 학습했습니다.
-**다음**: [실전 최적화 사례](./02-31-context-switching-optimization.md)에서 실제 프로덕션 환경의 최적화 사례들을 학습합니다.
+**이전**: [컨텍스트 스위칭 구현](./02-03-04-context-switching-implementation.md)에서 상세한 구현 과정을 학습했습니다.
+**다음**: [실전 최적화 사례](./02-04-01-context-switching-optimization.md)에서 실제 프로덕션 환경의 최적화 사례들을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -499,11 +499,11 @@ coroutine_t* coroutine_create(void (*func)(void*), void *arg) {
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

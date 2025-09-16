@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# 2.3: 컨텍스트 스위칭은 어떻게 일어나는가 개요
+# 2.3.3: 컨텍스트 스위칭
 
 ## 🎯 멀티태스킹의 핵심 메커니즘
 
@@ -25,28 +25,28 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [CPU 컨텍스트 기초](./02-04-context-fundamentals.md)
+### 1️⃣ [CPU 컨텍스트 기초](./02-03-01-context-fundamentals.md)
 
 - CPU 컨텍스트의 구성 요소
 - Task Struct의 내부 구조
 - 레지스터와 메모리 상태 저장
 - 프로세스 컨텍스트의 블랙박스
 
-### 2️⃣ [컨텍스트 스위칭 메커니즘](./02-18-switching-mechanisms.md)
+### 2️⃣ [컨텍스트 스위칭 메커니즘](./02-03-05-switching-mechanisms.md)
 
 - 스케줄러 호출 시점과 조건
 - 컨텍스트 저장 및 복원 과정
 - 메모리 관리 컨텍스트 전환
 - 어셈블리 레벨 스위칭 코드
 
-### 3️⃣ [성능 오버헤드 분석](./02-40-overhead-analysis.md)
+### 3️⃣ [성능 오버헤드 분석](./02-04-03-overhead-analysis.md)
 
 - 직접 비용과 간접 비용
 - 캐시 미스와 TLB 플러시 영향
 - 실제 측정 방법과 도구
 - NUMA 시스템에서의 성능 함정
 
-### 4️⃣ [최적화 전략과 실전 사례](./02-32-optimization-strategies.md)
+### 4️⃣ [최적화 전략과 실전 사례](./02-04-02-optimization-strategies.md)
 
 - CPU 친화도와 스레드 풀
 - Lock-free 프로그래밍 기법
@@ -85,46 +85,26 @@ priority_score: 4
 - **해결**: Lock-free 데이터 구조 + 전용 CPU 코어
 - **결과**: 0.8μs로 단축, 일일 수익 50배 증가
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. [CPU 컨텍스트 기초](./02-04-context-fundamentals.md) → 기본 개념 이해
-2. [컨텍스트 스위칭 메커니즘](./02-18-switching-mechanisms.md) → 실제 동작 원리
-3. 간단한 멀티스레드 프로그램으로 실습
-
-### 중급자 (심화 학습)
-
-1. [성능 오버헤드 분석](./02-40-overhead-analysis.md) → 성능 문제 진단
-2. [최적화 전략과 실전 사례](./02-32-optimization-strategies.md) → 고급 최적화 기법
-3. 실제 프로덕션 환경에서 성능 튜닝 적용
-
-### 고급자 (전문가 과정)
-
-- 커널 소스 코드 분석 (`kernel/sched/core.c`)
-- perf, ftrace 등 프로파일링 도구 마스터
-- 하드웨어 성능 카운터 활용
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [CPU 아키텍처와 실행 모드](./02-01-cpu-architecture.md) - CPU 기초 구조 이해
-- [인터럽트와 예외 처리](./02-12-interrupt-exception.md) - 인터럽트 메커니즘
+- [CPU 아키텍처와 실행 모드](./02-01-01-cpu-architecture.md) - CPU 기초 구조 이해
+- [인터럽트와 예외 처리](./02-02-02-interrupt-exception.md) - 인터럽트 메커니즘
 
 ### 후속 학습
 
-- [전력 관리](./04-power-management.md) - CPU 상태 전환과 전력 최적화
-- [프로세스와 스레드 관리](../chapter-04-process-thread/) - 스케줄링과 동기화
+- [전력 관리](./02-05-02-power-management.md) - CPU 상태 전환과 전력 최적화
+- [프로세스와 스레드 관리](../chapter-01-process-thread/) - 스케줄링과 동기화
 
 ### 실전 연계
 
-- [비동기 프로그래밍](../chapter-08-async-programming/) - 이벤트 기반 아키텍처
+- [비동기 프로그래밍](../chapter-10-async-programming/index.md) - 이벤트 기반 아키텍처
 - [성능 최적화](../chapter-12-observability-debugging/) - 모니터링과 튜닝
 
 ---
 
-**다음**: 먼저 [CPU 컨텍스트 기초](./02-04-context-fundamentals.md)에서 컨텍스트의 구성 요소를 학습하세요.
+**다음**: 먼저 [CPU 컨텍스트 기초](./02-03-01-context-fundamentals.md)에서 컨텍스트의 구성 요소를 학습하세요.
 
 ## 📚 관련 문서
 
@@ -142,11 +122,11 @@ priority_score: 4
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

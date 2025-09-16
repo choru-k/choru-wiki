@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 5
 ---
 
-# 2.3D: 최적화 전략과 실전 사례
+# 2.4.2: 최적화 전략
 
 ## 스포티파이가 음악을 끊김없이 스트리밍하는 방법
 
@@ -469,8 +469,8 @@ context_switching_wisdom = {
 
 ---
 
-**이전**: [성능 오버헤드 분석](./02-40-overhead-analysis.md)
-**다음**: 이제 [전력 관리](./04-power-management.md)에서 CPU 전력 최적화를 살펴보겠습니다.
+**이전**: [성능 오버헤드 분석](./02-04-03-overhead-analysis.md)
+**다음**: 이제 [전력 관리](./02-05-02-power-management.md)에서 CPU 전력 최적화를 살펴보겠습니다.
 
 ## 📚 관련 문서
 
@@ -488,11 +488,11 @@ context_switching_wisdom = {
 
 ### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
-- [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
-- [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)
-- [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)
-- [Chapter 5-1C: CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)
-- [Chapter 5-1D: 성능 측정과 실전 최적화](./02-30-performance-optimization.md)
+- [Chapter 2-1-1: CPU 아키텍처와 명령어 실행 개요](./02-01-01-cpu-architecture.md)
+- [Chapter 2-1-2: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [Chapter 2-1-3: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [Chapter 2-1-4: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [Chapter 2-1-5: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 🏷️ 관련 키워드
 

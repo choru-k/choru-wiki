@@ -39,41 +39,41 @@ CPU 아키텍처, 인터럽트 처리, 컨텍스트 스위칭부터 전력 관�
 
 ### 2.1 CPU 아키텍처 기초
 
-- [02-01: CPU 아키텍처 개요](./05-01-cpu-architecture.md)
-- [02-02: CPU 기본 원리](./05-02-cpu-fundamentals.md)
-- [02-03: 캐시와 SIMD](./05-11-cache-simd.md)
-- [02-04: 분기 예측과 비순차 실행](./05-10-prediction-ooo.md)
+- [02-01-01: CPU 아키텍처 개요](./02-01-01-cpu-architecture.md)
+- [02-01-02: CPU 기본 구조와 명령어 실행](./02-01-02-cpu-fundamentals.md)
+- [02-01-03: 분기 예측과 Out-of-Order 실행](./02-01-03-prediction-ooo.md)
+- [02-01-04: CPU 캐시와 SIMD 벡터화](./02-01-04-cache-simd.md)
+- [02-01-05: 성능 측정과 실전 최적화](./02-01-05-performance-optimization.md)
 
 ### 2.2 인터럽트 시스템
 
-- [02-10: 인터럽트 기초](./05-03-interrupt-basics.md)
-- [02-11: 인터럽트와 예외](./05-12-interrupt-exception.md)
-- [02-12: 인터럽트 처리 과정](./05-13-interrupt-processing.md)
-- [02-13: 인터럽트 컨트롤러](./05-14-interrupt-controllers.md)
-- [02-14: 소프트웨어 인터럽트](./05-15-software-interrupts.md)
+- [02-02-01: 인터럽트 기초와 개념 이해](./02-02-01-interrupt-basics.md)
+- [02-02-02: 인터럽트와 예외 개요](./02-02-02-interrupt-exception.md)
+- [02-02-03: 인터럽트 처리 과정과 예외 처리](./02-02-03-interrupt-processing.md)
+- [02-02-04: 인터럽트 컨트롤러와 최적화](./02-02-04-interrupt-controllers.md)
+- [02-02-05: 소프트 인터럽트와 실시간 처리](./02-02-05-software-interrupts.md)
 
 ### 2.3 컨텍스트 스위칭
 
-- [02-20: 컨텍스트 기초 개념](./05-04-context-fundamentals.md)
-- [02-21: 컨텍스트 스위칭 기본](./05-05-context-switching-fundamentals.md)
-- [02-22: 컨텍스트 스위칭 심화](./05-16-context-switching.md)
-- [02-23: 컨텍스트 스위칭 구현](./05-17-context-switching-implementation.md)
-- [02-24: 스위칭 메커니즘](./05-18-switching-mechanisms.md)
-- [02-25: 스위칭 오버헤드](./05-19-context-switching-overhead.md)
-- [02-26: 오버헤드 분석](./05-40-overhead-analysis.md)
+- [02-03-01: CPU 컨텍스트 기초](./02-03-01-context-fundamentals.md)
+- [02-03-02: 컨텍스트 스위칭 기초 - CPU의 저글링](./02-03-02-context-switching-fundamentals.md)
+- [02-03-03: 컨텍스트 스위칭은 어떻게 일어나는가 개요](./02-03-03-context-switching.md)
+- [02-03-04: 컨텍스트 스위칭 구현 - 0.001초의 예술](./02-03-04-context-switching-implementation.md)
+- [02-03-05: 컨텍스트 스위칭 메커니즘](./02-03-05-switching-mechanisms.md)
+- [02-03-06: 컨텍스트 스위칭 오버헤드 - 보이지 않는 비용](./02-03-06-context-switching-overhead.md)
 
 ### 2.4 성능 최적화
 
-- [02-30: 전반적 성능 최적화](./05-30-performance-optimization.md)
-- [02-31: 컨텍스트 스위칭 최적화](./05-31-context-switching-optimization.md)
-- [02-32: 최적화 전략](./05-32-optimization-strategies.md)
+- [02-04-01: 실전 최적화 사례 - 크롬, nginx, 그리고 SQL Server](./02-04-01-context-switching-optimization.md)
+- [02-04-02: 최적화 전략과 실전 사례](./02-04-02-optimization-strategies.md)
+- [02-04-03: 성능 오버헤드 분석](./02-04-03-overhead-analysis.md)
 
 ### 2.5 전력 관리
 
-- [02-40: 전력 관리 기초](./05-06-power-fundamentals.md)
-- [02-41: 전력 관리 시스템](./04-power-management.md)
-- [02-42: DVFS 주파수 스케일링](./04b-dvfs-frequency-scaling.md)
-- [02-43: C-State 유휴 관리](./04c-cstate-idle-management.md)
+- [02-05-01: 전력 관리 기본 개념과 아키텍처](./02-05-01-power-fundamentals.md)
+- [02-05-02: CPU 전력 관리와 주파수 스케일링 개요](./02-05-02-power-management.md)
+- [02-05-03: DVFS와 동적 주파수 조절](./02-05-03-dvfs-frequency-scaling.md)
+- [02-05-04: C-State와 절전 모드](./02-05-04-cstate-idle-management.md)
 
 ## 🔗 관련 챕터
 
@@ -81,7 +81,7 @@ CPU 아키텍처, 인터럽트 처리, 컨텍스트 스위칭부터 전력 관�
 
 - [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
 - [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
-- [Chapter 10: 시스템콜과 커널](../chapter-10-syscall-kernel/index.md)
+- [Chapter 4: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
 
 ### 🚀 성능 관련  
 
