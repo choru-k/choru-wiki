@@ -45,45 +45,47 @@
    - 대상: 대규모 Node.js 애플리케이션을 담당하는 시니어 개발자
 
 10. **[9.3d3d 프로덕션 환경 메모리 모니터링](../../../../chapter-09-advanced-memory-management/09-40-3d-production-monitoring.md)** (8-12시간)
-   - 키워드: production-monitoring, memory-leak-detection, real-time-analytics
-   - 대상: 시니어 프론트엔드 개발자, DevOps 엔지니어
+    - 키워드: production-monitoring, memory-leak-detection, real-time-analytics
+    - 대상: 시니어 프론트엔드 개발자, DevOps 엔지니어
 
 11. **[Chapter 8-3E: 동기화와 디버깅](../../../../chapter-10-async-programming/08-41-synchronization-debugging.md)** (8-12시간)
-   - 키워드: 동기화, 메모리모델, Lock-Free
-   - 대상: 3년+ 경험의 백엔드 개발자, 성능 엔지니어
+    - 키워드: 동기화, 메모리모델, Lock-Free
+    - 대상: 3년+ 경험의 백엔드 개발자, 성능 엔지니어
 
 12. **[V8 GC 아키텍처: 정교한 메모리 관리 시스템](../../../../chapter-08-memory-allocator-gc/09-06-1-v8-gc-architecture.md)** (8-12시간)
-   - 키워드: V8, JavaScript, GC
-   - 대상: 고급 JavaScript/Node.js 개발자, 프론트엔드 성능 엔지니어
+    - 키워드: V8, JavaScript, GC
+    - 대상: 고급 JavaScript/Node.js 개발자, 프론트엔드 성능 엔지니어
 
 13. **[JavaScript 분석 도구](../../docs/cs/guide/chapter-10-async-programming-05c-javascript-analyzer.md)** (15-25시간)
-   - 키워드: event-loop, async-hooks, performance-monitoring
-   - 대상: 시니어 Node.js 개발자, DevOps 엔지니어, 시스템 아키텍트
+    - 키워드: event-loop, async-hooks, performance-monitoring
+    - 대상: 시니어 Node.js 개발자, DevOps 엔지니어, 시스템 아키텍트
 
 14. **[16.2C 이벤트 소싱 구현 - 이벤트 스토어와 집합체 패턴](../../docs/cs/guide/chapter-15-microservices-architecture-02c-event-sourcing-implementation.md)** (16-24시간)
-   - 키워드: event-sourcing, cqrs, aggregate-pattern
-   - 대상: 시니어 백엔드 개발자, 시스템 아키텍트
+    - 키워드: event-sourcing, cqrs, aggregate-pattern
+    - 대상: 시니어 백엔드 개발자, 시스템 아키텍트
 
 15. **[Zero-allocation 프로그래밍](../../docs/cs/guide/chapter-08-memory-allocator-gc-04b-zero-allocation-programming.md)** (20-30시간)
-   - 키워드: zero-allocation, object-pool, memory-management
-   - 대상: 시니어 백엔드 개발자, 게임 엔진 개발자, 시스템 프로그래머
+    - 키워드: zero-allocation, object-pool, memory-management
+    - 대상: 시니어 백엔드 개발자, 게임 엔진 개발자, 시스템 프로그래머
 
 16. **[16.2C 이벤트 소싱 구현 - 이벤트 스토어와 집합체 패턴](../../docs/cs/guide/chapter-15-microservices-architecture-03c-event-sourcing-implementation.md)** (40-60시간)
-   - 키워드: event-sourcing, cqrs, aggregate-pattern
-   - 대상: 시니어 백엔드 개발자, 시스템 아키텍트
-
+    - 키워드: event-sourcing, cqrs, aggregate-pattern
+    - 대상: 시니어 백엔드 개발자, 시스템 아키텍트
 
 ## 🎯 학습 가이드
 
 ### 추천 학습 순서
+
 위 목록은 우선순위와 학습 시간을 고려하여 정렬되었습니다.
 
 ### 시간 투자 전략
+
 - **집중 학습**: 주당 8-10시간 → 약 26주 소요
 - **병행 학습**: 주당 4-5시간 → 약 48주 소요
 - **여유 학습**: 주당 2-3시간 → 약 80주 소요
 
 ### 학습 팁
+
 1. 각 문서의 선수 지식을 확인하세요
 2. 실습 위주 문서는 실제 환경에서 따라해보세요
 3. 이해가 어려운 부분은 기초 문서부터 다시 학습하세요
