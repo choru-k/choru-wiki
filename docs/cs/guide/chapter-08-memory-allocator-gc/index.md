@@ -80,5 +80,5 @@ priority_score: 4
 
 ### 🔧 고급 주제
 
-- [Chapter 10: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
+- [Chapter 4: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
 - [Chapter 9: 고급 메모리 관리](../chapter-09-advanced-memory-management/index.md)

@@ -39,46 +39,54 @@ priority_score: 4
 
 ### 1.1 프로세스와 스레드 기초
 
-- [04-01: Thread Fundamentals](./04-01-thread-fundamentals.md)
-- [04-02: Mutex Basics](./04-02-mutex-basics.md)
-- [04-03: Scheduling Fundamentals](./04-03-scheduling-fundamentals.md)
-- [04-04: Signals Basics](./04-04-signals-basics.md)
-- [04-05: Process State Fundamentals](./04-05-process-state-fundamentals.md)
-- [04-06: Cpu Affinity Fundamentals](./04-06-cpu-affinity-fundamentals.md)
+- [01-01-01: 스레드 기본 개념](./01-01-01-thread-fundamentals.md)
+- [01-01-02: 프로세스 상태와 라이프사이클](./01-01-02-process-state-fundamentals.md)
+- [01-01-03: 기본 스케줄링 원리](./01-01-03-scheduling-fundamentals.md)
+- [01-01-04: 시그널 기초](./01-01-04-signals-basics.md)
 
-### 1.2 프로세스 생성과 동기화
+### 1.2 프로세스 생성과 관리
 
-- [04-10: Process Creation](./04-10-process-creation.md)
-- [04-11: Process Creation Fork](./04-11-process-creation-fork.md)
-- [04-12: Program Replacement Exec](./04-12-program-replacement-exec.md)
-- [04-13: Process Termination Zombies](./04-13-process-termination-zombies.md)
-- [04-14: Thread Synchronization](./04-14-thread-synchronization.md)
-- [04-15: Semaphore Condvar](./04-15-semaphore-condvar.md)
-- [04-16: Scheduling](./04-16-scheduling.md)
-- [04-17: Cfs Implementation](./04-17-cfs-implementation.md)
-- [04-18: Realtime Scheduling](./04-18-realtime-scheduling.md)
-- [04-19: Signal Ipc](./04-19-signal-ipc.md)
-- [04-20: Advanced Locking](./04-20-advanced-locking.md)
-- [04-21: Sockets Advanced Ipc](./04-21-sockets-advanced-ipc.md)
-- [04-22: Python Advanced Manager](./04-22-python-advanced-manager.md)
-- [04-44: Thread Synchronization Debugging](./04-44-thread-synchronization-debugging.md)
+- [01-02-01: 프로세스 생성 개요](./01-02-01-process-creation.md)
+- [01-02-02: fork() 시스템 콜](./01-02-02-process-creation-fork.md)
+- [01-02-03: exec() 프로그램 교체](./01-02-03-program-replacement-exec.md)
+- [01-02-04: 프로세스 종료와 좀비](./01-02-04-process-termination-zombies.md)
 
-### 1.3 CPU 관리와 최적화
+### 1.3 스레드 동기화와 통신
 
-- [04-06: Cpu Affinity Fundamentals](./04-06-cpu-affinity-fundamentals.md)
-- [04-30: Cpu Affinity](./04-30-cpu-affinity.md)
-- [04-31: Performance Visualization](./04-31-performance-visualization.md)
-- [04-32: Optimization Strategies](./04-32-optimization-strategies.md)
-- [07b-cpu: Affinity Scripts](./07b-cpu-affinity-scripts.md)
+- [01-03-01: 뮤텍스 기초](./01-03-01-mutex-basics.md)
+- [01-03-02: 스레드 동기화](./01-03-02-thread-synchronization.md)
+- [01-03-03: 세마포어와 조건변수](./01-03-03-semaphore-condvar.md)
+- [01-03-04: 고급 락킹 기법](./01-03-04-advanced-locking.md)
+- [01-03-05: 시그널 IPC](./01-03-05-signal-ipc.md)
+- [01-03-06: 소켓 고급 IPC](./01-03-06-sockets-advanced-ipc.md)
 
-### 1.4 프로세스 모니터링과 디버깅
+### 1.4 고급 스케줄링과 성능
 
-- [04-40: Process Management Monitoring](./04-40-process-management-monitoring.md)
-- [04-41: Practical Debugging](./04-41-practical-debugging.md)
-- [04-42: Process State Analysis](./04-42-process-state-analysis.md)
-- [04-43: Dstate Debugging](./04-43-dstate-debugging.md)
-- [04-44: Thread Synchronization Debugging](./04-44-thread-synchronization-debugging.md)
-- [04-45: Signal Handling Debugging](./04-45-signal-handling-debugging.md)
+- [01-04-01: 스케줄링 심화](./01-04-01-scheduling.md)
+- [01-04-02: CFS 구현](./01-04-02-cfs-implementation.md)
+- [01-04-03: 실시간 스케줄링](./01-04-03-realtime-scheduling.md)
+- [01-04-04: CPU 친화성](./01-04-04-cpu-affinity.md)
+
+### 1.5 디버깅과 모니터링
+
+- [01-05-01: 프로세스 관리 모니터링](./01-05-01-process-management-monitoring.md)
+- [01-05-02: 실용적 디버깅](./01-05-02-practical-debugging.md)
+- [01-05-03: 성능 시각화](./01-05-03-performance-visualization.md)
+- [01-05-04: 최적화 전략](./01-05-04-optimization-strategies.md)
+- [01-05-05: 프로세스 상태 분석](./01-05-05-process-state-analysis.md)
+- [01-05-06: D-state 디버깅](./01-05-06-dstate-debugging.md)
+- [01-05-07: 스레드 동기화 디버깅](./01-05-07-thread-synchronization-debugging.md)
+- [01-05-08: 시그널 처리 디버깅](./01-05-08-signal-handling-debugging.md)
+
+### 1.6 고급 IPC와 추가 기능
+
+- [01-06-01: Python 고급 매니저](./01-06-01-python-advanced-manager.md)
+- [01-06-02: 파이프와 FIFO](./01-06-02-pipes-fifos.md)
+- [01-06-03: 메시지 큐와 공유 메모리](./01-06-03-message-queues-shared-memory.md)
+- [01-06-04: 좀비 프로세스 처리](./01-06-04-zombie-process-handling.md)
+- [01-06-05: CPU 친화성 스크립트](./01-06-05-cpu-affinity-scripts.md)
+- [01-06-06: 프로세스 회계](./01-06-06-process-accounting.md)
+- [01-06-07: CPU 친화성 기초](./01-06-07-cpu-affinity-fundamentals.md)
 
 ## 🔗 관련 챕터
 

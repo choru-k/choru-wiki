@@ -89,5 +89,5 @@ priority_score: 4
 
 ### 🔧 고급 주제
 
-- [Chapter 10: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
-- [Chapter 15: 보안 엔지니어링](../chapter-15-security-engineering/index.md)
+- [Chapter 4: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
+- [Chapter 17: 보안 엔지니어링](../chapter-17-security-engineering/index.md)

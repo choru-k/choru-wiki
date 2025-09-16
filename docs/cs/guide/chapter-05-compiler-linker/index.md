@@ -1,10 +1,10 @@
 ---
 tags:
-  - FileDescriptor
-  - FileSystem
-  - IO
+  - Compiler
+  - Linker
+  - BuildSystem
   - SystemProgramming
-  - VFS
+  - Optimization
   - deep-study
   - hands-on
   - intermediate

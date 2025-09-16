@@ -83,5 +83,5 @@ priority_score: 4
 
 ### 🔧 고급 주제
 
-- [Chapter 10: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
+- [Chapter 4: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
 - [Chapter 12: 관찰 가능성과 디버깅](../chapter-12-observability-debugging/index.md)
