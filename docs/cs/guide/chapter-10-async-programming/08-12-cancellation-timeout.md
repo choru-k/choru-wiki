@@ -432,8 +432,8 @@ exponential backoff로 서버 부하를 줄이고 성공률을 높여라.
 
 ---
 
-**이전**: [8.1b 비동기 연산 조합](chapter-10-async-programming/10-11-async-composition.md)  
-**다음**: [8.1d 실행 모델과 스케줄링](chapter-10-async-programming/10-13-execution-scheduling.md)에서 스레드 풀과 작업 스케줄링을 학습합니다.
+**이전**: [8.1b 비동기 연산 조합](./08-11-async-composition.md)  
+**다음**: [8.1d 실행 모델과 스케줄링](./08-13-execution-scheduling.md)에서 스레드 풀과 작업 스케줄링을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -449,13 +449,13 @@ exponential backoff로 서버 부하를 줄이고 성공률을 높여라.
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
-- [8.1e 에러 처리 패턴](./10-40-error-handling.md)
+- [8.1 Promise/Future 패턴 개요](./08-10-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./08-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./08-11-async-composition.md)
+- [8.1d 실행 모델과 스케줄링](./08-13-execution-scheduling.md)
+- [8.1e 에러 처리 패턴](./08-20-error-handling.md)
 
 ### 🏷️ 관련 키워드
 
