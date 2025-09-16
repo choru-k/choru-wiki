@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter 13: 관찰가능성과 디버깅 - 시스템을 들여다보는 기술
+# Chapter 12: 관찰가능성과 디버깅 - 시스템을 들여다보는 기술
 
 ## 이 장에서 다루는 내용
 
@@ -572,6 +572,23 @@ http_requests_total{method="POST", endpoint="/api/orders", status="201"}
 ### 🏷️ 관련 키워드
 
 `FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+
+## 🔗 관련 챕터
+
+### 📚 시스템 프로그래밍 기초
+
+- [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
+- [Chapter 11: 성능 최적화](../chapter-11-performance-optimization/index.md)
+
+### 🚀 운영 및 배포
+
+- [Chapter 13: 컨테이너와 Kubernetes](../chapter-13-container-kubernetes/index.md)
+- [Chapter 14: 분산 시스템](../chapter-14-distributed-systems/index.md)
+
+### 🔧 고급 주제
+
+- [Chapter 10: 비동기 프로그래밍](../chapter-10-async-programming/index.md)
+- [Chapter 16: 분산 시스템 패턴](../chapter-16-distributed-system-patterns/index.md)
 
 ### ⏭️ 다음 단계 가이드
 
