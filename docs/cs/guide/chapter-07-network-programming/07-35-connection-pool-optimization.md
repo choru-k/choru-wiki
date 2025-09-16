@@ -610,8 +610,8 @@ TARGET_HOST=api.example.com TARGET_PORT=443 ./optimize_tcp_connections.sh test
 
 ---
 
-**이전**: [07-41-tcp-analysis-tools.md](chapter-07-network-programming/07-41-tcp-analysis-tools.md)  
-**다음**: [07-43-realtime-connection-monitoring.md](chapter-07-network-programming/07-43-realtime-connection-monitoring.md)에서 Python 기반 실시간 모니터링 시스템을 학습합니다.
+**이전**: [07-41-tcp-analysis-tools.md](./07-41-tcp-analysis-tools.md)  
+**다음**: [07-43-realtime-connection-monitoring.md](./07-43-realtime-connection-monitoring.md)에서 Python 기반 실시간 모니터링 시스템을 학습합니다.
 
 ## 📚 관련 문서
 

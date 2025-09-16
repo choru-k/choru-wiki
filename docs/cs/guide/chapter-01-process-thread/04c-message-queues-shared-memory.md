@@ -741,8 +741,8 @@ Atomic 연산을 활용한 링 버퍼 등으로 뮤텍스 오버헤드를 제거
 
 ---
 
-**이전**: [4.4b 파이프와 FIFO](chapter-01-process-thread/04b-pipes-fifos.md)
-**다음**: [4.4d 소켓과 고급 IPC](chapter-01-process-thread/04-21-sockets-advanced-ipc.md)에서 네트워크 통신과 이벤트 기반 IPC를 학습합니다.
+**이전**: [4.4b 파이프와 FIFO](./04b-pipes-fifos.md)
+**다음**: [4.4d 소켓과 고급 IPC](./04-21-sockets-advanced-ipc.md)에서 네트워크 통신과 이벤트 기반 IPC를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -758,7 +758,7 @@ Atomic 연산을 활용한 링 버퍼 등으로 뮤텍스 오버헤드를 제거
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-04-process-thread)
+### 📂 같은 챕터 (chapter-01-process-thread)
 
 - [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
 - [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)

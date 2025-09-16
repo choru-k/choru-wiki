@@ -547,8 +547,8 @@ int main() {
 
 ---
 
-**이전**: [가상 메모리 기초](chapter-03-memory-system/03-03-virtual-memory-basics.md)  
-**다음**: [페이지 폴트와 TLB 최적화](chapter-03-memory-system/03-14-page-fault-tlb.md)에서 페이지 폴트 처리와 TLB의 성능 최적화를 학습합니다.
+**이전**: [가상 메모리 기초](./03-03-virtual-memory-basics.md)  
+**다음**: [페이지 폴트와 TLB 최적화](./03-14-page-fault-tlb.md)에서 페이지 폴트 처리와 TLB의 성능 최적화를 학습합니다.
 
 ## 📚 관련 문서
 

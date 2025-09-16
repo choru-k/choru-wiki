@@ -25,35 +25,35 @@ priority_score: 5
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [모놀리스 문제점과 전환 전략](chapter-15-microservices-architecture/15-10-monolith-to-microservices.md)
+### 1️⃣ [모놀리스 문제점과 전환 전략](./15-10-monolith-to-microservices.md)
 
 - 모놀리스 아키텍처의 현실적 한계점
 - 팀별 고충과 구체적인 문제 상황
 - 마이크로서비스 전환 결정과 전략적 접근
 - Domain-Driven Design을 통한 서비스 경계 정의
 
-### 2️⃣ [마이크로서비스 설계 원칙과 패턴](chapter-16-distributed-system-patterns/15-11-design-principles.md)
+### 2️⃣ [마이크로서비스 설계 원칙과 패턴](chapter-15-microservices-architecture/15-11-design-principles.md)
 
 - 단일 책임 원칙과 서비스 분해 전략
 - Database per Service 패턴
 - API Contract First 설계 방법론
 - 서비스 경계 설정과 데이터 일관성
 
-### 3️⃣ [서비스 간 통신과 메시징](chapter-15-microservices-architecture/15-16-service-communication.md)
+### 3️⃣ [서비스 간 통신과 메시징](./15-16-service-communication.md)
 
 - 동기식 통신: REST API와 Circuit Breaker 패턴
 - 비동기식 통신: 메시지 큐와 이벤트 기반 아키텍처
 - 분산 시스템에서의 데이터 일관성 보장
 - 통신 패턴별 장단점과 선택 기준
 
-### 4️⃣ [컨테이너화와 오케스트레이션](chapter-15-microservices-architecture/15-19-containerization-orchestration.md)
+### 4️⃣ [컨테이너화와 오케스트레이션](./15-19-containerization-orchestration.md)
 
 - Docker를 활용한 마이크로서비스 패키징
 - Kubernetes에서의 서비스 배포와 관리
 - Service Mesh와 API Gateway 구성
 - 분산 환경에서의 리소스 관리
 
-### 5️⃣ [모니터링과 성공/실패 요인](chapter-16-distributed-system-patterns/15-40-monitoring-success-factors.md)
+### 5️⃣ [모니터링과 성공/실패 요인](chapter-15-microservices-architecture/15-40-monitoring-success-factors.md)
 
 - 분산 트레이싱과 관찰성 구현
 - 마이크로서비스 성공 요인과 실패 요인 분석
@@ -88,19 +88,19 @@ priority_score: 5
 
 ### 초보자 (추천 순서)
 
-1. [모놀리스 문제점과 전환 전략](chapter-15-microservices-architecture/15-10-monolith-to-microservices.md) → 기본 개념 이해
-2. [마이크로서비스 설계 원칙](chapter-16-distributed-system-patterns/15-11-design-principles.md) → 설계 방법론 학습
+1. [모놀리스 문제점과 전환 전략](./15-10-monolith-to-microservices.md) → 기본 개념 이해
+2. [마이크로서비스 설계 원칙](chapter-15-microservices-architecture/15-11-design-principles.md) → 설계 방법론 학습
 3. 간단한 2-3개 서비스로 구성된 프로젝트 실습
 
 ### 중급자 (실무 적용)
 
-1. [서비스 간 통신과 메시징](chapter-15-microservices-architecture/15-16-service-communication.md) → 통신 패턴 마스터
-2. [컨테이너화와 오케스트레이션](chapter-15-microservices-architecture/15-19-containerization-orchestration.md) → 인프라 구성
+1. [서비스 간 통신과 메시징](./15-16-service-communication.md) → 통신 패턴 마스터
+2. [컨테이너화와 오케스트레이션](./15-19-containerization-orchestration.md) → 인프라 구성
 3. 기존 모놀리스 시스템의 점진적 분해 계획 수립
 
 ### 고급자 (아키텍처 설계)
 
-1. [모니터링과 성공/실패 요인](chapter-16-distributed-system-patterns/15-40-monitoring-success-factors.md) → 운영 관점 이해
+1. [모니터링과 성공/실패 요인](chapter-15-microservices-architecture/15-40-monitoring-success-factors.md) → 운영 관점 이해
 2. 조직의 마이크로서비스 도입 전략 수립
 3. 분산 시스템의 복잡성 관리와 최적화
 
@@ -113,16 +113,16 @@ priority_score: 5
 
 ### 후속 학습
 
-- [이벤트 드리븐 아키텍처](chapter-16-distributed-system-patterns/15-03-event-driven-architecture.md) - 이벤트 기반 통신
-- [CQRS와 Event Sourcing](chapter-16-distributed-system-patterns/03-cqrs-event-sourcing.md) - 고급 패턴
+- [이벤트 드리븐 아키텍처](chapter-15-microservices-architecture/15-03-event-driven-architecture.md) - 이벤트 기반 통신
+- [CQRS와 Event Sourcing](chapter-15-microservices-architecture/03-cqrs-event-sourcing.md) - 고급 패턴
 
 ---
 
-**다음**: [모놀리스 문제점과 전환 전략](chapter-15-microservices-architecture/15-10-monolith-to-microservices.md)에서 실제 전환 경험을 학습합니다.
+**다음**: [모놀리스 문제점과 전환 전략](./15-10-monolith-to-microservices.md)에서 실제 전환 경험을 학습합니다.
 
 ---
 
-**다음**: [모놀리스 문제점과 전환 전략](chapter-15-microservices-architecture/15-10-monolith-to-microservices.md)에서 실제 전환 경험을 학습합니다.
+**다음**: [모놀리스 문제점과 전환 전략](./15-10-monolith-to-microservices.md)에서 실제 전환 경험을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -141,10 +141,10 @@ priority_score: 5
 ### 📂 같은 챕터 (chapter-16-system-design-patterns)
 
 - [15.1A 모놀리스 문제점과 전환 전략](./15-10-monolith-to-microservices.md)
-- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-16-distributed-system-patterns/15-11-design-principles.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-12-1-single-responsibility-principle.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-13-1-single-responsibility.md)
-- [16.1B2 Database per Service 패턴](../chapter-16-distributed-system-patterns/15-14-2-database-per-service.md)
+- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-15-microservices-architecture/15-11-design-principles.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-12-1-single-responsibility-principle.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-13-1-single-responsibility.md)
+- [16.1B2 Database per Service 패턴](../chapter-15-microservices-architecture/15-14-2-database-per-service.md)
 
 ### 🏷️ 관련 키워드
 

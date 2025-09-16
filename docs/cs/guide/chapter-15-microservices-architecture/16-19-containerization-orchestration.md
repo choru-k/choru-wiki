@@ -25,21 +25,21 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [Docker를 활용한 마이크로서비스 패키징](chapter-15-microservices-architecture/01d1-docker-containerization.md)
+### 1️⃣ [Docker를 활용한 마이크로서비스 패키징](./01d1-docker-containerization.md)
 
 - Multi-stage Build를 활용한 최적화된 Dockerfile 작성
 - Java Spring Boot, Node.js, Go 언어별 컨테이너화 전략
 - 레이어 캐싱과 이미지 크기 최소화 기법
 - 보안 강화를 위한 비루트 사용자 설정과 베스트 프랙티스
 
-### 2️⃣ [Docker Compose를 통한 로컬 개발 환경](chapter-15-microservices-architecture/01d2-docker-compose-environment.md)
+### 2️⃣ [Docker Compose를 통한 로컬 개발 환경](./01d2-docker-compose-environment.md)
 
 - 마이크로서비스 통합 개발 환경 구성
 - 개발용 Dockerfile과 핫 리로딩 설정
 - 환경 제어 스크립트와 관리 도구
 - 볼륨 마운트와 개발 효율성 최적화
 
-### 3️⃣ [Kubernetes에서 마이크로서비스 프로덕션 배포](chapter-16-distributed-system-patterns/15-51-3-kubernetes-production-deployment.md)
+### 3️⃣ [Kubernetes에서 마이크로서비스 프로덕션 배포](chapter-15-microservices-architecture/15-51-3-kubernetes-production-deployment.md)
 
 - 프로덕션 급 Kubernetes 매니페스트 작성
 - 리소스 관리, 보안 설정, 자동 스케일링
@@ -80,13 +80,13 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [Docker 패키징](chapter-15-microservices-architecture/01d1-docker-containerization.md) → 컨테이너 개념과 언어별 최적화 이해
-2. [Docker Compose 환경](chapter-15-microservices-architecture/01d2-docker-compose-environment.md) → 실제 개발 환경에서 실습
+1. [Docker 패키징](./01d1-docker-containerization.md) → 컨테이너 개념과 언어별 최적화 이해
+2. [Docker Compose 환경](./01d2-docker-compose-environment.md) → 실제 개발 환경에서 실습
 3. 간단한 마이크로서비스 프로젝트로 연습
 
 ### 중급자 (심화 학습)
 
-1. [Kubernetes 배포](chapter-16-distributed-system-patterns/15-51-3-kubernetes-production-deployment.md) → 프로덕션 환경 구성
+1. [Kubernetes 배포](chapter-15-microservices-architecture/15-51-3-kubernetes-production-deployment.md) → 프로덕션 환경 구성
 2. 실제 프로덕션 환경에서 운영 경험 축적
 3. 성능 최적화와 보안 강화 적용
 
@@ -100,13 +100,13 @@ priority_score: 4
 
 ### 선행 학습
 
-- [마이크로서비스 아키텍처 기초](chapter-15-microservices-architecture/15-10-monolith-to-microservices.md) - 기초 개념
-- [서비스 간 통신](chapter-15-microservices-architecture/15-16-service-communication.md) - 통신 패턴
+- [마이크로서비스 아키텍처 기초](./15-10-monolith-to-microservices.md) - 기초 개념
+- [서비스 간 통신](./15-16-service-communication.md) - 통신 패턴
 
 ### 후속 학습
 
-- [모니터링과 성공 요인](chapter-16-distributed-system-patterns/15-40-monitoring-success-factors.md) - 운영 관리
-- [API Gateway 패턴](chapter-16-distributed-system-patterns/15-55-api-gateway-patterns.md) - 진입점 관리
+- [모니터링과 성공 요인](chapter-15-microservices-architecture/15-40-monitoring-success-factors.md) - 운영 관리
+- [API Gateway 패턴](chapter-15-microservices-architecture/15-55-api-gateway-patterns.md) - 진입점 관리
 
 ## 💡 실무 적용 가이드
 
@@ -132,7 +132,7 @@ priority_score: 4
 
 ---
 
-**다음**: [Docker를 활용한 마이크로서비스 패키징](chapter-15-microservices-architecture/01d1-docker-containerization.md)에서 Multi-stage Build와 언어별 최적화 기법을 학습합니다.
+**다음**: [Docker를 활용한 마이크로서비스 패키징](./01d1-docker-containerization.md)에서 Multi-stage Build와 언어별 최적화 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -152,9 +152,9 @@ priority_score: 4
 
 - [15.1 마이크로서비스 아키텍처 개요](./15-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](./15-10-monolith-to-microservices.md)
-- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-16-distributed-system-patterns/15-11-design-principles.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-12-1-single-responsibility-principle.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-13-1-single-responsibility.md)
+- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-15-microservices-architecture/15-11-design-principles.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-12-1-single-responsibility-principle.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-13-1-single-responsibility.md)
 
 ### 🏷️ 관련 키워드
 

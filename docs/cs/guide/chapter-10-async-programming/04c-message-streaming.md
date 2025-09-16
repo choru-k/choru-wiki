@@ -681,8 +681,8 @@ class BackPressureAwareConsumer:
 
 ---
 
-**이전**: [04b-event-sourcing-cqrs.md](chapter-10-async-programming/04b-event-sourcing-cqrs.md)
-**다음**: [08-50-resilience-patterns.md](chapter-10-async-programming/08-50-resilience-patterns.md)에서 Circuit Breaker와 복원력 패턴을 학습합니다.
+**이전**: [04b-event-sourcing-cqrs.md](./04b-event-sourcing-cqrs.md)
+**다음**: [08-50-resilience-patterns.md](./08-50-resilience-patterns.md)에서 Circuit Breaker와 복원력 패턴을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -698,7 +698,7 @@ class BackPressureAwareConsumer:
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./08-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./08-01-promise-future-basics.md)

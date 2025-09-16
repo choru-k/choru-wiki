@@ -637,8 +637,8 @@ sendmmsg/recvmmsg를 활용하여 시스템콜 오버헤드를 최소화합니�
 
 ---
 
-**이전**: [고성능 아키텍처](chapter-07-network-programming/07-05-high-performance-architecture.md)  
-**다음**: [DPDK 통합](chapter-07-network-programming/07c-dpdk-integration.md)에서 커널 바이패스 기술과 DPDK 활용법을 학습합니다.
+**이전**: [고성능 아키텍처](./07-05-high-performance-architecture.md)  
+**다음**: [DPDK 통합](./07c-dpdk-integration.md)에서 커널 바이패스 기술과 DPDK 활용법을 학습합니다.
 
 ## 📚 관련 문서
 

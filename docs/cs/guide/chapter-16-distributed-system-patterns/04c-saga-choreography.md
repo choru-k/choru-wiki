@@ -524,8 +524,8 @@ if __name__ == "__main__":
 
 ---
 
-**이전**: [Saga Orchestration 구현](chapter-16-distributed-system-patterns/04b-saga-orchestration.md)  
-**다음**: [Saga 모니터링 시스템](chapter-16-distributed-system-patterns/16-41-saga-monitoring.md)에서 실시간 Saga 상태 추적과 대시보드를 학습합니다.
+**이전**: [Saga Orchestration 구현](./04b-saga-orchestration.md)  
+**다음**: [Saga 모니터링 시스템](./16-41-saga-monitoring.md)에서 실시간 Saga 상태 추적과 대시보드를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -541,7 +541,7 @@ if __name__ == "__main__":
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

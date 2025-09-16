@@ -734,8 +734,8 @@ void chat_protocol_handler(struct websocket_client *client,
 
 ---
 
-**이전**: [커넥션 풀과 로드 밸런싱](chapter-07-network-programming/07-18-connection-pool-load-balancing.md)  
-**다음**: [고성능 네트워크 서버 구현 개요](chapter-07-network-programming/07-30-high-performance-networking.md)로 돌아가서 전체 내용을 복습하거나, [보안 네트워킹과 TLS](chapter-07-network-programming/07-19-secure-networking.md)에서 네트워크 보안 기술을 학습합니다.
+**이전**: [커넥션 풀과 로드 밸런싱](./07-18-connection-pool-load-balancing.md)  
+**다음**: [고성능 네트워크 서버 구현 개요](./07-30-high-performance-networking.md)로 돌아가서 전체 내용을 복습하거나, [보안 네트워킹과 TLS](./07-19-secure-networking.md)에서 네트워크 보안 기술을 학습합니다.
 
 ## 📚 관련 문서
 

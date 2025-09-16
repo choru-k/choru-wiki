@@ -233,8 +233,8 @@ void use_huge_pages() {
 
 ---
 
-**이전**: [Copy-on-Write 메커니즘](chapter-03-memory-system/03-14-copy-on-write.md)에서 fork()의 마법을 학습했습니다.
-**다음**: [스왑과 메모리 압박](chapter-03-memory-system/03-16-swap-memory-pressure.md)에서 시스템이 느려지는 이유를 학습합니다.
+**이전**: [Copy-on-Write 메커니즘](./03-14-copy-on-write.md)에서 fork()의 마법을 학습했습니다.
+**다음**: [스왑과 메모리 압박](./03-16-swap-memory-pressure.md)에서 시스템이 느려지는 이유를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -250,7 +250,7 @@ void use_huge_pages() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

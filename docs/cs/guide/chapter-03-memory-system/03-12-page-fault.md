@@ -31,35 +31,35 @@ priority_score: 4
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [페이지 폴트 종류와 처리](chapter-03-memory-system/03-13-page-fault-types-handling.md)
+### 1️⃣ [페이지 폴트 종류와 처리](./03-13-page-fault-types-handling.md)
 
 - Minor, Major, Invalid Fault의 분류와 특성
 - Linux 커널의 페이지 폴트 핸들러 동작 원리
 - 성능 차이의 근본 원인과 영향 분석
 - Segmentation Fault의 진실과 OS 응급실 체계
 
-### 2️⃣ [Copy-on-Write 메커니즘](chapter-03-memory-system/03-14-copy-on-write.md)
+### 2️⃣ [Copy-on-Write 메커니즘](./03-14-copy-on-write.md)
 
 - fork()가 빠른 이유: 게으른 복사의 천재성
 - Redis의 100GB 백업을 1초에 하는 비밀
 - CoW 구현과 실전 활용 사례
 - 이점과 한계, 최적화 전략
 
-### 3️⃣ [Demand Paging 메커니즘](chapter-03-memory-system/03-15-demand-paging.md)
+### 3️⃣ [Demand Paging 메커니즘](./03-15-demand-paging.md)
 
 - malloc()의 거짓말: 1GB 할당 ≠ 1GB 사용
 - 게으른 메모리 할당의 미학과 원리
 - Prefaulting 최적화와 HugePage 활용
 - 메모리 효율성과 성능 개선 기법
 
-### 4️⃣ [스왑과 메모리 압박](chapter-03-memory-system/03-16-swap-memory-pressure.md)
+### 4️⃣ [스왑과 메모리 압박](./03-16-swap-memory-pressure.md)
 
 - 스왑 지옥: 컴퓨터가 느려지는 이유
 - RAM vs 디스크의 10,000배 성능 차이
 - kswapd 데몬과 LRU 알고리즘의 일상
 - Swappiness 제어와 zRAM 활용 전략
 
-### 5️⃣ [OOM Killer와 실전 최적화](chapter-03-memory-system/03-30-oom-optimization.md)
+### 5️⃣ [OOM Killer와 실전 최적화](./03-30-oom-optimization.md)
 
 - OOM Score 계산: 누가 죽을 것인가?
 - 사형수 선정 기준과 방지 전략
@@ -99,15 +99,15 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [페이지 폴트 종류와 처리](chapter-03-memory-system/03-13-page-fault-types-handling.md) → 기본 개념 이해
-2. [Copy-on-Write 메커니즘](chapter-03-memory-system/03-14-copy-on-write.md) → fork() 마법 체험
-3. [Demand Paging 메커니즘](chapter-03-memory-system/03-15-demand-paging.md) → malloc() 거짓말 폭로
+1. [페이지 폴트 종류와 처리](./03-13-page-fault-types-handling.md) → 기본 개념 이해
+2. [Copy-on-Write 메커니즘](./03-14-copy-on-write.md) → fork() 마법 체험
+3. [Demand Paging 메커니즘](./03-15-demand-paging.md) → malloc() 거짓말 폭로
 4. 간단한 메모리 프로파일링 연습
 
 ### 중급자 (심화 학습)
 
-1. [스왑과 메모리 압박](chapter-03-memory-system/03-16-swap-memory-pressure.md) → 성능 최적화 핵심
-2. [OOM Killer와 실전 최적화](chapter-03-memory-system/03-30-oom-optimization.md) → 고급 디버깅
+1. [스왑과 메모리 압박](./03-16-swap-memory-pressure.md) → 성능 최적화 핵심
+2. [OOM Killer와 실전 최적화](./03-30-oom-optimization.md) → 고급 디버깅
 3. 실제 프로덕션 환경 적용
 
 ### 고급자 (마스터 과정)
@@ -118,12 +118,12 @@ priority_score: 4
 
 ### 선행 학습
 
-- [주소 변환 메커니즘](chapter-03-memory-system/03-10-address-translation.md) - MMU와 페이지 테이블 기초
-- [TLB와 캐싱](chapter-03-memory-system/03-11-tlb-caching.md) - 성능 최적화 기반 지식
+- [주소 변환 메커니즘](./03-10-address-translation.md) - MMU와 페이지 테이블 기초
+- [TLB와 캐싱](./03-11-tlb-caching.md) - 성능 최적화 기반 지식
 
 ### 후속 학습  
 
-- [메모리 압축과 중복 제거](chapter-03-memory-system/03-17-compression-deduplication.md) - 고급 메모리 기법
+- [메모리 압축과 중복 제거](./03-17-compression-deduplication.md) - 고급 메모리 기법
 - [프로세스 생성과 관리](../chapter-01-process-thread/04-10-process-creation.md) - fork()와 CoW 실전
 
 ## 📊 성능 범위 비교 차트
@@ -327,7 +327,7 @@ vmstat 1                                      # 실시간 모니터링
 
 ---
 
-**다음**: [메모리 압축과 중복 제거](chapter-03-memory-system/03-17-compression-deduplication.md)에서 더 고급 메모리 최적화 기법을 학습합니다.
+**다음**: [메모리 압축과 중복 제거](./03-17-compression-deduplication.md)에서 더 고급 메모리 최적화 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -343,7 +343,7 @@ vmstat 1                                      # 실시간 모니터링
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

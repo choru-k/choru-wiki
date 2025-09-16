@@ -584,8 +584,8 @@ echo 1 > /proc/sys/vm/dirty_background_ratio
 
 ---
 
-**이전**: [마운트 시스템과 네임스페이스](chapter-06-file-io/06-15-mount-system.md)  
-**다음**: [파일시스템별 구현](chapter-06-file-io/06-17-filesystem-impl.md)에서 ext4, Btrfs, 특수 파일시스템의 내부 구조를 학습합니다.
+**이전**: [마운트 시스템과 네임스페이스](./06-15-mount-system.md)  
+**다음**: [파일시스템별 구현](./06-17-filesystem-impl.md)에서 ext4, Btrfs, 특수 파일시스템의 내부 구조를 학습합니다.
 
 ## 📚 관련 문서
 

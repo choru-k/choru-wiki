@@ -38,28 +38,28 @@ close(sock);
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [소켓의 개념과 기본 구조](chapter-07-network-programming/07-02-socket-fundamentals.md)
+### 1️⃣ [소켓의 개념과 기본 구조](./07-02-socket-fundamentals.md)
 
 - 소켓 도메인과 타입의 분류
 - 주소 구조체 시스템 (sockaddr, sockaddr_in, sockaddr_in6)
 - 네트워크 바이트 순서 변환 (htons/ntohs)
 - 소켓 생성과 바인드 과정
 
-### 2️⃣ [TCP 소켓 프로그래밍](chapter-07-network-programming/07-10-tcp-programming.md)
+### 2️⃣ [TCP 소켓 프로그래밍](./07-10-tcp-programming.md)
 
 - TCP 서버 구현의 모든 단계 (socket → bind → listen → accept)
 - 클라이언트 연결과 비블로킹 모드
 - 실전 에러 처리와 성능 최적화
 - 멀티프로세스 서버 구현
 
-### 3️⃣ [UDP와 Raw 소켓 프로그래밍](chapter-07-network-programming/07-11-udp-raw-sockets.md)
+### 3️⃣ [UDP와 Raw 소켓 프로그래밍](./07-11-udp-raw-sockets.md)
 
 - UDP 프로그래밍 (단순하지만 강력한)
 - 브로드캐스트와 멀티캐스트 구현
 - Raw 소켓으로 패킷 분석 (ICMP ping, 패킷 스니퍼)
 - 실시간 통신에서의 UDP 활용
 
-### 4️⃣ [소켓 옵션과 Unix 도메인 소켓](chapter-07-network-programming/07-12-socket-options-unix.md)
+### 4️⃣ [소켓 옵션과 Unix 도메인 소켓](./07-12-socket-options-unix.md)
 
 - SO_REUSEADDR, TCP_NODELAY 등 성능 최적화 옵션
 - 소켓 상태 모니터링과 디버깅
@@ -99,14 +99,14 @@ close(sock);
 
 ### 초보자 (추천 순서)
 
-1. [소켓 기본 개념](chapter-07-network-programming/07-02-socket-fundamentals.md) → 이론적 기초 다지기
-2. [TCP 프로그래밍](chapter-07-network-programming/07-10-tcp-programming.md) → 실제 서버/클라이언트 구현
+1. [소켓 기본 개념](./07-02-socket-fundamentals.md) → 이론적 기초 다지기
+2. [TCP 프로그래밍](./07-10-tcp-programming.md) → 실제 서버/클라이언트 구현
 3. 간단한 에코 서버 만들어 보기
 
 ### 중급자 (심화 학습)
 
-1. [UDP와 Raw 소켓](chapter-07-network-programming/07-11-udp-raw-sockets.md) → 다양한 프로토콜 활용
-2. [소켓 옵션](chapter-07-network-programming/07-12-socket-options-unix.md) → 성능 최적화 기법
+1. [UDP와 Raw 소켓](./07-11-udp-raw-sockets.md) → 다양한 프로토콜 활용
+2. [소켓 옵션](./07-12-socket-options-unix.md) → 성능 최적화 기법
 3. 실제 프로덕션 환경에 적용
 
 ### 고급자 (성능 최적화)
@@ -124,7 +124,7 @@ close(sock);
 
 ### 후속 학습  
 
-- [TCP/IP 스택 구현](chapter-07-network-programming/07-13-tcp-ip-stack.md) - 커널 레벨 네트워킹의 심화
+- [TCP/IP 스택 구현](./07-13-tcp-ip-stack.md) - 커널 레벨 네트워킹의 심화
 - [비동기 프로그래밍](../chapter-10-async-programming/08-10-promise-future.md) - 논블로킹 I/O 패턴
 
 ## 🛠️ 실습 환경 준비
@@ -167,7 +167,7 @@ nc -v localhost 8080
 
 ---
 
-**다음**: 소켓의 기본 개념과 주소 구조체를 이해하기 위해 [소켓의 개념과 기본 구조](chapter-07-network-programming/07-02-socket-fundamentals.md)부터 시작하세요.
+**다음**: 소켓의 기본 개념과 주소 구조체를 이해하기 위해 [소켓의 개념과 기본 구조](./07-02-socket-fundamentals.md)부터 시작하세요.
 
 ## 📚 관련 문서
 

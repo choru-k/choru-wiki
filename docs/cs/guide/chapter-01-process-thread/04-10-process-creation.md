@@ -25,28 +25,28 @@ priority_score: 5
 
 이 섹션은 **4개의 전문화된 문서**로 구성되어 있습니다:
 
-### 1️⃣ [fork() 시스템 콜과 프로세스 복제 메커니즘](chapter-01-process-thread/01-11-process-creation-fork.md)
+### 1️⃣ [fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
 
 - **Copy-on-Write의 마법**: fork()가 100MB 프로세스를 0.05ms에 복제하는 비밀
 - **프로세스 복제 상세 구현**: 커널의 6단계 복제 과정
 - **Chrome의 멀티프로세스 아키텍처**: 탭마다 프로세스를 만드는 이유
 - **실전 fork() 패턴**: Apache, Nginx, PostgreSQL의 활용 사례
 
-### 2️⃣ [exec() 패밀리와 프로그램 교체 메커니즘](chapter-01-process-thread/01-12-program-replacement-exec.md)
+### 2️⃣ [exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
 
 - **Point of No Return**: exec()의 되돌릴 수 없는 프로그램 교체
 - **6형제 비교**: execl, execlp, execle, execv, execvp, execve의 차이점
 - **shell의 비밀**: 터미널에서 명령어 실행되는 fork + exec 패턴
 - **파이프라인 구현**: ls | grep | wc의 3-프로세스 협력 메커니즘
 
-### 3️⃣ [프로세스 종료와 좀비 처리](chapter-01-process-thread/01-13-process-termination-zombies.md)
+### 3️⃣ [프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
 
 - **디지털 장례식**: exit() 시스템 콜의 12단계 정리 절차
 - **좀비 프로세스**: 죽었는데 안 죽은 것들과의 전쟁 (실제 장애 사례)
 - **고아 프로세스**: init이 입양하는 자식들
 - **좀비 방지 패턴**: SIGCHLD 핸들러와 이중 fork 기법
 
-### 4️⃣ [프로세스 관리와 모니터링](chapter-01-process-thread/01-40-process-management-monitoring.md)
+### 4️⃣ [프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
 
 - **프로세스 트리**: 리눅스의 거대한 가족 관계도 (pstree의 진실)
 - **상태 전이**: 7개의 프로세스 상태와 생명주기
@@ -97,14 +97,14 @@ wait() ← ← exit(0) ← ls 종료
 
 ### 초보자 (추천 순서)
 
-1. [01a: fork() 기초](chapter-01-process-thread/01-11-process-creation-fork.md) → Copy-on-Write 이해
-2. [01b: exec() 활용](chapter-01-process-thread/01-12-program-replacement-exec.md) → 프로그램 교체 체험
-3. [01c: 좀비 처리](chapter-01-process-thread/01-13-process-termination-zombies.md) → 안전한 종료 패턴
+1. [01a: fork() 기초](./04-11-process-creation-fork.md) → Copy-on-Write 이해
+2. [01b: exec() 활용](./04-12-program-replacement-exec.md) → 프로그램 교체 체험
+3. [01c: 좀비 처리](./04-13-process-termination-zombies.md) → 안전한 종료 패턴
 4. 간단한 shell 프로그램 구현 연습
 
 ### 중급자 (심화 학습)
 
-1. [01d: 모니터링](chapter-01-process-thread/01-40-process-management-monitoring.md) → 프로덕션 운영 기법
+1. [01d: 모니터링](./04-40-process-management-monitoring.md) → 프로덕션 운영 기법
 2. 실제 웹서버 프로세스 풀 구현
 3. 성능 최적화 및 디버깅 실습
 
@@ -123,9 +123,9 @@ wait() ← ← exit(0) ← ls 종료
 
 ### 후속 학습  
 
-- [Thread & Synchronization](chapter-01-process-thread/01-14-thread-synchronization.md) - 스레드와 동기화
-- [Signal & IPC](chapter-01-process-thread/01-19-signal-ipc.md) - 프로세스 간 통신
-- [CPU Scheduling](chapter-01-process-thread/01-16-scheduling.md) - CPU 스케줄링
+- [Thread & Synchronization](./04-14-thread-synchronization.md) - 스레드와 동기화
+- [Signal & IPC](./04-19-signal-ipc.md) - 프로세스 간 통신
+- [CPU Scheduling](./04-16-scheduling.md) - CPU 스케줄링
 
 ## 🎪 실전 검증 포인트
 
@@ -155,7 +155,7 @@ wait() ← ← exit(0) ← ls 종료
 
 ---
 
-**시작**: [01-11-process-creation-fork.md](chapter-01-process-thread/01-11-process-creation-fork.md)에서 Copy-on-Write의 마법을 경험해보세요!
+**시작**: [01-11-process-creation-fork.md](./04-11-process-creation-fork.md)에서 Copy-on-Write의 마법을 경험해보세요!
 
 ## 📚 관련 문서
 
@@ -171,13 +171,13 @@ wait() ← ← exit(0) ← ls 종료
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-04-process-thread)
+### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-40-process-management-monitoring.md)
-- [4.2 스레드 동기화 개요: 멀티스레딩 마스터로드맵](./01-14-thread-synchronization.md)
+- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
+- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
+- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
+- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
+- [4.2 스레드 동기화 개요: 멀티스레딩 마스터로드맵](./04-14-thread-synchronization.md)
 
 ### 🏷️ 관련 키워드
 

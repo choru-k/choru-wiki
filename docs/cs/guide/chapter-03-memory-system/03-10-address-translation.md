@@ -725,20 +725,20 @@ void optimize_numa_page_tables() {
 
 ### 선행 지식
 
-- [Chapter 2: Virtual Memory](../chapter-03-memory-system/02-12-virtual-memory.md) - 가상 메모리 기초
-- [Process Memory Structure](../chapter-03-memory-system/02-10-process-memory.md) - 프로세스 메모리 구조
+- [Chapter 2: Virtual Memory](.././02-12-virtual-memory.md) - 가상 메모리 기초
+- [Process Memory Structure](.././02-10-process-memory.md) - 프로세스 메모리 구조
 
 ### 관련 주제
 
-- [TLB와 캐싱](chapter-03-memory-system/03-11-tlb-caching.md) - TLB 성능 최적화
-- [페이지 폴트 처리](chapter-03-memory-system/03-12-page-fault.md) - 주소 변환 실패 처리
+- [TLB와 캐싱](./03-11-tlb-caching.md) - TLB 성능 최적화
+- [페이지 폴트 처리](./03-12-page-fault.md) - 주소 변환 실패 처리
 - [CPU Architecture](../chapter-05-1-cpu-architecture-and-execution.md) - CPU와 MMU
 
 ## 다음 섹션 예고: TLB의 세계로
 
 지금까지 주소 변환의 원리를 배웠습니다. 하지만 진짜 성능의 비밀은 TLB에 있습니다.
 
-다음 섹션 [3-2: TLB와 캐싱](chapter-03-memory-system/03-11-tlb-caching.md)에서는 **TLB와 캐싱의 모든 것**을 파헤칩니다:
+다음 섹션 [3-2: TLB와 캐싱](./03-11-tlb-caching.md)에서는 **TLB와 캐싱의 모든 것**을 파헤칩니다:
 
 - TLB는 어떻게 1 사이클만에 주소를 찾을까?
 - TLB shootdown은 왜 시스템을 느리게 만들까?
@@ -761,7 +761,7 @@ void optimize_numa_page_tables() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)
 - [Chapter 3-3: 페이지 폴트와 메모리 관리 개요](./03-12-page-fault.md)

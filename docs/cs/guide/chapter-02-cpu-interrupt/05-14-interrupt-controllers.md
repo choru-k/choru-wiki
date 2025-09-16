@@ -400,8 +400,8 @@ void configure_msi_x(struct pci_device* dev) {
 
 ---
 
-**이전**: [인터럽트 처리 과정과 예외](chapter-02-cpu-interrupt/02-13-interrupt-processing.md)
-**다음**: [소프트 인터럽트와 실시간 처리](chapter-02-cpu-interrupt/02-15-software-interrupts.md)에서 소프트IRQ와 디버깅 기법을 학습합니다.
+**이전**: [인터럽트 처리 과정과 예외](./02-13-interrupt-processing.md)
+**다음**: [소프트 인터럽트와 실시간 처리](./02-15-software-interrupts.md)에서 소프트IRQ와 디버깅 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -417,7 +417,7 @@ void configure_msi_x(struct pci_device* dev) {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)

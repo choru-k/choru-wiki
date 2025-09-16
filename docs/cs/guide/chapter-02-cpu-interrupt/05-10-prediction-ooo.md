@@ -434,8 +434,8 @@ void check_memory_dependencies(reservation_station_t* load_rs,
 
 ---
 
-**이전**: [CPU 기본 구조와 명령어 실행](chapter-02-cpu-interrupt/02-02-cpu-fundamentals.md)  
-**다음**: [CPU 캐시와 SIMD 벡터화](chapter-02-cpu-interrupt/02-11-cache-simd.md)에서 메모리 계층과 병렬 처리 기법을 학습합니다.
+**이전**: [CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)  
+**다음**: [CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)에서 메모리 계층과 병렬 처리 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -451,7 +451,7 @@ void check_memory_dependencies(reservation_station_t* load_rs,
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)

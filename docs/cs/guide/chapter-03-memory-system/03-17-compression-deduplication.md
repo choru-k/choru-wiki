@@ -101,8 +101,8 @@ priority_score: 4
 
 ### 선행 학습
 
-- [페이지 폴트 처리](chapter-03-memory-system/03-12-page-fault.md) - 메모리 부족 상황 이해
-- [가상 메모리 기초](../chapter-03-memory-system/02-12-virtual-memory.md) - 메모리 관리 기반 지식
+- [페이지 폴트 처리](./03-12-page-fault.md) - 메모리 부족 상황 이해
+- [가상 메모리 기초](.././02-12-virtual-memory.md) - 메모리 관리 기반 지식
 
 ### 후속 학습
 
@@ -155,7 +155,7 @@ echo 1 | sudo tee /sys/kernel/mm/ksm/run
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

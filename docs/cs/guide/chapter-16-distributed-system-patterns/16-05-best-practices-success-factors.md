@@ -636,7 +636,7 @@ Event-Driven Architecture의 기초를 탄탄히 다졌으니, 이제 더 고급
 
 ---
 
-**이전**: [16.2C 이벤트 소싱 구현](chapter-16-distributed-system-patterns/02c-event-sourcing-implementation.md)
+**이전**: [16.2C 이벤트 소싱 구현](./02c-event-sourcing-implementation.md)
 
 ## 📚 관련 문서
 
@@ -652,7 +652,7 @@ Event-Driven Architecture의 기초를 탄탄히 다졌으니, 이제 더 고급
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

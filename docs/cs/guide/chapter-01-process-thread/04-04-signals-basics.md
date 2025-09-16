@@ -448,8 +448,8 @@ void parent_process() {
 
 ---
 
-**이전**: [4.3 스케줄링 개요](./01-16-scheduling.md)  
-**다음**: [4.4b 파이프와 FIFO](chapter-01-process-thread/04b-pipes-fifos.md)에서 프로세스 간 데이터 스트리밍을 학습합니다.
+**이전**: [4.3 스케줄링 개요](./04-16-scheduling.md)  
+**다음**: [4.4b 파이프와 FIFO](./04b-pipes-fifos.md)에서 프로세스 간 데이터 스트리밍을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -465,13 +465,13 @@ void parent_process() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-04-process-thread)
+### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-40-process-management-monitoring.md)
+- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
+- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
+- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
+- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
+- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 

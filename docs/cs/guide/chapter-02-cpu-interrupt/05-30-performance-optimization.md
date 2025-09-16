@@ -331,9 +331,9 @@ Jim Keller (AMD Zen 설계자)의 말:
 
 ### 다음 단계
 
-- [인터럽트와 예외 처리](chapter-02-cpu-interrupt/02-12-interrupt-exception.md) - CPU 모드 전환 메커니즘
-- [컨텍스트 스위칭](chapter-02-cpu-interrupt/02-16-context-switching.md) - Ring 전환과 상태 저장
-- [전력 관리](chapter-02-cpu-interrupt/04-power-management.md) - CPU 상태 전환과 전력 최적화
+- [인터럽트와 예외 처리](./02-12-interrupt-exception.md) - CPU 모드 전환 메커니즘
+- [컨텍스트 스위칭](./02-16-context-switching.md) - Ring 전환과 상태 저장
+- [전력 관리](./04-power-management.md) - CPU 상태 전환과 전력 최적화
 
 ### 연관 주제
 
@@ -354,8 +354,8 @@ CPU가 외부 이벤트를 처리하는 메커니즘을 탐구해봅시다!
 
 ---
 
-**이전**: [CPU 캐시와 SIMD 벡터화](chapter-02-cpu-interrupt/02-11-cache-simd.md)  
-**다음**: CPU 아키텍처 시리즈를 모두 완료했습니다! [인터럽트와 예외 처리](chapter-02-cpu-interrupt/02-12-interrupt-exception.md)로 넘어가거나 [CPU 아키텍처 개요](chapter-02-cpu-interrupt/02-01-cpu-architecture.md)에서 전체 내용을 다시 확인하세요.
+**이전**: [CPU 캐시와 SIMD 벡터화](./02-11-cache-simd.md)  
+**다음**: CPU 아키텍처 시리즈를 모두 완료했습니다! [인터럽트와 예외 처리](./02-12-interrupt-exception.md)로 넘어가거나 [CPU 아키텍처 개요](./02-01-cpu-architecture.md)에서 전체 내용을 다시 확인하세요.
 
 ## 📚 관련 문서
 
@@ -371,7 +371,7 @@ CPU가 외부 이벤트를 처리하는 메커니즘을 탐구해봅시다!
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)

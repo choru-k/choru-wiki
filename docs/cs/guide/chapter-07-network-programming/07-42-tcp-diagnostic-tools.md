@@ -540,8 +540,8 @@ TCP 연결의 안정성과 성능은 적절한 소켓 옵션 설정에 크게 �
 
 ---
 
-**이전**: [TCP 연결 디버깅 개요](chapter-07-network-programming/07-40-tcp-debugging.md)  
-**다음**: [연결 풀 최적화](chapter-07-network-programming/07-35-connection-pool-optimization.md)에서 시스템 TCP 설정 자동화와 로드밸런서 설정 최적화를 학습합니다.
+**이전**: [TCP 연결 디버깅 개요](./07-40-tcp-debugging.md)  
+**다음**: [연결 풀 최적화](./07-35-connection-pool-optimization.md)에서 시스템 TCP 설정 자동화와 로드밸런서 설정 최적화를 학습합니다.
 
 ## 📚 관련 문서
 

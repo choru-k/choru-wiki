@@ -25,35 +25,35 @@ priority_score: 4
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [블록 I/O 아키텍처와 BIO 구조체](chapter-06-file-io/06-03-block-layer-architecture.md)
+### 1️⃣ [블록 I/O 아키텍처와 BIO 구조체](./06-03-block-layer-architecture.md)
 
 - 블록 I/O 계층의 계층적 구조와 설계 철학
 - BIO 구조체와 Request 구조체의 상세 분석
 - 메모리 풀 기반 고성능 할당 메커니즘
 - 요청 병합과 최적화 기법
 
-### 2️⃣ [I/O 스케줄러 알고리즘](chapter-06-file-io/06-19-io-schedulers.md)
+### 2️⃣ [I/O 스케줄러 알고리즘](./06-19-io-schedulers.md)
 
 - NOOP, Deadline, BFQ 스케줄러 심화 분석
 - 워크로드별 최적 스케줄러 선택 전략
 - 스케줄러 파라미터 튜닝 기법
 - 실전 성능 측정 및 비교
 
-### 3️⃣ [멀티큐 블록 계층](chapter-06-file-io/03c-multiqueue-block-layer.md)
+### 3️⃣ [멀티큐 블록 계층](./03c-multiqueue-block-layer.md)
 
 - blk-mq 아키텍처와 설계 원리
 - 하드웨어 큐와 소프트웨어 큐 매핑
 - 요청 병합과 플러깅 최적화
 - NUMA 및 CPU 친화성 최적화
 
-### 4️⃣ [NVMe 최적화와 io_uring](chapter-06-file-io/03d-nvme-io-uring.md)
+### 4️⃣ [NVMe 최적화와 io_uring](./03d-nvme-io-uring.md)
 
 - NVMe 프로토콜과 드라이버 구현
 - 도어벨 메커니즘과 큐 페어 관리
 - io_uring 비동기 I/O 혁신
 - 폴링과 인터럽트 하이브리드 처리
 
-### 5️⃣ [성능 모니터링과 튜닝](chapter-06-file-io/06-40-performance-monitoring-tuning.md)
+### 5️⃣ [성능 모니터링과 튜닝](./06-40-performance-monitoring-tuning.md)
 
 - I/O 통계 수집과 분석 도구
 - 워크로드별 최적화 전략
@@ -93,19 +93,19 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [블록 I/O 아키텍처](chapter-06-file-io/06-03-block-layer-architecture.md) → 전체 구조 이해
-2. [I/O 스케줄러](chapter-06-file-io/06-19-io-schedulers.md) → 스케줄링 원리 학습
+1. [블록 I/O 아키텍처](./06-03-block-layer-architecture.md) → 전체 구조 이해
+2. [I/O 스케줄러](./06-19-io-schedulers.md) → 스케줄링 원리 학습
 3. 간단한 스케줄러 튜닝 실험
 
 ### 중급자 (심화 학습)
 
-1. [멀티큐 블록 계층](chapter-06-file-io/03c-multiqueue-block-layer.md) → 병렬 처리 이해
-2. [NVMe 최적화](chapter-06-file-io/03d-nvme-io-uring.md) → 최신 기술 활용
+1. [멀티큐 블록 계층](./03c-multiqueue-block-layer.md) → 병렬 처리 이해
+2. [NVMe 최적화](./03d-nvme-io-uring.md) → 최신 기술 활용
 3. 실제 워크로드 성능 측정 및 최적화
 
 ### 전문가 (실전 적용)
 
-1. [성능 모니터링](chapter-06-file-io/06-40-performance-monitoring-tuning.md) → 고급 튜닝 기법
+1. [성능 모니터링](./06-40-performance-monitoring-tuning.md) → 고급 튜닝 기법
 2. 커스텀 I/O 스케줄러 개발
 3. 프로덕션 환경 성능 최적화 프로젝트
 
@@ -113,13 +113,13 @@ priority_score: 4
 
 ### 선행 학습
 
-- [파일 디스크립터와 VFS](chapter-06-file-io/06-10-file-descriptor.md) - I/O 인터페이스 기초
-- [가상 파일시스템](chapter-06-file-io/06-13-vfs-filesystem.md) - 상위 계층 이해
+- [파일 디스크립터와 VFS](./06-10-file-descriptor.md) - I/O 인터페이스 기초
+- [가상 파일시스템](./06-13-vfs-filesystem.md) - 상위 계층 이해
 
 ### 후속 학습  
 
 - [비동기 I/O와 이벤트 프로그래밍](04-async-io-event.md) - 응용 계층 최적화
-- [네트워크 I/O와 소켓](../chapter-07-network-programming/07-01-socket-basics.md) - 네트워크 I/O 확장
+- [네트워크 I/O와 소켓](../chapter-06-file-io/07-01-socket-basics.md) - 네트워크 I/O 확장
 
 ## 도입: 스토리지 성능의 병목
 
@@ -220,7 +220,7 @@ echo bfq > /sys/block/sda/queue/scheduler
 
 ---
 
-**이전**: [가상 파일시스템과 파일시스템 구현](chapter-06-file-io/06-13-vfs-filesystem.md)  
+**이전**: [가상 파일시스템과 파일시스템 구현](./06-13-vfs-filesystem.md)  
 **다음**: 비동기 I/O와 이벤트 기반 프로그래밍에서 고성능 I/O 프로그래밍을 학습합니다.
 
 ## 📚 관련 문서

@@ -391,8 +391,8 @@ CPU 전력 관리는 러시아 마트료시카처럼 계층적으로 구성됩�
 
 ---
 
-**이전**: [컨텍스트 스위칭](chapter-02-cpu-interrupt/02-16-context-switching.md)  
-**다음**: [DVFS와 동적 주파수 조절](chapter-02-cpu-interrupt/04b-dvfs-frequency-scaling.md)에서 실제 주파수 변경 메커니즘을 학습합니다.
+**이전**: [컨텍스트 스위칭](./02-16-context-switching.md)  
+**다음**: [DVFS와 동적 주파수 조절](./04b-dvfs-frequency-scaling.md)에서 실제 주파수 변경 메커니즘을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -408,7 +408,7 @@ CPU 전력 관리는 러시아 마트료시카처럼 계층적으로 구성됩�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)

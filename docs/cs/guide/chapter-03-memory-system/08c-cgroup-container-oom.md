@@ -492,8 +492,8 @@ requests와 limits를 적절히 설정하여 Pod OOM을 예방하고, 이벤트 
 
 ---
 
-**이전**: [03-44-dmesg-log-analysis.md](chapter-03-memory-system/03-44-dmesg-log-analysis.md)  
-**다음**: [08d-early-oom-prevention.md](chapter-03-memory-system/08d-early-oom-prevention.md)에서 조기 OOM 예방 전략을 학습합니다.
+**이전**: [03-44-dmesg-log-analysis.md](./03-44-dmesg-log-analysis.md)  
+**다음**: [08d-early-oom-prevention.md](./08d-early-oom-prevention.md)에서 조기 OOM 예방 전략을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -509,7 +509,7 @@ requests와 limits를 적절히 설정하여 Pod OOM을 예방하고, 이벤트 
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

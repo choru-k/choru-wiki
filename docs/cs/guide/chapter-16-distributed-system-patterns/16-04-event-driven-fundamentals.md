@@ -538,7 +538,7 @@ Java 기반의 프로듀서/컨슈머 구현을 통해 안정적인 이벤트 �
 
 ---
 
-**다음**: [16.2B 실시간 스트림 처리](chapter-16-distributed-system-patterns/02b-real-time-stream-processing.md)에서 Apache Flink를 활용한 복합 이벤트 처리를 학습합니다.
+**다음**: [16.2B 실시간 스트림 처리](./02b-real-time-stream-processing.md)에서 Apache Flink를 활용한 복합 이벤트 처리를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -554,7 +554,7 @@ Java 기반의 프로듀서/컨슈머 구현을 통해 안정적인 이벤트 �
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

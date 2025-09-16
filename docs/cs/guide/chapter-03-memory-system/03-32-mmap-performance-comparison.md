@@ -424,7 +424,7 @@ void optimize_by_pattern(const char *filename, access_pattern_t pattern) {
 
 ---
 
-**다음**: [madvise 패턴 활용](chapter-03-memory-system/03-33-madvise-optimization-patterns.md)에서 운영체제에게 메모리 사용 힌트를 제공하는 방법을 학습합니다.
+**다음**: [madvise 패턴 활용](./03-33-madvise-optimization-patterns.md)에서 운영체제에게 메모리 사용 힌트를 제공하는 방법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -440,7 +440,7 @@ void optimize_by_pattern(const char *filename, access_pattern_t pattern) {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

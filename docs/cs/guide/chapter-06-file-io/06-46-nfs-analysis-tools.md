@@ -504,8 +504,8 @@ LAN(< 5ms), WAN(> 10ms), 메타데이터 집약적, 처리량 집약적 등 환�
 
 ---
 
-**이전**: [네트워크 파일시스템 최적화 개요](chapter-06-file-io/06-34-network-filesystem-optimization.md)  
-**다음**: [자동 최적화 스크립트](chapter-06-file-io/06-35-auto-optimization-scripts.md)에서 분석 결과를 바탕으로 한 자동 튜닝을 학습합니다.
+**이전**: [네트워크 파일시스템 최적화 개요](./06-34-network-filesystem-optimization.md)  
+**다음**: [자동 최적화 스크립트](./06-35-auto-optimization-scripts.md)에서 분석 결과를 바탕으로 한 자동 튜닝을 학습합니다.
 
 ## 📚 관련 문서
 

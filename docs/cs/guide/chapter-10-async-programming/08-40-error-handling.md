@@ -426,7 +426,7 @@ Bulkhead 패턴으로 동시 실행을 제한하여 한 부분의 장애가 전�
 
 ---
 
-**이전**: [8.1d 실행 모델과 스케줄링](chapter-10-async-programming/10-13-execution-scheduling.md)  
+**이전**: [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)  
 **다음**: [8.2 이벤트 루프와 동시성](../02-event-loop-concurrency.md)에서 Node.js의 libuv와 100만 연결 처리 기법을 학습합니다.
 
 ## 📚 관련 문서
@@ -443,7 +443,7 @@ Bulkhead 패턴으로 동시 실행을 제한하여 한 부분의 장애가 전�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

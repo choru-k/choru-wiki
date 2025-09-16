@@ -1043,8 +1043,8 @@ Provider와 Consumer 간의 계약을 자동으로 검증하여 호환성 보장
 
 ---
 
-**이전**: [Database per Service 패턴](chapter-16-distributed-system-patterns/16-14-2-database-per-service.md)  
-**다음**: [마이크로서비스 설계 원칙 개요](chapter-16-distributed-system-patterns/16-11-design-principles.md)로 돌아가서 전체 설계 원칙을 복습합니다.
+**이전**: [Database per Service 패턴](./16-14-2-database-per-service.md)  
+**다음**: [마이크로서비스 설계 원칙 개요](./16-11-design-principles.md)로 돌아가서 전체 설계 원칙을 복습합니다.
 
 ## 📚 관련 문서
 
@@ -1060,7 +1060,7 @@ Provider와 Consumer 간의 계약을 자동으로 검증하여 호환성 보장
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

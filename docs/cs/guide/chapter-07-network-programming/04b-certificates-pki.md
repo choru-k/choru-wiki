@@ -617,8 +617,8 @@ char* generate_certificate_report_json(CertMonitor* monitor) {
 
 ---
 
-**이전**: [TLS 프로토콜 기초](chapter-07-network-programming/07-04-tls-protocol-fundamentals.md)
-**다음**: [암호화 알고리즘과 성능 최적화](chapter-07-network-programming/07-33-crypto-performance.md)에서 암호화 성능 벤치마킹을 학습합니다.
+**이전**: [TLS 프로토콜 기초](./07-04-tls-protocol-fundamentals.md)
+**다음**: [암호화 알고리즘과 성능 최적화](./07-33-crypto-performance.md)에서 암호화 성능 벤치마킹을 학습합니다.
 
 ## 📚 관련 문서
 

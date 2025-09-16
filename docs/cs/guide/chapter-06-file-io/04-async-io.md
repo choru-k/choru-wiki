@@ -25,14 +25,14 @@ priority_score: 4
 
 이 섹션은 6개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [기본 개념과 C10K 문제](chapter-06-file-io/06-04-async-io-fundamentals.md)
+### 1️⃣ [기본 개념과 C10K 문제](./06-04-async-io-fundamentals.md)
 
 - 동기 vs 비동기 I/O의 근본적 차이점
 - C10K 문제의 배경과 해결 필요성  
 - nginx vs Apache 성능 비교 실례
 - 이벤트 기반 아키텍처의 등장 배경
 
-### 2️⃣ [I/O 멀티플렉싱: select, poll, epoll](chapter-06-file-io/04b-io-multiplexing-evolution.md)
+### 2️⃣ [I/O 멀티플렉싱: select, poll, epoll](./04b-io-multiplexing-evolution.md)
 
 - select: 1983년 BSD의 혁명적 아이디어
 - poll: System V의 select 개선점
@@ -40,7 +40,7 @@ priority_score: 4
 - Edge-Triggered vs Level-Triggered 모드
 - 실제 성능 벤치마크와 구현 예제
 
-### 3️⃣ [io_uring: 차세대 비동기 I/O](chapter-06-file-io/04c-io-uring-implementation.md)
+### 3️⃣ [io_uring: 차세대 비동기 I/O](./04c-io-uring-implementation.md)
 
 - io_uring 아키텍처와 설계 철학
 - Submission Queue와 Completion Queue 메커니즘
@@ -48,7 +48,7 @@ priority_score: 4
 - 버퍼 선택과 zero-copy 구현
 - 고성능 서버 구현 실예
 
-### 4️⃣ [리액터 패턴 구현](chapter-06-file-io/04d-reactor-pattern.md)
+### 4️⃣ [리액터 패턴 구현](./04d-reactor-pattern.md)
 
 - 리액터 패턴의 핵심 아키텍처
 - 이벤트 핸들러와 Demultiplexer 설계
@@ -56,7 +56,7 @@ priority_score: 4
 - HTTP 서버 구현 예제
 - 실제 프로덕션 최적화 기법
 
-### 5️⃣ [프로액터 패턴과 Windows IOCP](chapter-06-file-io/04e-proactor-iocp.md)
+### 5️⃣ [프로액터 패턴과 Windows IOCP](./04e-proactor-iocp.md)
 
 - 프로액터 vs 리액터 패턴 비교
 - Windows I/O Completion Port 구현
@@ -64,7 +64,7 @@ priority_score: 4
 - 워커 스레드 관리 전략
 - 크로스 플랫폼 비동기 I/O 설계
 
-### 6️⃣ [고성능 네트워크 최적화](chapter-06-file-io/06-31-network-optimization.md)
+### 6️⃣ [고성능 네트워크 최적화](./06-31-network-optimization.md)
 
 - Zero-copy 기법: sendfile, splice
 - TCP 최적화와 소켓 튜닝
@@ -104,15 +104,15 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [기본 개념](chapter-06-file-io/06-04-async-io-fundamentals.md) → 동기/비동기 차이 이해
-2. [select/poll/epoll](chapter-06-file-io/04b-io-multiplexing-evolution.md) → 기본적 이벤트 루프 구현
-3. [리액터 패턴](chapter-06-file-io/04d-reactor-pattern.md) → 실용적 서버 아키텍처
+1. [기본 개념](./06-04-async-io-fundamentals.md) → 동기/비동기 차이 이해
+2. [select/poll/epoll](./04b-io-multiplexing-evolution.md) → 기본적 이벤트 루프 구현
+3. [리액터 패턴](./04d-reactor-pattern.md) → 실용적 서버 아키텍처
 
 ### 중급자 (심화 학습)
 
-1. [io_uring](chapter-06-file-io/04c-io-uring-implementation.md) → 최신 비동기 I/O 기법
-2. [프로액터 패턴](chapter-06-file-io/04e-proactor-iocp.md) → 고급 비동기 아키텍처
-3. [네트워크 최적화](chapter-06-file-io/06-31-network-optimization.md) → 성능 튜닝 기법
+1. [io_uring](./04c-io-uring-implementation.md) → 최신 비동기 I/O 기법
+2. [프로액터 패턴](./04e-proactor-iocp.md) → 고급 비동기 아키텍처
+3. [네트워크 최적화](./06-31-network-optimization.md) → 성능 튜닝 기법
 
 ### 전문가 (마스터리)
 
@@ -124,17 +124,17 @@ priority_score: 4
 
 ### 선행 학습
 
-- [Chapter 6-1: 파일 디스크립터와 I/O](chapter-06-file-io/06-10-file-descriptor.md)
-- [Chapter 6-2: VFS와 파일시스템](chapter-06-file-io/06-13-vfs-filesystem.md)
+- [Chapter 6-1: 파일 디스크립터와 I/O](./06-10-file-descriptor.md)
+- [Chapter 6-2: VFS와 파일시스템](./06-13-vfs-filesystem.md)
 
 ### 후속 학습  
 
-- [Chapter 7: 네트워크 프로그래밍](../chapter-07-network-programming/07-01-socket-basics.md)
+- [Chapter 7: 네트워크 프로그래밍](../chapter-06-file-io/07-01-socket-basics.md)
 - [Chapter 8: 비동기 프로그래밍](../chapter-10-async-programming/08-10-promise-future.md)
 
 ---
 
-**다음**: [기본 개념과 C10K 문제](chapter-06-file-io/06-04-async-io-fundamentals.md)에서 비동기 I/O의 기초를 학습합니다.
+**다음**: [기본 개념과 C10K 문제](./06-04-async-io-fundamentals.md)에서 비동기 I/O의 기초를 학습합니다.
 
 ## 📚 관련 문서
 

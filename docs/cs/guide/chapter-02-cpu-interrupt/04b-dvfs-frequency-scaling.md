@@ -500,8 +500,8 @@ Phase-Locked Loop는 안정적인 주파수 전환을 보장합니다:
 
 ---
 
-**이전**: [전력 관리 기본 개념](chapter-02-cpu-interrupt/05-06-power-fundamentals.md)  
-**다음**: [C-State와 절전 모드](chapter-02-cpu-interrupt/04c-cstate-idle-management.md)에서 유휴 상태 전력 관리를 학습합니다.
+**이전**: [전력 관리 기본 개념](./05-06-power-fundamentals.md)  
+**다음**: [C-State와 절전 모드](./04c-cstate-idle-management.md)에서 유휴 상태 전력 관리를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -517,7 +517,7 @@ Phase-Locked Loop는 안정적인 주파수 전환을 보장합니다:
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./05-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./05-02-cpu-fundamentals.md)

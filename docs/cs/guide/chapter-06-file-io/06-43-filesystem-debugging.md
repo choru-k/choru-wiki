@@ -27,14 +27,14 @@ priority_score: 4
 
 이 파일시스템 디버깅 섹션은 3개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [진단 방법론과 흐름도](chapter-06-file-io/06-44-filesystem-diagnostic-flow.md)
+### 1️⃣ [진단 방법론과 흐름도](./06-44-filesystem-diagnostic-flow.md)
 
 - 파일시스템 오류 진단 흐름
 - 증상별 분류 및 초기 대응
 - 진단 도구 개요
 - 체계적인 문제 해결 접근법
 
-### 2️⃣ [종합 진단 도구 구현](chapter-06-file-io/06-45-filesystem-diagnostic-tools.md)
+### 2️⃣ [종합 진단 도구 구현](./06-45-filesystem-diagnostic-tools.md)
 
 - C 언어로 구현한 종합 진단 도구
 - 마운트된 파일시스템 정보 수집
@@ -43,7 +43,7 @@ priority_score: 4
 - 디스크 건강 상태 확인
 - 배드블록 검사 및 복구 가이드
 
-### 3️⃣ [자동 복구 시스템 구축](chapter-06-file-io/06c-filesystem-auto-recovery.md)
+### 3️⃣ [자동 복구 시스템 구축](./06c-filesystem-auto-recovery.md)
 
 - 자동 파일시스템 복구 스크립트
 - 실시간 모니터링 시스템
@@ -83,14 +83,14 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [진단 방법론](chapter-06-file-io/06-44-filesystem-diagnostic-flow.md) → 전체적인 접근 방법 이해
-2. [진단 도구](chapter-06-file-io/06-45-filesystem-diagnostic-tools.md) → 실제 도구 사용법 학습
+1. [진단 방법론](./06-44-filesystem-diagnostic-flow.md) → 전체적인 접근 방법 이해
+2. [진단 도구](./06-45-filesystem-diagnostic-tools.md) → 실제 도구 사용법 학습
 3. 간단한 파일시스템 검사 실습
 
 ### 중급자 (실무 적용)
 
-1. [종합 진단 도구](chapter-06-file-io/06-45-filesystem-diagnostic-tools.md) → C 구현체 분석
-2. [자동 복구 시스템](chapter-06-file-io/06c-filesystem-auto-recovery.md) → 운영 환경 적용
+1. [종합 진단 도구](./06-45-filesystem-diagnostic-tools.md) → C 구현체 분석
+2. [자동 복구 시스템](./06c-filesystem-auto-recovery.md) → 운영 환경 적용
 3. 실제 장애 상황 시뮬레이션
 
 ### 고급자 (시스템 최적화)
@@ -103,13 +103,13 @@ priority_score: 4
 
 ### 선행 학습
 
-- [파일 디스크립터와 VFS](chapter-06-file-io/06-10-file-descriptor.md) - 파일시스템 기초 이해
-- [블록 I/O 시스템](chapter-06-file-io/06-18-block-io.md) - 저수준 I/O 메커니즘
+- [파일 디스크립터와 VFS](./06-10-file-descriptor.md) - 파일시스템 기초 이해
+- [블록 I/O 시스템](./06-18-block-io.md) - 저수준 I/O 메커니즘
 
 ### 후속 학습
 
-- [네트워크 파일시스템 최적화](chapter-06-file-io/06-34-network-filesystem-optimization.md) - 분산 환경에서의 파일시스템
-- [I/O 성능 분석](chapter-06-file-io/06-41-io-performance.md) - 성능 튜닝
+- [네트워크 파일시스템 최적화](./06-34-network-filesystem-optimization.md) - 분산 환경에서의 파일시스템
+- [I/O 성능 분석](./06-41-io-performance.md) - 성능 튜닝
 
 ## ⚡ 빠른 시작 가이드
 
@@ -135,7 +135,7 @@ fuser -v /mount/point    # 사용 중인 프로세스 확인
 
 ---
 
-**다음**: [파일시스템 진단 방법론](chapter-06-file-io/06-44-filesystem-diagnostic-flow.md)에서 체계적인 문제 해결 접근법을 학습합니다.
+**다음**: [파일시스템 진단 방법론](./06-44-filesystem-diagnostic-flow.md)에서 체계적인 문제 해결 접근법을 학습합니다.
 
 ```c
 // filesystem_debugger.c

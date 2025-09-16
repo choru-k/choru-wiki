@@ -25,7 +25,7 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [Event-Driven Architecture 기초](chapter-16-distributed-system-patterns/16-04-event-driven-fundamentals.md)
+### 1️⃣ [Event-Driven Architecture 기초](./16-04-event-driven-fundamentals.md)
 
 - 실시간 추천 시스템 구축 사례
 - 배치 처리 시스템의 한계와 해결책
@@ -33,7 +33,7 @@ priority_score: 4
 - Apache Kafka 기반 이벤트 스트리밍
 - Java 프로듀서/컨슈머 패턴 구현
 
-### 2️⃣ [실시간 스트림 처리](chapter-16-distributed-system-patterns/02b-real-time-stream-processing.md)
+### 2️⃣ [실시간 스트림 처리](./02b-real-time-stream-processing.md)
 
 - Apache Flink 기반 실시간 분석 파이프라인
 - 복합 이벤트 처리 (CEP) 고급 패턴
@@ -41,7 +41,7 @@ priority_score: 4
 - 실시간 A/B 테스트 결과 분석
 - 바이럴 콘텐츠 및 취향 변화 패턴 인식
 
-### 3️⃣ [이벤트 소싱 구현](chapter-16-distributed-system-patterns/02c-event-sourcing-implementation.md)
+### 3️⃣ [이벤트 소싱 구현](./02c-event-sourcing-implementation.md)
 
 - PostgreSQL 기반 완전한 이벤트 스토어
 - 집합체 루트 패턴과 도메인 모델
@@ -49,7 +49,7 @@ priority_score: 4
 - 동시성 제어와 낙관적 동시성
 - 이벤트 재생을 통한 상태 복원
 
-### 4️⃣ [베스트 프랙티스와 성공 요인](chapter-16-distributed-system-patterns/16-05-best-practices-success-factors.md)
+### 4️⃣ [베스트 프랙티스와 성공 요인](./16-05-best-practices-success-factors.md)
 
 - 이벤트 설계 원칙과 스키마 관리
 - 내결함성 설계와 모니터링 전략
@@ -97,14 +97,14 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [Event-Driven 기초](chapter-16-distributed-system-patterns/16-04-event-driven-fundamentals.md) → 핵심 개념과 실제 사례 이해
-2. [베스트 프랙티스](chapter-16-distributed-system-patterns/16-05-best-practices-success-factors.md) → 설계 원칙과 주의사항 학습
+1. [Event-Driven 기초](./16-04-event-driven-fundamentals.md) → 핵심 개념과 실제 사례 이해
+2. [베스트 프랙티스](./16-05-best-practices-success-factors.md) → 설계 원칙과 주의사항 학습
 3. 간단한 이벤트 기반 시스템 구현 연습
 
 ### 중급자 (심화 학습)
 
-1. [실시간 스트림 처리](chapter-16-distributed-system-patterns/02b-real-time-stream-processing.md) → Apache Flink와 CEP 마스터
-2. [이벤트 소싱 구현](chapter-16-distributed-system-patterns/02c-event-sourcing-implementation.md) → 완전한 이벤트 기반 시스템 구축
+1. [실시간 스트림 처리](./02b-real-time-stream-processing.md) → Apache Flink와 CEP 마스터
+2. [이벤트 소싱 구현](./02c-event-sourcing-implementation.md) → 완전한 이벤트 기반 시스템 구축
 3. 실제 프로덕션 환경에 적용
 
 ### 고급자 (전문성 강화)
@@ -118,12 +118,12 @@ priority_score: 4
 ### 선행 학습
 
 - [Microservices Architecture](chapter-15-microservices-architecture/16-01-microservices-architecture.md) - 분산 시스템 기초
-- [CQRS와 Event Sourcing](chapter-16-distributed-system-patterns/03-cqrs-event-sourcing.md) - 심화 아키텍처 패턴
+- [CQRS와 Event Sourcing](./03-cqrs-event-sourcing.md) - 심화 아키텍처 패턴
 
 ### 후속 학습
 
-- [Saga Pattern](chapter-16-distributed-system-patterns/04-saga-pattern.md) - 분산 트랜잭션 관리
-- [API Gateway Patterns](chapter-16-distributed-system-patterns/16-55-api-gateway-patterns.md) - 마이크로서비스 통신 최적화
+- [Saga Pattern](./04-saga-pattern.md) - 분산 트랜잭션 관리
+- [API Gateway Patterns](./16-55-api-gateway-patterns.md) - 마이크로서비스 통신 최적화
 
 ## 🏆 학습 성과 지표
 
@@ -137,7 +137,7 @@ priority_score: 4
 
 ---
 
-**시작**: [16.2A Event-Driven Architecture 기초](chapter-16-distributed-system-patterns/16-04-event-driven-fundamentals.md)에서 실시간 추천 시스템 구축 사례를 통해 Event-Driven Architecture의 핵심 개념을 학습합니다.
+**시작**: [16.2A Event-Driven Architecture 기초](./16-04-event-driven-fundamentals.md)에서 실시간 추천 시스템 구축 사례를 통해 Event-Driven Architecture의 핵심 개념을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -153,7 +153,7 @@ priority_score: 4
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

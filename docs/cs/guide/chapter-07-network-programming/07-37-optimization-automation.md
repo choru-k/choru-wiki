@@ -680,8 +680,8 @@ watch -n 1 'ss -s'
 
 ---
 
-**이전**: [네트워크 지연시간 분석 도구](chapter-07-network-programming/07-44-latency-analysis-tools.md)  
-**다음**: [고성능 네트워킹](chapter-07-network-programming/07-38-high-performance-networking.md)에서 더욱 전문적인 네트워크 최적화 기법을 학습합니다.
+**이전**: [네트워크 지연시간 분석 도구](./07-44-latency-analysis-tools.md)  
+**다음**: [고성능 네트워킹](./07-38-high-performance-networking.md)에서 더욱 전문적인 네트워크 최적화 기법을 학습합니다.
 
 ## 📚 관련 문서
 

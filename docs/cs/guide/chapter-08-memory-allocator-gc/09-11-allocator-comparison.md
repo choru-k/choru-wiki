@@ -263,8 +263,8 @@ Arena 구조와 세밀한 크기 클래스로 메모리 효율성과 성능의 �
 
 ---
 
-**이전**: [08-01-malloc-fundamentals.md](chapter-08-memory-allocator-gc/08-01-malloc-fundamentals.md)  
-**다음**: [08-12-custom-allocators.md](chapter-08-memory-allocator-gc/08-12-custom-allocators.md)에서 커스텀 메모리 할당자 구현을 학습합니다.
+**이전**: [08-01-malloc-fundamentals.md](./08-01-malloc-fundamentals.md)  
+**다음**: [08-12-custom-allocators.md](./08-12-custom-allocators.md)에서 커스텀 메모리 할당자 구현을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -280,7 +280,7 @@ Arena 구조와 세밀한 크기 클래스로 메모리 효율성과 성능의 �
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)

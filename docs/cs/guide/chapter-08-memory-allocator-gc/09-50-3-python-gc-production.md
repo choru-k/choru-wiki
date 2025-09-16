@@ -744,7 +744,7 @@ Python GC는 완벽하지 않지만, 특성을 이해하고 적절히 대응하�
 
 ---
 
-**이전**: [Python GC 최적화 전략](chapter-08-memory-allocator-gc/08-32-2-python-gc-optimization.md)  
+**이전**: [Python GC 최적화 전략](./08-32-2-python-gc-optimization.md)  
 **관련 학습**: [메모리 최적화](../chapter-09-advanced-memory-management/08-34-memory-optimization.md)에서 언어 무관 최적화 기법을 학습하세요.
 
 ## 📚 관련 문서
@@ -761,7 +761,7 @@ Python GC는 완벽하지 않지만, 특성을 이해하고 적절히 대응하�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)

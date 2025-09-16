@@ -28,28 +28,28 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [가상 메모리 기초와 주소 변환](chapter-03-memory-system/03-03-virtual-memory-basics.md)
+### 1️⃣ [가상 메모리 기초와 주소 변환](./03-03-virtual-memory-basics.md)
 
 - 두 개의 세계: 가상과 현실
 - 가상 메모리가 해결하는 문제들
 - 주소 공간의 크기와 구조
 - 실습: 가상 주소와 물리 주소 비교
 
-### 2️⃣ [페이징 시스템과 페이지 테이블](chapter-03-memory-system/03-13-paging-system.md)
+### 2️⃣ [페이징 시스템과 페이지 테이블](./03-13-paging-system.md)
 
 - 페이지와 프레임의 개념
 - 페이지 테이블의 구조와 동작
 - 다단계 페이지 테이블의 필요성
 - x86-64 4단계 페이징 메커니즘
 
-### 3️⃣ [페이지 폴트와 TLB 최적화](chapter-03-memory-system/03-14-page-fault-tlb.md)
+### 3️⃣ [페이지 폴트와 TLB 최적화](./03-14-page-fault-tlb.md)
 
 - 페이지 폴트의 정체와 처리 과정
 - Copy-on-Write(CoW) 메커니즘
 - TLB의 구조와 성능 최적화
 - 메모리 접근 패턴의 중요성
 
-### 4️⃣ [스왑과 대용량 페이지 활용](chapter-03-memory-system/03-15-swap-huge-pages.md)
+### 4️⃣ [스왑과 대용량 페이지 활용](./03-15-swap-huge-pages.md)
 
 - 스왑의 필요성과 페이지 교체 알고리즘
 - 메모리 압박 상황 대응
@@ -89,14 +89,14 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [가상 메모리 기초](chapter-03-memory-system/03-03-virtual-memory-basics.md) → 기본 개념 이해
-2. [페이징 시스템](chapter-03-memory-system/03-13-paging-system.md) → 구현 원리 학습
+1. [가상 메모리 기초](./03-03-virtual-memory-basics.md) → 기본 개념 이해
+2. [페이징 시스템](./03-13-paging-system.md) → 구현 원리 학습
 3. 간단한 메모리 할당 실험으로 이해 확인
 
 ### 중급자 (심화 학습)
 
-1. [페이지 폴트와 TLB](chapter-03-memory-system/03-14-page-fault-tlb.md) → 성능 최적화
-2. [스왑과 Huge Pages](chapter-03-memory-system/03-15-swap-huge-pages.md) → 실무 활용
+1. [페이지 폴트와 TLB](./03-14-page-fault-tlb.md) → 성능 최적화
+2. [스왑과 Huge Pages](./03-15-swap-huge-pages.md) → 실무 활용
 3. 실제 서버 환경에서 메모리 모니터링
 
 ### 고급자 (전문가 과정)
@@ -109,13 +109,13 @@ priority_score: 4
 
 ### 선행 학습
 
-- [스택과 힙 메모리](chapter-03-memory-system/03-11-stack-heap.md) - 메모리 레이아웃 기초
-- [프로세스 메모리 구조](chapter-03-memory-system/03-10-process-memory.md) - 메모리 영역 이해
+- [스택과 힙 메모리](./03-11-stack-heap.md) - 메모리 레이아웃 기초
+- [프로세스 메모리 구조](./03-10-process-memory.md) - 메모리 영역 이해
 
 ### 후속 학습
 
-- [메모리 매핑](chapter-03-memory-system/03-16-memory-mapping.md) - 파일과 메모리 연동
-- [메모리 누수 디버깅](chapter-03-memory-system/03-41-memory-leak-debugging.md) - 문제 해결 기법
+- [메모리 매핑](./03-16-memory-mapping.md) - 파일과 메모리 연동
+- [메모리 누수 디버깅](./03-41-memory-leak-debugging.md) - 문제 해결 기법
 
 ## 이 문서를 읽으면 답할 수 있는 질문들
 
@@ -180,7 +180,7 @@ priority_score: 4
 
 ## 다음 섹션 예고
 
-다음 섹션([2-4: 메모리 매핑과 공유 메모리는 어떻게 동작하는가](chapter-03-memory-system/03-16-memory-mapping.md))에서는 **메모리 매핑과 공유 메모리**를 탐구합니다:
+다음 섹션([2-4: 메모리 매핑과 공유 메모리는 어떻게 동작하는가](./03-16-memory-mapping.md))에서는 **메모리 매핑과 공유 메모리**를 탐구합니다:
 
 - mmap()은 어떻게 파일을 메모리처럼 다루게 할까?
 - 프로세스 간 가장 빠른 통신 방법은?

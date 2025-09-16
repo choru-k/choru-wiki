@@ -535,8 +535,8 @@ Generator를 사용해 긴 작업을 작은 단위로 나누어 UI 반응성을 
 
 ---
 
-**이전**: [8.1c 취소와 타임아웃](chapter-10-async-programming/10-12-cancellation-timeout.md)  
-**다음**: [8.1e 에러 처리 패턴](chapter-10-async-programming/10-40-error-handling.md)에서 Circuit Breaker와 장애 격리 기법을 학습합니다.
+**이전**: [8.1c 취소와 타임아웃](./10-12-cancellation-timeout.md)  
+**다음**: [8.1e 에러 처리 패턴](./10-40-error-handling.md)에서 Circuit Breaker와 장애 격리 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -552,7 +552,7 @@ Generator를 사용해 긴 작업을 작은 단위로 나누어 UI 반응성을 
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

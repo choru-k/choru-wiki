@@ -634,8 +634,8 @@ int main() {
 
 ---
 
-**이전**: [소켓의 개념과 기본 구조](chapter-07-network-programming/07-02-socket-fundamentals.md)  
-**다음**: [UDP와 Raw 소켓 프로그래밍](chapter-07-network-programming/07-11-udp-raw-sockets.md)에서 UDP와 Raw 소켓의 활용을 학습합니다.
+**이전**: [소켓의 개념과 기본 구조](./07-02-socket-fundamentals.md)  
+**다음**: [UDP와 Raw 소켓 프로그래밍](./07-11-udp-raw-sockets.md)에서 UDP와 Raw 소켓의 활용을 학습합니다.
 
 ## 📚 관련 문서
 

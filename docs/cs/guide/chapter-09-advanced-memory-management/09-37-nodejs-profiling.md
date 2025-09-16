@@ -728,8 +728,8 @@ GC 이벤트와 성능을 실시간으로 추적하여 메모리 관리 효율�
 
 ---
 
-**이전**: [시스템 레벨 탐지 도구](chapter-09-advanced-memory-management/05a-system-level-detection.md)
-**다음**: [메모리 최적화](chapter-09-advanced-memory-management/09-34-memory-optimization.md)에서 누수 해결 후 성능 최적화를 학습합니다.
+**이전**: [시스템 레벨 탐지 도구](./05a-system-level-detection.md)
+**다음**: [메모리 최적화](./09-34-memory-optimization.md)에서 누수 해결 후 성능 최적화를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -745,7 +745,7 @@ GC 이벤트와 성능을 실시간으로 추적하여 메모리 관리 효율�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)

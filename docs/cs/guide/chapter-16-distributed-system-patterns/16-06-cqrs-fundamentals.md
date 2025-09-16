@@ -196,8 +196,8 @@ CQRS는 단순히 성능 향상 기법이 아닙니다. 읽기와 쓰기의 본�
 
 ---
 
-**이전**: [16.3 CQRS와 이벤트 소싱 개요](chapter-16-distributed-system-patterns/03-cqrs-event-sourcing.md)  
-**다음**: [16.3b CQRS 패턴 구현](chapter-16-distributed-system-patterns/03b-cqrs-pattern-implementation.md)에서 Command와 Query 분리 구현을 학습합니다.
+**이전**: [16.3 CQRS와 이벤트 소싱 개요](./03-cqrs-event-sourcing.md)  
+**다음**: [16.3b CQRS 패턴 구현](./03b-cqrs-pattern-implementation.md)에서 Command와 Query 분리 구현을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -213,7 +213,7 @@ CQRS는 단순히 성능 향상 기법이 아닙니다. 읽기와 쓰기의 본�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

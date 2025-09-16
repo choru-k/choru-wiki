@@ -33,21 +33,21 @@ priority_score: 0
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [메모리 누수 탐지와 디버깅 도구](chapter-09-advanced-memory-management/09-41-memory-leak-debugging.md)
+### 1️⃣ [메모리 누수 탐지와 디버깅 도구](./09-41-memory-leak-debugging.md)
 
 - 메모리 누수의 10가지 패턴과 실제 사례
 - Valgrind, AddressSanitizer를 활용한 C/C++ 디버깅
 - Java 프로파일링 도구 (jmap, jstat, JFR, MAT) 완전 정복
 - 실시간 메모리 모니터링 시스템 구축
 
-### 2️⃣ [Zero-allocation 프로그래밍 기법](chapter-09-advanced-memory-management/04b-zero-allocation-programming.md)
+### 2️⃣ [Zero-allocation 프로그래밍 기법](./04b-zero-allocation-programming.md)
 
 - HFT(High-Frequency Trading) 시스템의 Zero-allocation 패턴
 - Object Pool, Primitive 사용, ByteBuffer 재사용
 - 게임 엔진의 프레임 할당자 구현
 - Zero-allocation 벤치마킹과 성능 측정
 
-### 3️⃣ [Cache-friendly 자료구조 최적화](chapter-09-advanced-memory-management/09-35-cache-optimization.md)
+### 3️⃣ [Cache-friendly 자료구조 최적화](./09-35-cache-optimization.md)
 
 - 캐시 계층 이해와 성능 영향
 - Array of Structs vs Struct of Arrays 비교
@@ -93,13 +93,13 @@ Terabyte 급 데이터를 처리하면서 GC pause를 1ms 이하로 유지하는
 
 ### 초보자 (추천 순서)
 
-1. [메모리 누수 탐지](chapter-09-advanced-memory-management/09-41-memory-leak-debugging.md) → 기본 패턴과 도구 이해
-2. [Cache 최적화](chapter-09-advanced-memory-management/09-35-cache-optimization.md) → 성능 개선 기초
+1. [메모리 누수 탐지](./09-41-memory-leak-debugging.md) → 기본 패턴과 도구 이해
+2. [Cache 최적화](./09-35-cache-optimization.md) → 성능 개선 기초
 3. 간단한 최적화 프로젝트로 실습
 
 ### 중급자 (심화 학습)
 
-1. [Zero-allocation](chapter-09-advanced-memory-management/04b-zero-allocation-programming.md) → 고급 기법 습득
+1. [Zero-allocation](./04b-zero-allocation-programming.md) → 고급 기법 습득
 2. [실전 사례](04d-production-optimization.md) → 프로덕션 적용
 3. 실제 서비스에서 메모리 최적화 프로젝트 진행
 
@@ -153,7 +153,7 @@ Terabyte 급 데이터를 처리하면서 GC pause를 1ms 이하로 유지하는
 
 ---
 
-**다음**: [메모리 누수 탐지와 디버깅 도구](chapter-09-advanced-memory-management/09-41-memory-leak-debugging.md)에서 실제 메모리 누수 패턴과 전문가급 디버깅 도구 사용법을 학습합니다.
+**다음**: [메모리 누수 탐지와 디버깅 도구](./09-41-memory-leak-debugging.md)에서 실제 메모리 누수 패턴과 전문가급 디버깅 도구 사용법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -169,7 +169,7 @@ Terabyte 급 데이터를 처리하면서 GC pause를 1ms 이하로 유지하는
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)

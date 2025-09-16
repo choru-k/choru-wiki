@@ -653,8 +653,8 @@ JSON 형식의 상세 분석 리포트와 개선 권장사항 제공
 
 ---
 
-**이전**: [메모리 누수 탐지 개요](chapter-09-advanced-memory-management/05-memory-leak-detection.md)
-**다음**: [JavaScript/Node.js 프로파일링](chapter-09-advanced-memory-management/09-37-nodejs-profiling.md)에서 고수준 언어의 메모리 프로파일링을 학습합니다.
+**이전**: [메모리 누수 탐지 개요](./05-memory-leak-detection.md)
+**다음**: [JavaScript/Node.js 프로파일링](./09-37-nodejs-profiling.md)에서 고수준 언어의 메모리 프로파일링을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -670,7 +670,7 @@ JSON 형식의 상세 분석 리포트와 개선 권장사항 제공
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)

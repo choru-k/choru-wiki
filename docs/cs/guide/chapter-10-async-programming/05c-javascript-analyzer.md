@@ -675,8 +675,8 @@ Async Hooks와 Performance Observer를 통해 실행 중인 애플리케이션�
 
 ---
 
-**이전**: [C 기반 모니터링 시스템](chapter-10-async-programming/08-43-c-monitoring-system.md)  
-**다음**: [코루틴과 비동기 패턴](chapter-10-async-programming/08-15-coroutine.md)에서 고급 비동기 프로그래밍 기법을 학습합니다.
+**이전**: [C 기반 모니터링 시스템](./08-43-c-monitoring-system.md)  
+**다음**: [코루틴과 비동기 패턴](./08-15-coroutine.md)에서 고급 비동기 프로그래밍 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -692,7 +692,7 @@ Async Hooks와 Performance Observer를 통해 실행 중인 애플리케이션�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./08-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./08-01-promise-future-basics.md)

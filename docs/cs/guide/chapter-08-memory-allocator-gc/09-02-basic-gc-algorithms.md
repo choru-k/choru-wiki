@@ -523,8 +523,8 @@ void compare_gc_algorithms() {
 
 ---
 
-**이전**: [GC 알고리즘과 구현 원리 개요](chapter-08-memory-allocator-gc/08-13-gc-algorithms.md)  
-**다음**: [세대별 및 동시 GC](chapter-08-memory-allocator-gc/08-04-advanced-gc-concepts.md)에서 Weak Generational Hypothesis와 동시 실행 GC의 원리를 학습합니다.
+**이전**: [GC 알고리즘과 구현 원리 개요](./08-13-gc-algorithms.md)  
+**다음**: [세대별 및 동시 GC](./08-04-advanced-gc-concepts.md)에서 Weak Generational Hypothesis와 동시 실행 GC의 원리를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -540,7 +540,7 @@ void compare_gc_algorithms() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)

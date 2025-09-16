@@ -409,8 +409,8 @@ int handle_early_data(SSL* ssl) {
 
 ---
 
-**이전**: [보안 네트워킹 개요](chapter-07-network-programming/07-19-secure-networking.md)  
-**다음**: [X.509 인증서와 PKI 시스템](chapter-07-network-programming/04b-certificates-pki.md)에서 신뢰성 검증 체계를 학습합니다.
+**이전**: [보안 네트워킹 개요](./07-19-secure-networking.md)  
+**다음**: [X.509 인증서와 PKI 시스템](./04b-certificates-pki.md)에서 신뢰성 검증 체계를 학습합니다.
 
 ## 📚 관련 문서
 

@@ -725,8 +725,8 @@ public class SecureNetworkManager {
 
 ---
 
-**이전**: [네트워크 보안 기초와 위협 환경](chapter-17-security-engineering/17-01-network-fundamentals.md)  
-**다음**: [DDoS 공격 탐지와 방어 시스템](chapter-17-security-engineering/17-13-ddos-defense.md)에서 대규모 분산 공격에 대한 탐지와 방어 메커니즘을 학습합니다.
+**이전**: [네트워크 보안 기초와 위협 환경](./17-01-network-fundamentals.md)  
+**다음**: [DDoS 공격 탐지와 방어 시스템](./17-13-ddos-defense.md)에서 대규모 분산 공격에 대한 탐지와 방어 메커니즘을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -742,7 +742,7 @@ public class SecureNetworkManager {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./17-10-memory-security.md)
 - [Chapter 15.2 네트워크 보안 개요](./17-11-network-security.md)

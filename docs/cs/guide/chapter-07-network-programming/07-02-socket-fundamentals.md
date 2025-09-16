@@ -424,8 +424,8 @@ int validate_and_create_socket(const char *ip, uint16_t port) {
 
 ---
 
-**이전**: [소켓 프로그래밍 개요](chapter-07-network-programming/07-01-socket-basics.md)  
-**다음**: [TCP 소켓 프로그래밍](chapter-07-network-programming/07-10-tcp-programming.md)에서 실제 서버/클라이언트 구현을 학습합니다.
+**이전**: [소켓 프로그래밍 개요](./07-01-socket-basics.md)  
+**다음**: [TCP 소켓 프로그래밍](./07-10-tcp-programming.md)에서 실제 서버/클라이언트 구현을 학습합니다.
 
 ## 📚 관련 문서
 

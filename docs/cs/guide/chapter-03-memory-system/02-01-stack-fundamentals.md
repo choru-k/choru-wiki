@@ -261,8 +261,8 @@ void use_dangling_pointer() {
 
 ---
 
-**이전**: [스택과 힙 개요](chapter-03-memory-system/03-11-stack-heap.md)  
-**다음**: [힙의 상세 동작](chapter-03-memory-system/03-02-heap-fundamentals.md)에서 malloc의 복잡한 여정을 탐구합니다.
+**이전**: [스택과 힙 개요](./03-11-stack-heap.md)  
+**다음**: [힙의 상세 동작](./03-02-heap-fundamentals.md)에서 malloc의 복잡한 여정을 탐구합니다.
 
 ## 📚 관련 문서
 

@@ -32,21 +32,21 @@ priority_score: 4
 
 이 섹션은 **5개의 전문화된 문서**로 구성되어 있어, 스케줄링의 모든 측면을 체계적으로 마스터할 수 있습니다:
 
-### 1️⃣ [스케줄링 기초와 CFS 원리](chapter-01-process-thread/01-03-scheduling-fundamentals.md)
+### 1️⃣ [스케줄링 기초와 CFS 원리](./04-03-scheduling-fundamentals.md)
 
 - 스케줄링 목표의 불가능한 삼각형 (공정성 vs 응답성 vs 처리량)
 - 프로세스 상태와 런큐 구조
 - CFS(Completely Fair Scheduler)의 Red-Black Tree 마법
 - vruntime과 공정성 보장 메커니즘
 
-### 2️⃣ [CFS 구현 세부사항](chapter-01-process-thread/01-17-cfs-implementation.md)
+### 2️⃣ [CFS 구현 세부사항](./04-17-cfs-implementation.md)
 
 - Nice 값과 가중치 시스템: 1.25의 법칙
 - Weight 테이블과 CPU 시간 분배 공식
 - PELT(Per-Entity Load Tracking) 알고리즘
 - CFS 성능 튜닝과 워크로드별 최적화
 
-### 3️⃣ [실시간 스케줄링](chapter-01-process-thread/01-18-realtime-scheduling.md)
+### 3️⃣ [실시간 스케줄링](./04-18-realtime-scheduling.md)
 
 - SCHED_FIFO vs SCHED_RR: 언제 어떤 것을 사용할까?
 - SCHED_DEADLINE과 EDF(Earliest Deadline First) 알고리즘
@@ -139,13 +139,13 @@ set_deadline_scheduling(sensor_pid,
 
 ### 초보자 경로
 
-1. **[스케줄링 기초](chapter-01-process-thread/01-03-scheduling-fundamentals.md)** → 전체적인 개념 이해
-2. **[CFS 구현](chapter-01-process-thread/01-17-cfs-implementation.md)** → 가장 중요한 스케줄러 마스터
+1. **[스케줄링 기초](./04-03-scheduling-fundamentals.md)** → 전체적인 개념 이해
+2. **[CFS 구현](./04-17-cfs-implementation.md)** → 가장 중요한 스케줄러 마스터
 3. 간단한 Nice 값 조정 실험으로 체감
 
 ### 중급자 경로
 
-1. **[실시간 스케줄링](chapter-01-process-thread/01-18-realtime-scheduling.md)** → 고성능 시스템 구축
+1. **[실시간 스케줄링](./04-18-realtime-scheduling.md)** → 고성능 시스템 구축
 2. **[CPU 친화도](03d-cpu-affinity-numa.md)** → 멀티코어 최적화
 3. 실제 서버 환경에서 성능 튜닝 경험
 
@@ -174,11 +174,11 @@ set_deadline_scheduling(sensor_pid,
 ### 선행 학습 권장
 
 - [4.1 프로세스 기초](../01-process-basics.md) - 프로세스 생명주기
-- [4.2 스레드 동기화](./01-14-thread-synchronization.md) - 동기화 메커니즘
+- [4.2 스레드 동기화](./04-14-thread-synchronization.md) - 동기화 메커니즘
 
 ### 후속 학습 추천  
 
-- [4.4 Signal과 IPC](./01-19-signal-ipc.md) - 프로세스 간 통신
+- [4.4 Signal과 IPC](./04-19-signal-ipc.md) - 프로세스 간 통신
 - [메모리 관리](../../memory/) - 가상 메모리와 성능
 
 ## 💡 마지막 조언
@@ -196,7 +196,7 @@ set_deadline_scheduling(sensor_pid,
 
 ---
 
-**다음**: [4.3a 스케줄링 기초와 CFS 원리](chapter-01-process-thread/01-03-scheduling-fundamentals.md)에서 스케줄링의 기초부터 차근차근 시작하세요!
+**다음**: [4.3a 스케줄링 기초와 CFS 원리](./04-03-scheduling-fundamentals.md)에서 스케줄링의 기초부터 차근차근 시작하세요!
 
 ## 📚 관련 문서
 
@@ -212,13 +212,13 @@ set_deadline_scheduling(sensor_pid,
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-04-process-thread)
+### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-40-process-management-monitoring.md)
+- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
+- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
+- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
+- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
+- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 

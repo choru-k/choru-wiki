@@ -972,7 +972,7 @@ ptr = NULL;
 
 메모리 보안의 기초를 마스터했다면, 이제 네트워크 레벨에서의 보안 위협과 대응 방법을 배워보겠습니다:
 
-**Next**: [15.2 네트워크 보안](chapter-17-security-engineering/17-11-network-security.md)에서 TLS/SSL부터 DDoS 방어까지 네트워크 보안의 모든 것을 다룹니다.
+**Next**: [15.2 네트워크 보안](./17-11-network-security.md)에서 TLS/SSL부터 DDoS 방어까지 네트워크 보안의 모든 것을 다룹니다.
 
 **Key Takeaway**: "메모리는 거짓말하지 않지만, 프로그래머는 실수할 수 있습니다. 도구와 원칙으로 실수를 방지하세요." 🛡️
 
@@ -990,7 +990,7 @@ ptr = NULL;
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15.2 네트워크 보안 개요](./17-11-network-security.md)
 - [Chapter 15-2a: 네트워크 보안 기초와 위협 환경](./17-01-network-fundamentals.md)

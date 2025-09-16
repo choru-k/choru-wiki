@@ -434,8 +434,8 @@ void async_pipeline_example() {
 
 ---
 
-**이전**: [8.1a Promise/Future 기본 개념](chapter-10-async-programming/10-01-promise-future-basics.md)  
-**다음**: [8.1c 취소와 타임아웃](chapter-10-async-programming/10-12-cancellation-timeout.md)에서 사용자 취소와 시간 제한 처리를 학습합니다.
+**이전**: [8.1a Promise/Future 기본 개념](./10-01-promise-future-basics.md)  
+**다음**: [8.1c 취소와 타임아웃](./10-12-cancellation-timeout.md)에서 사용자 취소와 시간 제한 처리를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -451,7 +451,7 @@ void async_pipeline_example() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

@@ -27,28 +27,28 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [C10K/C10M 문제 해결](chapter-07-network-programming/07-17-c10k-scaling-solutions.md)
+### 1️⃣ [C10K/C10M 문제 해결](./07-17-c10k-scaling-solutions.md)
 
 - 연결당 리소스 최적화 전략
 - 멀티코어 스케일링과 SO_REUSEPORT
 - 메모리 풀과 슬랩 캐시 시스템
 - Per-CPU 캐시 기반 락프리 아키텍처
 
-### 2️⃣ [제로카피와 NUMA 최적화](chapter-07-network-programming/07-31-zerocopy-numa-optimization.md)
+### 2️⃣ [제로카피와 NUMA 최적화](./07-31-zerocopy-numa-optimization.md)
 
 - sendfile, splice, MSG_ZEROCOPY 기술
 - NUMA 토폴로지와 메모리 지역성
 - 노드별 메모리 할당과 CPU 친화도
 - 정적 파일 서빙 성능 극대화
 
-### 3️⃣ [커넥션 풀과 로드 밸런싱](chapter-07-network-programming/07-18-connection-pool-load-balancing.md)
+### 3️⃣ [커넥션 풀과 로드 밸런싱](./07-18-connection-pool-load-balancing.md)
 
 - 고성능 커넥션 풀 설계
 - 로드 밸런싱 알고리즘 구현
 - Circuit Breaker와 헬스 체크
 - Consistent Hashing과 분산 처리
 
-### 4️⃣ [프로토콜 최적화](chapter-07-network-programming/07-32-protocol-optimization.md)
+### 4️⃣ [프로토콜 최적화](./07-32-protocol-optimization.md)
 
 - HTTP/2 멀티플렉싱과 서버 푸시
 - WebSocket 실시간 통신
@@ -95,14 +95,14 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [C10K 문제 해결](chapter-07-network-programming/07-17-c10k-scaling-solutions.md) → 기본 스케일링 개념 이해
-2. [제로카피 최적화](chapter-07-network-programming/07-31-zerocopy-numa-optimization.md) → 성능 최적화 기법 습득
+1. [C10K 문제 해결](./07-17-c10k-scaling-solutions.md) → 기본 스케일링 개념 이해
+2. [제로카피 최적화](./07-31-zerocopy-numa-optimization.md) → 성능 최적화 기법 습득
 3. 간단한 고성능 서버 프로토타입 구현
 
 ### 중급자 (심화 학습)
 
-1. [커넥션 풀링](chapter-07-network-programming/07-18-connection-pool-load-balancing.md) → 분산 시스템 설계
-2. [프로토콜 최적화](chapter-07-network-programming/07-32-protocol-optimization.md) → 최신 네트워크 기술
+1. [커넥션 풀링](./07-18-connection-pool-load-balancing.md) → 분산 시스템 설계
+2. [프로토콜 최적화](./07-32-protocol-optimization.md) → 최신 네트워크 기술
 3. 실제 프로덕션 환경 최적화 적용
 
 ### 고급자 (전문가 과정)
@@ -115,12 +115,12 @@ priority_score: 4
 
 ### 선행 학습
 
-- [소켓 프로그래밍 기초](chapter-07-network-programming/07-01-socket-basics.md) - 기본 네트워크 개념
-- [TCP/IP 스택 구현](chapter-07-network-programming/07-13-tcp-ip-stack.md) - 프로토콜 이해
+- [소켓 프로그래밍 기초](./07-01-socket-basics.md) - 기본 네트워크 개념
+- [TCP/IP 스택 구현](./07-13-tcp-ip-stack.md) - 프로토콜 이해
 
 ### 후속 학습  
 
-- [보안 네트워킹과 TLS](chapter-07-network-programming/07-19-secure-networking.md) - 암호화 통신
+- [보안 네트워킹과 TLS](./07-19-secure-networking.md) - 암호화 통신
 - [네트워크 모니터링](05-network-monitoring.md) - 성능 분석
 
 ## 💪 실전 성능 체크리스트
@@ -141,7 +141,7 @@ priority_score: 4
 
 ---
 
-**다음**: [C10K/C10M 문제 해결](chapter-07-network-programming/07-17-c10k-scaling-solutions.md)에서 대규모 연결 처리의 핵심 기술을 학습합니다.
+**다음**: [C10K/C10M 문제 해결](./07-17-c10k-scaling-solutions.md)에서 대규모 연결 처리의 핵심 기술을 학습합니다.
 
 ## C10K/C10M 문제 해결
 

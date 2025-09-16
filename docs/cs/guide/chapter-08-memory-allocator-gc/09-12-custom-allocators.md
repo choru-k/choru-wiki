@@ -334,7 +334,7 @@ Frame Allocator와 Ring Buffer 등 특수 목적의 할당자로 성능과 예�
 
 ---
 
-**이전**: [08-11-allocator-comparison.md](chapter-08-memory-allocator-gc/08-11-allocator-comparison.md)  
+**이전**: [08-11-allocator-comparison.md](./08-11-allocator-comparison.md)  
 **다음**: [08-30-production-optimization.md](chapter-09-advanced-memory-management/08-30-production-optimization.md)에서 실전 최적화 사례를 학습합니다.
 
 ## 📚 관련 문서
@@ -351,7 +351,7 @@ Frame Allocator와 Ring Buffer 등 특수 목적의 할당자로 성능과 예�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)

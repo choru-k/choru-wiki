@@ -534,8 +534,8 @@ collect_metrics() {
 
 ---
 
-**이전**: [NVMe 최적화와 io_uring](chapter-06-file-io/03d-nvme-io-uring.md)  
-**다음**: [블록 I/O와 디스크 스케줄링 개요](chapter-06-file-io/06-18-block-io.md)로 돌아가서 전체 내용을 복습합니다.
+**이전**: [NVMe 최적화와 io_uring](./03d-nvme-io-uring.md)  
+**다음**: [블록 I/O와 디스크 스케줄링 개요](./06-18-block-io.md)로 돌아가서 전체 내용을 복습합니다.
 
 ## 📚 관련 문서
 

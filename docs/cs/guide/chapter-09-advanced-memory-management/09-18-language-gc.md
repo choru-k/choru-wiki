@@ -66,7 +66,7 @@ priority_score: 4
   - Dropbox의 대용량 파일 처리 시 GC 최적화
   - 과학 계산에서 numpy와 함께한 효율적 메모리 관리
 
-### ⚡ [JavaScript/V8 GC - 숨겨진 복잡성](chapter-09-advanced-memory-management/03d-javascript-gc.md)
+### ⚡ [JavaScript/V8 GC - 숨겨진 복잡성](./03d-javascript-gc.md)
 
 **브라우저부터 서버까지, 동적 최적화의 극치**
 
@@ -151,7 +151,7 @@ priority_score: 4
 1. **[Java GC](chapter-08-memory-allocator-gc/09-19-java-gc.md)**: 가장 다양하고 정교한 GC 시스템 이해
 2. **[Go GC](chapter-08-memory-allocator-gc/03b-go-gc.md)**: 단순하면서도 효과적인 현대적 GC 학습  
 3. **[Python GC](chapter-08-memory-allocator-gc/03c-python-gc.md)**: Reference Counting의 장단점 파악
-4. **[JavaScript GC](chapter-09-advanced-memory-management/03d-javascript-gc.md)**: 브라우저와 서버 환경에서의 특수성 이해
+4. **[JavaScript GC](./03d-javascript-gc.md)**: 브라우저와 서버 환경에서의 특수성 이해
 
 각 언어별 상세 가이드에서 실제 코드와 사례를 통해 GC의 실무 활용법을 배워보세요!
 
@@ -177,7 +177,7 @@ priority_score: 4
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)

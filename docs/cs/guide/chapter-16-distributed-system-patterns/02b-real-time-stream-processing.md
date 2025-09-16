@@ -610,8 +610,8 @@ Scala 기반의 Flink 파이프라인을 통해 실시간 콘텐츠 트렌딩 �
 
 ---
 
-**이전**: [16.2A Event-Driven 아키텍처 기초](chapter-16-distributed-system-patterns/16-04-event-driven-fundamentals.md)  
-**다음**: [16.2C 이벤트 소싱 구현](chapter-16-distributed-system-patterns/02c-event-sourcing-implementation.md)에서 이벤트 스토어와 집합체 패턴을 학습합니다.
+**이전**: [16.2A Event-Driven 아키텍처 기초](./16-04-event-driven-fundamentals.md)  
+**다음**: [16.2C 이벤트 소싱 구현](./02c-event-sourcing-implementation.md)에서 이벤트 스토어와 집합체 패턴을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -627,7 +627,7 @@ Scala 기반의 Flink 파이프라인을 통해 실시간 콘텐츠 트렌딩 �
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

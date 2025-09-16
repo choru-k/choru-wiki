@@ -25,35 +25,35 @@ priority_score: 5
 
 이 섹션은 **5개의 전문화된 문서**로 구성되어 있습니다:
 
-### 1️⃣ [암호화 기초 이론과 실무 적용](chapter-17-security-engineering/17-03-cryptography-fundamentals.md)
+### 1️⃣ [암호화 기초 이론과 실무 적용](./17-03-cryptography-fundamentals.md)
 
 - 2016년 실제 해킹 사고 대응 사례
 - 대칭 vs 비대칭 암호화 비교
 - 현대 암호화 알고리즘 선택 가이드 (AES-GCM, ChaCha20, ECDSA)
 - 하이브리드 암호화 패턴
 
-### 2️⃣ [실전 암호화 구현](chapter-17-security-engineering/17-50-practical-encryption.md)
+### 2️⃣ [실전 암호화 구현](./17-50-practical-encryption.md)
 
 - 비밀번호 해시화 (bcrypt vs Argon2)
 - 민감 데이터 암호화 구현 (Go언어)
 - 사용자 인증 시스템 구축
 - 타이밍 공격 방지 기법
 
-### 3️⃣ [키 관리 시스템 및 E2E 암호화](chapter-17-security-engineering/05c-key-management-e2e.md)
+### 3️⃣ [키 관리 시스템 및 E2E 암호화](./05c-key-management-e2e.md)
 
 - AWS KMS 활용한 키 관리
 - Envelope Encryption 패턴
 - 키 로테이션과 라이프사이클 관리
 - Signal Protocol 기반 E2E 메시징
 
-### 4️⃣ [성능 최적화와 보안 모범 사례](chapter-17-security-engineering/17-30-performance-security.md)
+### 4️⃣ [성능 최적화와 보안 모범 사례](./17-30-performance-security.md)
 
 - 하드웨어 가속 활용 (Intel AES-NI)
 - GPU 기반 대량 암호화
 - 메모리 보안과 안전한 난수 생성
 - 타이밍 공격 방지 구현
 
-### 5️⃣ [모니터링과 베스트 프랙티스](chapter-17-security-engineering/17-41-monitoring-best-practices.md)
+### 5️⃣ [모니터링과 베스트 프랙티스](./17-41-monitoring-best-practices.md)
 
 - 암호화 성능 모니터링
 - 구현 체크리스트와 코드 리뷰 가이드
@@ -93,19 +93,19 @@ priority_score: 5
 
 ### 초보자 (추천 순서)
 
-1. [05A 암호화 기초](chapter-17-security-engineering/17-03-cryptography-fundamentals.md) → 기본 개념과 실제 사례
-2. [05B 실전 구현](chapter-17-security-engineering/17-50-practical-encryption.md) → 비밀번호와 데이터 암호화
+1. [05A 암호화 기초](./17-03-cryptography-fundamentals.md) → 기본 개념과 실제 사례
+2. [05B 실전 구현](./17-50-practical-encryption.md) → 비밀번호와 데이터 암호화
 3. 간단한 암호화 프로젝트 구현
 
 ### 중급자 (심화 학습)
 
-1. [05C 키 관리](chapter-17-security-engineering/05c-key-management-e2e.md) → 전문적 키 관리 시스템
-2. [05D 성능 최적화](chapter-17-security-engineering/17-30-performance-security.md) → 하드웨어 가속과 보안
+1. [05C 키 관리](./05c-key-management-e2e.md) → 전문적 키 관리 시스템
+2. [05D 성능 최적화](./17-30-performance-security.md) → 하드웨어 가속과 보안
 3. 실제 프로덕션 환경 적용
 
 ### 전문가 (마스터리)
 
-1. [05E 베스트 프랙티스](chapter-17-security-engineering/17-41-monitoring-best-practices.md) → 모니터링과 코드 리뷰
+1. [05E 베스트 프랙티스](./17-41-monitoring-best-practices.md) → 모니터링과 코드 리뷰
 2. 오픈 소스 암호화 라이브러리 기여
 3. 보안 감사 및 컨설팅 역량 개발
 
@@ -113,9 +113,9 @@ priority_score: 5
 
 ### 선행 학습
 
-- [15.1 메모리 보안](chapter-17-security-engineering/17-10-memory-security.md) - 기본적인 메모리 보안 개념
-- [15.2 네트워크 보안](chapter-17-security-engineering/17-11-network-security.md) - 네트워크 계층 보안
-- [15.3 인증과 권한관리](chapter-17-security-engineering/17-14-authentication-authorization.md) - 인증 시스템 기초
+- [15.1 메모리 보안](./17-10-memory-security.md) - 기본적인 메모리 보안 개념
+- [15.2 네트워크 보안](./17-11-network-security.md) - 네트워크 계층 보안
+- [15.3 인증과 권한관리](./17-14-authentication-authorization.md) - 인증 시스템 기초
 
 ### 후속 학습
 
@@ -123,7 +123,7 @@ priority_score: 5
 
 ---
 
-**시작**: [암호화 기초 이론](chapter-17-security-engineering/17-03-cryptography-fundamentals.md)에서 실제 해킹 사고 대응 사례와 함께 암호화 여정을 시작합니다.
+**시작**: [암호화 기초 이론](./17-03-cryptography-fundamentals.md)에서 실제 해킹 사고 대응 사례와 함께 암호화 여정을 시작합니다.
 
 ## 📚 관련 문서
 
@@ -139,7 +139,7 @@ priority_score: 5
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./17-10-memory-security.md)
 - [Chapter 15.2 네트워크 보안 개요](./17-11-network-security.md)

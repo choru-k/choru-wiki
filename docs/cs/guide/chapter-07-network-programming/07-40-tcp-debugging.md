@@ -27,14 +27,14 @@ priority_score: 5
 
 이 TCP 연결 디버깅 가이드는 3개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [TCP 연결 진단 도구](chapter-07-network-programming/07-42-tcp-diagnostic-tools.md)
+### 1️⃣ [TCP 연결 진단 도구](./07-42-tcp-diagnostic-tools.md)
 
 - C 기반 종합 TCP 연결 분석기 구현
 - 소켓 옵션 설정 및 Keep-alive 최적화
 - 연결 상태 실시간 모니터링 및 통계 생성
 - 스트레스 테스트를 통한 연결 안정성 검증
 
-### 2️⃣ [연결 풀 최적화](chapter-07-network-programming/07-35-connection-pool-optimization.md)
+### 2️⃣ [연결 풀 최적화](./07-35-connection-pool-optimization.md)
 
 - Bash 기반 시스템 TCP 설정 자동화
 - 연결 풀과 로드밸런서 설정 최적화
@@ -112,14 +112,14 @@ graph TD
 
 ### 초보자 (추천 순서)
 
-1. [진단 도구](chapter-07-network-programming/07-42-tcp-diagnostic-tools.md) → TCP 연결의 기본 동작 이해
-2. [최적화 스크립트](chapter-07-network-programming/07-35-connection-pool-optimization.md) → 시스템 설정 최적화 실습
+1. [진단 도구](./07-42-tcp-diagnostic-tools.md) → TCP 연결의 기본 동작 이해
+2. [최적화 스크립트](./07-35-connection-pool-optimization.md) → 시스템 설정 최적화 실습
 3. 간단한 연결 테스트 환경에서 도구 사용법 숙달
 
 ### 중급자 (심화 학습)
 
 1. [실시간 모니터링](05c-realtime-monitoring.md) → 고급 분석 기법 습득
-2. [최적화 스크립트](chapter-07-network-programming/07-35-connection-pool-optimization.md) → 로드밸런서 설정 마스터
+2. [최적화 스크립트](./07-35-connection-pool-optimization.md) → 로드밸런서 설정 마스터
 3. 실제 프로덕션 환경에 모니터링 시스템 적용
 
 ### 고급자 (전문가 과정)
@@ -132,13 +132,13 @@ graph TD
 
 ### 선행 학습
 
-- [소켓 프로그래밍 기초](chapter-07-network-programming/07-01-socket-basics.md) - TCP/IP 기본 개념
-- [고성능 네트워킹](chapter-07-network-programming/07-30-high-performance-networking.md) - 성능 최적화 이론
+- [소켓 프로그래밍 기초](./07-01-socket-basics.md) - TCP/IP 기본 개념
+- [고성능 네트워킹](./07-30-high-performance-networking.md) - 성능 최적화 이론
 
 ### 후속 학습
 
-- [네트워크 지연시간 최적화](chapter-07-network-programming/07-36-network-latency-optimization.md) - 성능 튜닝 심화
-- [고성능 네트워킹 아키텍처](chapter-07-network-programming/07-38-high-performance-networking.md) - 스케일링 전략
+- [네트워크 지연시간 최적화](./07-36-network-latency-optimization.md) - 성능 튜닝 심화
+- [고성능 네트워킹 아키텍처](./07-38-high-performance-networking.md) - 스케일링 전략
 
 ## 🎯 핵심 요점
 
@@ -156,7 +156,7 @@ TCP 연결 문제는 여러 계층에서 발생할 수 있으므로, 단계별 �
 
 ---
 
-**다음**: [TCP 연결 분석 도구](chapter-07-network-programming/07-41-tcp-analysis-tools.md)에서 C 기반 종합 분석 도구 구현을 학습합니다.
+**다음**: [TCP 연결 분석 도구](./07-41-tcp-analysis-tools.md)에서 C 기반 종합 분석 도구 구현을 학습합니다.
 
 ## 🛠 주요 도구 한눈에 보기
 

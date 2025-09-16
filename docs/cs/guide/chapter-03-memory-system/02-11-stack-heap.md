@@ -24,35 +24,35 @@ priority_score: 5
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [스택의 상세 동작](chapter-03-memory-system/03-01-stack-fundamentals.md)
+### 1️⃣ [스택의 상세 동작](./03-01-stack-fundamentals.md)
 
 - 함수 호출 시 스택에서 일어나는 일
 - 스택 프레임과 함수 호출 규약
 - 스택의 놀라운 속도 비밀
 - 스택 관련 버그와 오버플로우
 
-### 2️⃣ [힙의 상세 동작](chapter-03-memory-system/03-02-heap-fundamentals.md)
+### 2️⃣ [힙의 상세 동작](./03-02-heap-fundamentals.md)
 
 - malloc()의 내부 여정
 - 메모리 청크와 Free List
 - 메모리 단편화 문제
 - 힙 메모리 관리 전략
 
-### 3️⃣ [성능 비교와 메모리 버그](chapter-03-memory-system/03-40-performance-debugging.md)
+### 3️⃣ [성능 비교와 메모리 버그](./03-40-performance-debugging.md)
 
 - 스택 vs 힙 성능 대결
 - 캐시 효과와 성능 차이 분석
 - 스택과 힙에서 발생하는 대표적인 버그들
 - 디버깅 도구 활용법
 
-### 4️⃣ [고급 메모리 관리 기법](chapter-03-memory-system/03-20-advanced-techniques.md)
+### 4️⃣ [고급 메모리 관리 기법](./03-20-advanced-techniques.md)
 
 - 메모리 풀과 대량 생산의 효율성
 - Arena 할당자로 한 번에 정리하기
 - 게임과 서버에서의 실전 활용
 - 성능 최적화 전략
 
-### 5️⃣ [실전 가이드와 베스트 프랙티스](chapter-03-memory-system/03-50-practical-guide.md)
+### 5️⃣ [실전 가이드와 베스트 프랙티스](./03-50-practical-guide.md)
 
 - 스택 vs 힙 결정 플로우차트
 - 실제 시나리오별 권장사항
@@ -96,15 +96,15 @@ priority_score: 5
 
 ### 초보자 (추천 순서)
 
-1. [스택 기초](chapter-03-memory-system/03-01-stack-fundamentals.md) → 함수 호출 메커니즘 이해
-2. [힙 기초](chapter-03-memory-system/03-02-heap-fundamentals.md) → 동적 메모리 할당 학습
-3. [성능과 버그](chapter-03-memory-system/03-40-performance-debugging.md) → 실전 문제 해결 능력 개발
+1. [스택 기초](./03-01-stack-fundamentals.md) → 함수 호출 메커니즘 이해
+2. [힙 기초](./03-02-heap-fundamentals.md) → 동적 메모리 할당 학습
+3. [성능과 버그](./03-40-performance-debugging.md) → 실전 문제 해결 능력 개발
 4. 간단한 메모리 관리 프로그램 작성 연습
 
 ### 중급자 (심화 학습)
 
-1. [고급 기법](chapter-03-memory-system/03-20-advanced-techniques.md) → 성능 최적화 기술
-2. [실전 가이드](chapter-03-memory-system/03-50-practical-guide.md) → 상황별 최적 선택
+1. [고급 기법](./03-20-advanced-techniques.md) → 성능 최적화 기술
+2. [실전 가이드](./03-50-practical-guide.md) → 상황별 최적 선택
 3. 실제 프로덕션 환경에서 메모리 프로파일링 경험
 4. 커스텀 할당자 구현 도전
 
@@ -118,12 +118,12 @@ priority_score: 5
 
 ### 선행 학습
 
-- [Chapter 2-1: 프로세스 메모리 구조](chapter-03-memory-system/03-10-process-memory.md) - 메모리 세그먼트 이해
+- [Chapter 2-1: 프로세스 메모리 구조](./03-10-process-memory.md) - 메모리 세그먼트 이해
 
 ### 후속 학습
 
-- [Chapter 2-3: 가상 메모리와 페이징](chapter-03-memory-system/03-12-virtual-memory.md) - 메모리 추상화
-- [Chapter 2-4: 메모리 매핑과 공유 메모리](chapter-03-memory-system/03-16-memory-mapping.md) - 고급 메모리 기법
+- [Chapter 2-3: 가상 메모리와 페이징](./03-12-virtual-memory.md) - 메모리 추상화
+- [Chapter 2-4: 메모리 매핑과 공유 메모리](./03-16-memory-mapping.md) - 고급 메모리 기법
 
 ## 📊 이 섹션에서 배우게 될 핵심 질문들
 
@@ -137,7 +137,7 @@ priority_score: 5
 
 ---
 
-**다음**: [스택의 상세 동작](chapter-03-memory-system/03-01-stack-fundamentals.md)에서 함수 호출의 발레와 같은 우아한 메커니즘을 탐구합니다.
+**다음**: [스택의 상세 동작](./03-01-stack-fundamentals.md)에서 함수 호출의 발레와 같은 우아한 메커니즘을 탐구합니다.
 
 ## 📚 관련 문서
 

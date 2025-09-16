@@ -654,8 +654,8 @@ void zns_optimized_write(int fd, void *data, size_t size, off_t zone_start) {
 
 ---
 
-**이전**: [멀티큐 블록 계층](chapter-06-file-io/03c-multiqueue-block-layer.md)  
-**다음**: [성능 모니터링과 튜닝](chapter-06-file-io/06-40-performance-monitoring-tuning.md)에서 실전 최적화 기법을 학습합니다.
+**이전**: [멀티큐 블록 계층](./03c-multiqueue-block-layer.md)  
+**다음**: [성능 모니터링과 튜닝](./06-40-performance-monitoring-tuning.md)에서 실전 최적화 기법을 학습합니다.
 
 ## 📚 관련 문서
 

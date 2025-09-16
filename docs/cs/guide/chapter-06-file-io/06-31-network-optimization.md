@@ -781,8 +781,8 @@ Chapter 7에서는 "네트워크 프로그래밍은 어떻게 동작하는가"�
 
 ---
 
-**이전**: [프로액터 패턴과 Windows IOCP](chapter-06-file-io/04e-proactor-iocp.md)  
-**다음**: [Chapter 7: 네트워크 프로그래밍](../chapter-07-network-programming/07-01-socket-basics.md)에서 소켓 프로그래밍의 기초를 학습합니다.
+**이전**: [프로액터 패턴과 Windows IOCP](./04e-proactor-iocp.md)  
+**다음**: [Chapter 7: 네트워크 프로그래밍](../chapter-06-file-io/07-01-socket-basics.md)에서 소켓 프로그래밍의 기초를 학습합니다.
 
 ## 📚 관련 문서
 

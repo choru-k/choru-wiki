@@ -27,7 +27,7 @@ priority_score: 4
 
 이 섹션은 2개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [네트워크 지연시간 분석 도구](chapter-07-network-programming/07-44-latency-analysis-tools.md)
+### 1️⃣ [네트워크 지연시간 분석 도구](./07-44-latency-analysis-tools.md)
 
 - 포괄적인 C 기반 네트워크 분석기 구현
 - ICMP ping, TCP 연결, traceroute 통합 도구
@@ -35,7 +35,7 @@ priority_score: 4
 - 실시간 네트워크 성능 모니터링
 - 대역폭 테스트 및 경로 분석
 
-### 2️⃣ [네트워크 최적화 자동화](chapter-07-network-programming/07-37-optimization-automation.md)
+### 2️⃣ [네트워크 최적화 자동화](./07-37-optimization-automation.md)
 
 - Bash 기반 시스템 최적화 스크립트
 - TCP 버퍼 크기 자동 조정
@@ -113,8 +113,8 @@ graph TD
 
 ### 초보자 (추천 순서)
 
-1. [네트워크 지연시간 분석 도구](chapter-07-network-programming/07-44-latency-analysis-tools.md) → 네트워크 측정의 기초 이해
-2. [네트워크 최적화 자동화](chapter-07-network-programming/07-37-optimization-automation.md) → 시스템 레벨 최적화 적용
+1. [네트워크 지연시간 분석 도구](./07-44-latency-analysis-tools.md) → 네트워크 측정의 기초 이해
+2. [네트워크 최적화 자동화](./07-37-optimization-automation.md) → 시스템 레벨 최적화 적용
 3. 소규모 환경에서 실습 후 점진적 확대
 
 ### 중급자 (심화 학습)
@@ -133,17 +133,17 @@ graph TD
 
 ### 선행 학습
 
-- [TCP/IP 프로토콜 스택](chapter-07-network-programming/07-13-tcp-ip-stack.md) - 네트워크 기초
-- [소켓 프로그래밍](chapter-07-network-programming/07-01-socket-basics.md) - 네트워크 API 이해
+- [TCP/IP 프로토콜 스택](./07-13-tcp-ip-stack.md) - 네트워크 기초
+- [소켓 프로그래밍](./07-01-socket-basics.md) - 네트워크 API 이해
 
 ### 후속 학습  
 
-- [고성능 네트워킹](chapter-07-network-programming/07-38-high-performance-networking.md) - 심화 최적화 기법
+- [고성능 네트워킹](./07-38-high-performance-networking.md) - 심화 최적화 기법
 - [네트워크 보안](../chapter-17-security-engineering/15-11-network-security.md) - 보안과 성능의 균형
 
 ---
 
-**다음**: [네트워크 지연시간 분석 도구](chapter-07-network-programming/07-44-latency-analysis-tools.md)에서 정확한 성능 측정 방법을 학습합니다.
+**다음**: [네트워크 지연시간 분석 도구](./07-44-latency-analysis-tools.md)에서 정확한 성능 측정 방법을 학습합니다.
 
 ## 📚 관련 문서
 

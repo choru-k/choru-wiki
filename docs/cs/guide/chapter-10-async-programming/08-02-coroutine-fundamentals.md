@@ -213,7 +213,7 @@ Stackful은 성능과 유연성을, Stackless는 단순성과 메모리 효율�
 
 ---
 
-**다음**: [10-16-python-asyncio-implementation.md](chapter-10-async-programming/10-16-python-asyncio-implementation.md)에서 Python의 Generator 기반 asyncio 구현을 살펴봅니다.
+**다음**: [10-16-python-asyncio-implementation.md](./10-16-python-asyncio-implementation.md)에서 Python의 Generator 기반 asyncio 구현을 살펴봅니다.
 
 ## 📚 관련 문서
 
@@ -229,7 +229,7 @@ Stackful은 성능과 유연성을, Stackless는 단순성과 메모리 효율�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

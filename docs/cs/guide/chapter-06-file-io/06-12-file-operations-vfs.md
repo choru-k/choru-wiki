@@ -325,7 +325,7 @@ struct file은 열린 파일의 모든 상태를 중앙집중식으로 관리하
 
 ---
 
-**이전**: [파일 디스크립터 할당과 관리](chapter-06-file-io/06-11-fd-allocation-management.md)  
+**이전**: [파일 디스크립터 할당과 관리](./06-11-fd-allocation-management.md)  
 **다음**: [특수 파일 디스크립터와 실전 예제](01d-special-fd-examples.md)에서 파이프, 소켓, eventfd 등의 실제 구현을 학습합니다.
 
 ## 📚 관련 문서

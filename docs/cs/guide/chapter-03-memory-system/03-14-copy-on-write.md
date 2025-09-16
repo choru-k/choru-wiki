@@ -198,8 +198,8 @@ void efficient_process_creation() {
 
 ---
 
-**이전**: [페이지 폴트 종류와 처리](chapter-03-memory-system/03-13-page-fault-types-handling.md)에서 기본 폴트 메커니즘을 학습했습니다.
-**다음**: [Demand Paging 메커니즘](chapter-03-memory-system/03-15-demand-paging.md)에서 게으른 메모리 할당의 비밀을 학습합니다.
+**이전**: [페이지 폴트 종류와 처리](./03-13-page-fault-types-handling.md)에서 기본 폴트 메커니즘을 학습했습니다.
+**다음**: [Demand Paging 메커니즘](./03-15-demand-paging.md)에서 게으른 메모리 할당의 비밀을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -215,7 +215,7 @@ void efficient_process_creation() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

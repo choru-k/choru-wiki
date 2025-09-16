@@ -869,8 +869,8 @@ void update_reactor_stats(reactor_t *reactor) {
 
 ---
 
-**이전**: [io_uring: 차세대 비동기 I/O](chapter-06-file-io/04c-io-uring-implementation.md)  
-**다음**: [프로액터 패턴과 Windows IOCP](chapter-06-file-io/04e-proactor-iocp.md)에서 완료 기반 I/O 모델을 학습합니다.
+**이전**: [io_uring: 차세대 비동기 I/O](./04c-io-uring-implementation.md)  
+**다음**: [프로액터 패턴과 Windows IOCP](./04e-proactor-iocp.md)에서 완료 기반 I/O 모델을 학습합니다.
 
 ## 📚 관련 문서
 

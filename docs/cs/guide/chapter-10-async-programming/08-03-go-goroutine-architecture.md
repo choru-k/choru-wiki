@@ -354,8 +354,8 @@ G(Goroutine), P(Processor), M(Machine) 세 요소의 조화로 효율적인 스�
 
 ---
 
-**이전**: [10-16-python-asyncio-implementation.md](chapter-10-async-programming/10-16-python-asyncio-implementation.md)  
-**다음**: [10-17-java-virtual-threads.md](chapter-10-async-programming/10-17-java-virtual-threads.md)에서 Java Virtual Thread와 Project Loom의 혁신을 다룹니다.
+**이전**: [10-16-python-asyncio-implementation.md](./10-16-python-asyncio-implementation.md)  
+**다음**: [10-17-java-virtual-threads.md](./10-17-java-virtual-threads.md)에서 Java Virtual Thread와 Project Loom의 혁신을 다룹니다.
 
 ## 📚 관련 문서
 
@@ -371,7 +371,7 @@ G(Goroutine), P(Processor), M(Machine) 세 요소의 조화로 효율적인 스�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

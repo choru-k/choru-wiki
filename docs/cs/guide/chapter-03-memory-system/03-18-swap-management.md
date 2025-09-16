@@ -1461,7 +1461,7 @@ graph TD
 
 ---
 
-**다음**: [스왑 성능 영향 분석](chapter-03-memory-system/03-41-swap-performance-analysis.md)에서 스왑 사용이 시스템 성능에 미치는 구체적 영향을 정량적으로 분석해봅시다.
+**다음**: [스왑 성능 영향 분석](./03-41-swap-performance-analysis.md)에서 스왑 사용이 시스템 성능에 미치는 구체적 영향을 정량적으로 분석해봅시다.
 
 ## 📚 관련 문서
 
@@ -1477,7 +1477,7 @@ graph TD
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

@@ -354,7 +354,7 @@ check_and_cleanup
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-04-process-thread)
+### 📂 같은 챕터 (chapter-01-process-thread)
 
 - [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
 - [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)

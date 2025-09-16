@@ -189,8 +189,8 @@ Build와 Runtime 환경을 분리하여 이미지 크기 최소화 및 보안 �
 
 ---
 
-**이전**: [컨테이너화와 오케스트레이션 개요](chapter-15-microservices-architecture/15-19-containerization-orchestration.md)  
-**다음**: [언어별 Dockerfile 최적화 전략](chapter-15-microservices-architecture/01d2-dockerfile-strategies.md)에서 Node.js와 Go 최적화 기법을 학습합니다.
+**이전**: [컨테이너화와 오케스트레이션 개요](./15-19-containerization-orchestration.md)  
+**다음**: [언어별 Dockerfile 최적화 전략](./01d2-dockerfile-strategies.md)에서 Node.js와 Go 최적화 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -210,9 +210,9 @@ Build와 Runtime 환경을 분리하여 이미지 크기 최소화 및 보안 �
 
 - [15.1 마이크로서비스 아키텍처 개요](./15-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](./15-10-monolith-to-microservices.md)
-- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-16-distributed-system-patterns/15-11-design-principles.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-12-1-single-responsibility-principle.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-13-1-single-responsibility.md)
+- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-15-microservices-architecture/15-11-design-principles.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-12-1-single-responsibility-principle.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-13-1-single-responsibility.md)
 
 ### 🏷️ 관련 키워드
 

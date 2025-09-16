@@ -622,8 +622,8 @@ void send_position_update(struct game_connection *conn,
 
 ---
 
-**이전**: [TCP 소켓 프로그래밍](chapter-07-network-programming/07-10-tcp-programming.md)  
-**다음**: [소켓 옵션과 Unix 도메인 소켓](chapter-07-network-programming/07-12-socket-options-unix.md)에서 성능 최적화와 로컬 통신을 학습합니다.
+**이전**: [TCP 소켓 프로그래밍](./07-10-tcp-programming.md)  
+**다음**: [소켓 옵션과 Unix 도메인 소켓](./07-12-socket-options-unix.md)에서 성능 최적화와 로컬 통신을 학습합니다.
 
 ## 📚 관련 문서
 

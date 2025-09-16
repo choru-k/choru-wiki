@@ -469,8 +469,8 @@ context_switching_wisdom = {
 
 ---
 
-**이전**: [성능 오버헤드 분석](chapter-02-cpu-interrupt/02-40-overhead-analysis.md)
-**다음**: 이제 [전력 관리](chapter-02-cpu-interrupt/04-power-management.md)에서 CPU 전력 최적화를 살펴보겠습니다.
+**이전**: [성능 오버헤드 분석](./02-40-overhead-analysis.md)
+**다음**: 이제 [전력 관리](./04-power-management.md)에서 CPU 전력 최적화를 살펴보겠습니다.
 
 ## 📚 관련 문서
 
@@ -486,7 +486,7 @@ context_switching_wisdom = {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)

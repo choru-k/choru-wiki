@@ -408,8 +408,8 @@ void demonstrate_recursive_mutex() {
 
 ---
 
-**이전**: [4.2a 스레드 기초](chapter-01-process-thread/01-01-thread-fundamentals.md)  
-**다음**: [4.2c 세마포어와 조건 변수](chapter-01-process-thread/01-15-semaphore-condvar.md)에서 더 고급 동기화 메커니즘을 학습합니다.
+**이전**: [4.2a 스레드 기초](./04-01-thread-fundamentals.md)  
+**다음**: [4.2c 세마포어와 조건 변수](./04-15-semaphore-condvar.md)에서 더 고급 동기화 메커니즘을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -425,13 +425,13 @@ void demonstrate_recursive_mutex() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-04-process-thread)
+### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-40-process-management-monitoring.md)
+- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
+- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
+- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
+- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
+- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 

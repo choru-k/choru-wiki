@@ -868,7 +868,7 @@ GC 로그를 통해 allocation rate, promotion rate, pause time 등 핵심 지�
 
 ---
 
-**이전**: [08-16-modern-gc-algorithms.md](chapter-08-memory-allocator-gc/08-16-modern-gc-algorithms.md)  
+**이전**: [08-16-modern-gc-algorithms.md](./08-16-modern-gc-algorithms.md)  
 **다음**: [Chapter 09 Index](index.md)에서 메모리 관리의 다른 주제들을 탐색하세요.
 
 ## 📚 관련 문서
@@ -885,7 +885,7 @@ GC 로그를 통해 allocation rate, promotion rate, pause time 등 핵심 지�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)

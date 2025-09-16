@@ -817,8 +817,8 @@ public class DatabaseMigrationStrategy {
 
 ---
 
-**이전**: [단일 책임 원칙](chapter-16-distributed-system-patterns/16-12-1-single-responsibility-principle.md)  
-**다음**: [API Contract First 설계](chapter-16-distributed-system-patterns/16-15-3-api-contract-first.md)에서 서비스 간 계약 기반 개발을 학습합니다.
+**이전**: [단일 책임 원칙](./16-12-1-single-responsibility-principle.md)  
+**다음**: [API Contract First 설계](./16-15-3-api-contract-first.md)에서 서비스 간 계약 기반 개발을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -834,7 +834,7 @@ public class DatabaseMigrationStrategy {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

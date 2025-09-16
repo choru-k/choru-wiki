@@ -438,8 +438,8 @@ struct queue_limits {
 
 ---
 
-**이전**: [블록 I/O와 디스크 스케줄링 개요](chapter-06-file-io/06-18-block-io.md)  
-**다음**: [I/O 스케줄러 알고리즘](chapter-06-file-io/06-19-io-schedulers.md)에서 다양한 스케줄링 전략을 학습합니다.
+**이전**: [블록 I/O와 디스크 스케줄링 개요](./06-18-block-io.md)  
+**다음**: [I/O 스케줄러 알고리즘](./06-19-io-schedulers.md)에서 다양한 스케줄링 전략을 학습합니다.
 
 ## 📚 관련 문서
 

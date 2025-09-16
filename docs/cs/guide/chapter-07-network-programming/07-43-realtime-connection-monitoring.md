@@ -757,7 +757,7 @@ if __name__ == '__main__':
 
 ---
 
-**이전**: [07-35-connection-pool-optimization.md](chapter-07-network-programming/07-35-connection-pool-optimization.md)  
+**이전**: [07-35-connection-pool-optimization.md](./07-35-connection-pool-optimization.md)  
 **다음**: [Chapter 07 Index](index.md)에서 네트워크 프로그래밍의 다른 주제를 탐색하세요.
 
 ## 📚 관련 문서

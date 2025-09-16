@@ -495,8 +495,8 @@ static int e1000_clean_rx_irq(struct e1000_adapter *adapter, int budget) {
 
 ---
 
-**이전**: [Chapter 7-2: TCP/IP 스택 개요](chapter-07-network-programming/07-13-tcp-ip-stack.md)  
-**다음**: [Chapter 7-2B: TCP 상태 머신](chapter-07-network-programming/07-14-tcp-state-machine.md)에서 TCP 연결 관리와 상태 전이를 학습합니다.
+**이전**: [Chapter 7-2: TCP/IP 스택 개요](./07-13-tcp-ip-stack.md)  
+**다음**: [Chapter 7-2B: TCP 상태 머신](./07-14-tcp-state-machine.md)에서 TCP 연결 관리와 상태 전이를 학습합니다.
 
 ## 📚 관련 문서
 

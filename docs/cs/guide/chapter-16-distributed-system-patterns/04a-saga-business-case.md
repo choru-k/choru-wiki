@@ -173,7 +173,7 @@ Saga 적용 후:
 
 ---
 
-**다음**: [16.4b Saga 패턴 핵심 개념과 오케스트레이션](chapter-16-distributed-system-patterns/04b-saga-orchestration.md)에서 Saga 패턴의 이론적 배경과 Java 기반 오케스트레이션 구현을 학습합니다.
+**다음**: [16.4b Saga 패턴 핵심 개념과 오케스트레이션](./04b-saga-orchestration.md)에서 Saga 패턴의 이론적 배경과 Java 기반 오케스트레이션 구현을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -189,7 +189,7 @@ Saga 적용 후:
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

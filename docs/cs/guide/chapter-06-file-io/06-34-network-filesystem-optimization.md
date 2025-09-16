@@ -27,28 +27,28 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [NFS 성능 분석 도구](chapter-06-file-io/06-46-nfs-analysis-tools.md)
+### 1️⃣ [NFS 성능 분석 도구](./06-46-nfs-analysis-tools.md)
 
 - 종합적인 NFS 성능 분석기 구현
 - 네트워크 지연시간 및 I/O 성능 벤치마크
 - 실시간 NFS 통계 수집 및 분석
 - 성능 병목 지점 자동 감지
 
-### 2️⃣ [자동 최적화 스크립트](chapter-06-file-io/06-35-auto-optimization-scripts.md)
+### 2️⃣ [자동 최적화 스크립트](./06-35-auto-optimization-scripts.md)
 
 - 환경별 자동 최적화 스크립트
 - 워크로드 패턴 기반 설정 생성
 - Docker 환경 NFS 최적화
 - 실시간 성능 테스트 및 튜닝
 
-### 3️⃣ [서버 튜닝 가이드](chapter-06-file-io/06-36-server-tuning-guide.md)
+### 3️⃣ [서버 튜닝 가이드](./06-36-server-tuning-guide.md)
 
 - NFS 서버 성능 최적화 전략
 - 커널 매개변수 조정
 - 내보내기 옵션 최적화
 - 파일시스템별 최적화 방법
 
-### 4️⃣ [모니터링 및 트러블슈팅](chapter-06-file-io/06-47-monitoring-troubleshooting.md)
+### 4️⃣ [모니터링 및 트러블슈팅](./06-47-monitoring-troubleshooting.md)
 
 - 실시간 성능 모니터링 설정
 - 일반적인 성능 문제 진단
@@ -70,19 +70,19 @@ priority_score: 4
 
 - **특징**: 대용량 파일, 순차 접근 패턴
 - **최적화**: 큰 블록 크기, 다중 연결
-- **구현 방법**: [자동 최적화 스크립트](chapter-06-file-io/06-35-auto-optimization-scripts.md) 활용
+- **구현 방법**: [자동 최적화 스크립트](./06-35-auto-optimization-scripts.md) 활용
 
 ### 웹 애플리케이션 환경
 
 - **특징**: 많은 작은 파일, 랜덤 접근
 - **최적화**: 적극적인 캐싱, 메타데이터 최적화
-- **구현 방법**: [NFS 분석 도구](chapter-06-file-io/06-46-nfs-analysis-tools.md)로 패턴 분석
+- **구현 방법**: [NFS 분석 도구](./06-46-nfs-analysis-tools.md)로 패턴 분석
 
 ### 컨테이너 환경
 
 - **특징**: Docker/Kubernetes 볼륨 마운트
 - **최적화**: 컨테이너 특화 마운트 옵션
-- **구현 방법**: [서버 튜닝 가이드](chapter-06-file-io/06-36-server-tuning-guide.md) 참조
+- **구현 방법**: [서버 튜닝 가이드](./06-36-server-tuning-guide.md) 참조
 
 ## 네트워크 파일시스템 아키텍처
 
@@ -125,14 +125,14 @@ graph TD
 
 ### 초보자 (추천 순서)
 
-1. [NFS 분석 도구](chapter-06-file-io/06-46-nfs-analysis-tools.md) → 현재 성능 상태 파악
-2. [자동 최적화 스크립트](chapter-06-file-io/06-35-auto-optimization-scripts.md) → 자동화된 개선 적용
+1. [NFS 분석 도구](./06-46-nfs-analysis-tools.md) → 현재 성능 상태 파악
+2. [자동 최적화 스크립트](./06-35-auto-optimization-scripts.md) → 자동화된 개선 적용
 3. 실제 환경에서 성능 테스트 수행
 
 ### 중급자 (심화 학습)
 
-1. [서버 튜닝 가이드](chapter-06-file-io/06-36-server-tuning-guide.md) → 서버측 최적화 이해
-2. [모니터링 및 트러블슈팅](chapter-06-file-io/06-47-monitoring-troubleshooting.md) → 운영 환경 관리
+1. [서버 튜닝 가이드](./06-36-server-tuning-guide.md) → 서버측 최적화 이해
+2. [모니터링 및 트러블슈팅](./06-47-monitoring-troubleshooting.md) → 운영 환경 관리
 3. 복잡한 분산 시스템 환경 적용
 
 ### 고급자 (전문가 수준)
@@ -145,12 +145,12 @@ graph TD
 
 ### 선행 학습
 
-- [비동기 I/O](chapter-06-file-io/04-async-io.md) - 기본 I/O 최적화 이해
-- [VFS와 파일시스템](chapter-06-file-io/06-13-vfs-filesystem.md) - 파일시스템 구조 이해
+- [비동기 I/O](./04-async-io.md) - 기본 I/O 최적화 이해
+- [VFS와 파일시스템](./06-13-vfs-filesystem.md) - 파일시스템 구조 이해
 
 ### 후속 학습
 
-- [고성능 네트워킹](../chapter-07-network-programming/07-38-high-performance-networking.md) - 네트워크 레벨 최적화
+- [고성능 네트워킹](../chapter-06-file-io/07-38-high-performance-networking.md) - 네트워크 레벨 최적화
 - [컨테이너 스토리지](../chapter-13-container-kubernetes/04-storage-optimization.md) - 컨테이너 환경 특화
 
 ## 핵심 요점
@@ -169,7 +169,7 @@ LAN vs WAN, 작은 파일 vs 큰 파일 등 환경에 따라 최적화 전략이
 
 ---
 
-**다음**: [NFS 성능 분석 도구](chapter-06-file-io/06-46-nfs-analysis-tools.md)에서 체계적인 성능 분석 방법을 학습합니다.
+**다음**: [NFS 성능 분석 도구](./06-46-nfs-analysis-tools.md)에서 체계적인 성능 분석 방법을 학습합니다.
 
 ## 📚 관련 문서
 

@@ -671,14 +671,14 @@ class SecurityMonitor {
 
 ## 🔗 연관 학습 자료
 
-- **[16.5A API Gateway 기초](chapter-16-distributed-system-patterns/16-07-api-gateway-fundamentals.md)** - API Gateway 패턴의 기본 개념
-- **[16.5B 라우팅과 로드 밸런싱](chapter-16-distributed-system-patterns/05b-routing-load-balancing.md)** - 고성능 트래픽 처리
-- **[16.5D Rate Limiting](chapter-16-distributed-system-patterns/16-42-rate-limiting-monitoring.md)** - 트래픽 제어와 모니터링
-- **[16.5 API Gateway 패턴 종합](chapter-16-distributed-system-patterns/16-55-api-gateway-patterns.md)** - 전체 개요와 학습 로드맵
+- **[16.5A API Gateway 기초](./16-07-api-gateway-fundamentals.md)** - API Gateway 패턴의 기본 개념
+- **[16.5B 라우팅과 로드 밸런싱](./05b-routing-load-balancing.md)** - 고성능 트래픽 처리
+- **[16.5D Rate Limiting](./16-42-rate-limiting-monitoring.md)** - 트래픽 제어와 모니터링
+- **[16.5 API Gateway 패턴 종합](./16-55-api-gateway-patterns.md)** - 전체 개요와 학습 로드맵
 
 ---
 
-**다음**: [Rate Limiting과 트래픽 제어](chapter-16-distributed-system-patterns/16-42-rate-limiting-monitoring.md)에서 고급 트래픽 관리 기법을 학습해보세요! ⚡
+**다음**: [Rate Limiting과 트래픽 제어](./16-42-rate-limiting-monitoring.md)에서 고급 트래픽 관리 기법을 학습해보세요! ⚡
 
 ## 📚 관련 문서
 
@@ -694,7 +694,7 @@ class SecurityMonitor {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

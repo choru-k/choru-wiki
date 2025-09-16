@@ -427,8 +427,8 @@ export default SagaMonitoringDashboard;
 
 ---
 
-**이전**: [Saga 코레오그래피 구현](chapter-16-distributed-system-patterns/04c-saga-choreography.md)  
-**다음**: [Saga 베스트 프랙티스](chapter-16-distributed-system-patterns/16-54-saga-best-practices.md)에서 성공 요인과 주의사항을 학습합니다.
+**이전**: [Saga 코레오그래피 구현](./04c-saga-choreography.md)  
+**다음**: [Saga 베스트 프랙티스](./16-54-saga-best-practices.md)에서 성공 요인과 주의사항을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -444,7 +444,7 @@ export default SagaMonitoringDashboard;
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

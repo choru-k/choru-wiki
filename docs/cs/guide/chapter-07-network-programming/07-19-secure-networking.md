@@ -25,35 +25,35 @@ priority_score: 4
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [TLS 프로토콜 기초](chapter-07-network-programming/07-04-tls-protocol-fundamentals.md)
+### 1️⃣ [TLS 프로토콜 기초](./07-04-tls-protocol-fundamentals.md)
 
 - TLS 레이어 구조와 핸드셰이크 과정
 - TLS 1.3의 혁신적 변화 (2-RTT → 1-RTT)
 - 암호화 스위트와 보안 매개변수
 - OpenSSL을 활용한 실제 구현
 
-### 2️⃣ [X.509 인증서와 PKI 시스템](chapter-07-network-programming/04b-certificates-pki.md)
+### 2️⃣ [X.509 인증서와 PKI 시스템](./04b-certificates-pki.md)
 
 - 인증서 체인 구조와 검증 과정
 - OCSP Stapling과 실시간 유효성 확인
 - Certificate Pinning 구현 기법
 - Let's Encrypt와 자동 인증서 관리
 
-### 3️⃣ [암호화 알고리즘과 성능 최적화](chapter-07-network-programming/07-33-crypto-performance.md)
+### 3️⃣ [암호화 알고리즘과 성능 최적화](./07-33-crypto-performance.md)
 
 - AES-GCM vs ChaCha20-Poly1305 비교
 - ECDHE 키 교환과 Perfect Forward Secrecy
 - 하드웨어 가속 (AES-NI, AVX2) 활용
 - 암호화 성능 벤치마킹 기법
 
-### 4️⃣ [TLS 성능 튜닝](chapter-07-network-programming/07-34-tls-optimization.md)
+### 4️⃣ [TLS 성능 튜닝](./07-34-tls-optimization.md)
 
 - Session Resumption과 Session Ticket
 - TLS 1.3의 0-RTT Early Data
 - 연결 풀링과 keep-alive 최적화
 - CDN과 로드밸런서 설정
 
-### 5️⃣ [보안 프로그래밍 실습](chapter-07-network-programming/04e-secure-programming.md)
+### 5️⃣ [보안 프로그래밍 실습](./04e-secure-programming.md)
 
 - 보안 메모리 관리와 타이밍 공격 방지
 - SQL Injection, XSS 방어 기법
@@ -93,19 +93,19 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [TLS 프로토콜 기초](chapter-07-network-programming/07-04-tls-protocol-fundamentals.md) → 핸드셰이크 이해
-2. [인증서와 PKI](chapter-07-network-programming/04b-certificates-pki.md) → 신뢰성 검증 원리
+1. [TLS 프로토콜 기초](./07-04-tls-protocol-fundamentals.md) → 핸드셰이크 이해
+2. [인증서와 PKI](./04b-certificates-pki.md) → 신뢰성 검증 원리
 3. 간단한 HTTPS 서버 구현 연습
 
 ### 중급자 (심화 학습)
 
-1. [암호화 성능 최적화](chapter-07-network-programming/07-33-crypto-performance.md) → 알고리즘 선택 기준
-2. [TLS 튜닝](chapter-07-network-programming/07-34-tls-optimization.md) → 실제 서비스 적용
+1. [암호화 성능 최적화](./07-33-crypto-performance.md) → 알고리즘 선택 기준
+2. [TLS 튜닝](./07-34-tls-optimization.md) → 실제 서비스 적용
 3. 프로덕션 환경 보안 설정 적용
 
 ### 고급자 (전문가 과정)
 
-1. [보안 프로그래밍](chapter-07-network-programming/04e-secure-programming.md) → 취약점 방어
+1. [보안 프로그래밍](./04e-secure-programming.md) → 취약점 방어
 2. 보안 감사와 모니터링 시스템 구축
 3. 새로운 보안 표준 (TLS 1.4, Post-Quantum) 연구
 
@@ -113,8 +113,8 @@ priority_score: 4
 
 ### 선행 학습
 
-- [TCP/IP 스택](chapter-07-network-programming/07-13-tcp-ip-stack.md) - 네트워크 프로토콜 기초
-- [소켓 프로그래밍](chapter-07-network-programming/07-01-socket-basics.md) - 연결 관리
+- [TCP/IP 스택](./07-13-tcp-ip-stack.md) - 네트워크 프로토콜 기초
+- [소켓 프로그래밍](./07-01-socket-basics.md) - 연결 관리
 
 ### 후속 학습  
 
@@ -146,7 +146,7 @@ priority_score: 4
 
 ---
 
-**다음**: [TLS 프로토콜 기초](chapter-07-network-programming/07-04-tls-protocol-fundamentals.md)에서 TLS 핸드셰이크의 내부 동작을 학습합니다.
+**다음**: [TLS 프로토콜 기초](./07-04-tls-protocol-fundamentals.md)에서 TLS 핸드셰이크의 내부 동작을 학습합니다.
 
 ## 📚 관련 문서
 

@@ -638,14 +638,14 @@ func (gw *APIGateway) Start(port int) error {
 
 ## 🔗 연관 학습 자료
 
-- **[16.5A API Gateway 기초](chapter-16-distributed-system-patterns/16-07-api-gateway-fundamentals.md)** - API Gateway 패턴의 기본 개념
-- **[16.5C 인증과 인가](chapter-16-distributed-system-patterns/05c-authentication-authorization.md)** - JWT 기반 통합 인증 시스템  
-- **[16.5D Rate Limiting](chapter-16-distributed-system-patterns/16-42-rate-limiting-monitoring.md)** - 트래픽 제어와 모니터링
-- **[16.5 API Gateway 패턴 종합](chapter-16-distributed-system-patterns/16-55-api-gateway-patterns.md)** - 전체 개요와 학습 로드맵
+- **[16.5A API Gateway 기초](./16-07-api-gateway-fundamentals.md)** - API Gateway 패턴의 기본 개념
+- **[16.5C 인증과 인가](./05c-authentication-authorization.md)** - JWT 기반 통합 인증 시스템  
+- **[16.5D Rate Limiting](./16-42-rate-limiting-monitoring.md)** - 트래픽 제어와 모니터링
+- **[16.5 API Gateway 패턴 종합](./16-55-api-gateway-patterns.md)** - 전체 개요와 학습 로드맵
 
 ---
 
-**다음**: [인증과 인가 시스템 구현](chapter-16-distributed-system-patterns/05c-authentication-authorization.md)에서 JWT 기반 통합 인증을 학습해보세요! 🔐
+**다음**: [인증과 인가 시스템 구현](./05c-authentication-authorization.md)에서 JWT 기반 통합 인증을 학습해보세요! 🔐
 
 ## 📚 관련 문서
 
@@ -661,7 +661,7 @@ func (gw *APIGateway) Start(port int) error {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

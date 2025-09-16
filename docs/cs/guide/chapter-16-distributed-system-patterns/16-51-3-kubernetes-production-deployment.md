@@ -832,7 +832,7 @@ Pod 스케줄링, 리소스 관리, 보안 정책, 자동 확장을 포함한 �
 ---
 
 **이전**: [Docker Compose 로컬 개발 환경](chapter-15-microservices-architecture/01d2-docker-compose-environment.md)  
-**다음**: [모니터링과 성공/실패 요인](chapter-16-distributed-system-patterns/16-40-monitoring-success-factors.md)에서 운영과 관리 방법을 학습합니다.
+**다음**: [모니터링과 성공/실패 요인](./16-40-monitoring-success-factors.md)에서 운영과 관리 방법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -848,7 +848,7 @@ Pod 스케줄링, 리소스 관리, 보안 정책, 자동 확장을 포함한 �
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

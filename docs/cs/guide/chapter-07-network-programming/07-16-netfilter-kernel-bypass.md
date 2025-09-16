@@ -515,8 +515,8 @@ eBPF 기반으로 커널 내에서 안전하고 효율적인 패킷 처리를 �
 
 ---
 
-**이전**: [Chapter 7-2C: TCP 혼잡 제어](chapter-07-network-programming/07-15-tcp-congestion-control.md)
-**다음**: [Chapter 7-2: TCP/IP 스택 개요](chapter-07-network-programming/07-13-tcp-ip-stack.md)로 돌아가서 전체적인 내용을 복습합니다.
+**이전**: [Chapter 7-2C: TCP 혼잡 제어](./07-15-tcp-congestion-control.md)
+**다음**: [Chapter 7-2: TCP/IP 스택 개요](./07-13-tcp-ip-stack.md)로 돌아가서 전체적인 내용을 복습합니다.
 
 ## 📚 관련 문서
 

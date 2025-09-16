@@ -713,8 +713,8 @@ fi
 
 ---
 
-**이전**: [madvise 패턴 활용](chapter-03-memory-system/03-33-madvise-optimization-patterns.md)  
-**다음**: [NUMA 환경 최적화](chapter-03-memory-system/03-35-numa-memory-optimization.md)에서 멀티소켓 시스템의 메모리 바인딩을 학습합니다.
+**이전**: [madvise 패턴 활용](./03-33-madvise-optimization-patterns.md)  
+**다음**: [NUMA 환경 최적화](./03-35-numa-memory-optimization.md)에서 멀티소켓 시스템의 메모리 바인딩을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -730,7 +730,7 @@ fi
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

@@ -899,8 +899,8 @@ DOM 노드 수를 일정하게 유지하면서 대용량 데이터를 효율적�
 
 ---
 
-**이전**: [라우트별 메모리 관리 전략](chapter-09-advanced-memory-management/03d3b-route-memory-management.md)  
-**다음**: [프로덕션 환경 메모리 모니터링](chapter-09-advanced-memory-management/09-40-3d-production-monitoring.md)에서 실시간 메모리 대시보드와 알림 시스템을 학습합니다.
+**이전**: [라우트별 메모리 관리 전략](./03d3b-route-memory-management.md)  
+**다음**: [프로덕션 환경 메모리 모니터링](./09-40-3d-production-monitoring.md)에서 실시간 메모리 대시보드와 알림 시스템을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -916,7 +916,7 @@ DOM 노드 수를 일정하게 유지하면서 대용량 데이터를 효율적�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)

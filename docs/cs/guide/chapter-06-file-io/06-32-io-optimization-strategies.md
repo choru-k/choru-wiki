@@ -555,8 +555,8 @@ SSD와 HDD의 물리적 특성을 이해하고 각각에 최적화된 설정 적
 
 ---
 
-**이전**: [I/O 성능 분석 도구](chapter-06-file-io/06-42-io-performance-monitoring.md)  
-**다음**: [실전 I/O 성능 테스트](chapter-06-file-io/06-33-io-performance-testing.md)에서 벤치마크와 성능 테스트 도구를 학습합니다.
+**이전**: [I/O 성능 분석 도구](./06-42-io-performance-monitoring.md)  
+**다음**: [실전 I/O 성능 테스트](./06-33-io-performance-testing.md)에서 벤치마크와 성능 테스트 도구를 학습합니다.
 
 ## 📚 관련 문서
 

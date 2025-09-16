@@ -311,8 +311,8 @@ int main() {
 
 ---
 
-**이전**: [스왑 관리와 최적화 개요](chapter-03-memory-system/03-18-swap-management.md)  
-**다음**: [swappiness 파라미터 최적화](chapter-03-memory-system/03-37-swappiness-optimization.md)에서 스왑 사용을 제어하는 핵심 파라미터를 학습합니다.
+**이전**: [스왑 관리와 최적화 개요](./03-18-swap-management.md)  
+**다음**: [swappiness 파라미터 최적화](./03-37-swappiness-optimization.md)에서 스왑 사용을 제어하는 핵심 파라미터를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -328,7 +328,7 @@ int main() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

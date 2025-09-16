@@ -508,8 +508,8 @@ do_time_wait:
 
 ---
 
-**이전**: [Chapter 7-2A: 네트워크 스택 아키텍처](chapter-07-network-programming/07-03-network-stack-architecture.md)  
-**다음**: [Chapter 7-2C: TCP 혼잡 제어](chapter-07-network-programming/07-15-tcp-congestion-control.md)에서 네트워크 성능 최적화를 위한 혼잡 제어 알고리즘을 학습합니다.
+**이전**: [Chapter 7-2A: 네트워크 스택 아키텍처](./07-03-network-stack-architecture.md)  
+**다음**: [Chapter 7-2C: TCP 혼잡 제어](./07-15-tcp-congestion-control.md)에서 네트워크 성능 최적화를 위한 혼잡 제어 알고리즘을 학습합니다.
 
 ## 📚 관련 문서
 

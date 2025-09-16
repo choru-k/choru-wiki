@@ -685,8 +685,8 @@ EXT, XFS, Btrfs 각각의 특성에 맞는 분석 방법을 제공하여 정확�
 
 ---
 
-**이전**: [파일시스템 진단 방법론](chapter-06-file-io/06-44-filesystem-diagnostic-flow.md)  
-**다음**: [자동 복구 시스템 구축](chapter-06-file-io/06c-filesystem-auto-recovery.md)에서 무인 운영을 위한 자동 복구 시스템을 구축합니다.
+**이전**: [파일시스템 진단 방법론](./06-44-filesystem-diagnostic-flow.md)  
+**다음**: [자동 복구 시스템 구축](./06c-filesystem-auto-recovery.md)에서 무인 운영을 위한 자동 복구 시스템을 구축합니다.
 
 ## 📚 관련 문서
 

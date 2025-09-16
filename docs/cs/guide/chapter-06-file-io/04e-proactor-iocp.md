@@ -885,8 +885,8 @@ void optimize_iocp_performance() {
 
 ---
 
-**이전**: [리액터 패턴 구현](chapter-06-file-io/04d-reactor-pattern.md)  
-**다음**: [고성능 네트워크 최적화](chapter-06-file-io/06-31-network-optimization.md)에서 네트워크 성능 튜닝 기법을 학습합니다.
+**이전**: [리액터 패턴 구현](./04d-reactor-pattern.md)  
+**다음**: [고성능 네트워크 최적화](./06-31-network-optimization.md)에서 네트워크 성능 튜닝 기법을 학습합니다.
 
 ## 📚 관련 문서
 

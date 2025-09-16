@@ -522,8 +522,8 @@ class WebAuthnSupport:
 
 ---
 
-**이전**: [JWT 보안](chapter-17-security-engineering/17-16-jwt-security.md)  
-**다음**: [인증과 인가 개요](chapter-17-security-engineering/17-14-authentication-authorization.md)로 돌아가서 다른 보안 토픽을 학습합니다.
+**이전**: [JWT 보안](./17-16-jwt-security.md)  
+**다음**: [인증과 인가 개요](./17-14-authentication-authorization.md)로 돌아가서 다른 보안 토픽을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -539,7 +539,7 @@ class WebAuthnSupport:
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./17-10-memory-security.md)
 - [Chapter 15.2 네트워크 보안 개요](./17-11-network-security.md)

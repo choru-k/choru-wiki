@@ -25,7 +25,7 @@ priority_score: 5
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [기본 개념과 구현](chapter-17-security-engineering/17-02-authentication-basics.md)
+### 1️⃣ [기본 개념과 구현](./17-02-authentication-basics.md)
 
 - Authentication vs Authorization 차이점
 - LinkedIn 해킹 사건 분석
@@ -33,7 +33,7 @@ priority_score: 5
 - 패스워드 보안과 Rate Limiting
 - 현대적 다층 보안 아키텍처
 
-### 2️⃣ [OAuth 2.0 구현](chapter-17-security-engineering/17-15-oauth2-implementation.md)
+### 2️⃣ [OAuth 2.0 구현](./17-15-oauth2-implementation.md)
 
 - OAuth 2.0 Authorization Code Flow
 - 완전한 OAuth 2.0 서버 구현
@@ -41,7 +41,7 @@ priority_score: 5
 - 클라이언트 구현과 토큰 관리
 - 실제 프로덕션 고려사항
 
-### 3️⃣ [JWT 보안](chapter-17-security-engineering/17-16-jwt-security.md)
+### 3️⃣ [JWT 보안](./17-16-jwt-security.md)
 
 - JWT 구조와 서명 검증
 - 토큰 블랙리스트와 취소
@@ -49,7 +49,7 @@ priority_score: 5
 - 보안 헤더와 클레임 검증
 - JWT 미들웨어 구현
 
-### 4️⃣ [다중 인증 (MFA)](chapter-17-security-engineering/17-17-mfa-implementation.md)
+### 4️⃣ [다중 인증 (MFA)](./17-17-mfa-implementation.md)
 
 - TOTP (Time-based OTP) 구현
 - QR 코드와 백업 코드 관리
@@ -84,14 +84,14 @@ priority_score: 5
 
 ### 초보자 (추천 순서)
 
-1. [기본 개념과 구현](chapter-17-security-engineering/17-02-authentication-basics.md) → 인증/인가 차이점 이해
-2. [OAuth 2.0 구현](chapter-17-security-engineering/17-15-oauth2-implementation.md) → 표준 프로토콜 학습
+1. [기본 개념과 구현](./17-02-authentication-basics.md) → 인증/인가 차이점 이해
+2. [OAuth 2.0 구현](./17-15-oauth2-implementation.md) → 표준 프로토콜 학습
 3. 간단한 로그인 시스템 구현 연습
 
 ### 중급자 (심화 학습)
 
-1. [JWT 보안](chapter-17-security-engineering/17-16-jwt-security.md) → 토큰 기반 인증 마스터
-2. [다중 인증 (MFA)](chapter-17-security-engineering/17-17-mfa-implementation.md) → 보안 강화 기법
+1. [JWT 보안](./17-16-jwt-security.md) → 토큰 기반 인증 마스터
+2. [다중 인증 (MFA)](./17-17-mfa-implementation.md) → 보안 강화 기법
 3. 실제 프로덕션 환경에 적용
 
 ### 고급자 (전문가 수준)
@@ -105,11 +105,11 @@ priority_score: 5
 ### 선행 학습
 
 - [Chapter 15-1: 보안 기초](01-security-fundamentals.md) - 암호학 기초
-- [Chapter 15-2: 네트워크 보안](chapter-17-security-engineering/17-11-network-security.md) - TLS/HTTPS
+- [Chapter 15-2: 네트워크 보안](./17-11-network-security.md) - TLS/HTTPS
 
 ### 후속 학습
 
-- [Chapter 15-4: 컨테이너 보안](chapter-17-security-engineering/17-18-container-security.md) - 인증 시스템 배포
+- [Chapter 15-4: 컨테이너 보안](./17-18-container-security.md) - 인증 시스템 배포
 - [Chapter 14: 분산 시스템](../chapter-14-distributed-systems/) - 분산 인증
 
 ## 핵심 학습 성과
@@ -137,7 +137,7 @@ priority_score: 5
 
 ---
 
-**다음**: [기본 개념과 구현](chapter-17-security-engineering/17-02-authentication-basics.md)에서 Authentication과 Authorization의 차이점과 LinkedIn 사건 분석부터 시작합니다.
+**다음**: [기본 개념과 구현](./17-02-authentication-basics.md)에서 Authentication과 Authorization의 차이점과 LinkedIn 사건 분석부터 시작합니다.
 
 ## 📚 관련 문서
 
@@ -153,7 +153,7 @@ priority_score: 5
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./17-10-memory-security.md)
 - [Chapter 15.2 네트워크 보안 개요](./17-11-network-security.md)

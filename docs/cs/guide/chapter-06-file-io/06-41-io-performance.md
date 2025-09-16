@@ -27,7 +27,7 @@ priority_score: 5
 
 이 섹션은 3개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [I/O 성능 분석 도구](chapter-06-file-io/06-42-io-performance-monitoring.md)
+### 1️⃣ [I/O 성능 분석 도구](./06-42-io-performance-monitoring.md)
 
 - 종합 I/O 성능 분석기 구현
 - /proc/diskstats 파싱 및 실시간 모니터링
@@ -35,7 +35,7 @@ priority_score: 5
 - 페이지 캐시 효율성 분석
 - I/O 대기 프로세스 분석
 
-### 2️⃣ [I/O 최적화 전략](chapter-06-file-io/06-32-io-optimization-strategies.md)
+### 2️⃣ [I/O 최적화 전략](./06-32-io-optimization-strategies.md)
 
 - 디바이스별 최적화 (SSD vs HDD)
 - I/O 스케줄러 선택 및 튜닝
@@ -43,7 +43,7 @@ priority_score: 5
 - 파일시스템별 최적화 옵션
 - 데이터베이스 특화 최적화
 
-### 3️⃣ [실전 I/O 성능 테스트](chapter-06-file-io/06-33-io-performance-testing.md)
+### 3️⃣ [실전 I/O 성능 테스트](./06-33-io-performance-testing.md)
 
 - 디스크 벤치마크 도구 구현
 - 순차/랜덤 I/O 성능 측정
@@ -84,14 +84,14 @@ priority_score: 5
 
 ### 초보자 (추천 순서)
 
-1. [I/O 성능 분석 도구](chapter-06-file-io/06-42-io-performance-monitoring.md) → 기본 모니터링 이해
-2. [I/O 최적화 전략](chapter-06-file-io/06-32-io-optimization-strategies.md) → 실용적 튜닝 기법
+1. [I/O 성능 분석 도구](./06-42-io-performance-monitoring.md) → 기본 모니터링 이해
+2. [I/O 최적화 전략](./06-32-io-optimization-strategies.md) → 실용적 튜닝 기법
 3. 간단한 벤치마크 실습
 
 ### 중급자 (심화 학습)
 
-1. [실전 I/O 성능 테스트](chapter-06-file-io/06-33-io-performance-testing.md) → 고급 테스트 기법
-2. [I/O 성능 분석 도구](chapter-06-file-io/06-42-io-performance-monitoring.md) → 커스텀 모니터링 구현
+1. [실전 I/O 성능 테스트](./06-33-io-performance-testing.md) → 고급 테스트 기법
+2. [I/O 성능 분석 도구](./06-42-io-performance-monitoring.md) → 커스텀 모니터링 구현
 3. 실제 프로덕션 환경 적용
 
 ### 고급자 (전문가)
@@ -140,18 +140,18 @@ graph TD
 
 ### 선행 학습
 
-- [File Descriptor 시스템](chapter-06-file-io/06-10-file-descriptor.md) - I/O 기초 개념
-- [VFS와 파일시스템](chapter-06-file-io/06-13-vfs-filesystem.md) - 파일시스템 이해
-- [Block I/O 아키텍처](chapter-06-file-io/06-18-block-io.md) - 블록 장치 I/O
+- [File Descriptor 시스템](./06-10-file-descriptor.md) - I/O 기초 개념
+- [VFS와 파일시스템](./06-13-vfs-filesystem.md) - 파일시스템 이해
+- [Block I/O 아키텍처](./06-18-block-io.md) - 블록 장치 I/O
 
 ### 후속 학습
 
-- [파일시스템 디버깅](chapter-06-file-io/06-43-filesystem-debugging.md) - I/O 오류 분석
-- [네트워크 파일시스템 최적화](chapter-06-file-io/06-34-network-filesystem-optimization.md) - 분산 스토리지
+- [파일시스템 디버깅](./06-43-filesystem-debugging.md) - I/O 오류 분석
+- [네트워크 파일시스템 최적화](./06-34-network-filesystem-optimization.md) - 분산 스토리지
 
 ---
 
-**다음**: [I/O 성능 분석 도구](chapter-06-file-io/06-42-io-performance-monitoring.md)에서 실시간 모니터링과 성능 측정 도구를 학습합니다.
+**다음**: [I/O 성능 분석 도구](./06-42-io-performance-monitoring.md)에서 실시간 모니터링과 성능 측정 도구를 학습합니다.
 
 ## 📚 관련 문서
 

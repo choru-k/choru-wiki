@@ -487,8 +487,8 @@ void forwarding_unit(pipeline_t* pipe) {
 
 ---
 
-**이전**: [CPU 아키텍처 개요](chapter-02-cpu-interrupt/02-01-cpu-architecture.md)  
-**다음**: [분기 예측과 Out-of-Order 실행](chapter-02-cpu-interrupt/02-10-prediction-ooo.md)에서 CPU가 미래를 예측하는 놀라운 메커니즘을 학습합니다.
+**이전**: [CPU 아키텍처 개요](./02-01-cpu-architecture.md)  
+**다음**: [분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)에서 CPU가 미래를 예측하는 놀라운 메커니즘을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -504,7 +504,7 @@ void forwarding_unit(pipeline_t* pipe) {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1B: 분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)

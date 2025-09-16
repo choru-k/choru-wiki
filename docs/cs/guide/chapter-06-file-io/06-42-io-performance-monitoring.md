@@ -525,8 +525,8 @@ iostat과 동일한 계산 방식으로 IOPS, 대역폭, 지연시간, 디스크
 
 ---
 
-**이전**: [I/O 성능 분석 개요](chapter-06-file-io/06-41-io-performance.md)  
-**다음**: [I/O 최적화 전략](chapter-06-file-io/06-32-io-optimization-strategies.md)에서 SSD/HDD별 최적화 기법을 학습합니다.
+**이전**: [I/O 성능 분석 개요](./06-41-io-performance.md)  
+**다음**: [I/O 최적화 전략](./06-32-io-optimization-strategies.md)에서 SSD/HDD별 최적화 기법을 학습합니다.
 
 ## 📚 관련 문서
 

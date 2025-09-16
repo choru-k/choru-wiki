@@ -506,8 +506,8 @@ int simd_strlen(const char* str) {
 
 ---
 
-**이전**: [분기 예측과 Out-of-Order 실행](chapter-02-cpu-interrupt/02-10-prediction-ooo.md)  
-**다음**: [성능 측정과 실전 최적화](chapter-02-cpu-interrupt/02-30-performance-optimization.md)에서 실제 프로파일링과 최적화 기법을 학습합니다.
+**이전**: [분기 예측과 Out-of-Order 실행](./02-10-prediction-ooo.md)  
+**다음**: [성능 측정과 실전 최적화](./02-30-performance-optimization.md)에서 실제 프로파일링과 최적화 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -523,7 +523,7 @@ int simd_strlen(const char* str) {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)

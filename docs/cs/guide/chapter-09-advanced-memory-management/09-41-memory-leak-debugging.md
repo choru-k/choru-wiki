@@ -1059,8 +1059,8 @@ class CustomClassLoader extends ClassLoader {
 
 ---
 
-**이전**: [메모리 최적화 개요](chapter-09-advanced-memory-management/09-34-memory-optimization.md)  
-**다음**: [Zero-allocation 프로그래밍](chapter-09-advanced-memory-management/04b-zero-allocation-programming.md)에서 GC 압박을 완전히 제거하는 고급 기법을 학습합니다.
+**이전**: [메모리 최적화 개요](./09-34-memory-optimization.md)  
+**다음**: [Zero-allocation 프로그래밍](./04b-zero-allocation-programming.md)에서 GC 압박을 완전히 제거하는 고급 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -1076,7 +1076,7 @@ class CustomClassLoader extends ClassLoader {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)

@@ -493,8 +493,8 @@ $ perf stat -e node-loads,node-load-misses ./server
 
 ---
 
-**이전**: [C10K/C10M 문제 해결](chapter-07-network-programming/07-17-c10k-scaling-solutions.md)  
-**다음**: [커넥션 풀과 로드 밸런싱](chapter-07-network-programming/07-18-connection-pool-load-balancing.md)에서 분산 시스템의 핵심 기술을 학습합니다.
+**이전**: [C10K/C10M 문제 해결](./07-17-c10k-scaling-solutions.md)  
+**다음**: [커넥션 풀과 로드 밸런싱](./07-18-connection-pool-load-balancing.md)에서 분산 시스템의 핵심 기술을 학습합니다.
 
 ## 📚 관련 문서
 

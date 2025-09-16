@@ -667,8 +667,8 @@ int sni_callback(SSL* ssl, int* ad, void* arg) {
 
 ---
 
-**이전**: [암호화 알고리즘과 성능 최적화](chapter-07-network-programming/07-33-crypto-performance.md)  
-**다음**: [보안 프로그래밍 실습](chapter-07-network-programming/04e-secure-programming.md)에서 보안 취약점 방어 기법을 학습합니다.
+**이전**: [암호화 알고리즘과 성능 최적화](./07-33-crypto-performance.md)  
+**다음**: [보안 프로그래밍 실습](./04e-secure-programming.md)에서 보안 취약점 방어 기법을 학습합니다.
 
 ## 📚 관련 문서
 

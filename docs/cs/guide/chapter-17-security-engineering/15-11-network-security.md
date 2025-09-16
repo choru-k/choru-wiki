@@ -25,7 +25,7 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [네트워크 보안 기초와 위협 환경](chapter-17-security-engineering/17-01-network-fundamentals.md)
+### 1️⃣ [네트워크 보안 기초와 위협 환경](./17-01-network-fundamentals.md)
 
 네트워크 보안의 출발점으로, 실제 일어난 사이버 공격 사례를 통해 위협의 실상을 이해합니다:
 
@@ -35,7 +35,7 @@ priority_score: 4
 - **실전 보안 설정**: SSH, 방화벽, 네트워크 모니터링 기초
 - **즉시 적용 가능한 보안 조치**: 오늘부터 시작하는 보안 체크리스트
 
-### 2️⃣ [TLS/SSL 프로토콜과 암호화 통신](chapter-17-security-engineering/17-12-tls-protocols.md)
+### 2️⃣ [TLS/SSL 프로토콜과 암호화 통신](./17-12-tls-protocols.md)
 
 현대 네트워크 보안의 핵심인 TLS/SSL 프로토콜의 구현과 보안 설정에 대해 다룹니다:
 
@@ -45,7 +45,7 @@ priority_score: 4
 - **실전 TLS 보안 설정**: nginx, Apache 등 실제 서비스 적용 방법
 - **TLS 취약점과 대응**: SSL Strip, 중간자 공격 등 방어 기법
 
-### 3️⃣ [DDoS 공격 탐지와 방어 시스템](chapter-17-security-engineering/17-13-ddos-defense.md)
+### 3️⃣ [DDoS 공격 탐지와 방어 시스템](./17-13-ddos-defense.md)
 
 DDoS 공격의 탐지, 방어, 그리고 대응 전략에 대한 종합적인 가이드입니다:
 
@@ -55,7 +55,7 @@ DDoS 공격의 탐지, 방어, 그리고 대응 전략에 대한 종합적인 �
 - **계층별 방어 전략**: 네트워크부터 애플리케이션까지 다층 방어
 - **실전 방어 설정**: nginx, iptables를 이용한 실제 방어 구현
 
-### 4️⃣ [Zero Trust 아키텍처와 고급 모니터링](chapter-17-security-engineering/17-40-zero-trust-monitoring.md)
+### 4️⃣ [Zero Trust 아키텍처와 고급 모니터링](./17-40-zero-trust-monitoring.md)
 
 현대적인 네트워크 보안 모델인 Zero Trust 아키텍처와 위협 탐지 시스템에 대해 다룹니다:
 
@@ -98,14 +98,14 @@ DDoS 공격의 탐지, 방어, 그리고 대응 전략에 대한 종합적인 �
 
 ### 초보자 (추천 순서)
 
-1. [**네트워크 보안 기초**](chapter-17-security-engineering/17-01-network-fundamentals.md) → 기초 개념 이해
-2. [**TLS/SSL 프로토콜**](chapter-17-security-engineering/17-12-tls-protocols.md) → 암호화 통신 이해
+1. [**네트워크 보안 기초**](./17-01-network-fundamentals.md) → 기초 개념 이해
+2. [**TLS/SSL 프로토콜**](./17-12-tls-protocols.md) → 암호화 통신 이해
 3. 간단한 방화벽 설정과 보안 설정 연습
 
 ### 중급자 (심화 학습)
 
-1. [**DDoS 방어 시스템**](chapter-17-security-engineering/17-13-ddos-defense.md) → 위협 탐지와 대응
-2. [**Zero Trust 아키텍처**](chapter-17-security-engineering/17-40-zero-trust-monitoring.md) → 전체 시스템 보안 설계
+1. [**DDoS 방어 시스템**](./17-13-ddos-defense.md) → 위협 탐지와 대응
+2. [**Zero Trust 아키텍처**](./17-40-zero-trust-monitoring.md) → 전체 시스템 보안 설계
 3. 실제 네트워크 환경에서 종합적인 보안 시스템 구축
 
 ### 고급자 (전문가 수준)
@@ -123,12 +123,12 @@ DDoS 공격의 탐지, 방어, 그리고 대응 전략에 대한 종합적인 �
 
 ### 후속 학습
 
-- **[15.3 인증과 인가](chapter-17-security-engineering/17-14-authentication-authorization.md)**: 애플리케이션 보안의 핵심
-- **[15.4 컴테이너 보안](chapter-17-security-engineering/17-18-container-security.md)**: 클라우드 네이티브 환경의 보안
+- **[15.3 인증과 인가](./17-14-authentication-authorization.md)**: 애플리케이션 보안의 핵심
+- **[15.4 컴테이너 보안](./17-18-container-security.md)**: 클라우드 네이티브 환경의 보안
 
 ---
 
-**다음**: [TLS/SSL 프로토콜과 암호화 통신](chapter-17-security-engineering/17-12-tls-protocols.md)에서 안전한 암호화 통신 구현을 시작해보세요.
+**다음**: [TLS/SSL 프로토콜과 암호화 통신](./17-12-tls-protocols.md)에서 안전한 암호화 통신 구현을 시작해보세요.
 
 ## 📚 관련 문서
 
@@ -144,7 +144,7 @@ DDoS 공격의 탐지, 방어, 그리고 대응 전략에 대한 종합적인 �
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./17-10-memory-security.md)
 - [Chapter 15-2a: 네트워크 보안 기초와 위협 환경](./17-01-network-fundamentals.md)

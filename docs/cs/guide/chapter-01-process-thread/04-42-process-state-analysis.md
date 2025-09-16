@@ -27,28 +27,28 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [프로세스 상태 기초 분석](chapter-01-process-thread/01-05-process-state-fundamentals.md)
+### 1️⃣ [프로세스 상태 기초 분석](./04-05-process-state-fundamentals.md)
 
 - Linux 프로세스 상태 전체 목록과 의미
 - /proc/[pid]/stat 파일 파싱과 해석
 - /proc/[pid]/status 정보 활용법
 - 실시간 프로세스 상태 모니터링 도구
 
-### 2️⃣ [D State 프로세스 디버깅](chapter-01-process-thread/01-43-dstate-debugging.md)
+### 2️⃣ [D State 프로세스 디버깅](./04-43-dstate-debugging.md)
 
 - D state 발생 원인 심층 분석
 - I/O 행업 문제 진단 방법
 - 커널 스택 추적과 디버깅 기법
 - D state 프로세스 해결 전략
 
-### 3️⃣ [Zombie 프로세스 처리](chapter-01-process-thread/05c-zombie-process-handling.md)
+### 3️⃣ [Zombie 프로세스 처리](./05c-zombie-process-handling.md)
 
 - Zombie 프로세스 발생 메커니즘
 - 부모-자식 프로세스 관계 분석
 - 자동 Zombie 정리 시스템 구축
 - 프로세스 테이블 관리 최적화
 
-### 4️⃣ [Process Accounting 활용](chapter-01-process-thread/05d-process-accounting.md)
+### 4️⃣ [Process Accounting 활용](./05d-process-accounting.md)
 
 - Process accounting 설정과 활성화
 - 프로세스 실행 기록 분석
@@ -71,32 +71,32 @@ priority_score: 4
 
 - **증상**: 시스템이 느려지지만 CPU/메모리는 정상
 - **원인**: D state 프로세스가 파일 잠금 보유
-- **접근법**: [D State 디버깅](chapter-01-process-thread/01-43-dstate-debugging.md)으로 I/O 병목 해결
+- **접근법**: [D State 디버깅](./04-43-dstate-debugging.md)으로 I/O 병목 해결
 
 ### 메모리 누수 의심 상황
 
 - **증상**: 프로세스 수는 증가하지만 실제 작업은 없음
 - **원인**: Zombie 프로세스 누적
-- **접근법**: [Zombie 처리](chapter-01-process-thread/05c-zombie-process-handling.md)로 자동 정리 시스템 구축
+- **접근법**: [Zombie 처리](./05c-zombie-process-handling.md)로 자동 정리 시스템 구축
 
 ### 보안 감사 요구 상황
 
 - **증상**: 시스템에서 실행된 프로세스 기록 필요
 - **원인**: 감사 로그 부재
-- **접근법**: [Process Accounting](chapter-01-process-thread/05d-process-accounting.md)으로 완전한 추적 시스템
+- **접근법**: [Process Accounting](./05d-process-accounting.md)으로 완전한 추적 시스템
 
 ## 🎭 학습 전략
 
 ### 초보자 (추천 순서)
 
-1. [프로세스 상태 기초](chapter-01-process-thread/01-05-process-state-fundamentals.md) → /proc 파일시스템 이해
-2. [Zombie 처리](chapter-01-process-thread/05c-zombie-process-handling.md) → 간단한 문제부터 해결
+1. [프로세스 상태 기초](./04-05-process-state-fundamentals.md) → /proc 파일시스템 이해
+2. [Zombie 처리](./05c-zombie-process-handling.md) → 간단한 문제부터 해결
 3. 간단한 모니터링 스크립트 작성 연습
 
 ### 중급자 (심화 학습)
 
-1. [D State 디버깅](chapter-01-process-thread/01-43-dstate-debugging.md) → 복잡한 I/O 문제 해결
-2. [Process Accounting](chapter-01-process-thread/05d-process-accounting.md) → 시스템 감사 마스터
+1. [D State 디버깅](./04-43-dstate-debugging.md) → 복잡한 I/O 문제 해결
+2. [Process Accounting](./05d-process-accounting.md) → 시스템 감사 마스터
 3. 실제 프로덕션 환경 모니터링 시스템 구축
 
 ### 고급자 (실무 전문가)
@@ -109,13 +109,13 @@ priority_score: 4
 
 ### 선행 학습
 
-- [프로세스 생성](chapter-01-process-thread/01-10-process-creation.md) - 프로세스 생명주기 이해
-- [스레드 동기화](chapter-01-process-thread/01-14-thread-synchronization.md) - 프로세스 간 협력 메커니즘
-- [스케줄링](chapter-01-process-thread/01-16-scheduling.md) - 프로세스 상태 전환 원리
+- [프로세스 생성](./04-10-process-creation.md) - 프로세스 생명주기 이해
+- [스레드 동기화](./04-14-thread-synchronization.md) - 프로세스 간 협력 메커니즘
+- [스케줄링](./04-16-scheduling.md) - 프로세스 상태 전환 원리
 
 ### 후속 학습
 
-- [스레드 동기화 디버깅](chapter-01-process-thread/01-44-thread-synchronization-debugging.md) - 동기화 문제 진단
+- [스레드 동기화 디버깅](./04-44-thread-synchronization-debugging.md) - 동기화 문제 진단
 - [CPU 아키텍처](../chapter-02-cpu-interrupt/05-01-cpu-architecture.md) - 하드웨어 수준의 프로세스 지원
 - [파일 I/O](../chapter-06-file-io/06-10-file-descriptor.md) - D state의 주요 원인인 I/O 이해
 
@@ -196,7 +196,7 @@ graph TD
 
 ---
 
-**다음**: [프로세스 상태 기초 분석](chapter-01-process-thread/01-05-process-state-fundamentals.md)에서 /proc 파일시스템과 프로세스 상태 파싱을 마스터해봅시다.
+**다음**: [프로세스 상태 기초 분석](./04-05-process-state-fundamentals.md)에서 /proc 파일시스템과 프로세스 상태 파싱을 마스터해봅시다.
 
 ## 📚 관련 문서
 
@@ -212,13 +212,13 @@ graph TD
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-04-process-thread)
+### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-40-process-management-monitoring.md)
+- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
+- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
+- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
+- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
+- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 

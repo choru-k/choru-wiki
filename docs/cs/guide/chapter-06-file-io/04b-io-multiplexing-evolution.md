@@ -723,8 +723,8 @@ void benchmark_io_multiplexing() {
 
 ---
 
-**이전**: [기본 개념과 C10K 문제](chapter-06-file-io/06-04-async-io-fundamentals.md)  
-**다음**: [io_uring: 차세대 비동기 I/O](chapter-06-file-io/04c-io-uring-implementation.md)에서 최신 Linux 비동기 I/O 기술을 학습합니다.
+**이전**: [기본 개념과 C10K 문제](./06-04-async-io-fundamentals.md)  
+**다음**: [io_uring: 차세대 비동기 I/O](./04c-io-uring-implementation.md)에서 최신 Linux 비동기 I/O 기술을 학습합니다.
 
 ## 📚 관련 문서
 

@@ -1032,7 +1032,7 @@ Big Bang 방식보다는 Strangler Fig 패턴을 통한 점진적 전환이 위�
 ---
 
 **이전**: [컨테이너화와 오케스트레이션](chapter-15-microservices-architecture/16-19-containerization-orchestration.md)  
-**다음**: [이벤트 드리븐 아키텍처](chapter-16-distributed-system-patterns/16-03-event-driven-architecture.md)에서 마이크로서비스의 느슨한 결합을 달성하는 이벤트 기반 패턴을 학습합니다.
+**다음**: [이벤트 드리븐 아키텍처](./16-03-event-driven-architecture.md)에서 마이크로서비스의 느슨한 결합을 달성하는 이벤트 기반 패턴을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -1048,7 +1048,7 @@ Big Bang 방식보다는 Strangler Fig 패턴을 통한 점진적 전환이 위�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

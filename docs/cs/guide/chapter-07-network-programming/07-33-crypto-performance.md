@@ -587,8 +587,8 @@ void optimize_crypto_performance(void) {
 
 ---
 
-**이전**: [X.509 인증서와 PKI 시스템](chapter-07-network-programming/04b-certificates-pki.md)  
-**다음**: [TLS 성능 튜닝](chapter-07-network-programming/07-34-tls-optimization.md)에서 Session Resumption과 0-RTT 최적화를 학습합니다.
+**이전**: [X.509 인증서와 PKI 시스템](./04b-certificates-pki.md)  
+**다음**: [TLS 성능 튜닝](./07-34-tls-optimization.md)에서 Session Resumption과 0-RTT 최적화를 학습합니다.
 
 ## 📚 관련 문서
 

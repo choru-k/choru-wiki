@@ -552,7 +552,7 @@ Colored pointer, Multi-mapping 등 하드웨어 특성을 적극 활용한 최�
 ---
 
 **이전**: [08-14-generational-concurrent-gc.md](chapter-09-advanced-memory-management/08-14-generational-concurrent-gc.md)  
-**다음**: [08-31-gc-tuning-practices.md](chapter-08-memory-allocator-gc/08-31-gc-tuning-practices.md)에서 실전 GC 튜닝과 문제 해결 방법을 학습합니다.
+**다음**: [08-31-gc-tuning-practices.md](./08-31-gc-tuning-practices.md)에서 실전 GC 튜닝과 문제 해결 방법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -568,7 +568,7 @@ Colored pointer, Multi-mapping 등 하드웨어 특성을 적극 활용한 최�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)

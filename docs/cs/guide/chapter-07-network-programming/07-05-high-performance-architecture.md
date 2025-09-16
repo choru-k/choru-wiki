@@ -76,7 +76,7 @@ CPU 친화성, 메모리 풀링, 배치 처리 등의 최적화가 필수적입�
 
 ---
 
-**다음**: [고성능 분석 도구](chapter-07-network-programming/07-45-high-performance-analysis-tool.md)에서 실제 구현과 성능 측정 도구를 학습합니다.
+**다음**: [고성능 분석 도구](./07-45-high-performance-analysis-tool.md)에서 실제 구현과 성능 측정 도구를 학습합니다.
 
 ## 📚 관련 문서
 

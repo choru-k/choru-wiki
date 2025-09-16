@@ -369,8 +369,8 @@ class UserDataService:
 
 ---
 
-**이전**: [05A 암호화 기초](chapter-17-security-engineering/17-03-cryptography-fundamentals.md)  
-**다음**: [05C 키 관리 시스템](chapter-17-security-engineering/05c-key-management-e2e.md)에서 AWS KMS를 활용한 키 관리와 E2E 암호화를 학습합니다.
+**이전**: [05A 암호화 기초](./17-03-cryptography-fundamentals.md)  
+**다음**: [05C 키 관리 시스템](./05c-key-management-e2e.md)에서 AWS KMS를 활용한 키 관리와 E2E 암호화를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -386,7 +386,7 @@ class UserDataService:
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./17-10-memory-security.md)
 - [Chapter 15.2 네트워크 보안 개요](./17-11-network-security.md)

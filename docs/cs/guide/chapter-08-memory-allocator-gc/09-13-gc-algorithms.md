@@ -25,28 +25,28 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [기본 GC 알고리즘](chapter-08-memory-allocator-gc/08-02-basic-gc-algorithms.md)
+### 1️⃣ [기본 GC 알고리즘](./08-02-basic-gc-algorithms.md)
 
 - Mark & Sweep: 가장 직관적인 방법의 장단점
 - Copying Collector: 단편화 해결을 위한 혁신
 - Mark & Compact: 두 알고리즘의 장점을 결합한 접근법
 - 각 알고리즘의 실제 구현과 성능 특성 분석
 
-### 2️⃣ [세대별 및 동시 GC](chapter-08-memory-allocator-gc/08-04-advanced-gc-concepts.md)
+### 2️⃣ [세대별 및 동시 GC](./08-04-advanced-gc-concepts.md)
 
 - Weak Generational Hypothesis와 세대별 GC의 핵심 원리
 - Tri-color Marking을 통한 동시 실행 가능한 GC
 - CMS (Concurrent Mark Sweep)의 구현과 문제점
 - Write Barrier와 Card Table을 활용한 최적화
 
-### 3️⃣ [현대적 GC 구현](chapter-08-memory-allocator-gc/08-17-modern-gc-implementations.md)
+### 3️⃣ [현대적 GC 구현](./08-17-modern-gc-implementations.md)
 
 - G1GC: Region 기반 가비지 컬렉션의 혁신
 - ZGC: Colored Pointers를 통한 10ms 이하 지연 시간 달성
 - Shenandoah: Brooks Pointer를 활용한 Red Hat의 접근법
 - 각 GC의 실제 프로덕션 성능과 사용 사례
 
-### 4️⃣ [GC 튜닝과 실전 활용](chapter-08-memory-allocator-gc/08-31-gc-tuning-practices.md)
+### 4️⃣ [GC 튜닝과 실전 활용](./08-31-gc-tuning-practices.md)
 
 - GC 로그 분석과 성능 지표 해석
 - 워크로드별 GC 선택 가이드
@@ -94,14 +94,14 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [기본 GC 알고리즘](chapter-08-memory-allocator-gc/08-02-basic-gc-algorithms.md) → GC의 기본 원리와 고전적 방법들 이해
-2. [세대별 및 동시 GC](chapter-08-memory-allocator-gc/08-04-advanced-gc-concepts.md) → 실용적인 최적화 기법 학습
+1. [기본 GC 알고리즘](./08-02-basic-gc-algorithms.md) → GC의 기본 원리와 고전적 방법들 이해
+2. [세대별 및 동시 GC](./08-04-advanced-gc-concepts.md) → 실용적인 최적화 기법 학습
 3. 간단한 GC 구현 또는 벤치마크 테스트 진행
 
 ### 중급자 (심화 학습)
 
-1. [현대적 GC 구현](chapter-08-memory-allocator-gc/08-17-modern-gc-implementations.md) → 최신 GC 기술과 혁신 이해
-2. [GC 튜닝과 실전 활용](chapter-08-memory-allocator-gc/08-31-gc-tuning-practices.md) → 실제 프로덕션 환경 최적화
+1. [현대적 GC 구현](./08-17-modern-gc-implementations.md) → 최신 GC 기술과 혁신 이해
+2. [GC 튜닝과 실전 활용](./08-31-gc-tuning-practices.md) → 실제 프로덕션 환경 최적화
 3. 자신의 워크로드에 맞는 GC 전략 수립
 
 ### 전문가 (마스터리)
@@ -263,7 +263,7 @@ void* roots[] = {
 
 ---
 
-**다음**: [기본 GC 알고리즘](chapter-08-memory-allocator-gc/08-02-basic-gc-algorithms.md)에서 Mark & Sweep, Copying, Mark & Compact의 구현 원리를 상세히 학습합니다.
+**다음**: [기본 GC 알고리즘](./08-02-basic-gc-algorithms.md)에서 Mark & Sweep, Copying, Mark & Compact의 구현 원리를 상세히 학습합니다.
 
 ## 📚 관련 문서
 
@@ -279,7 +279,7 @@ void* roots[] = {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)

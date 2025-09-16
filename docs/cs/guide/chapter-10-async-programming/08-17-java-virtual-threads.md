@@ -283,8 +283,8 @@ public class PinningProblem {
 
 ---
 
-**이전**: [10-03-go-goroutine-architecture.md](chapter-10-async-programming/10-03-go-goroutine-architecture.md)  
-**다음**: [10-41-synchronization-debugging.md](chapter-10-async-programming/10-41-synchronization-debugging.md)에서 메모리 모델과 디버깅 기법을 다룹니다.
+**이전**: [10-03-go-goroutine-architecture.md](./10-03-go-goroutine-architecture.md)  
+**다음**: [10-41-synchronization-debugging.md](./10-41-synchronization-debugging.md)에서 메모리 모델과 디버깅 기법을 다룹니다.
 
 ## 📚 관련 문서
 
@@ -300,7 +300,7 @@ public class PinningProblem {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

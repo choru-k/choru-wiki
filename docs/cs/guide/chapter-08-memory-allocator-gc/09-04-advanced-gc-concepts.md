@@ -785,8 +785,8 @@ public class CMSCollector {
 
 ---
 
-**이전**: [기본 GC 알고리즘](chapter-08-memory-allocator-gc/08-02-basic-gc-algorithms.md)  
-**다음**: [현대적 GC 구현](chapter-08-memory-allocator-gc/08-17-modern-gc-implementations.md)에서 G1GC, ZGC, Shenandoah의 혁신적 기술을 학습합니다.
+**이전**: [기본 GC 알고리즘](./08-02-basic-gc-algorithms.md)  
+**다음**: [현대적 GC 구현](./08-17-modern-gc-implementations.md)에서 G1GC, ZGC, Shenandoah의 혁신적 기술을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -802,7 +802,7 @@ public class CMSCollector {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)

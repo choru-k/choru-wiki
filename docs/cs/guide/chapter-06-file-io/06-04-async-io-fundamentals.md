@@ -439,8 +439,8 @@ void io_multiplexing_concept() {
 
 ---
 
-**이전**: [Chapter 6-4 개요](chapter-06-file-io/04-async-io.md)  
-**다음**: [I/O 멀티플렉싱의 진화](chapter-06-file-io/04b-io-multiplexing-evolution.md)에서 select, poll, epoll의 발전 과정을 학습합니다.
+**이전**: [Chapter 6-4 개요](./04-async-io.md)  
+**다음**: [I/O 멀티플렉싱의 진화](./04b-io-multiplexing-evolution.md)에서 select, poll, epoll의 발전 과정을 학습합니다.
 
 ## 📚 관련 문서
 

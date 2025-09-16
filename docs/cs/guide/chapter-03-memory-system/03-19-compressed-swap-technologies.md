@@ -475,8 +475,8 @@ echo "   vm.zswap.max_pool_percent=20"
 
 ---
 
-**이전**: [swappiness 파라미터 최적화](chapter-03-memory-system/03-37-swappiness-optimization.md)  
-**다음**: [스왑 모니터링과 패턴 분석](chapter-03-memory-system/03-42-swap-monitoring-analysis.md)에서 스왑 사용 패턴을 실시간으로 분석하는 방법을 학습합니다.
+**이전**: [swappiness 파라미터 최적화](./03-37-swappiness-optimization.md)  
+**다음**: [스왑 모니터링과 패턴 분석](./03-42-swap-monitoring-analysis.md)에서 스왑 사용 패턴을 실시간으로 분석하는 방법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -492,7 +492,7 @@ echo "   vm.zswap.max_pool_percent=20"
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

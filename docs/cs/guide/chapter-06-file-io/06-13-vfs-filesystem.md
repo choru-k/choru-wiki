@@ -25,42 +25,42 @@ VFS는 리눅스의 "만능 번역기"입니다. 78개의 서로 다른 파일�
 
 이 섹션은 6개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [VFS 기본 개념과 아키텍처](chapter-06-file-io/06-02-vfs-fundamentals.md)
+### 1️⃣ [VFS 기본 개념과 아키텍처](./06-02-vfs-fundamentals.md)
 
 - VFS의 필요성과 기본 개념
 - 4대 핵심 객체 (슈퍼블록, 아이노드, 덴트리, 파일)
 - VFS 계층 구조와 동작 원리
 - 실제 파일 접근 과정 체험
 
-### 2️⃣ [경로명 조회와 덴트리 캐시](chapter-06-file-io/06-14-path-lookup.md)
+### 2️⃣ [경로명 조회와 덴트리 캐시](./06-14-path-lookup.md)
 
 - 경로명 해석 메커니즘 심화 분석
 - 덴트리 캐시의 성능 최적화
 - 보안 검사와 권한 확인 과정
 - 심볼릭 링크와 마운트 포인트 처리
 
-### 3️⃣ [마운트 시스템과 네임스페이스](chapter-06-file-io/06-15-mount-system.md)
+### 3️⃣ [마운트 시스템과 네임스페이스](./06-15-mount-system.md)
 
 - 마운트 메커니즘과 파일시스템 통합
 - 마운트 네임스페이스와 컨테이너 격리
 - 다양한 마운트 옵션과 실무 활용
 - 바인드 마운트와 전파 정책
 
-### 4️⃣ [VFS 캐시 시스템](chapter-06-file-io/06-16-vfs-cache.md)
+### 4️⃣ [VFS 캐시 시스템](./06-16-vfs-cache.md)
 
 - 3단계 캐시 계층 (덴트리, 아이노드, 페이지)
 - 캐시 효율성과 성능 측정
 - LRU 알고리즘과 메모리 회수
 - Read-ahead와 성능 최적화
 
-### 5️⃣ [파일시스템별 구현](chapter-06-file-io/06-17-filesystem-impl.md)
+### 5️⃣ [파일시스템별 구현](./06-17-filesystem-impl.md)
 
 - ext4: 안정성과 extent 기반 할당
 - Btrfs: Copy-on-Write와 스냅샷 기능
 - 특수 파일시스템 (procfs, tmpfs) 활용
 - 파일시스템 선택 가이드
 
-### 6️⃣ [성능 최적화와 튜닝](chapter-06-file-io/06-30-performance-tuning.md)
+### 6️⃣ [성능 최적화와 튜닝](./06-30-performance-tuning.md)
 
 - VFS 캐시 튜닝 전략
 - 파일시스템별 최적화 기법
@@ -100,31 +100,31 @@ VFS는 리눅스의 "만능 번역기"입니다. 78개의 서로 다른 파일�
 
 ### 초보자 (추천 순서)
 
-1. [VFS 기본 개념](chapter-06-file-io/06-02-vfs-fundamentals.md) → 전체 구조 이해
-2. [캐시 시스템](chapter-06-file-io/06-16-vfs-cache.md) → 성능의 핵심 파악
+1. [VFS 기본 개념](./06-02-vfs-fundamentals.md) → 전체 구조 이해
+2. [캐시 시스템](./06-16-vfs-cache.md) → 성능의 핵심 파악
 3. 간단한 파일시스템 마운트 실습
 
 ### 중급자 (심화 학습)
 
-1. [경로명 조회](chapter-06-file-io/06-14-path-lookup.md) → 내부 메커니즘 이해
-2. [마운트 시스템](chapter-06-file-io/06-15-mount-system.md) → 고급 설정 활용
+1. [경로명 조회](./06-14-path-lookup.md) → 내부 메커니즘 이해
+2. [마운트 시스템](./06-15-mount-system.md) → 고급 설정 활용
 3. 실제 서버 환경 최적화 적용
 
 ### 고급자 (전문가 과정)
 
-1. [파일시스템 구현](chapter-06-file-io/06-17-filesystem-impl.md) → 각 FS별 특성
-2. [성능 튜닝](chapter-06-file-io/06-30-performance-tuning.md) → 프로덕션 최적화
+1. [파일시스템 구현](./06-17-filesystem-impl.md) → 각 FS별 특성
+2. [성능 튜닝](./06-30-performance-tuning.md) → 프로덕션 최적화
 3. 커스텀 파일시스템 개발 도전
 
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [Chapter 6-1: 파일 디스크립터와 시스템 콜](chapter-06-file-io/06-10-file-descriptor.md) - 기초 파일 I/O
+- [Chapter 6-1: 파일 디스크립터와 시스템 콜](./06-10-file-descriptor.md) - 기초 파일 I/O
 
 ### 후속 학습
 
-- [Chapter 6-3: 블록 I/O와 디스크 스케줄링](chapter-06-file-io/06-18-block-io.md) - 하위 계층 이해
+- [Chapter 6-3: 블록 I/O와 디스크 스케줄링](./06-18-block-io.md) - 하위 계층 이해
 
 ## 🌟 왜 VFS를 학습해야 할까요?
 
@@ -144,7 +144,7 @@ VFS는 단순한 추상화 계층이 아닙니다. 현대 시스템의 성능과
 
 ---
 
-**다음**: [VFS 기본 개념과 아키텍처](chapter-06-file-io/06-02-vfs-fundamentals.md)에서 VFS의 핵심 구조와 동작 원리를 학습합니다.
+**다음**: [VFS 기본 개념과 아키텍처](./06-02-vfs-fundamentals.md)에서 VFS의 핵심 구조와 동작 원리를 학습합니다.
 
 ```mermaid
 flowchart TD

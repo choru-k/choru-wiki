@@ -32,21 +32,21 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [malloc 내부 동작의 진실](chapter-08-memory-allocator-gc/08-01-malloc-fundamentals.md)
+### 1️⃣ [malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)
 
 - malloc이 시스템 콜이 아닌 라이브러리 함수라는 충격적 진실
 - glibc ptmalloc2의 Arena, Bin, Chunk 구조 분석
 - 메모리 단편화(Swiss cheese) 현상과 해결책
 - 실제 코드와 함께하는 내부 동작 원리
 
-### 2️⃣ [메모리 할당자 대전: 성능 비교](chapter-08-memory-allocator-gc/08-11-allocator-comparison.md)
+### 2️⃣ [메모리 할당자 대전: 성능 비교](./08-11-allocator-comparison.md)
 
 - TCMalloc: Google의 Thread-local 캐시 혁신
 - JEMalloc: Facebook의 Arena 기반 NUMA 최적화
 - MIMalloc: Microsoft의 최신 Sharded free list
 - 실제 벤치마크 결과와 성능 비교 분석
 
-### 3️⃣ [커스텀 메모리 할당자 구현](chapter-08-memory-allocator-gc/08-12-custom-allocators.md)
+### 3️⃣ [커스텀 메모리 할당자 구현](./08-12-custom-allocators.md)
 
 - Memory Pool: Frame Allocator와 Ring Buffer의 게임 엔진 활용
 - Slab Allocator: Linux 커널의 같은 크기 객체 전용 최적화
@@ -96,13 +96,13 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [malloc 기초](chapter-08-memory-allocator-gc/08-01-malloc-fundamentals.md) → 메모리 할당의 본질 이해
-2. [할당자 비교](chapter-08-memory-allocator-gc/08-11-allocator-comparison.md) → 성능 차이 체감
+1. [malloc 기초](./08-01-malloc-fundamentals.md) → 메모리 할당의 본질 이해
+2. [할당자 비교](./08-11-allocator-comparison.md) → 성능 차이 체감
 3. 간단한 Memory Pool 구현 연습
 
 ### 중급자 (심화 학습)
 
-1. [커스텀 할당자](chapter-08-memory-allocator-gc/08-12-custom-allocators.md) → 직접 구현 경험
+1. [커스텀 할당자](./08-12-custom-allocators.md) → 직접 구현 경험
 2. [실전 최적화](chapter-09-advanced-memory-management/08-30-production-optimization.md) → 프로덕션 적용
 3. 실제 프로젝트에서 성능 측정과 튜닝
 
@@ -121,7 +121,7 @@ priority_score: 4
 
 ### 후속 학습
 
-- [가비지 컬렉션 기초](chapter-08-memory-allocator-gc/08-13-gc-algorithms.md) - 자동 메모리 관리
+- [가비지 컬렉션 기초](./08-13-gc-algorithms.md) - 자동 메모리 관리
 - [메모리 누수 탐지](chapter-09-advanced-memory-management/05-memory-leak-detection.md) - 문제 진단과 해결
 
 ## 이 문서를 읽으면 답할 수 있는 질문들
@@ -158,7 +158,7 @@ priority_score: 4
 
 ---
 
-**다음**: [malloc 기초부터 시작](chapter-08-memory-allocator-gc/08-01-malloc-fundamentals.md)하여 메모리 할당의 진실을 파헤쳐보세요.
+**다음**: [malloc 기초부터 시작](./08-01-malloc-fundamentals.md)하여 메모리 할당의 진실을 파헤쳐보세요.
 
 ## 📚 관련 문서
 
@@ -174,7 +174,7 @@ priority_score: 4
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)
 - [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-11-allocator-comparison.md)

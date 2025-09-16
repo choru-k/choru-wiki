@@ -246,7 +246,7 @@ void set_idt_entry(int vector, void* handler, int type, int dpl) {
 
 ---
 
-**다음**: [인터럽트 처리 과정과 예외](chapter-02-cpu-interrupt/02-13-interrupt-processing.md)에서 인터럽트의 실제 처리 메커니즘을 학습합니다.
+**다음**: [인터럽트 처리 과정과 예외](./02-13-interrupt-processing.md)에서 인터럽트의 실제 처리 메커니즘을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -262,7 +262,7 @@ void set_idt_entry(int vector, void* handler, int type, int dpl) {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)

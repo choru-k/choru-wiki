@@ -25,35 +25,35 @@ priority_score: 0
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [기본 개념과 mmap vs read/write](chapter-03-memory-system/03-32-mmap-performance-comparison.md)
+### 1️⃣ [기본 개념과 mmap vs read/write](./03-32-mmap-performance-comparison.md)
 
 - mmap과 read/write의 성능 차이점 분석
 - 파일 크기별, 접근 패턴별 선택 기준
 - 실제 벤치마크를 통한 성능 비교
 - Zero-copy와 지연 로딩의 실질적 효과
 
-### 2️⃣ [madvise 패턴 활용](chapter-03-memory-system/03-33-madvise-optimization-patterns.md)
+### 2️⃣ [madvise 패턴 활용](./03-33-madvise-optimization-patterns.md)
 
 - 운영체제에게 메모리 사용 패턴 힌트 제공
 - MADV_SEQUENTIAL, MADV_RANDOM 최적화
 - MADV_WILLNEED, MADV_DONTNEED 활용법
 - 실무에서 사용하는 madvise 패턴들
 
-### 3️⃣ [Huge Pages 최적화](chapter-03-memory-system/03-34-huge-pages-optimization.md)
+### 3️⃣ [Huge Pages 최적화](./03-34-huge-pages-optimization.md)
 
 - TLB 효율성 향상을 위한 Huge Pages 활용
 - 2MB, 1GB 페이지 설정과 성능 효과
 - Transparent Huge Pages (THP) 구성
 - 메모리 집약적 애플리케이션 최적화
 
-### 4️⃣ [NUMA 환경 최적화](chapter-03-memory-system/03-35-numa-memory-optimization.md)
+### 4️⃣ [NUMA 환경 최적화](./03-35-numa-memory-optimization.md)
 
 - NUMA 토폴로지 이해와 메모리 바인딩
 - 로컬 vs 원격 메모리 접근 성능 차이
 - CPU-메모리 친화성 최적화 전략
 - 멀티소켓 시스템에서의 성능 튜닝
 
-### 5️⃣ [실무 최적화 패턴](chapter-03-memory-system/03-36-practical-optimization-patterns.md)
+### 5️⃣ [실무 최적화 패턴](./03-36-practical-optimization-patterns.md)
 
 - 대용량 로그 파일 분석기 구현
 - 윈도우 슬라이딩 기반 스트리밍 처리
@@ -94,19 +94,19 @@ priority_score: 0
 
 ### 초보자 (추천 순서)
 
-1. [mmap 성능 비교](chapter-03-memory-system/03-32-mmap-performance-comparison.md) → 기본 원리 이해
-2. [madvise 패턴](chapter-03-memory-system/03-33-madvise-optimization-patterns.md) → 힌트 활용법
+1. [mmap 성능 비교](./03-32-mmap-performance-comparison.md) → 기본 원리 이해
+2. [madvise 패턴](./03-33-madvise-optimization-patterns.md) → 힌트 활용법
 3. 간단한 파일 처리 도구로 실습
 
 ### 중급자 (심화 학습)
 
-1. [Huge Pages](chapter-03-memory-system/03-34-huge-pages-optimization.md) → 시스템 레벨 최적화
-2. [NUMA 최적화](chapter-03-memory-system/03-35-numa-memory-optimization.md) → 하드웨어 친화적 구성
+1. [Huge Pages](./03-34-huge-pages-optimization.md) → 시스템 레벨 최적화
+2. [NUMA 최적화](./03-35-numa-memory-optimization.md) → 하드웨어 친화적 구성
 3. 실제 프로덕션 환경에서 성능 측정
 
 ### 고급자 (전문가 과정)
 
-1. [실무 패턴](chapter-03-memory-system/03-36-practical-optimization-patterns.md) → 복합 최적화 기법
+1. [실무 패턴](./03-36-practical-optimization-patterns.md) → 복합 최적화 기법
 2. 맞춤형 메모리 매핑 라이브러리 구현
 3. 시스템별 성능 특성 분석 및 튜닝
 
@@ -114,13 +114,13 @@ priority_score: 0
 
 ### 선행 학습
 
-- [가상 메모리 기초](chapter-03-memory-system/03-10-address-translation.md) - 주소 변환 메카니즘
-- [페이지 폴트 처리](chapter-03-memory-system/03-12-page-fault.md) - 메모리 로딩 원리
+- [가상 메모리 기초](./03-10-address-translation.md) - 주소 변환 메카니즘
+- [페이지 폴트 처리](./03-12-page-fault.md) - 메모리 로딩 원리
 
 ### 후속 학습
 
-- [스왑 관리](chapter-03-memory-system/03-18-swap-management.md) - 메모리 부족 상황 대응
-- [OOM 디버깅](chapter-03-memory-system/03-43-oom-debugging.md) - 메모리 고갈 문제 해결
+- [스왑 관리](./03-18-swap-management.md) - 메모리 부족 상황 대응
+- [OOM 디버깅](./03-43-oom-debugging.md) - 메모리 고갈 문제 해결
 
 ## 🎯 학습 목표 체크리스트
 
@@ -135,7 +135,7 @@ priority_score: 0
 
 ---
 
-**시작하기**: [mmap vs read/write 성능 비교](chapter-03-memory-system/03-32-mmap-performance-comparison.md)에서 기본 개념부터 학습을 시작하세요.
+**시작하기**: [mmap vs read/write 성능 비교](./03-32-mmap-performance-comparison.md)에서 기본 개념부터 학습을 시작하세요.
 
 ## 📚 관련 문서
 
@@ -151,7 +151,7 @@ priority_score: 0
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

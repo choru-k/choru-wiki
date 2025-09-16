@@ -287,7 +287,7 @@ if __name__ == "__main__":
 
 ---
 
-**이전**: [OOM Killer 동작 원리](chapter-03-memory-system/03-02-oom-killer-fundamentals.md)  
+**이전**: [OOM Killer 동작 원리](./03-02-oom-killer-fundamentals.md)  
 **다음**: [컨테이너 환경 OOM 디버깅](08c-container-oom-debugging.md)에서 Docker와 Kubernetes 환경에서의 OOM 대응을 학습합니다.
 
 ## 📚 관련 문서
@@ -304,7 +304,7 @@ if __name__ == "__main__":
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

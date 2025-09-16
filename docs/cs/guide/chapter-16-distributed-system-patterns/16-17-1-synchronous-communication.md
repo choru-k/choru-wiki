@@ -500,7 +500,7 @@ Fallback 메커니즘과 캐싱을 통한 사용자 경험 보장
 ---
 
 **이전**: [서비스 간 통신과 메시징 개요](chapter-15-microservices-architecture/16-16-service-communication.md)  
-**다음**: [비동기식 통신 - 메시지 큐와 이벤트](chapter-16-distributed-system-patterns/16-18-2-asynchronous-communication.md)에서 비동기 패턴을 학습합니다.
+**다음**: [비동기식 통신 - 메시지 큐와 이벤트](./16-18-2-asynchronous-communication.md)에서 비동기 패턴을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -516,7 +516,7 @@ Fallback 메커니즘과 캐싱을 통한 사용자 경험 보장
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

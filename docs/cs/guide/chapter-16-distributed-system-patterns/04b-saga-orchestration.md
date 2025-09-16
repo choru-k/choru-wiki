@@ -533,8 +533,8 @@ public enum SagaStatus {
 
 ---
 
-**이전**: [16.4a Saga 패턴 비즈니스 사례](chapter-16-distributed-system-patterns/04a-saga-business-case.md)  
-**다음**: [16.4c Saga 패턴 코레오그래피 구현](chapter-16-distributed-system-patterns/04c-saga-choreography.md)에서 이벤트 주도의 분산 코레오그래피 접근법을 학습합니다.
+**이전**: [16.4a Saga 패턴 비즈니스 사례](./04a-saga-business-case.md)  
+**다음**: [16.4c Saga 패턴 코레오그래피 구현](./04c-saga-choreography.md)에서 이벤트 주도의 분산 코레오그래피 접근법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -550,7 +550,7 @@ public enum SagaStatus {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

@@ -808,8 +808,8 @@ Vue Router와 React Router 각각의 특성을 활용한 맞춤형 메모리 관
 
 ---
 
-**이전**: [SPA 메모리 관리 아키텍처](chapter-09-advanced-memory-management/09-07-3a-spa-architecture-lifecycle.md)  
-**다음**: [고급 메모리 최적화 기법](chapter-09-advanced-memory-management/09-33-3c-advanced-optimization.md)에서 가상 스크롤링과 Progressive Loading 기법을 학습합니다.
+**이전**: [SPA 메모리 관리 아키텍처](./09-07-3a-spa-architecture-lifecycle.md)  
+**다음**: [고급 메모리 최적화 기법](./09-33-3c-advanced-optimization.md)에서 가상 스크롤링과 Progressive Loading 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -825,7 +825,7 @@ Vue Router와 React Router 각각의 특성을 활용한 맞춤형 메모리 관
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)

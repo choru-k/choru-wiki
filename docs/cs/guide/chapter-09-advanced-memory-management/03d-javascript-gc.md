@@ -90,7 +90,7 @@ class V8MemoryStructure {
 }
 ```
 
-### [9.3d2 메모리 누수 방지와 성능 최적화](chapter-09-advanced-memory-management/03d2-memory-leak-prevention.md)
+### [9.3d2 메모리 누수 방지와 성능 최적화](./03d2-memory-leak-prevention.md)
 
 **실전 메모리 누수 방지 완벽 가이드**
 
@@ -114,7 +114,7 @@ function modernEventHandling() {
 }
 ```
 
-### [9.3d3 대규모 SPA 메모리 관리 전략](chapter-09-advanced-memory-management/03d3-spa-memory-management.md)
+### [9.3d3 대규모 SPA 메모리 관리 전략](./03d3-spa-memory-management.md)
 
 **프로덕션 환경의 실전 메모리 관리**
 
@@ -140,7 +140,7 @@ class SPAMemoryManager {
 }
 ```
 
-### [9.3d4 JavaScript GC의 미래와 실무 경험](chapter-09-advanced-memory-management/03d4-javascript-gc-future.md)
+### [9.3d4 JavaScript GC의 미래와 실무 경험](./03d4-javascript-gc-future.md)
 
 **차세대 기술과 10년 실무 경험 정리**
 
@@ -369,7 +369,7 @@ class OptimizedPoint {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)

@@ -733,8 +733,8 @@ Publisher Confirm, 재시도, Dead Letter Queue를 통한 신뢰성 있는 메�
 
 ---
 
-**이전**: [동기식 통신 - REST API와 Circuit Breaker](chapter-16-distributed-system-patterns/16-17-1-synchronous-communication.md)  
-**다음**: [통신 패턴 선택과 실전 최적화](chapter-16-distributed-system-patterns/16-50-3-communication-patterns-best-practices.md)에서 전체 통신 전략을 학습합니다.
+**이전**: [동기식 통신 - REST API와 Circuit Breaker](./16-17-1-synchronous-communication.md)  
+**다음**: [통신 패턴 선택과 실전 최적화](./16-50-3-communication-patterns-best-practices.md)에서 전체 통신 전략을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -750,7 +750,7 @@ Publisher Confirm, 재시도, Dead Letter Queue를 통한 신뢰성 있는 메�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

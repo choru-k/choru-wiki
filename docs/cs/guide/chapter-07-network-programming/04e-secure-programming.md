@@ -896,7 +896,7 @@ void run_security_tests() {
 
 ---
 
-**이전**: [TLS 성능 튜닝](chapter-07-network-programming/07-34-tls-optimization.md)  
+**이전**: [TLS 성능 튜닝](./07-34-tls-optimization.md)  
 **다음**: [비동기 프로그래밍](../chapter-10-async-programming/08-10-promise-future.md)에서 Promise/Future 패턴과 비동기 프로그래밍의 핵심을 학습합니다.
 
 ## 📚 관련 문서

@@ -690,8 +690,8 @@ ICMP, TCP, 경로 추적, 대역폭 테스트를 결합하여 네트워크 문�
 
 ---
 
-**이전**: [네트워크 지연시간 최적화 개요](chapter-07-network-programming/07-36-network-latency-optimization.md)  
-**다음**: [네트워크 최적화 자동화](chapter-07-network-programming/07-37-optimization-automation.md)에서 시스템 레벨 최적화 스크립트를 학습합니다.
+**이전**: [네트워크 지연시간 최적화 개요](./07-36-network-latency-optimization.md)  
+**다음**: [네트워크 최적화 자동화](./07-37-optimization-automation.md)에서 시스템 레벨 최적화 스크립트를 학습합니다.
 
 ## 📚 관련 문서
 

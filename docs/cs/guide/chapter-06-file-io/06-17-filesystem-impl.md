@@ -736,8 +736,8 @@ mount -t tmpfs -o size=8G tmpfs /tmp/fast
 
 ---
 
-**이전**: [VFS 캐시 시스템](chapter-06-file-io/06-16-vfs-cache.md)  
-**다음**: [성능 최적화와 튜닝](chapter-06-file-io/06-30-performance-tuning.md)에서 실전 성능 분석과 최적화 기법을 학습합니다.
+**이전**: [VFS 캐시 시스템](./06-16-vfs-cache.md)  
+**다음**: [성능 최적화와 튜닝](./06-30-performance-tuning.md)에서 실전 성능 분석과 최적화 기법을 학습합니다.
 
 ## 📚 관련 문서
 

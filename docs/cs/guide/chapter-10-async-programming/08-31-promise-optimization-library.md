@@ -803,8 +803,8 @@ async function aggregateApiData() {
 
 ---
 
-**이전**: [Promise 성능 분석 도구](chapter-10-async-programming/10-44-promise-performance-analysis-tools.md)  
-**다음**: [Promise 성능 최적화 개요](chapter-10-async-programming/10-30-promise-performance-optimization.md)에서 전체적인 최적화 전략을 학습합니다.
+**이전**: [Promise 성능 분석 도구](./10-44-promise-performance-analysis-tools.md)  
+**다음**: [Promise 성능 최적화 개요](./10-30-promise-performance-optimization.md)에서 전체적인 최적화 전략을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -820,7 +820,7 @@ async function aggregateApiData() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

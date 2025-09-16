@@ -754,8 +754,8 @@ Python으로 구현한 완전한 이벤트 스토어로, 동시성 제어와 트
 
 ---
 
-**이전**: [16.2B 실시간 스트림 처리](chapter-16-distributed-system-patterns/02b-real-time-stream-processing.md)  
-**다음**: [16.2D 베스트 프랙티스](chapter-16-distributed-system-patterns/16-05-best-practices-success-factors.md)에서 성공 요인과 안티패턴을 학습합니다.
+**이전**: [16.2B 실시간 스트림 처리](./02b-real-time-stream-processing.md)  
+**다음**: [16.2D 베스트 프랙티스](./16-05-best-practices-success-factors.md)에서 성공 요인과 안티패턴을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -771,7 +771,7 @@ Python으로 구현한 완전한 이벤트 스토어로, 동시성 제어와 트
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

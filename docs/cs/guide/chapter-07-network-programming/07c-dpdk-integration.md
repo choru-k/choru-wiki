@@ -627,8 +627,8 @@ DPDK는 커널을 우회하여 직접 네트워크 카드를 제어하는 고성
 
 ---
 
-**이전**: [고성능 분석 도구](chapter-07-network-programming/07-45-high-performance-analysis-tool.md)  
-**다음**: [고성능 네트워킹 개요](chapter-07-network-programming/07-38-high-performance-networking.md)로 돌아가서 전체 내용을 검토할 수 있습니다.
+**이전**: [고성능 분석 도구](./07-45-high-performance-analysis-tool.md)  
+**다음**: [고성능 네트워킹 개요](./07-38-high-performance-networking.md)로 돌아가서 전체 내용을 검토할 수 있습니다.
 
 ## 📚 관련 문서
 

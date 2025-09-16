@@ -277,8 +277,8 @@ Multi-stage build, 경량 base 이미지, 의존성 캐싱 활용
 
 ---
 
-**이전**: [Docker 컨테이너화 기초](chapter-15-microservices-architecture/16-02-1-docker-fundamentals.md)  
-**다음**: [로컬 개발 환경 구성](chapter-15-microservices-architecture/01d3-local-development.md)에서 Docker Compose를 활용한 개발 환경을 학습합니다.
+**이전**: [Docker 컨테이너화 기초](./16-02-1-docker-fundamentals.md)  
+**다음**: [로컬 개발 환경 구성](./01d3-local-development.md)에서 Docker Compose를 활용한 개발 환경을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -298,9 +298,9 @@ Multi-stage build, 경량 base 이미지, 의존성 캐싱 활용
 
 - [15.1 마이크로서비스 아키텍처 개요](./16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](./16-10-monolith-to-microservices.md)
-- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-16-distributed-system-patterns/16-11-design-principles.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/16-12-1-single-responsibility-principle.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/16-13-1-single-responsibility.md)
+- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-15-microservices-architecture/16-11-design-principles.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/16-12-1-single-responsibility-principle.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/16-13-1-single-responsibility.md)
 
 ### 🏷️ 관련 키워드
 

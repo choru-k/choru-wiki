@@ -27,14 +27,14 @@ priority_score: 4
 
 이 섹션은 3개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [고성능 아키텍처](chapter-07-network-programming/07-05-high-performance-architecture.md)
+### 1️⃣ [고성능 아키텍처](./07-05-high-performance-architecture.md)
 
 - 성능 계층별 기술 스택
 - 커널 바이패스의 중요성
 - 시스템 레벨 최적화 전략
 - DPDK, RDMA, AF_XDP 비교
 
-### 2️⃣ [고성능 분석 도구](chapter-07-network-programming/07-45-high-performance-analysis-tool.md)
+### 2️⃣ [고성능 분석 도구](./07-45-high-performance-analysis-tool.md)
 
 - Lock-Free Ring Buffer 구현
 - Busy Polling 패턴
@@ -42,7 +42,7 @@ priority_score: 4
 - 실시간 성능 측정 및 통계
 - CPU 친화성과 메모리 정렬
 
-### 3️⃣ [DPDK 통합](chapter-07-network-programming/07c-dpdk-integration.md)
+### 3️⃣ [DPDK 통합](./07c-dpdk-integration.md)
 
 - DPDK 설치 및 환경 설정
 - 휴지페이지(HugePage) 구성
@@ -84,14 +84,14 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [고성능 아키텍처](chapter-07-network-programming/07-05-high-performance-architecture.md) → 전체 그림 파악
-2. [분석 도구](chapter-07-network-programming/07-45-high-performance-analysis-tool.md) → 핵심 구현 이해
+1. [고성능 아키텍처](./07-05-high-performance-architecture.md) → 전체 그림 파악
+2. [분석 도구](./07-45-high-performance-analysis-tool.md) → 핵심 구현 이해
 3. 간단한 성능 측정 프로그램 작성 연습
 
 ### 중급자 (심화 학습)
 
-1. [DPDK 통합](chapter-07-network-programming/07c-dpdk-integration.md) → 프로덕션 환경 구축
-2. [분석 도구](chapter-07-network-programming/07-45-high-performance-analysis-tool.md) → 고급 최적화 기법
+1. [DPDK 통합](./07c-dpdk-integration.md) → 프로덕션 환경 구축
+2. [분석 도구](./07-45-high-performance-analysis-tool.md) → 고급 최적화 기법
 3. 실제 고성능 애플리케이션 개발
 
 ### 고급자 (성능 극한 추구)
@@ -104,8 +104,8 @@ priority_score: 4
 
 ### 선행 학습
 
-- [소켓 프로그래밍 기초](chapter-07-network-programming/07-01-socket-basics.md) - 기본 네트워킹 지식
-- [TCP/IP 스택](chapter-07-network-programming/07-13-tcp-ip-stack.md) - 프로토콜 이해
+- [소켓 프로그래밍 기초](./07-01-socket-basics.md) - 기본 네트워킹 지식
+- [TCP/IP 스택](./07-13-tcp-ip-stack.md) - 프로토콜 이해
 - [비동기 I/O](../chapter-06-file-io/04-async-io.md) - 이벤트 기반 처리
 
 ### 후속 학습
@@ -116,7 +116,7 @@ priority_score: 4
 
 ---
 
-**다음**: [고성능 아키텍처](chapter-07-network-programming/07-05-high-performance-architecture.md)에서 성능 계층별 접근법과 핵심 아키텍처를 학습합니다.
+**다음**: [고성능 아키텍처](./07-05-high-performance-architecture.md)에서 성능 계층별 접근법과 핵심 아키텍처를 학습합니다.
 
 ## 📚 관련 문서
 

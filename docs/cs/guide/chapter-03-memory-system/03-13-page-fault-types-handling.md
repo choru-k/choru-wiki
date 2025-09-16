@@ -223,8 +223,8 @@ Minor Fault(0.001ms)와 Major Fault(5ms)는 5000배의 성능 차이를 보이�
 
 ---
 
-**이전**: [TLB와 캐싱](chapter-03-memory-system/03-11-tlb-caching.md)에서 주소 변환 성능을 학습했습니다.
-**다음**: [Copy-on-Write 메커니즘](chapter-03-memory-system/03-14-copy-on-write.md)에서 fork()가 빠른 이유를 학습합니다.
+**이전**: [TLB와 캐싱](./03-11-tlb-caching.md)에서 주소 변환 성능을 학습했습니다.
+**다음**: [Copy-on-Write 메커니즘](./03-14-copy-on-write.md)에서 fork()가 빠른 이유를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -240,7 +240,7 @@ Minor Fault(0.001ms)와 Major Fault(5ms)는 5000배의 성능 차이를 보이�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

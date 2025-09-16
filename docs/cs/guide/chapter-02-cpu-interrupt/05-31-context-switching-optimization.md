@@ -358,8 +358,8 @@ nginx는 단일 프로세스 이벤트 루프 모델로 Apache대비 90% 적은 
 
 ---
 
-**이전**: [컨텍스트 스위칭 오버헤드](chapter-02-cpu-interrupt/02-19-context-switching-overhead.md)에서 레이턴시 분석과 최적화 기법을 학습했습니다.
-**다음**: [전력 관리](chapter-02-cpu-interrupt/04-power-management.md)에서 CPU의 전력 효율성과 주파수 스케일링을 학습합니다.
+**이전**: [컨텍스트 스위칭 오버헤드](./02-19-context-switching-overhead.md)에서 레이턴시 분석과 최적화 기법을 학습했습니다.
+**다음**: [전력 관리](./04-power-management.md)에서 CPU의 전력 효율성과 주파수 스케일링을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -375,7 +375,7 @@ nginx는 단일 프로세스 이벤트 루프 모델로 Apache대비 90% 적은 
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)

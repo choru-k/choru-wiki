@@ -435,8 +435,8 @@ Signal Protocol의 Double Ratchet 알고리즘을 통해 Perfect Forward Secrecy
 
 ---
 
-**이전**: [05B 실전 암호화 구현](chapter-17-security-engineering/15-50-practical-encryption.md)  
-**다음**: [05D 성능 최적화와 보안](chapter-17-security-engineering/15-30-performance-security.md)에서 하드웨어 가속과 보안 모범 사례를 학습합니다.
+**이전**: [05B 실전 암호화 구현](./15-50-practical-encryption.md)  
+**다음**: [05D 성능 최적화와 보안](./15-30-performance-security.md)에서 하드웨어 가속과 보안 모범 사례를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -452,7 +452,7 @@ Signal Protocol의 Double Ratchet 알고리즘을 통해 Perfect Forward Secrecy
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./15-10-memory-security.md)
 - [Chapter 15.2 네트워크 보안 개요](./15-11-network-security.md)

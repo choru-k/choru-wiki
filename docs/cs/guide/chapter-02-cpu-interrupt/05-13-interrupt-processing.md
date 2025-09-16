@@ -397,8 +397,8 @@ Fault(복구가능), Trap(디버깅), Abort(복구불가)로 구분됩니다.
 
 ---
 
-**이전**: [인터럽트 기초와 개념](chapter-02-cpu-interrupt/02-03-interrupt-basics.md)  
-**다음**: [인터럽트 컨트롤러와 최적화](chapter-02-cpu-interrupt/02-14-interrupt-controllers.md)에서 PIC와 APIC의 진화 과정을 학습합니다.
+**이전**: [인터럽트 기초와 개념](./02-03-interrupt-basics.md)  
+**다음**: [인터럽트 컨트롤러와 최적화](./02-14-interrupt-controllers.md)에서 PIC와 APIC의 진화 과정을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -414,7 +414,7 @@ Fault(복구가능), Trap(디버깅), Abort(복구불가)로 구분됩니다.
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-05-cpu-interrupt)
+### 📂 같은 챕터 (chapter-02-cpu-interrupt)
 
 - [Chapter 5-1: CPU 아키텍처와 명령어 실행 개요](./02-01-cpu-architecture.md)
 - [Chapter 5-1A: CPU 기본 구조와 명령어 실행](./02-02-cpu-fundamentals.md)

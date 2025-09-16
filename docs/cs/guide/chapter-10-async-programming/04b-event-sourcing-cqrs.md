@@ -577,8 +577,8 @@ class CausalConsistencyManager {
 
 ---
 
-**이전**: [08-19-distributed-transactions.md](chapter-10-async-programming/08-19-distributed-transactions.md)
-**다음**: [04c-message-streaming.md](chapter-10-async-programming/04c-message-streaming.md)에서 메시지 큐와 스트리밍을 학습합니다.
+**이전**: [08-19-distributed-transactions.md](./08-19-distributed-transactions.md)
+**다음**: [04c-message-streaming.md](./04c-message-streaming.md)에서 메시지 큐와 스트리밍을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -594,7 +594,7 @@ class CausalConsistencyManager {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./08-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./08-01-promise-future-basics.md)

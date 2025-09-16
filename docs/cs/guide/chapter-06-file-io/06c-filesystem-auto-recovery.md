@@ -822,8 +822,8 @@ analyze_recovery_logs() {
 
 ---
 
-**이전**: [파일시스템 진단 도구 구현](chapter-06-file-io/06-45-filesystem-diagnostic-tools.md)  
-**다음**: [I/O 성능 분석](chapter-06-file-io/06-41-io-performance.md)에서 파일시스템 성능 최적화 방법을 학습합니다.
+**이전**: [파일시스템 진단 도구 구현](./06-45-filesystem-diagnostic-tools.md)  
+**다음**: [I/O 성능 분석](./06-41-io-performance.md)에서 파일시스템 성능 최적화 방법을 학습합니다.
 
 ## 📚 관련 문서
 

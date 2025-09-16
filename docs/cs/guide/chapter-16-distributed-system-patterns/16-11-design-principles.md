@@ -24,7 +24,7 @@ priority_score: 4
 
 이 섹션은 3개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [단일 책임 원칙 (Single Responsibility Principle)](chapter-16-distributed-system-patterns/16-12-1-single-responsibility-principle.md)
+### 1️⃣ [단일 책임 원칙 (Single Responsibility Principle)](./16-12-1-single-responsibility-principle.md)
 
 - 잘못된 다중 책임 서비스의 문제점 분석
 - 도메인별 서비스 분리 전략
@@ -32,7 +32,7 @@ priority_score: 4
 - 도메인 이벤트를 통한 서비스 간 통신
 - 도메인 경계 식별 및 서비스 크기 결정 가이드라인
 
-### 2️⃣ [Database per Service 패턴](chapter-16-distributed-system-patterns/16-14-2-database-per-service.md)
+### 2️⃣ [Database per Service 패턴](./16-14-2-database-per-service.md)
 
 - 서비스별 전용 데이터베이스 구성 (Docker Compose)
 - PostgreSQL, MongoDB, Redis 등 기술별 선택 전략
@@ -41,7 +41,7 @@ priority_score: 4
 - 최종 일관성(Eventual Consistency) 구현
 - 모놀리스에서 마이크로서비스로의 점진적 데이터 마이그레이션
 
-### 3️⃣ [API Contract First 설계](chapter-16-distributed-system-patterns/16-15-3-api-contract-first.md)
+### 3️⃣ [API Contract First 설계](./16-15-3-api-contract-first.md)
 
 - OpenAPI 3.0 스펙을 통한 상세한 API 계약 정의
 - 자동화된 코드 생성 및 클라이언트 구현
@@ -75,15 +75,15 @@ Conway's Law에 따른 조직 구조와 마이크로서비스 설계의 상관�
 
 ### 초보자 (추천 순서)
 
-1. [단일 책임 원칙](chapter-16-distributed-system-patterns/16-12-1-single-responsibility-principle.md) → 기본 개념과 도메인 분리 이해
-2. [Database per Service](chapter-16-distributed-system-patterns/16-14-2-database-per-service.md) → 데이터 분리와 일관성 보장 학습
-3. [API Contract First](chapter-16-distributed-system-patterns/16-15-3-api-contract-first.md) → 서비스 간 계약 기반 개발 실습
+1. [단일 책임 원칙](./16-12-1-single-responsibility-principle.md) → 기본 개념과 도메인 분리 이해
+2. [Database per Service](./16-14-2-database-per-service.md) → 데이터 분리와 일관성 보장 학습
+3. [API Contract First](./16-15-3-api-contract-first.md) → 서비스 간 계약 기반 개발 실습
 4. 간단한 마이크로서비스 프로젝트 구현 연습
 
 ### 중급자 (심화 학습)
 
-1. [Database per Service](chapter-16-distributed-system-patterns/16-14-2-database-per-service.md) → Saga Pattern과 Event Sourcing 심화
-2. [API Contract First](chapter-16-distributed-system-patterns/16-15-3-api-contract-first.md) → Contract Testing 도입
+1. [Database per Service](./16-14-2-database-per-service.md) → Saga Pattern과 Event Sourcing 심화
+2. [API Contract First](./16-15-3-api-contract-first.md) → Contract Testing 도입
 3. 실제 프로덕션 환경에서의 마이크로서비스 운영 경험
 
 ### 고급자 (전문화)
@@ -121,7 +121,7 @@ Conway's Law에 따른 조직 구조와 마이크로서비스 설계의 상관�
 
 ---
 
-**다음**: [단일 책임 원칙](chapter-16-distributed-system-patterns/16-12-1-single-responsibility-principle.md)에서 마이크로서비스 설계의 첫 번째 원칙을 상세히 학습합니다.
+**다음**: [단일 책임 원칙](./16-12-1-single-responsibility-principle.md)에서 마이크로서비스 설계의 첫 번째 원칙을 상세히 학습합니다.
 
 ## 📚 관련 문서
 
@@ -137,7 +137,7 @@ Conway's Law에 따른 조직 구조와 마이크로서비스 설계의 상관�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

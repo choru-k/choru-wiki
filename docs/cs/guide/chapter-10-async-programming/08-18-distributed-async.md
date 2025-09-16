@@ -30,35 +30,35 @@ priority_score: 4
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [분산 트랜잭션과 Saga 패턴](chapter-10-async-programming/10-19-distributed-transactions.md)
+### 1️⃣ [분산 트랜잭션과 Saga 패턴](./10-19-distributed-transactions.md)
 
 - Two-Phase Commit의 한계점과 실패 이유
 - Saga 패턴의 핵심 원리와 구현 방법
 - Orchestration vs Choreography 비교 분석
 - 보상 트랜잭션(Compensation)의 설계 원칙
 
-### 2️⃣ [Event Sourcing과 CQRS](chapter-10-async-programming/04b-event-sourcing-cqrs.md)
+### 2️⃣ [Event Sourcing과 CQRS](./04b-event-sourcing-cqrs.md)
 
 - Event Sourcing의 기본 개념과 구현
 - 이벤트 스토어 설계와 최적화 전략
 - CQRS 패턴으로 읽기/쓰기 모델 분리
 - Eventual Consistency 처리 방법
 
-### 3️⃣ [메시지 큐와 스트리밍](chapter-10-async-programming/04c-message-streaming.md)
+### 3️⃣ [메시지 큐와 스트리밍](./04c-message-streaming.md)
 
 - Kafka를 이용한 대용량 이벤트 스트리밍
 - Exactly-once semantics 구현 방법
 - Back-pressure와 Flow Control 패턴
 - 동적 스케일링과 성능 최적화
 
-### 4️⃣ [복원력 패턴](chapter-10-async-programming/10-50-resilience-patterns.md)
+### 4️⃣ [복원력 패턴](./10-50-resilience-patterns.md)
 
 - Circuit Breaker 패턴과 구현 전략
 - Bulkhead 패턴으로 장애 격리
 - 지능적인 Retry와 Timeout 전략
 - Hedged Requests와 적응적 시스템
 
-### 5️⃣ [실전 사례 연구](chapter-10-async-programming/10-51-production-case-study.md)
+### 5️⃣ [실전 사례 연구](./10-51-production-case-study.md)
 
 - 대규모 이커머스 시스템 아키텍처
 - 2023년 블랙프라이데이 장애 대응 사례
@@ -114,15 +114,15 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. **[분산 트랜잭션과 Saga](chapter-10-async-programming/10-19-distributed-transactions.md)** → 분산 시스템의 기본 딜레마 이해
-2. **[복원력 패턴](chapter-10-async-programming/10-50-resilience-patterns.md)** → 실용적인 장애 대응 패턴 학습
-3. **[메시지 큐와 스트리밍](chapter-10-async-programming/04c-message-streaming.md)** → 비동기 통신 기초
+1. **[분산 트랜잭션과 Saga](./10-19-distributed-transactions.md)** → 분산 시스템의 기본 딜레마 이해
+2. **[복원력 패턴](./10-50-resilience-patterns.md)** → 실용적인 장애 대응 패턴 학습
+3. **[메시지 큐와 스트리밍](./04c-message-streaming.md)** → 비동기 통신 기초
 4. 간단한 마이크로서비스 프로젝트 구현 연습
 
 ### 중급자 (심화 학습)
 
-1. **[Event Sourcing과 CQRS](chapter-10-async-programming/04b-event-sourcing-cqrs.md)** → 고급 아키텍처 패턴
-2. **[실전 사례 연구](chapter-10-async-programming/10-51-production-case-study.md)** → 프로덕션 환경 경험
+1. **[Event Sourcing과 CQRS](./04b-event-sourcing-cqrs.md)** → 고급 아키텍처 패턴
+2. **[실전 사례 연구](./10-51-production-case-study.md)** → 프로덕션 환경 경험
 3. 대용량 트래픽 처리 시스템 설계 연습
 4. Chaos Engineering 도입
 
@@ -247,7 +247,7 @@ graph TD
 
 ---
 
-**시작점**: [10-19-distributed-transactions.md](chapter-10-async-programming/10-19-distributed-transactions.md)에서 분산 트랜잭션의 기본 개념부터 학습을 시작하세요!
+**시작점**: [10-19-distributed-transactions.md](./10-19-distributed-transactions.md)에서 분산 트랜잭션의 기본 개념부터 학습을 시작하세요!
 
 ## 📚 관련 문서
 
@@ -263,7 +263,7 @@ graph TD
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

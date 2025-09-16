@@ -549,8 +549,8 @@ void benchmark_allocators() {
 
 ---
 
-**이전**: [성능 비교와 메모리 버그](chapter-03-memory-system/03-40-performance-debugging.md)  
-**다음**: [실전 가이드와 베스트 프랙티스](chapter-03-memory-system/03-50-practical-guide.md)에서 실제 상황에서 어떤 메모리 관리 기법을 선택할지 결정하는 가이드를 제공합니다.
+**이전**: [성능 비교와 메모리 버그](./03-40-performance-debugging.md)  
+**다음**: [실전 가이드와 베스트 프랙티스](./03-50-practical-guide.md)에서 실제 상황에서 어떤 메모리 관리 기법을 선택할지 결정하는 가이드를 제공합니다.
 
 ## 📚 관련 문서
 

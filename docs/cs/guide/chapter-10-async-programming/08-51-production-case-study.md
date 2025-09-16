@@ -993,7 +993,7 @@ class IntelligentCacheManager:
 
 ---
 
-**이전**: [10-50-resilience-patterns.md](chapter-10-async-programming/10-50-resilience-patterns.md)
+**이전**: [10-50-resilience-patterns.md](./10-50-resilience-patterns.md)
 **다음**: [Chapter 9 메모리 관리와 GC](../chapter-09-memory-gc/)에서 성능 최적화를 학습합니다.
 
 ## 📚 관련 문서
@@ -1010,7 +1010,7 @@ class IntelligentCacheManager:
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

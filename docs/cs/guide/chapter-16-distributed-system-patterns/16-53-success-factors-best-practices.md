@@ -293,8 +293,8 @@ CQRS와 Event Sourcing은 강력하지만 복잡한 패턴입니다. 전체 시�
 
 ---
 
-**이전**: [16.3d 프로젝션 구현](chapter-16-distributed-system-patterns/03d-projection-implementation.md)  
-**다음**: [16.4 Saga 패턴](chapter-16-distributed-system-patterns/04-saga-pattern.md)에서 분산 시스템에서 복잡한 비즈니스 트랜잭션을 처리하는 Saga 패턴을 학습합니다.
+**이전**: [16.3d 프로젝션 구현](./03d-projection-implementation.md)  
+**다음**: [16.4 Saga 패턴](./04-saga-pattern.md)에서 분산 시스템에서 복잡한 비즈니스 트랜잭션을 처리하는 Saga 패턴을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -310,7 +310,7 @@ CQRS와 Event Sourcing은 강력하지만 복잡한 패턴입니다. 전체 시�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

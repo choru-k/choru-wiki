@@ -343,8 +343,8 @@ malloc으로 할당한 메모리는 반드시 free로 해제해야 합니다.
 
 ---
 
-**이전**: [스택의 상세 동작](chapter-03-memory-system/03-01-stack-fundamentals.md)  
-**다음**: [성능 비교와 메모리 버그](chapter-03-memory-system/03-40-performance-debugging.md)에서 스택과 힙의 성능 차이를 실측하고 메모리 버그를 디버깅합니다.
+**이전**: [스택의 상세 동작](./03-01-stack-fundamentals.md)  
+**다음**: [성능 비교와 메모리 버그](./03-40-performance-debugging.md)에서 스택과 힙의 성능 차이를 실측하고 메모리 버그를 디버깅합니다.
 
 ## 📚 관련 문서
 

@@ -589,8 +589,8 @@ flowchart LR
 
 ---
 
-**이전**: [08d-early-oom-prevention.md](chapter-03-memory-system/08d-early-oom-prevention.md)  
-**개요**: [03-43-oom-debugging.md](chapter-03-memory-system/03-43-oom-debugging.md)로 돌아가서 전체 OOM 디버깅 여정을 검토해보세요.
+**이전**: [08d-early-oom-prevention.md](./08d-early-oom-prevention.md)  
+**개요**: [03-43-oom-debugging.md](./03-43-oom-debugging.md)로 돌아가서 전체 OOM 디버깅 여정을 검토해보세요.
 
 ## 📚 관련 문서
 
@@ -606,7 +606,7 @@ flowchart LR
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-11-tlb-caching.md)

@@ -257,7 +257,7 @@ for issue in all_issues:
 
 ---
 
-**이전**: [05D 성능 최적화와 보안](chapter-17-security-engineering/17-30-performance-security.md)  
+**이전**: [05D 성능 최적화와 보안](./17-30-performance-security.md)  
 **다음**: [Chapter 16 System Design Patterns](../chapter-16-system-design-patterns/index.md)에서 전체 시스템 설계에 보안을 통합하는 방법을 학습합니다.
 
 ## 📚 관련 문서
@@ -274,7 +274,7 @@ for issue in all_issues:
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./17-10-memory-security.md)
 - [Chapter 15.2 네트워크 보안 개요](./17-11-network-security.md)

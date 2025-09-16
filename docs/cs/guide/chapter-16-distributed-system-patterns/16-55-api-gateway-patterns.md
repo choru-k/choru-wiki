@@ -25,7 +25,7 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [API Gateway 기본 개념](chapter-16-distributed-system-patterns/16-07-api-gateway-fundamentals.md)
+### 1️⃣ [API Gateway 기본 개념](./16-07-api-gateway-fundamentals.md)
 
 - 마이크로서비스 스파게티 문제와 해결책
 - API Gateway 도입의 기적적인 변화
@@ -33,7 +33,7 @@ priority_score: 4
 - 서비스 추상화와 개발자 경험 개선
 - 성공 사례와 도입 체크리스트
 
-### 2️⃣ [고성능 라우팅과 로드 밸런싱](chapter-16-distributed-system-patterns/05b-routing-load-balancing.md)
+### 2️⃣ [고성능 라우팅과 로드 밸런싱](./05b-routing-load-balancing.md)
 
 - Go 언어로 구현한 고성능 API Gateway
 - 가중치 기반 라운드로빈 로드 밸런싱
@@ -41,7 +41,7 @@ priority_score: 4
 - 병렬 응답 집계와 복합 요청 처리
 - 헬스체크와 서비스 디스커버리 통합
 
-### 3️⃣ [통합 인증과 인가 시스템](chapter-16-distributed-system-patterns/05c-authentication-authorization.md)
+### 3️⃣ [통합 인증과 인가 시스템](./05c-authentication-authorization.md)
 
 - JWT 기반 통합 인증 시스템
 - Refresh Token Rotation과 보안 강화
@@ -49,7 +49,7 @@ priority_score: 4
 - 권한 기반 접근 제어 (RBAC)
 - 보안 이벤트 처리와 토큰 관리
 
-### 4️⃣ [Rate Limiting과 트래픽 제어](chapter-16-distributed-system-patterns/16-42-rate-limiting-monitoring.md)
+### 4️⃣ [Rate Limiting과 트래픽 제어](./16-42-rate-limiting-monitoring.md)
 
 - 고급 Rate Limiting 알고리즘 구현
 - Fixed Window vs Sliding Window vs Token Bucket vs Leaky Bucket
@@ -57,7 +57,7 @@ priority_score: 4
 - Python/FastAPI 기반 실전 구현
 - 분산 환경에서의 Redis 기반 Rate Limiting
 
-### 5️⃣ [성공 요인과 실무 가이드](chapter-16-distributed-system-patterns/16-56-success-factors-best-practices.md)
+### 5️⃣ [성공 요인과 실무 가이드](./16-56-success-factors-best-practices.md)
 
 - API Gateway 성공과 실패 요인 분석
 - 주요 함정과 해결책
@@ -98,19 +98,19 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [기본 개념](chapter-16-distributed-system-patterns/16-07-api-gateway-fundamentals.md) → API Gateway 필요성과 가치 이해
-2. [라우팅 구현](chapter-16-distributed-system-patterns/05b-routing-load-balancing.md) → 핵심 기능 실습
+1. [기본 개념](./16-07-api-gateway-fundamentals.md) → API Gateway 필요성과 가치 이해
+2. [라우팅 구현](./05b-routing-load-balancing.md) → 핵심 기능 실습
 3. 간단한 프록시 서버 구현 연습
 
 ### 중급자 (심화 학습)
 
-1. [인증 시스템](chapter-16-distributed-system-patterns/05c-authentication-authorization.md) → 보안 강화 기법
-2. [Rate Limiting](chapter-16-distributed-system-patterns/16-42-rate-limiting-monitoring.md) → 트래픽 제어 고도화
+1. [인증 시스템](./05c-authentication-authorization.md) → 보안 강화 기법
+2. [Rate Limiting](./16-42-rate-limiting-monitoring.md) → 트래픽 제어 고도화
 3. 실제 프로덕션 환경 구축 시뮬레이션
 
 ### 고급자 (전문가 과정)
 
-1. [성공 요인](chapter-16-distributed-system-patterns/16-56-success-factors-best-practices.md) → 아키텍처 설계 원칙
+1. [성공 요인](./16-56-success-factors-best-practices.md) → 아키텍처 설계 원칙
 2. 대규모 시스템 설계 및 운영
 3. 팀 조직과 연계한 API 거버넌스 체계 구축
 
@@ -119,7 +119,7 @@ priority_score: 4
 ### 선행 학습
 
 - [16.1 마이크로서비스 아키텍처](chapter-15-microservices-architecture/16-01-microservices-architecture.md) - 기초 아키텍처 이해
-- [16.2 이벤트 드리븐 아키텍처](chapter-16-distributed-system-patterns/16-03-event-driven-architecture.md) - 비동기 통신 패턴
+- [16.2 이벤트 드리븐 아키텍처](./16-03-event-driven-architecture.md) - 비동기 통신 패턴
 
 ### 후속 학습  
 
@@ -152,7 +152,7 @@ priority_score: 4
 
 ---
 
-**시작**: [API Gateway 기본 개념](chapter-16-distributed-system-patterns/16-07-api-gateway-fundamentals.md)부터 학습을 시작하세요!
+**시작**: [API Gateway 기본 개념](./16-07-api-gateway-fundamentals.md)부터 학습을 시작하세요!
 
 ---
 
@@ -227,22 +227,22 @@ priority_score: 4
    - 서비스 분해 전략과 통신 패턴
    - 컨테이너화와 오케스트레이션
 
-2. **[15.2 이벤트 드리븐 아키텍처](chapter-16-distributed-system-patterns/16-03-event-driven-architecture.md)**
+2. **[15.2 이벤트 드리븐 아키텍처](./16-03-event-driven-architecture.md)**
    - 실시간 데이터 처리와 이벤트 스트리밍
    - Apache Kafka와 복합 이벤트 처리
    - 이벤트 소싱과 상태 관리
 
-3. **[15.3 CQRS와 이벤트 소싱](chapter-16-distributed-system-patterns/03-cqrs-event-sourcing.md)**
+3. **[15.3 CQRS와 이벤트 소싱](./03-cqrs-event-sourcing.md)**
    - 명령과 조회의 분리
    - 이벤트 기반 상태 재구성
    - 프로젝션과 읽기 모델 최적화
 
-4. **[15.4 Saga 패턴](chapter-16-distributed-system-patterns/04-saga-pattern.md)**
+4. **[15.4 Saga 패턴](./04-saga-pattern.md)**
    - 분산 트랜잭션 관리
    - Orchestration vs Choreography
    - 보상 트랜잭션과 장애 복구
 
-5. **[15.5 API Gateway 패턴](chapter-16-distributed-system-patterns/16-55-api-gateway-patterns.md)**
+5. **[15.5 API Gateway 패턴](./16-55-api-gateway-patterns.md)**
    - 마이크로서비스의 통합 관문
    - 고급 인증/인가와 Rate Limiting
    - 트래픽 관리와 모니터링
@@ -321,7 +321,7 @@ Phase 4: 운영 안정화 (지속적)
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

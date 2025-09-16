@@ -399,8 +399,8 @@ tcp ESTAB 0 0 192.168.1.100:22 192.168.1.10:12345
 
 ---
 
-**이전**: [Chapter 7-2B: TCP 상태 머신](chapter-07-network-programming/07-14-tcp-state-machine.md)
-**다음**: [Chapter 7-2D: Netfilter와 커널 바이패스](chapter-07-network-programming/07-16-netfilter-kernel-bypass.md)에서 패킷 필터링과 고성능 처리 기술을 학습합니다.
+**이전**: [Chapter 7-2B: TCP 상태 머신](./07-14-tcp-state-machine.md)
+**다음**: [Chapter 7-2D: Netfilter와 커널 바이패스](./07-16-netfilter-kernel-bypass.md)에서 패킷 필터링과 고성능 처리 기술을 학습합니다.
 
 ## 📚 관련 문서
 

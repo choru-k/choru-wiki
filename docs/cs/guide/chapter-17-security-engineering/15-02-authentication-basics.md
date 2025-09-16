@@ -492,8 +492,8 @@ if __name__ == "__main__":
 
 ---
 
-**이전**: [인증과 인가 개요](chapter-17-security-engineering/17-14-authentication-authorization.md)
-**다음**: [OAuth 2.0 구현](chapter-17-security-engineering/17-15-oauth2-implementation.md)에서 OAuth 2.0 플로우와 서버 구현을 학습합니다.
+**이전**: [인증과 인가 개요](./17-14-authentication-authorization.md)
+**다음**: [OAuth 2.0 구현](./17-15-oauth2-implementation.md)에서 OAuth 2.0 플로우와 서버 구현을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -509,7 +509,7 @@ if __name__ == "__main__":
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./17-10-memory-security.md)
 - [Chapter 15.2 네트워크 보안 개요](./17-11-network-security.md)

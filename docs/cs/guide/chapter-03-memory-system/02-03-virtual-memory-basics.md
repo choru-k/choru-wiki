@@ -412,8 +412,8 @@ int main() {
 
 ---
 
-**이전**: [가상 메모리 개요](chapter-03-memory-system/03-12-virtual-memory.md)  
-**다음**: [페이징 시스템과 페이지 테이블](chapter-03-memory-system/03-13-paging-system.md)에서 페이징의 구체적 구현 메커니즘을 학습합니다.
+**이전**: [가상 메모리 개요](./03-12-virtual-memory.md)  
+**다음**: [페이징 시스템과 페이지 테이블](./03-13-paging-system.md)에서 페이징의 구체적 구현 메커니즘을 학습합니다.
 
 ## 📚 관련 문서
 

@@ -830,8 +830,8 @@ public class ModernGCComparison {
 
 ---
 
-**이전**: [세대별 및 동시 GC](chapter-08-memory-allocator-gc/08-04-advanced-gc-concepts.md)  
-**다음**: [GC 튜닝과 실전 활용](chapter-08-memory-allocator-gc/08-31-gc-tuning-practices.md)에서 실제 프로덕션 환경에서의 GC 선택과 튜닝 전략을 학습합니다.
+**이전**: [세대별 및 동시 GC](./08-04-advanced-gc-concepts.md)  
+**다음**: [GC 튜닝과 실전 활용](./08-31-gc-tuning-practices.md)에서 실제 프로덕션 환경에서의 GC 선택과 튜닝 전략을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -847,7 +847,7 @@ public class ModernGCComparison {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)

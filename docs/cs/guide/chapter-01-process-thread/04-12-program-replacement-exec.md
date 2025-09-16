@@ -375,8 +375,8 @@ exec()는 프로세스의 기억을 완전히 지우고 새로운 프로그램�
 
 ---
 
-**이전**: [01-11-process-creation-fork.md](chapter-01-process-thread/01-11-process-creation-fork.md)  
-**다음**: [01-13-process-termination-zombies.md](chapter-01-process-thread/01-13-process-termination-zombies.md)에서 프로세스 종료와 좀비 프로세스 처리를 학습합니다.
+**이전**: [01-11-process-creation-fork.md](./04-11-process-creation-fork.md)  
+**다음**: [01-13-process-termination-zombies.md](./04-13-process-termination-zombies.md)에서 프로세스 종료와 좀비 프로세스 처리를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -392,13 +392,13 @@ exec()는 프로세스의 기억을 완전히 지우고 새로운 프로그램�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-04-process-thread)
+### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-11-process-creation-fork.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-40-process-management-monitoring.md)
-- [4.2 스레드 동기화 개요: 멀티스레딩 마스터로드맵](./01-14-thread-synchronization.md)
+- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
+- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
+- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
+- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
+- [4.2 스레드 동기화 개요: 멀티스레딩 마스터로드맵](./04-14-thread-synchronization.md)
 
 ### 🏷️ 관련 키워드
 

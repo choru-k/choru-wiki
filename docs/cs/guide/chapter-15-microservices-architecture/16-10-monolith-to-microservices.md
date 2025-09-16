@@ -425,8 +425,8 @@ Big Bang 방식보다는 단계적 분해를 통한 리스크 최소화
 
 ---
 
-**이전**: [마이크로서비스 아키텍처 개요](chapter-15-microservices-architecture/15-01-microservices-architecture.md)  
-**다음**: [마이크로서비스 설계 원칙과 패턴](chapter-16-distributed-system-patterns/15-11-design-principles.md)에서 구체적인 설계 방법론을 학습합니다.
+**이전**: [마이크로서비스 아키텍처 개요](./15-01-microservices-architecture.md)  
+**다음**: [마이크로서비스 설계 원칙과 패턴](chapter-15-microservices-architecture/15-11-design-principles.md)에서 구체적인 설계 방법론을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -445,10 +445,10 @@ Big Bang 방식보다는 단계적 분해를 통한 리스크 최소화
 ### 📂 같은 챕터 (chapter-16-system-design-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](./15-01-microservices-architecture.md)
-- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-16-distributed-system-patterns/15-11-design-principles.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-12-1-single-responsibility-principle.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-13-1-single-responsibility.md)
-- [16.1B2 Database per Service 패턴](../chapter-16-distributed-system-patterns/15-14-2-database-per-service.md)
+- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-15-microservices-architecture/15-11-design-principles.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-12-1-single-responsibility-principle.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-13-1-single-responsibility.md)
+- [16.1B2 Database per Service 패턴](../chapter-15-microservices-architecture/15-14-2-database-per-service.md)
 
 ### 🏷️ 관련 키워드
 

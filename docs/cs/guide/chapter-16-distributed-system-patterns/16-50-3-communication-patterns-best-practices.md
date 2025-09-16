@@ -487,7 +487,7 @@ flowchart TD
 
 ---
 
-**이전**: [비동기식 통신 - 메시지 큐와 이벤트](chapter-16-distributed-system-patterns/16-18-2-asynchronous-communication.md)  
+**이전**: [비동기식 통신 - 메시지 큐와 이벤트](./16-18-2-asynchronous-communication.md)  
 **다음**: [서비스 간 통신과 메시징 개요](chapter-15-microservices-architecture/16-16-service-communication.md)로 돌아가서 전체 내용을 정리하거나, [컨테이너화와 오케스트레이션](chapter-15-microservices-architecture/16-19-containerization-orchestration.md)에서 다음 단계를 학습합니다.
 
 ## 📚 관련 문서
@@ -504,7 +504,7 @@ flowchart TD
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

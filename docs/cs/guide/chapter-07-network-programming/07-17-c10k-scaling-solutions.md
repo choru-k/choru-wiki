@@ -359,8 +359,8 @@ void worker_main(struct server_config *config, int worker_id) {
 
 ---
 
-**이전**: [고성능 네트워크 서버 구현 개요](chapter-07-network-programming/07-30-high-performance-networking.md)  
-**다음**: [제로카피와 NUMA 최적화](chapter-07-network-programming/07-31-zerocopy-numa-optimization.md)에서 CPU와 메모리 최적화 기법을 학습합니다.
+**이전**: [고성능 네트워크 서버 구현 개요](./07-30-high-performance-networking.md)  
+**다음**: [제로카피와 NUMA 최적화](./07-31-zerocopy-numa-optimization.md)에서 CPU와 메모리 최적화 기법을 학습합니다.
 
 ## 📚 관련 문서
 

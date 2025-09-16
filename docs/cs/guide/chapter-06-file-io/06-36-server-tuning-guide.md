@@ -660,8 +660,8 @@ fi
 
 ---
 
-**이전**: [자동 최적화 스크립트](chapter-06-file-io/06-35-auto-optimization-scripts.md)  
-**다음**: [모니터링 및 트러블슈팅](chapter-06-file-io/06-47-monitoring-troubleshooting.md)에서 운영 환경에서의 실시간 관리 방법을 학습합니다.
+**이전**: [자동 최적화 스크립트](./06-35-auto-optimization-scripts.md)  
+**다음**: [모니터링 및 트러블슈팅](./06-47-monitoring-troubleshooting.md)에서 운영 환경에서의 실시간 관리 방법을 학습합니다.
 
 ## 📚 관련 문서
 

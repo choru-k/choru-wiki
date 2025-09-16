@@ -25,28 +25,28 @@ TCP/IP 스택은 현대 인터넷의 심장입니다. 네트워크 카드에 도
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [네트워크 스택 아키텍처](chapter-07-network-programming/07-03-network-stack-architecture.md)
+### 1️⃣ [네트워크 스택 아키텍처](./07-03-network-stack-architecture.md)
 
 - 패킷의 여정: 하드웨어부터 애플리케이션까지
 - sk_buff 구조체: 네트워킹의 핵심 데이터 구조
 - NAPI 메커니즘: 인터럽트 폭풍 방지와 고성능 처리
 - 네트워크 드라이버와 하드웨어 인터페이스
 
-### 2️⃣ [TCP 상태 머신](chapter-07-network-programming/07-14-tcp-state-machine.md)
+### 2️⃣ [TCP 상태 머신](./07-14-tcp-state-machine.md)
 
 - TCP 연결의 생명주기: LISTEN부터 CLOSED까지
 - 상태 전이의 미스터리: TIME_WAIT와 성능 최적화
 - TCP Control Block: 연결별 상태 관리
 - 패킷 처리 파이프라인: 검증부터 소켓 라우팅까지
 
-### 3️⃣ [TCP 혼잡 제어](chapter-07-network-programming/07-15-tcp-congestion-control.md)
+### 3️⃣ [TCP 혼잡 제어](./07-15-tcp-congestion-control.md)
 
 - 혼잡 제어의 진화: Reno부터 CUBIC, BBR까지
 - CUBIC 알고리즘: 3차 함수를 이용한 고대역폭 최적화
 - BBR 혁신: 구글의 대역폭 기반 접근법
 - 실전 성능 비교와 튜닝 전략
 
-### 4️⃣ [Netfilter와 커널 바이패스](chapter-07-network-programming/07-16-netfilter-kernel-bypass.md)
+### 4️⃣ [Netfilter와 커널 바이패스](./07-16-netfilter-kernel-bypass.md)
 
 - Netfilter 훅 포인트: 패킷 필터링의 5개 관문
 - iptables 실전 활용과 안전한 방화벽 구축
@@ -86,14 +86,14 @@ TCP/IP 스택은 현대 인터넷의 심장입니다. 네트워크 카드에 도
 
 ### 초보자 (추천 순서)
 
-1. [네트워크 스택 아키텍처](chapter-07-network-programming/07-03-network-stack-architecture.md) → 기초 개념 이해
-2. [TCP 상태 머신](chapter-07-network-programming/07-14-tcp-state-machine.md) → 연결 관리 학습
+1. [네트워크 스택 아키텍처](./07-03-network-stack-architecture.md) → 기초 개념 이해
+2. [TCP 상태 머신](./07-14-tcp-state-machine.md) → 연결 관리 학습
 3. 간단한 네트워크 프로그래밍 실습
 
 ### 중급자 (심화 학습)
 
-1. [TCP 혼잡 제어](chapter-07-network-programming/07-15-tcp-congestion-control.md) → 성능 최적화
-2. [커널 바이패스](chapter-07-network-programming/07-16-netfilter-kernel-bypass.md) → 고급 기법
+1. [TCP 혼잡 제어](./07-15-tcp-congestion-control.md) → 성능 최적화
+2. [커널 바이패스](./07-16-netfilter-kernel-bypass.md) → 고급 기법
 3. 실제 고성능 서버 구현
 
 ### 고급자 (전문가 과정)
@@ -106,13 +106,13 @@ TCP/IP 스택은 현대 인터넷의 심장입니다. 네트워크 카드에 도
 
 ### 선행 학습
 
-- [Chapter 7-1: 소켓 프로그래밍 기초](chapter-07-network-programming/07-01-socket-basics.md) - 네트워크 프로그래밍 기초
+- [Chapter 7-1: 소켓 프로그래밍 기초](./07-01-socket-basics.md) - 네트워크 프로그래밍 기초
 - [Chapter 5: CPU와 인터럽트](../chapter-05-cpu-interrupt/) - 하드웨어 인터럽트 이해
 
 ### 후속 학습  
 
 - [Chapter 7-3: 고성능 네트워크 서버](03-high-performance-server.md) - C10K/C10M 문제 해결
-- [Chapter 7-4: 네트워크 보안](chapter-07-network-programming/07-19-secure-networking.md) - TLS와 보안 프로토콜
+- [Chapter 7-4: 네트워크 보안](./07-19-secure-networking.md) - TLS와 보안 프로토콜
 
 ## 💡 실전 체크리스트
 
@@ -129,7 +129,7 @@ TCP/IP 스택은 현대 인터넷의 심장입니다. 네트워크 카드에 도
 
 ---
 
-**다음**: [네트워크 스택 아키텍처](chapter-07-network-programming/07-03-network-stack-architecture.md)에서 패킷 처리의 기본 원리부터 시작합니다.
+**다음**: [네트워크 스택 아키텍처](./07-03-network-stack-architecture.md)에서 패킷 처리의 기본 원리부터 시작합니다.
 
 ## 💡 실전 활용을 위한 요약
 

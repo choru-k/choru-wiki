@@ -25,35 +25,35 @@ priority_score: 5
 
 이 섹션은 **5개의 전문화된 문서**로 구성되어 있습니다:
 
-### 1️⃣ [CQRS 기초와 실전 경험](chapter-16-distributed-system-patterns/16-06-cqrs-fundamentals.md)
+### 1️⃣ [CQRS 기초와 실전 경험](./16-06-cqrs-fundamentals.md)
 
 - 금융 시스템에서의 실제 도입 사례
 - 기존 CRUD 시스템의 한계점 분석
 - CQRS 도입 전후의 극적인 성능 개선 결과
 - 50배 성능 향상과 비즈니스 임팩트
 
-### 2️⃣ [CQRS 패턴 구현](chapter-16-distributed-system-patterns/03b-cqrs-pattern-implementation.md)
+### 2️⃣ [CQRS 패턴 구현](./03b-cqrs-pattern-implementation.md)
 
 - Command와 Query의 명확한 책임 분리
 - Command Handler와 Query Handler 구현
 - CQRS 버스와 중재자 패턴
 - 읽기 모델(Read Model) 최적화 전략
 
-### 3️⃣ [Event Sourcing 구현](chapter-16-distributed-system-patterns/03c-event-sourcing-implementation.md)
+### 3️⃣ [Event Sourcing 구현](./03c-event-sourcing-implementation.md)
 
 - 도메인 이벤트 설계와 구현
 - 집합체(Aggregate)와 이벤트 소싱 패턴
 - 이벤트 스토어 구현과 동시성 제어
 - 도메인 로직과 이벤트 적용 메커니즘
 
-### 4️⃣ [프로젝션 구현](chapter-16-distributed-system-patterns/03d-projection-implementation.md)
+### 4️⃣ [프로젝션 구현](./03d-projection-implementation.md)
 
 - 이벤트로부터 읽기 모델 생성
 - 다중 데이터베이스 활용 전략
 - 실시간 프로젝션 업데이트와 캐싱
 - 프로젝션 재구성과 장애 복구
 
-### 5️⃣ [성공 요인과 모범 사례](chapter-16-distributed-system-patterns/16-53-success-factors-best-practices.md)
+### 5️⃣ [성공 요인과 모범 사례](./16-53-success-factors-best-practices.md)
 
 - 핵심 성공 요인과 함정 회피
 - 단계적 도입 전략과 로드맵
@@ -95,19 +95,19 @@ priority_score: 5
 
 ### 초보자 (추천 순서)
 
-1. [CQRS 기초](chapter-16-distributed-system-patterns/16-06-cqrs-fundamentals.md) → 개념과 실제 사례 이해
-2. [패턴 구현](chapter-16-distributed-system-patterns/03b-cqrs-pattern-implementation.md) → Command/Query 분리 실습
+1. [CQRS 기초](./16-06-cqrs-fundamentals.md) → 개념과 실제 사례 이해
+2. [패턴 구현](./03b-cqrs-pattern-implementation.md) → Command/Query 분리 실습
 3. 간단한 도메인으로 프로토타입 구현 연습
 
 ### 중급자 (심화 학습)
 
-1. [Event Sourcing](chapter-16-distributed-system-patterns/03c-event-sourcing-implementation.md) → 도메인 이벤트 설계
-2. [프로젝션 구현](chapter-16-distributed-system-patterns/03d-projection-implementation.md) → 다중 저장소 활용
+1. [Event Sourcing](./03c-event-sourcing-implementation.md) → 도메인 이벤트 설계
+2. [프로젝션 구현](./03d-projection-implementation.md) → 다중 저장소 활용
 3. 실제 비즈니스 도메인에 적용 시도
 
 ### 전문가 (프로덕션 준비)
 
-1. [모범 사례](chapter-16-distributed-system-patterns/16-53-success-factors-best-practices.md) → 성공 요인과 함정 회피
+1. [모범 사례](./16-53-success-factors-best-practices.md) → 성공 요인과 함정 회피
 2. 성능 벤치마킹과 모니터링 구현
 3. 점진적 마이그레이션 전략 수립
 
@@ -120,8 +120,8 @@ priority_score: 5
 
 ### 후속 학습  
 
-- [Saga 패턴](chapter-16-distributed-system-patterns/04-saga-pattern.md) - 분산 트랜잭션 관리
-- [API 게이트웨이 패턴](chapter-16-distributed-system-patterns/16-55-api-gateway-patterns.md) - 서비스 통합과 관리
+- [Saga 패턴](./04-saga-pattern.md) - 분산 트랜잭션 관리
+- [API 게이트웨이 패턴](./16-55-api-gateway-patterns.md) - 서비스 통합과 관리
 
 ## 💡 학습 팁
 
@@ -145,7 +145,7 @@ priority_score: 5
 
 ---
 
-**다음**: 실전 경험과 구체적인 성과 지표를 통해 [CQRS 기초와 실전 경험](chapter-16-distributed-system-patterns/16-06-cqrs-fundamentals.md)에서 CQRS의 강력함을 체험해보세요.
+**다음**: 실전 경험과 구체적인 성과 지표를 통해 [CQRS 기초와 실전 경험](./16-06-cqrs-fundamentals.md)에서 CQRS의 강력함을 체험해보세요.
 
 ## 📚 관련 문서
 
@@ -161,7 +161,7 @@ priority_score: 5
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

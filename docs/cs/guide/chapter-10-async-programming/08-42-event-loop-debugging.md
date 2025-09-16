@@ -25,21 +25,21 @@ priority_score: 4
 
 이 섹션은 3개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [이벤트 루프 기초와 모니터링](chapter-10-async-programming/10-04-event-loop-fundamentals.md)
+### 1️⃣ [이벤트 루프 기초와 모니터링](./10-04-event-loop-fundamentals.md)
 
 - 이벤트 루프 동작 원리와 블로킹 원인 분석
 - 진단 도구와 최적화 방법 개요
 - 모니터링 체계 설계 방법론
 - 실시간 상태 추적을 위한 접근법
 
-### 2️⃣ [C 기반 모니터링 시스템](chapter-10-async-programming/10-43-c-monitoring-system.md)
+### 2️⃣ [C 기반 모니터링 시스템](./10-43-c-monitoring-system.md)
 
 - 고성능 이벤트 루프 모니터링 도구
 - 실시간 대시보드와 샘플링 메커니즘
 - 멀티스레드 기반 데이터 수집
 - 통계 분석 및 경고 시스템
 
-### 3️⃣ [JavaScript 분석 도구](chapter-10-async-programming/05c-javascript-analyzer.md)
+### 3️⃣ [JavaScript 분석 도구](./05c-javascript-analyzer.md)
 
 - Node.js 전용 이벤트 루프 분석기
 - Async Hooks와 Performance Observer 활용
@@ -74,13 +74,13 @@ priority_score: 4
 
 ### 초보자 (추천 순서)
 
-1. [이벤트 루프 기초](chapter-10-async-programming/10-04-event-loop-fundamentals.md) → 기본 개념 이해
-2. [JavaScript 분석 도구](chapter-10-async-programming/05c-javascript-analyzer.md) → 실습 적용
+1. [이벤트 루프 기초](./10-04-event-loop-fundamentals.md) → 기본 개념 이해
+2. [JavaScript 분석 도구](./05c-javascript-analyzer.md) → 실습 적용
 3. 간단한 Node.js 앱으로 모니터링 실험
 
 ### 중급자 (심화 학습)
 
-1. [C 모니터링 시스템](chapter-10-async-programming/10-43-c-monitoring-system.md) → 고급 기법
+1. [C 모니터링 시스템](./10-43-c-monitoring-system.md) → 고급 기법
 2. 프로덕션 환경 적용 및 커스터마이징
 3. 성능 최적화 프로젝트 수행
 
@@ -94,17 +94,17 @@ priority_score: 4
 
 ### 선행 학습
 
-- [Promise와 Future 패턴](chapter-10-async-programming/10-10-promise-future.md) - 비동기 기초
-- [이벤트 루프 아키텍처](chapter-10-async-programming/10-14-event-loop.md) - 내부 구조 이해
+- [Promise와 Future 패턴](./10-10-promise-future.md) - 비동기 기초
+- [이벤트 루프 아키텍처](./10-14-event-loop.md) - 내부 구조 이해
 
 ### 후속 학습
 
-- [코루틴과 비동기 패턴](chapter-10-async-programming/10-15-coroutine.md) - 고급 비동기 기법
-- [분산 비동기 시스템](chapter-10-async-programming/10-18-distributed-async.md) - 확장된 아키텍처
+- [코루틴과 비동기 패턴](./10-15-coroutine.md) - 고급 비동기 기법
+- [분산 비동기 시스템](./10-18-distributed-async.md) - 확장된 아키텍처
 
 ---
 
-**다음**: [이벤트 루프 기초와 모니터링](chapter-10-async-programming/10-04-event-loop-fundamentals.md)에서 기본 개념과 진단 방법론을 학습합니다.
+**다음**: [이벤트 루프 기초와 모니터링](./10-04-event-loop-fundamentals.md)에서 기본 개념과 진단 방법론을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -120,7 +120,7 @@ priority_score: 4
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-08-async-programming)
+### 📂 같은 챕터 (chapter-10-async-programming)
 
 - [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
 - [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)

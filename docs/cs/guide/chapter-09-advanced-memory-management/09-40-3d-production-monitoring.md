@@ -1017,8 +1017,8 @@ class ProductionMemoryDashboard {
 
 ---
 
-**이전**: [고급 메모리 최적화 기법](chapter-09-advanced-memory-management/09-33-3c-advanced-optimization.md)  
-**다음**: [9.3d4 JavaScript GC의 현실과 미래](chapter-09-advanced-memory-management/03d4-javascript-gc-future.md)에서 JavaScript GC의 전망과 핵심 교훈을 정리합니다.
+**이전**: [고급 메모리 최적화 기법](./09-33-3c-advanced-optimization.md)  
+**다음**: [9.3d4 JavaScript GC의 현실과 미래](./03d4-javascript-gc-future.md)에서 JavaScript GC의 전망과 핵심 교훈을 정리합니다.
 
 ## 📚 관련 문서
 
@@ -1034,7 +1034,7 @@ class ProductionMemoryDashboard {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
 - [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)

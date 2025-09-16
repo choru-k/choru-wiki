@@ -732,8 +732,8 @@ int main() {
 
 ---
 
-**이전**: [페이지 폴트와 TLB](chapter-03-memory-system/03-14-page-fault-tlb.md)  
-**다음**: [가상 메모리 개요](chapter-03-memory-system/03-12-virtual-memory.md)로 돌아가서 전체 내용을 정리하거나, [메모리 매핑과 공유 메모리](chapter-03-memory-system/03-16-memory-mapping.md)에서 고급 메모리 기법을 학습합니다.
+**이전**: [페이지 폴트와 TLB](./03-14-page-fault-tlb.md)  
+**다음**: [가상 메모리 개요](./03-12-virtual-memory.md)로 돌아가서 전체 내용을 정리하거나, [메모리 매핑과 공유 메모리](./03-16-memory-mapping.md)에서 고급 메모리 기법을 학습합니다.
 
 ## 📚 관련 문서
 

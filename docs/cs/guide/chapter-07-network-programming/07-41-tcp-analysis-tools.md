@@ -531,7 +531,7 @@ TCP_KEEPIDLE, TCP_KEEPINTVL, TCP_KEEPCNT 옵션을 통해 연결 생명주기를
 
 ---
 
-**다음**: [07-35-connection-pool-optimization.md](chapter-07-network-programming/07-35-connection-pool-optimization.md)에서 연결 풀과 로드밸런서 최적화를 학습합니다.
+**다음**: [07-35-connection-pool-optimization.md](./07-35-connection-pool-optimization.md)에서 연결 풀과 로드밸런서 최적화를 학습합니다.
 
 ## 📚 관련 문서
 

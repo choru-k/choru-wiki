@@ -27,7 +27,7 @@ priority_score: 4
 
 이 통신 패턴 가이드는 3개의 핵심 문서로 구성되어 있습니다:
 
-### 1️⃣ [동기식 통신 - REST API와 Circuit Breaker](chapter-16-distributed-system-patterns/15-17-1-synchronous-communication.md)
+### 1️⃣ [동기식 통신 - REST API와 Circuit Breaker](chapter-15-microservices-architecture/15-17-1-synchronous-communication.md)
 
 - **TypeScript 기반 견고한 REST 클라이언트 구현**
   - Circuit Breaker 패턴 적용
@@ -39,7 +39,7 @@ priority_score: 4
   - 배치 요청 최적화
   - Fallback 메커니즘
 
-### 2️⃣ [비동기식 통신 - 메시지 큐와 이벤트 기반](chapter-16-distributed-system-patterns/15-18-2-asynchronous-communication.md)
+### 2️⃣ [비동기식 통신 - 메시지 큐와 이벤트 기반](chapter-15-microservices-architecture/15-18-2-asynchronous-communication.md)
 
 - **Go 언어 기반 이벤트 시스템 구현**
   - RabbitMQ를 활용한 견고한 Publisher/Subscriber
@@ -50,7 +50,7 @@ priority_score: 4
   - 미들웨어 패턴을 통한 확장성
   - 분산 트레이싱 및 메트릭 통합
 
-### 3️⃣ [통신 패턴 선택과 실전 최적화 가이드](chapter-16-distributed-system-patterns/15-50-3-communication-patterns-best-practices.md)
+### 3️⃣ [통신 패턴 선택과 실전 최적화 가이드](chapter-15-microservices-architecture/15-50-3-communication-patterns-best-practices.md)
 
 - **통신 방식 선택 기준과 하이브리드 패턴**
   - 동기식 vs 비동기식 통신 선택 가이드
@@ -109,14 +109,14 @@ graph TD
 
 ### 초보자 (권장 순서)
 
-1. **[동기식 통신](chapter-16-distributed-system-patterns/15-17-1-synchronous-communication.md)** → REST API 기초와 Circuit Breaker 이해
+1. **[동기식 통신](chapter-15-microservices-architecture/15-17-1-synchronous-communication.md)** → REST API 기초와 Circuit Breaker 이해
 2. **간단한 동기 클라이언트 구현** → 재시도, 타임아웃 등 기본 패턴 적용
-3. **[비동기식 통신](chapter-16-distributed-system-patterns/15-18-2-asynchronous-communication.md)** → 이벤트 기반 아키텍처 학습
-4. **[통신 패턴 선택 가이드](chapter-16-distributed-system-patterns/15-50-3-communication-patterns-best-practices.md)** → 실전 선택 기준과 최적화 전략
+3. **[비동기식 통신](chapter-15-microservices-architecture/15-18-2-asynchronous-communication.md)** → 이벤트 기반 아키텍처 학습
+4. **[통신 패턴 선택 가이드](chapter-15-microservices-architecture/15-50-3-communication-patterns-best-practices.md)** → 실전 선택 기준과 최적화 전략
 
 ### 중급자 (심화 학습)
 
-1. **[통신 패턴 선택 가이드](chapter-16-distributed-system-patterns/15-50-3-communication-patterns-best-practices.md)** → 하이브리드 패턴과 성능 최적화
+1. **[통신 패턴 선택 가이드](chapter-15-microservices-architecture/15-50-3-communication-patterns-best-practices.md)** → 하이브리드 패턴과 성능 최적화
 2. **동기식 고급 패턴** → Bulkhead, Rate Limiting, 캐스케이딩 장애 방지
 3. **비동기식 고급 패턴** → Saga, Event Sourcing, CQRS
 4. **운영 및 모니터링** → 메트릭, 로깅, 분산 트레이싱
@@ -132,13 +132,13 @@ graph TD
 
 ### 선행 학습
 
-- [마이크로서비스 설계 원칙](chapter-16-distributed-system-patterns/15-11-design-principles.md) - 서비스 분할과 경계 설정
+- [마이크로서비스 설계 원칙](chapter-15-microservices-architecture/15-11-design-principles.md) - 서비스 분할과 경계 설정
 - [분산 시스템 기초](../chapter-14-distributed-systems/index.md) - CAP 정리, 일관성 모델
 
 ### 후속 학습
 
-- [컨테이너화와 오케스트레이션](chapter-15-microservices-architecture/15-19-containerization-orchestration.md) - 배포 및 운영 전략
-- [모니터링과 성공 요인](chapter-16-distributed-system-patterns/15-40-monitoring-success-factors.md) - 운영 관점의 통신 최적화
+- [컨테이너화와 오케스트레이션](./15-19-containerization-orchestration.md) - 배포 및 운영 전략
+- [모니터링과 성공 요인](chapter-15-microservices-architecture/15-40-monitoring-success-factors.md) - 운영 관점의 통신 최적화
 
 ## 📊 주요 성능 지표
 
@@ -158,7 +158,7 @@ graph TD
 
 ---
 
-**다음**: 구체적인 구현을 위해 [동기식 통신 패턴](chapter-16-distributed-system-patterns/15-17-1-synchronous-communication.md)부터 시작하거나, [비동기식 통신 패턴](chapter-16-distributed-system-patterns/15-18-2-asynchronous-communication.md), [통신 패턴 선택 가이드](chapter-16-distributed-system-patterns/15-50-3-communication-patterns-best-practices.md)로 직접 이동할 수 있습니다.
+**다음**: 구체적인 구현을 위해 [동기식 통신 패턴](chapter-15-microservices-architecture/15-17-1-synchronous-communication.md)부터 시작하거나, [비동기식 통신 패턴](chapter-15-microservices-architecture/15-18-2-asynchronous-communication.md), [통신 패턴 선택 가이드](chapter-15-microservices-architecture/15-50-3-communication-patterns-best-practices.md)로 직접 이동할 수 있습니다.
 
 ## 📚 관련 문서
 
@@ -178,9 +178,9 @@ graph TD
 
 - [15.1 마이크로서비스 아키텍처 개요](./15-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](./15-10-monolith-to-microservices.md)
-- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-16-distributed-system-patterns/15-11-design-principles.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-12-1-single-responsibility-principle.md)
-- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-16-distributed-system-patterns/15-13-1-single-responsibility.md)
+- [16.1B 마이크로서비스 설계 원칙과 패턴 개요](../chapter-15-microservices-architecture/15-11-design-principles.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-12-1-single-responsibility-principle.md)
+- [16.1B1 단일 책임 원칙 (Single Responsibility Principle)](../chapter-15-microservices-architecture/15-13-1-single-responsibility.md)
 
 ### 🏷️ 관련 키워드
 

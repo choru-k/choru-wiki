@@ -665,11 +665,11 @@ continuous_improvement:
 
 ## 🔗 연관 학습 자료
 
-- **[16.5A API Gateway 기초](chapter-16-distributed-system-patterns/16-07-api-gateway-fundamentals.md)** - 기본 개념과 도입 배경
-- **[16.5B 라우팅과 로드 밸런싱](chapter-16-distributed-system-patterns/05b-routing-load-balancing.md)** - 핵심 기능 구현
-- **[16.5C 인증과 인가](chapter-16-distributed-system-patterns/05c-authentication-authorization.md)** - 보안 시스템 설계  
-- **[16.5D Rate Limiting](chapter-16-distributed-system-patterns/16-42-rate-limiting-monitoring.md)** - 트래픽 제어 전략
-- **[16.5 API Gateway 패턴 종합](chapter-16-distributed-system-patterns/16-55-api-gateway-patterns.md)** - 전체 개요
+- **[16.5A API Gateway 기초](./16-07-api-gateway-fundamentals.md)** - 기본 개념과 도입 배경
+- **[16.5B 라우팅과 로드 밸런싱](./05b-routing-load-balancing.md)** - 핵심 기능 구현
+- **[16.5C 인증과 인가](./05c-authentication-authorization.md)** - 보안 시스템 설계  
+- **[16.5D Rate Limiting](./16-42-rate-limiting-monitoring.md)** - 트래픽 제어 전략
+- **[16.5 API Gateway 패턴 종합](./16-55-api-gateway-patterns.md)** - 전체 개요
 
 ---
 
@@ -684,22 +684,22 @@ continuous_improvement:
    - 서비스 분해 전략과 통신 패턴
    - 컨테이너화와 오케스트레이션
 
-2. **[16.2 이벤트 드리븐 아키텍처](chapter-16-distributed-system-patterns/16-03-event-driven-architecture.md)**
+2. **[16.2 이벤트 드리븐 아키텍처](./16-03-event-driven-architecture.md)**
    - 실시간 데이터 처리와 이벤트 스트리밍
    - Apache Kafka와 복합 이벤트 처리
    - 이벤트 소싱과 상태 관리
 
-3. **[16.3 CQRS와 이벤트 소싱](chapter-16-distributed-system-patterns/03-cqrs-event-sourcing.md)**
+3. **[16.3 CQRS와 이벤트 소싱](./03-cqrs-event-sourcing.md)**
    - 명령과 조회의 분리
    - 이벤트 기반 상태 재구성
    - 프로젝션과 읽기 모델 최적화
 
-4. **[16.4 Saga 패턴](chapter-16-distributed-system-patterns/04-saga-pattern.md)**
+4. **[16.4 Saga 패턴](./04-saga-pattern.md)**
    - 분산 트랜잭션 관리
    - Orchestration vs Choreography
    - 보상 트랜잭션과 장애 복구
 
-5. **[16.5 API Gateway 패턴](chapter-16-distributed-system-patterns/16-55-api-gateway-patterns.md)**
+5. **[16.5 API Gateway 패턴](./16-55-api-gateway-patterns.md)**
    - 마이크로서비스의 통합 관문
    - 고급 인증/인가와 Rate Limiting
    - 트래픽 관리와 모니터링
@@ -752,7 +752,7 @@ continuous_improvement:
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-16-system-design-patterns)
+### 📂 같은 챕터 (chapter-16-distributed-system-patterns)
 
 - [15.1 마이크로서비스 아키텍처 개요](../chapter-15-microservices-architecture/16-01-microservices-architecture.md)
 - [15.1A 모놀리스 문제점과 전환 전략](../chapter-15-microservices-architecture/16-10-monolith-to-microservices.md)

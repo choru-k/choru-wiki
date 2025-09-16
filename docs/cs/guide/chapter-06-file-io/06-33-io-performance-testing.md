@@ -702,8 +702,8 @@ O_SYNC와 캐시 무효화를 통해 실제 디스크 성능을 정확하게 측
 
 ---
 
-**이전**: [I/O 최적화 전략](chapter-06-file-io/06-32-io-optimization-strategies.md)  
-**다음**: [I/O 성능 분석 개요](chapter-06-file-io/06-41-io-performance.md)로 돌아가서 전체 가이드를 검토합니다.
+**이전**: [I/O 최적화 전략](./06-32-io-optimization-strategies.md)  
+**다음**: [I/O 성능 분석 개요](./06-41-io-performance.md)로 돌아가서 전체 가이드를 검토합니다.
 
 ## 📚 관련 문서
 

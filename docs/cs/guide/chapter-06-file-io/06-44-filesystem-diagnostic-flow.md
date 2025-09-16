@@ -325,8 +325,8 @@ EOF
 
 ---
 
-**이전**: [파일시스템 디버깅 개요](chapter-06-file-io/06-43-filesystem-debugging.md)  
-**다음**: [파일시스템 진단 도구 구현](chapter-06-file-io/06-45-filesystem-diagnostic-tools.md)에서 실제 진단 도구의 구현과 사용법을 학습합니다.
+**이전**: [파일시스템 디버깅 개요](./06-43-filesystem-debugging.md)  
+**다음**: [파일시스템 진단 도구 구현](./06-45-filesystem-diagnostic-tools.md)에서 실제 진단 도구의 구현과 사용법을 학습합니다.
 
 ## 📚 관련 문서
 

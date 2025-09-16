@@ -448,8 +448,8 @@ class TokenRefreshSystem:
 
 ---
 
-**이전**: [OAuth 2.0 구현](chapter-17-security-engineering/17-15-oauth2-implementation.md)
-**다음**: [다중 인증 (MFA)](chapter-17-security-engineering/17-17-mfa-implementation.md)에서 TOTP와 백업 코드를 통한 보안 강화 방법을 학습합니다.
+**이전**: [OAuth 2.0 구현](./17-15-oauth2-implementation.md)
+**다음**: [다중 인증 (MFA)](./17-17-mfa-implementation.md)에서 TOTP와 백업 코드를 통한 보안 강화 방법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -465,7 +465,7 @@ class TokenRefreshSystem:
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-15-security-engineering)
+### 📂 같은 챕터 (chapter-17-security-engineering)
 
 - [Chapter 15-1: 메모리 보안 - 메모리 공격과 방어의 과학](./17-10-memory-security.md)
 - [Chapter 15.2 네트워크 보안 개요](./17-11-network-security.md)

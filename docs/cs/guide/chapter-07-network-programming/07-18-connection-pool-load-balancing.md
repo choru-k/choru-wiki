@@ -552,8 +552,8 @@ void report_metrics(struct load_balancer_metrics *metrics) {
 
 ---
 
-**이전**: [제로카피와 NUMA 최적화](chapter-07-network-programming/07-31-zerocopy-numa-optimization.md)  
-**다음**: [프로토콜 최적화](chapter-07-network-programming/07-32-protocol-optimization.md)에서 HTTP/2와 WebSocket 등 최신 프로토콜 기술을 학습합니다.
+**이전**: [제로카피와 NUMA 최적화](./07-31-zerocopy-numa-optimization.md)  
+**다음**: [프로토콜 최적화](./07-32-protocol-optimization.md)에서 HTTP/2와 WebSocket 등 최신 프로토콜 기술을 학습합니다.
 
 ## 📚 관련 문서
 

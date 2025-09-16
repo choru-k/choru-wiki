@@ -544,8 +544,8 @@ $ echo 0 > /sys/block/nvme0n1/queue/io_poll
 
 ---
 
-**이전**: [I/O 스케줄러 알고리즘](chapter-06-file-io/06-19-io-schedulers.md)  
-**다음**: [NVMe 최적화와 io_uring](chapter-06-file-io/03d-nvme-io-uring.md)에서 차세대 I/O 기술을 학습합니다.
+**이전**: [I/O 스케줄러 알고리즘](./06-19-io-schedulers.md)  
+**다음**: [NVMe 최적화와 io_uring](./03d-nvme-io-uring.md)에서 차세대 I/O 기술을 학습합니다.
 
 ## 📚 관련 문서
 

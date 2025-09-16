@@ -226,7 +226,7 @@ Arena, Bin, Chunk의 3단계 계층 구조로 다양한 크기의 메모리 요�
 
 ---
 
-**다음**: [08-11-allocator-comparison.md](chapter-08-memory-allocator-gc/08-11-allocator-comparison.md)에서 tcmalloc, jemalloc, mimalloc의 성능 비교를 학습합니다.
+**다음**: [08-11-allocator-comparison.md](./08-11-allocator-comparison.md)에서 tcmalloc, jemalloc, mimalloc의 성능 비교를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -242,7 +242,7 @@ Arena, Bin, Chunk의 3단계 계층 구조로 다양한 크기의 메모리 요�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-09-memory-gc)
+### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
 - [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
 - [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-11-allocator-comparison.md)

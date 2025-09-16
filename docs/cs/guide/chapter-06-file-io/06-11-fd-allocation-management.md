@@ -349,8 +349,8 @@ fork()에서 파일 내용과 오프셋은 공유하지만, fd 테이블은 독�
 
 ---
 
-**이전**: [파일 디스크립터 기본 개념과 3단계 구조](chapter-06-file-io/06-01-fd-basics-structure.md)  
-**다음**: [파일 연산과 VFS 다형성](chapter-06-file-io/06-12-file-operations-vfs.md)에서 파일 시스템별 연산 방식을 학습합니다.
+**이전**: [파일 디스크립터 기본 개념과 3단계 구조](./06-01-fd-basics-structure.md)  
+**다음**: [파일 연산과 VFS 다형성](./06-12-file-operations-vfs.md)에서 파일 시스템별 연산 방식을 학습합니다.
 
 ## 📚 관련 문서
 

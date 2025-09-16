@@ -790,12 +790,12 @@ void analyze_tlb_misses() {
 
 ### 선행 지식
 
-- [주소 변환 메커니즘](chapter-03-memory-system/03-10-address-translation.md) - 페이지 테이블과 MMU
-- [Process Memory Structure](../chapter-03-memory-system/02-10-process-memory.md) - 프로세스 메모리 구조
+- [주소 변환 메커니즘](./03-10-address-translation.md) - 페이지 테이블과 MMU
+- [Process Memory Structure](.././02-10-process-memory.md) - 프로세스 메모리 구조
 
 ### 관련 주제
 
-- [페이지 폴트 처리](chapter-03-memory-system/03-12-page-fault.md) - TLB 미스 후 처리
+- [페이지 폴트 처리](./03-12-page-fault.md) - TLB 미스 후 처리
 - [Context Switching](../chapter-05-3-context-switching.md) - TLB 무효화와 성능
 - [Performance Optimization](../chapter-10-performance-optimization.md) - TLB 최적화 기법
 
@@ -803,7 +803,7 @@ void analyze_tlb_misses() {
 
 지금까지 TLB가 주소 변환을 어떻게 빠르게 하는지 배웠습니다. 하지만 만약 페이지가 아예 없다면?
 
-다음 섹션 [3-3: 페이지 폴트와 메모리 관리](chapter-03-memory-system/03-12-page-fault.md)에서는 **페이지 폴트의 모든 것**을 다룹니다:
+다음 섹션 [3-3: 페이지 폴트와 메모리 관리](./03-12-page-fault.md)에서는 **페이지 폴트의 모든 것**을 다룹니다:
 
 - Segmentation Fault의 진짜 원인
 - fork()가 빠른 이유: Copy-on-Write의 마법
@@ -826,7 +826,7 @@ void analyze_tlb_misses() {
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-03-virtual-memory)
+### 📂 같은 챕터 (chapter-03-memory-system)
 
 - [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-10-address-translation.md)
 - [Chapter 3-3: 페이지 폴트와 메모리 관리 개요](./03-12-page-fault.md)
