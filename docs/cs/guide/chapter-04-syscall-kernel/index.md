@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter 04: 시스템콜과 커널 - OS와의 인터페이스
+# Chapter 10: 시스템콜과 커널 - OS와의 인터페이스
 
 이 챕터는 시스템 프로그래밍의 핵심인 시스템 호출 메커니즘과 커널 아키텍처, 그리고 고급 디버깅 기법을 다룹니다.
 
@@ -133,6 +133,23 @@ priority_score: 4
 ### 🏷️ 관련 키워드
 
 `FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+
+## 🔗 관련 챕터
+
+### 📚 시스템 프로그래밍 기초
+
+- [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
+- [Chapter 2: CPU와 인터럽트](../chapter-02-cpu-interrupt/index.md)
+- [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
+
+### 🚀 성능 관련  
+
+- [Chapter 11: 성능 최적화](../chapter-11-performance-optimization/index.md)
+
+### 🔧 고급 주제
+
+- [Chapter 6: 파일 시스템과 I/O](../chapter-06-file-io/index.md)
+- [Chapter 15: 보안 엔지니어링](../chapter-15-security-engineering/index.md)
 
 ### ⏭️ 다음 단계 가이드
 

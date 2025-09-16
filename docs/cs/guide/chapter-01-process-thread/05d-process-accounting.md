@@ -329,8 +329,8 @@ check_disk_usage
 
 ---
 
-**이전**: [05c-zombie-process-handling.md](chapter-01-process-thread/05c-zombie-process-handling.md)  
-**다음**: [05e-integrated-monitoring.md](05e-integrated-monitoring.md)에서 통합 모니터링 시스템을 학습합니다.
+**이전**: [05c-zombie-process-handling.md](./05c-zombie-process-handling.md)  
+**다음**: 다음 단계는 각 장의 고급 주제들을 학습하거나 다른 챕터로 이동하세요.
 
 ## 📚 관련 문서
 

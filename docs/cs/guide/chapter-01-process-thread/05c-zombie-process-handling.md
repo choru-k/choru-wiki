@@ -337,8 +337,8 @@ check_and_cleanup
 
 ---
 
-**이전**: [04-43-dstate-debugging.md](chapter-01-process-thread/04-43-dstate-debugging.md)  
-**다음**: [05d-process-accounting.md](chapter-01-process-thread/05d-process-accounting.md)에서 Process Accounting 활용법을 학습합니다.
+**이전**: [04-43-dstate-debugging.md](./04-43-dstate-debugging.md)  
+**다음**: [05d-process-accounting.md](./05d-process-accounting.md)에서 Process Accounting 활용법을 학습합니다.
 
 ## 📚 관련 문서
 

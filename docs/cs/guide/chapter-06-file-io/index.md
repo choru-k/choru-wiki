@@ -95,8 +95,8 @@ priority_score: 4
 
 ### 📚 시스템 프로그래밍 기초
 
-- [Chapter 1: 컴파일러와 링커](../chapter-05-compiler-linker/index.md)
-- [Chapter 2: 메모리 시스템](../chapter-03-memory-system/index.md)
+- [Chapter 5: 컴파일러와 링커](../chapter-05-compiler-linker/index.md)
+- [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
 
 ### 🚀 성능 관련  
 
@@ -104,5 +104,5 @@ priority_score: 4
 
 ### 🔧 고급 주제
 
-- [Chapter 04: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
-- [Chapter 17: 보안 엔지니어링](../chapter-17-security-engineering/index.md)
+- [Chapter 10: 시스템콜과 커널](../chapter-10-syscall-kernel/index.md)
+- [Chapter 15: 보안 엔지니어링](../chapter-15-security-engineering/index.md)

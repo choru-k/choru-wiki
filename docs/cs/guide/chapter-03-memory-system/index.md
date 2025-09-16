@@ -78,14 +78,10 @@ priority_score: 4
 
 ## 🔗 관련 챕터
 
-### 📚 메모리 관련
-
-- [Chapter 2: 메모리 시스템](../chapter-03-memory-system-system/index.md)
-
 ### 🚀 성능 관련  
 
 - [Chapter 11: 성능 최적화](../chapter-11-performance-optimization/index.md)
 
 ### 🔧 시스템 프로그래밍
 
-- [Chapter 04: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
+- [Chapter 10: 시스템콜과 커널](../chapter-10-syscall-kernel/index.md)

@@ -230,6 +230,23 @@ mindmap
 
 `FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
 
+## 🔗 관련 챕터
+
+### 📚 시스템 프로그래밍 기초
+
+- [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
+- [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
+- [Chapter 6: 파일 시스템과 I/O](../chapter-06-file-io/index.md)
+
+### 🚀 성능 관련  
+
+- [Chapter 11: 성능 최적화](../chapter-11-performance-optimization/index.md)
+
+### 🔧 고급 주제
+
+- [Chapter 10: 시스템콜과 커널](../chapter-10-syscall-kernel/index.md)
+- [Chapter 15: 보안 엔지니어링](../chapter-15-security-engineering/index.md)
+
 ### ⏭️ 다음 단계 가이드
 
 - 실무 적용을 염두에 두고 프로젝트에 적용해보세요
