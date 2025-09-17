@@ -1,0 +1,110 @@
+---
+tags:
+  - advanced
+  - balanced
+  - deep-study
+  - dpdk
+  - high_performance_networking
+  - kernel_bypass
+  - rdma
+  - zero_copy
+  - 인프라스트럭처
+difficulty: ADVANCED
+learning_time: "12-20시간"
+main_topic: "인프라스트럭처"
+priority_score: 5
+---
+
+# 7.4.1: 고성능 아키텍처
+
+## 상황: 극한 성능이 필요한 네트워크 애플리케이션
+
+"안녕하세요, 실시간 트레이딩 시스템을 개발하고 있는데 네트워크 지연시간이 생명입니다. 마이크로초 단위의 지연시간도 중요하고, 초당 수백만 개의 패킷을 처리해야 해요. 일반적인 소켓 프로그래밍으로는 한계가 있는 것 같습니다. 커널 바이패스나 제로 카피 같은 고성능 네트워킹 기술을 어떻게 활용할 수 있을까요?"
+
+이런 극한 성능이 요구되는 상황에서는 전통적인 네트워킹 방식을 넘어선 고급 기술들이 필요합니다.
+
+## 고성능 네트워킹 아키텍처
+
+```mermaid
+graph TD
+    A[애플리케이션] --> B{성능 요구사항}
+
+    B -->|높음| C[커널 바이패스]
+    B -->|중간| D[최적화된 소켓]
+    B -->|일반| E[표준 소켓]
+
+    C --> F[DPDK]
+    C --> G[RDMA]
+    C --> H[AF_XDP]
+
+    D --> I[epoll/io_uring]
+    D --> J[제로 카피]
+    D --> K[CPU 친화성]
+
+    E --> L[기본 네트워킹]
+
+    subgraph "성능 최적화 기법"
+        M[메모리 풀링]
+        N[배치 처리]
+        O[인터럽트 코어 격리]
+        P[NUMA 최적화]
+        Q[패킷 파이프라이닝]
+    end
+
+    subgraph "지연시간 최적화"
+        R[커널 우회]
+        S[폴링 모드]
+        T[락프리 큐]
+        U[메모리 사전 할당]
+        V[캐시 최적화]
+    end
+```
+
+## 핵심 요점
+
+### 1. 성능 계층별 접근법
+
+고성능 네트워킹에서는 요구사항에 따라 다른 기술 스택을 선택해야 합니다
+
+### 2. 커널 바이패스의 중요성
+
+DPDK, RDMA, AF_XDP 같은 기술로 커널 오버헤드를 제거할 수 있습니다
+
+### 3. 시스템 레벨 최적화
+
+CPU 친화성, 메모리 풀링, 배치 처리 등의 최적화가 필수적입니다
+
+---
+
+**다음**: [고성능 분석 도구](./07-45-high-performance-analysis-tool.md)에서 실제 구현과 성능 측정 도구를 학습합니다.
+
+## 📚 관련 문서
+
+### 📖 현재 문서 정보
+
+- **난이도**: ADVANCED
+- **주제**: 인프라스트럭처
+- **예상 시간**: 12-20시간
+
+### 🎯 학습 경로
+
+- [📚 ADVANCED 레벨 전체 보기](../learning-paths/advanced/)
+- [🏠 메인 학습 경로](../learning-paths/)
+- [📋 전체 가이드 목록](../README.md)
+
+### 📂 같은 챕터 (chapter-07-network-programming)
+
+- [7.1.1: 소켓 프로그래밍의 기초 개요](./07-01-socket-basics.md)
+- [7.1.2: 소켓의 개념과 기본 구조](./07-02-socket-fundamentals.md)
+- [7.1.3: TCP 소켓 프로그래밍](./07-10-tcp-programming.md)
+- [7.1.4: UDP와 Raw 소켓 프로그래밍](./07-11-udp-raw-sockets.md)
+- [7.1.5: 소켓 옵션과 Unix 도메인 소켓](./07-12-socket-options-unix.md)
+
+### 🏷️ 관련 키워드
+
+`high_performance_networking`, `kernel_bypass`, `zero_copy`, `dpdk`, `rdma`
+
+### ⏭️ 다음 단계 가이드
+
+- 시스템 전체의 관점에서 이해하려 노력하세요
+- 다른 고급 주제들과의 연관성을 파악해보세요
