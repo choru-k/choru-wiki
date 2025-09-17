@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# Chapter 9-4A: 메모리 누수 탐지와 프로파일링 도구
+# 9.3.1: 메모리 누수 탐지 기초
 
 ## 🎯 이 문서에서 다루는 내용
 
@@ -383,7 +383,7 @@ class MemoryMonitor {
 
 ---
 
-**다음**: [04b-zero-allocation-programming.md](./04b-zero-allocation-programming.md)에서 Zero-allocation 프로그래밍 패턴을 학습합니다.
+**다음**: [Zero-allocation 프로그래밍](./09-04-01-zero-allocation-programming.md)에서 Zero-allocation 프로그래밍 패턴을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -401,11 +401,11 @@ class MemoryMonitor {
 
 ### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/09-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/09-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](./09-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/08-01-04-custom-allocators.md)
+- [9.4.2: 실전 메모리 최적화 사례](./09-04-02-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

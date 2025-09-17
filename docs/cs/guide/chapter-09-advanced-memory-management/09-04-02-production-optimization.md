@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter 9-1D: 실전 메모리 최적화 사례
+# 9.4.2: 프로덕션 최적화 전략
 
 ## Netflix의 jemalloc 튜닝
 
@@ -328,11 +328,11 @@ Netflix와 Discord의 사례처럼 환경에 맞는 세밀한 튜닝이 극적�
 
 ### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/09-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/09-12-custom-allocators.md)
-- [Chapter 9-2: GC 알고리즘과 구현 원리 개요](../chapter-08-memory-allocator-gc/09-13-gc-algorithms.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/08-01-04-custom-allocators.md)
+- [8.2.4: GC 알고리즘과 구현 원리 개요](../chapter-08-memory-allocator-gc/09-13-gc-algorithms.md)
 
 ### 🏷️ 관련 키워드
 

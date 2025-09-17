@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter 9-4A: 메모리 누수 탐지와 디버깅 도구
+# 9.3.4: 메모리 누수 디버깅
 
 프로덕션 환경에서 서버가 갑자기 OOM으로 죽는 상황은 개발자들의 악몽입니다. 이 문서에서는 메모리 누수의 일반적인 패턴을 이해하고, 전문가급 디버깅 도구로 원인을 정확히 찾아내는 방법을 학습합니다.
 
@@ -1059,8 +1059,8 @@ class CustomClassLoader extends ClassLoader {
 
 ---
 
-**이전**: [메모리 최적화 개요](./09-34-memory-optimization.md)  
-**다음**: [Zero-allocation 프로그래밍](./04b-zero-allocation-programming.md)에서 GC 압박을 완전히 제거하는 고급 기법을 학습합니다.
+**이전**: [시스템 레벨 탐지](./09-03-03-system-level-detection.md)  
+**다음**: [메모리 최적화 실무](./09-04-04-memory-optimization.md)에서 전반적인 메모리 최적화 전략을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -1078,11 +1078,11 @@ class CustomClassLoader extends ClassLoader {
 
 ### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/09-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/09-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](./09-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/08-01-04-custom-allocators.md)
+- [9.4.2: 실전 메모리 최적화 사례](./09-04-02-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

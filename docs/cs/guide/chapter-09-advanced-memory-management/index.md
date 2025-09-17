@@ -37,43 +37,47 @@ priority_score: 4
 
 ## 📚 이 챕터의 구성
 
-### 9.1 고급 GC 알고리즘
+### 9.1 고급 GC 알고리즘 이론
 
-- [09-14: Generational Concurrent GC](./09-14-generational-concurrent-gc.md)
-- [09-15: Generational GC](./09-15-generational-gc.md)
-- [09-18: Language GC](./09-18-language-gc.md)
+- [09-01-01: 세대별 동시 실행 GC](./09-01-01-generational-concurrent-gc.md)
+- [09-01-02: 세대별 가비지 컬렉션](./09-01-02-generational-gc.md)
+- [09-01-03: 언어별 GC 구현](./09-01-03-language-gc.md)
 
 ### 9.2 JavaScript 메모리 관리
 
-- [03d-javascript: GC](./03d-javascript-gc.md)
-- [03d2-memory: Leak Prevention](./03d2-memory-leak-prevention.md)
-- [03d3-spa: Memory Management](./03d3-spa-memory-management.md)
-- [03d3b-route: Memory Management](./03d3b-route-memory-management.md)
-- [03d4-javascript: GC Future](./03d4-javascript-gc-future.md)
-- [09-07: SPA Architecture Lifecycle](./09-07-3a-spa-architecture-lifecycle.md)
-- [09-37: Node.js Profiling](./09-37-nodejs-profiling.md)
+- [09-02-01: JavaScript GC 완전 가이드](./09-02-01-javascript-gc.md)
+- [09-02-02: 메모리 누수 방지 전략](./09-02-02-memory-leak-prevention.md)
+- [09-02-03: SPA 메모리 관리](./09-02-03-spa-memory-management.md)
+- [09-02-04: 라우트별 메모리 관리](./09-02-04-route-memory-management.md)
+- [09-02-05: JavaScript GC 미래 기술](./09-02-05-javascript-gc-future.md)
+- [09-02-06: SPA 아키텍처 생명주기](./09-02-06-spa-architecture-lifecycle.md)
+- [09-02-07: Node.js 프로파일링](./09-02-07-nodejs-profiling.md)
 
-### 9.3 메모리 누수 탐지
+### 9.3 메모리 누수 탐지 및 분석
 
-- [04a-memory: Leak Detection](./04a-memory-leak-detection.md)
-- [05-memory: Leak Detection](./05-memory-leak-detection.md)
-- [05a-system: Level Detection](./05a-system-level-detection.md)
-- [09-41: Memory Leak Debugging](./09-41-memory-leak-debugging.md)
+- [09-03-01: 메모리 누수 탐지 기초](./09-03-01-memory-leak-detection.md)
+- [09-03-02: 고급 누수 탐지 기법](./09-03-02-advanced-leak-detection.md)
+- [09-03-03: 시스템 레벨 탐지](./09-03-03-system-level-detection.md)
+- [09-03-04: 메모리 누수 디버깅](./09-03-04-memory-leak-debugging.md)
 
 ### 9.4 고급 최적화 기법
 
-- [04b-zero: Allocation Programming](./04b-zero-allocation-programming.md)
-- [09-30: Production Optimization](./09-30-production-optimization.md)
-- [09-33: Advanced Optimization](./09-33-3c-advanced-optimization.md)
-- [09-34: Memory Optimization](./09-34-memory-optimization.md)
-- [09-35: Cache Optimization](./09-35-cache-optimization.md)
-- [09-36: Real World Optimization](./09-36-real-world-optimization.md)
-- [09-40: Production Monitoring](./09-40-3d-production-monitoring.md)
+- [09-04-01: Zero-allocation 프로그래밍](./09-04-01-zero-allocation-programming.md)
+- [09-04-02: 프로덕션 최적화 전략](./09-04-02-production-optimization.md)
+- [09-04-03: 고급 최적화 기법](./09-04-03-advanced-optimization.md)
+- [09-04-04: 메모리 최적화 실무](./09-04-04-memory-optimization.md)
+- [09-04-05: 캐시 최적화](./09-04-05-cache-optimization.md)
+- [09-04-06: 실무 최적화 사례](./09-04-06-real-world-optimization.md)
+
+### 9.5 프로덕션 모니터링
+
+- [09-05-01: 프로덕션 메모리 모니터링](./09-05-01-production-monitoring.md)
 
 ## 🔗 관련 챕터
 
 ### 📚 시스템 프로그래밍 기초
 
+- [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
 - [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
 - [Chapter 8: 메모리 할당자와 가비지 컬렉션](../chapter-08-memory-allocator-gc/index.md)
 

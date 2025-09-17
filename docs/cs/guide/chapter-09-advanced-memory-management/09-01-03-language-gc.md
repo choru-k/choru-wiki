@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# Chapter 9-3: 언어별 GC 특징과 최적화 - 개요
+# 9.1.3: 언어별 GC 구현
 
 ## 🎯 이 챕터를 읽고 나면 얻을 수 있는 것들
 
@@ -30,7 +30,7 @@ priority_score: 4
 
 각 언어의 GC는 고유한 특성과 최적화 전략을 가지고 있습니다. 아래 링크에서 각 언어의 상세한 분석과 실무 적용 사례를 확인하세요:
 
-### 🔥 [Java GC - 가장 정교한 GC 생태계](chapter-08-memory-allocator-gc/09-19-java-gc.md)
+### 🔥 [Java GC - 가장 정교한 GC 생태계](../chapter-08-memory-allocator-gc/08-03-01-java-gc.md)
 
 **25년 진화의 결정체, 엔터프라이즈급 메모리 관리**
 
@@ -42,7 +42,7 @@ priority_score: 4
   - 금융 HFT 시스템에서 ZGC로 1ms 대 GC pause 실현
   - Cassandra에서 ZGC 도입으로 64GB 힙에서도 안정적 운영
 
-### 🚀 [Go GC - 단순함의 미학](chapter-08-memory-allocator-gc/03b-go-gc.md)
+### 🚀 [Go GC - 단순함의 미학](../chapter-08-memory-allocator-gc/08-03-02-go-gc.md)
 
 **Less is More, 개발자 친화적 저지연 GC**
 
@@ -54,7 +54,7 @@ priority_score: 4
   - Go 1.19 Soft Memory Limit으로 컨테이너 환경 최적화
   - Kubernetes에서 Go 서비스들의 안정적인 저지연 달성
 
-### 🐍 [Python GC - Reference Counting + Cycle Detection](chapter-08-memory-allocator-gc/03c-python-gc.md)
+### 🐍 [Python GC - Reference Counting + Cycle Detection](../chapter-08-memory-allocator-gc/08-03-03-python-gc-fundamentals.md)
 
 **편의성과 GIL, 그리고 최적화의 예술**
 
@@ -66,7 +66,7 @@ priority_score: 4
   - Dropbox의 대용량 파일 처리 시 GC 최적화
   - 과학 계산에서 numpy와 함께한 효율적 메모리 관리
 
-### ⚡ [JavaScript/V8 GC - 숨겨진 복잡성](./03d-javascript-gc.md)
+### ⚡ [JavaScript/V8 GC - 숨겨진 복잡성](./09-02-01-javascript-gc.md)
 
 **브라우저부터 서버까지, 동적 최적화의 극치**
 
@@ -148,10 +148,10 @@ priority_score: 4
 
 ## 📝 추천 학습 순서
 
-1. **[Java GC](chapter-08-memory-allocator-gc/09-19-java-gc.md)**: 가장 다양하고 정교한 GC 시스템 이해
-2. **[Go GC](chapter-08-memory-allocator-gc/03b-go-gc.md)**: 단순하면서도 효과적인 현대적 GC 학습  
-3. **[Python GC](chapter-08-memory-allocator-gc/03c-python-gc.md)**: Reference Counting의 장단점 파악
-4. **[JavaScript GC](./03d-javascript-gc.md)**: 브라우저와 서버 환경에서의 특수성 이해
+1. **[Java GC](../chapter-08-memory-allocator-gc/08-03-01-java-gc.md)**: 가장 다양하고 정교한 GC 시스템 이해
+2. **[Go GC](../chapter-08-memory-allocator-gc/08-03-02-go-gc.md)**: 단순하면서도 효과적인 현대적 GC 학습  
+3. **[Python GC](../chapter-08-memory-allocator-gc/08-03-03-python-gc-fundamentals.md)**: Reference Counting의 장단점 파악
+4. **[JavaScript GC](./09-02-01-javascript-gc.md)**: 브라우저와 서버 환경에서의 특수성 이해
 
 각 언어별 상세 가이드에서 실제 코드와 사례를 통해 GC의 실무 활용법을 배워보세요!
 
@@ -179,11 +179,11 @@ priority_score: 4
 
 ### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/09-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/09-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](./09-30-production-optimization.md)
+- [Chapter 8-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/08-01-02-memory-allocator.md)
+- [Chapter 8-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/08-01-01-malloc-fundamentals.md)
+- [Chapter 8-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/08-01-03-allocator-comparison.md)
+- [Chapter 8-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/08-01-04-custom-allocators.md)
+- [9.4.2: 실전 메모리 최적화 사례](./09-04-02-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

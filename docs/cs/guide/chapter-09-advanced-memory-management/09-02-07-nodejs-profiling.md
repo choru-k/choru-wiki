@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 0
 ---
 
-# 05b. JavaScript/Node.js 메모리 프로파일링
+# 9.2.7: Node.js 프로파일링
 
 ## 고도화된 Node.js 메모리 누수 탐지 시스템
 
@@ -728,8 +728,8 @@ GC 이벤트와 성능을 실시간으로 추적하여 메모리 관리 효율�
 
 ---
 
-**이전**: [시스템 레벨 탐지 도구](./05a-system-level-detection.md)
-**다음**: [메모리 최적화](./09-34-memory-optimization.md)에서 누수 해결 후 성능 최적화를 학습합니다.
+**이전**: [시스템 레벨 탐지 도구](./09-03-03-system-level-detection.md)
+**다음**: [메모리 누수 디버깅](./09-03-04-memory-leak-debugging.md)에서 심층 디버깅 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -747,11 +747,11 @@ GC 이벤트와 성능을 실시간으로 추적하여 메모리 관리 효율�
 
 ### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/09-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/09-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](./09-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/08-01-04-custom-allocators.md)
+- [9.4.2: 실전 메모리 최적화 사례](./09-04-02-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

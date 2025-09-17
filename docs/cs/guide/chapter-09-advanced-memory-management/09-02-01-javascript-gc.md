@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# 9.3d JavaScript GC 학습 가이드: V8 엔진의 정교한 메모리 관리
+# 9.2.1: JavaScript GC 완전 가이드
 
 ## 🎯 학습 목표
 
@@ -63,7 +63,7 @@ flowchart TD
 
 ## 🔍 전체 구성
 
-### [9.3d1 V8 GC 아키텍처: 정교한 메모리 관리 시스템](chapter-08-memory-allocator-gc/09-06-1-v8-gc-architecture.md)
+### [9.3d1 V8 GC 아키텍처: 정교한 메모리 관리 시스템](../chapter-08-memory-allocator-gc/08-03-06-v8-gc-architecture.md)
 
 **V8 엔진의 핵심 메모리 관리 이해**
 
@@ -90,7 +90,7 @@ class V8MemoryStructure {
 }
 ```
 
-### [9.3d2 메모리 누수 방지와 성능 최적화](./03d2-memory-leak-prevention.md)
+### [9.3d2 메모리 누수 방지와 성능 최적화](./09-02-02-memory-leak-prevention.md)
 
 **실전 메모리 누수 방지 완벽 가이드**
 
@@ -114,7 +114,7 @@ function modernEventHandling() {
 }
 ```
 
-### [9.3d3 대규모 SPA 메모리 관리 전략](./03d3-spa-memory-management.md)
+### [9.3d3 대규모 SPA 메모리 관리 전략](./09-02-03-spa-memory-management.md)
 
 **프로덕션 환경의 실전 메모리 관리**
 
@@ -140,7 +140,7 @@ class SPAMemoryManager {
 }
 ```
 
-### [9.3d4 JavaScript GC의 미래와 실무 경험](./03d4-javascript-gc-future.md)
+### [9.3d4 JavaScript GC의 미래와 실무 경험](./09-02-05-javascript-gc-future.md)
 
 **차세대 기술과 10년 실무 경험 정리**
 
@@ -320,7 +320,7 @@ class OptimizedPoint {
 ### 관련 주제
 
 - **[Chapter 03 가상 메모리](../../chapter-03-virtual-memory/)** - 시스템 수준 메모리 관리
-- **[Chapter 04 프로세스/스레드](../../chapter-04-process-thread/)** - 멀티스레딩과 메모리
+- **[Chapter 04 프로세스/스레드](../../chapter-01-process-thread/)** - 멀티스레딩과 메모리
 - **[Chapter 11 성능 최적화](../../chapter-11-performance-optimization/)** - 시스템 전반 성능 튜닝
 
 ### 외부 자료
@@ -371,11 +371,11 @@ class OptimizedPoint {
 
 ### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/09-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/09-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](./09-30-production-optimization.md)
+- [Chapter 8-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/08-01-02-memory-allocator.md)
+- [Chapter 8-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/08-01-01-malloc-fundamentals.md)
+- [Chapter 8-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/08-01-03-allocator-comparison.md)
+- [Chapter 8-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/08-01-04-custom-allocators.md)
+- [9.4.2: 실전 메모리 최적화 사례](./09-04-02-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

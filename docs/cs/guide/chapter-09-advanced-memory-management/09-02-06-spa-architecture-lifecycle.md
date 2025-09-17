@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# 9.3d3a SPA 메모리 관리 아키텍처
+# 9.2.6: SPA 아키텍처 생명주기
 
 ## 🏗️ 메모리 관리 시스템 설계
 
@@ -706,8 +706,8 @@ class SPAMemoryManager {
 
 ---
 
-**이전**: [9.3d3 대규모 SPA 메모리 관리 개요](./03d3-spa-memory-management.md)  
-**다음**: [라우트별 메모리 관리 전략](./03d3b-route-memory-management.md)에서 Vue Router와 React Router 기반 메모리 관리를 학습합니다.
+**이전**: [SPA 메모리 관리](./09-02-03-spa-memory-management.md)  
+**다음**: [라우트별 메모리 관리 전략](./09-02-04-route-memory-management.md)에서 Vue Router와 React Router 기반 메모리 관리를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -725,11 +725,11 @@ class SPAMemoryManager {
 
 ### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/09-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/09-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](./09-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/08-01-04-custom-allocators.md)
+- [9.4.2: 실전 메모리 최적화 사례](./09-04-02-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

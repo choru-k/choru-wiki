@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter 9-2B: 세대별 GC (Generational GC)
+# 9.1.2: 세대별 가비지 컬렉션
 
 ## 🎯 이 문서에서 배우는 것
 
@@ -430,7 +430,7 @@ Thread-Local Allocation Buffer로 멀티스레드 환경에서도 빠른 객체 
 
 ---
 
-**다음**: [02c-concurrent-gc.md](02c-concurrent-gc.md)에서 Stop-the-world를 제거하는 동시 실행 GC 기술을 학습합니다.
+**다음**: [세대별 동시 실행 GC](./09-01-01-generational-concurrent-gc.md)에서 Stop-the-world를 제거하는 동시 실행 GC 기술을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -448,11 +448,11 @@ Thread-Local Allocation Buffer로 멀티스레드 환경에서도 빠른 객체 
 
 ### 📂 같은 챕터 (chapter-09-advanced-memory-management)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/09-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/09-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/09-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/09-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](./09-30-production-optimization.md)
+- [Chapter 8-1: 메모리 할당자의 내부 구현 개요](../chapter-08-memory-allocator-gc/08-01-02-memory-allocator.md)
+- [Chapter 8-1A: malloc 내부 동작의 진실](../chapter-08-memory-allocator-gc/08-01-01-malloc-fundamentals.md)
+- [Chapter 8-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](../chapter-08-memory-allocator-gc/08-01-03-allocator-comparison.md)
+- [Chapter 8-1C: 커스텀 메모리 할당자 구현](../chapter-08-memory-allocator-gc/08-01-04-custom-allocators.md)
+- [9.4.2: 실전 메모리 최적화 사례](./09-04-02-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 
