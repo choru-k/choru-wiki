@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# Promise 성능 최적화: "비동기 코드가 느려요" 개요
+# 10.4.1: Promise 성능 최적화
 
 ## 🎯 Promise 성능 문제 해결
 
@@ -27,7 +27,7 @@ priority_score: 4
 
 이 섹션은 2개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [Promise 성능 분석 도구](./10-45-promise-performance-analysis.md)
+### 1️⃣ [Promise 성능 분석 도구](./10-04-04-promise-performance-analysis.md)
 
 C 기반 성능 분석 도구로 정밀한 Promise 성능 측정과 분석을 수행합니다:
 
@@ -36,7 +36,7 @@ C 기반 성능 분석 도구로 정밀한 Promise 성능 측정과 분석을 �
 - **동시성 제어**: 세마포어 패턴으로 시스템 리소스 효율적 사용
 - **종합적 분석**: 실행 시간, 메모리, 동시성 효율성 종합 분석
 
-### 2️⃣ [JavaScript Promise 최적화 라이브러리](./10-31-promise-optimization-library.md)
+### 2️⃣ [JavaScript Promise 최적화 라이브러리](./10-04-02-promise-optimization-library.md)
 
 실제 프로덕션 환경에서 바로 사용할 수 있는 종합적인 최적화 라이브러리입니다:
 
@@ -115,37 +115,17 @@ graph TD
 - **해결책**: 실시간 메트릭 수집과 자동화된 성능 리포트
 - **도구**: 두 도구의 통합 모니터링 시스템
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. [JavaScript Promise 최적화 라이브러리](./10-31-promise-optimization-library.md) → 실용적 구현 학습
-2. [Promise 성능 분석 도구](./10-45-promise-performance-analysis.md) → 성능 측정 기초 이해
-3. 간단한 API 호출 최적화 실습
-
-### 중급자 (심화 학습)
-
-1. [Promise 성능 분석 도구](./10-45-promise-performance-analysis.md) → 깊이 있는 성능 분석
-2. [JavaScript Promise 최적화 라이브러리](./10-31-promise-optimization-library.md) → 고급 패턴 마스터
-3. 프로덕션 환경 모니터링 구축
-
-### 고급자 (전문가 수준)
-
-1. 두 도구를 조합한 종합 성능 분석 시스템 구축
-2. 커스텀 성능 최적화 솔루션 개발
-3. 대규모 시스템의 성능 아키텍처 설계
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [Promise와 Future 패턴](./10-10-promise-future.md) - 기본 Promise 패턴 이해
-- [이벤트 루프 메커니즘](./10-14-event-loop.md) - 비동기 실행 원리
+- [Promise와 Future 패턴](./10-02-01-promise-future.md) - 기본 Promise 패턴 이해
+- [이벤트 루프 메커니즘](./10-02-05-event-loop.md) - 비동기 실행 원리
 
 ### 후속 학습  
 
-- [분산 비동기 시스템](./10-18-distributed-async.md) - 마이크로서비스 환경 최적화
-- [이벤트 루프 디버깅](./10-42-event-loop-debugging.md) - 성능 이슈 해결
+- [분산 비동기 시스템](./10-03-01-distributed-async.md) - 마이크로서비스 환경 최적화
+- [이벤트 루프 디버깅](./10-05-04-event-loop-debugging.md) - 성능 이슈 해결
 
 ## 📊 성능 최적화 체크리스트
 
@@ -181,7 +161,7 @@ graph TD
 
 ---
 
-**다음**: [Promise 성능 분석 도구](./10-45-promise-performance-analysis.md)에서 C 기반 정밀 성능 측정 도구를 학습합니다.
+**다음**: [Promise 성능 분석 도구](./10-04-04-promise-performance-analysis.md)에서 C 기반 정밀 성능 측정 도구를 학습합니다.
 
 Promise 성능 최적화를 위한 체계적인 접근법과 실용적인 구현 방법을 종합적으로 다루는 전문 가이드입니다.
 
@@ -201,11 +181,11 @@ Promise 성능 최적화를 위한 체계적인 접근법과 실용적인 구현
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

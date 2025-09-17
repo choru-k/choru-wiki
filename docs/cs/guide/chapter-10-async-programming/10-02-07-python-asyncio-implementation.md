@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# Chapter 8-3B: Python asyncio 구현의 마법
+# 10.2.7: Python asyncio 구현
 
 ## 🎯 Generator에서 Event Loop까지
 
@@ -245,8 +245,8 @@ I/O 집약적 작업에서 동기 방식대비 100배, 스레드 방식대비 10
 
 ---
 
-**이전**: [10-02-coroutine-fundamentals.md](./10-02-coroutine-fundamentals.md)  
-**다음**: [10-03-go-goroutine-architecture.md](./10-03-go-goroutine-architecture.md)에서 Go의 GPM 모델과 goroutine 아키텍처를 학습합니다.
+**이전**: [10-01-02-coroutine-fundamentals.md](./10-01-02-coroutine-fundamentals.md)  
+**다음**: [10-01-03-go-goroutine-architecture.md](./10-01-03-go-goroutine-architecture.md)에서 Go의 GPM 모델과 goroutine 아키텍처를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -264,11 +264,11 @@ I/O 집약적 작업에서 동기 방식대비 100배, 스레드 방식대비 10
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

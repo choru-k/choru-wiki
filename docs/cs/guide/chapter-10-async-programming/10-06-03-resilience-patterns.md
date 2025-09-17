@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# Chapter 8-4D: Circuit Breaker와 복원력 패턴
+# 10.6.3: 복원력 패턴
 
 ## 🎯 이 섹션에서 배울 내용
 
@@ -716,8 +716,8 @@ class AdaptiveRetryPolicy {
 
 ---
 
-**이전**: [04c-message-streaming.md](./04c-message-streaming.md)
-**다음**: [10-51-production-case-study.md](./10-51-production-case-study.md)에서 대용량 이커머스 시스템 사례를 학습합니다.
+**이전**: [10.6.2 메시지 스트리밍](./10-06-02-message-streaming.md)
+**다음**: [10-06-04-production-case-study.md](./10-06-04-production-case-study.md)에서 대용량 이커머스 시스템 사례를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -735,11 +735,11 @@ class AdaptiveRetryPolicy {
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

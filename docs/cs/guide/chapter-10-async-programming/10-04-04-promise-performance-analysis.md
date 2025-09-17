@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# Promise 성능 분석 도구: C 기반 성능 프로파일링
+# 10.4.4: Promise 성능 분석
 
 ## 상황: 비효율적인 Promise 체이닝
 
@@ -706,8 +706,8 @@ int main(int argc, char *argv[]) {
 
 ---
 
-**이전**: [Promise 성능 최적화 개요](./10-30-promise-performance-optimization.md)  
-**다음**: [JavaScript Promise 최적화 라이브러리](./10-31-promise-optimization-library.md)에서 실용적인 JavaScript 최적화 도구를 학습합니다.
+**이전**: [Promise 성능 최적화 개요](./10-04-01-promise-performance-optimization.md)  
+**다음**: [JavaScript Promise 최적화 라이브러리](./10-04-02-promise-optimization-library.md)에서 실용적인 JavaScript 최적화 도구를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -725,11 +725,11 @@ int main(int argc, char *argv[]) {
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

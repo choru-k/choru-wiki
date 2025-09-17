@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 5
 ---
 
-# Chapter 8-3: 코루틴과 Green Thread 구현 개요
+# 10.2.6: 코루틴 상세 구현
 
 ## 🎯 코루틴과 Green Thread의 진정한 마스터리
 
@@ -30,35 +30,35 @@ priority_score: 5
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [코루틴 기초와 역사](./10-02-coroutine-fundamentals.md)
+### 1️⃣ [코루틴 기초와 역사](./10-01-02-coroutine-fundamentals.md)
 
 - 협력적 vs 선점적 멀티태스킹의 차이점
 - Stackful vs Stackless 구현 방식 비교
 - 1958년 발명에서 현대 부활까지의 역사
 - 스레드 대비 15배 높은 메모리 효율성 실험
 
-### 2️⃣ [Python asyncio 구현](./10-16-python-asyncio-implementation.md)
+### 2️⃣ [Python asyncio 구현](./10-02-07-python-asyncio-implementation.md)
 
 - Generator에서 async/await까지의 4단계 진화
 - Event Loop와 Task의 내부 아키텍처
 - 동기/스레드/비동기 방식 성능 비교 분석
 - I/O 집약적 작업에서 100배 성능 향상 비밀
 
-### 3️⃣ [Go Goroutine 아키텍처](./10-03-go-goroutine-architecture.md)
+### 3️⃣ [Go Goroutine 아키텍처](./10-01-03-go-goroutine-architecture.md)
 
 - GPM(G-P-M) 모델의 세밀한 동작 원리
 - 컨티기어스 스택과 Hot Split 문제 해결
 - Channel의 CSP 모델 내부 구현
 - Worker Pool, Fan-out/Fan-in 패턴 실전 활용
 
-### 4️⃣ [Java Virtual Threads](./10-17-java-virtual-threads.md)
+### 4️⃣ [Java Virtual Threads](./10-02-08-java-virtual-threads.md)
 
 - Project Loom의 Continuation 기반 혁신
 - Platform Thread 대비 300배 성능, 5배 메모리 효율
 - synchronized 블록의 Pinning 문제와 해결
 - 대규모 동시 연결 처리 사례
 
-### 5️⃣ [동기화와 디버깅](./10-41-synchronization-debugging.md)
+### 5️⃣ [동기화와 디버깅](./10-05-02-synchronization-debugging.md)
 
 - Happens-Before 관계와 언어별 메모리 모델
 - CAS 기반 Lock-free 알고리즘 구현
@@ -90,36 +90,16 @@ priority_score: 5
 - **CPU Bound**: 멀티프로세싱 + 코루틴 하이브리드
 - **혼합 워크로드**: 전용 스레드 풀 분리
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. **[기초 개념](./10-02-coroutine-fundamentals.md)** → 협력적 멀티태스킹 이해
-2. **[Python 구현](./10-16-python-asyncio-implementation.md)** → 간단한 예제로 실습
-3. 간단한 비동기 웹 크롤러 구현 연습
-
-### 중급자 (심화 학습)
-
-1. **[Go Goroutine](./10-03-go-goroutine-architecture.md)** → GPM 모델 심층 분석
-2. **[Java Virtual Thread](./10-17-java-virtual-threads.md)** → 엔터프라이즈 급 기능
-3. 실제 프로덕션 환경 적용
-
-### 고급자 (전문가 수준)
-
-1. **[동기화와 디버깅](./10-41-synchronization-debugging.md)** → Lock-free 알고리즘
-2. 하이브리드 성능 최적화
-3. 대규모 시스템 아키텍처 설계
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [Chapter 8-1: Promise와 Future](./10-10-promise-future.md) - 기초 비동기 개념
-- [Chapter 8-2: Event Loop 아키텍처](./10-14-event-loop.md) - 이벤트 기반 프로그래밍
+- [10.2.1: Promise와 Future](./10-02-01-promise-future.md) - 기초 비동기 개념
+- [10.2.5: Event Loop 아키텍처](./10-02-05-event-loop.md) - 이벤트 기반 프로그래밍
 
 ### 후속 학습
 
-- [Chapter 8-4: 분산 비동기 시스템](./10-18-distributed-async.md) - 마이크로서비스 패턴
+- [10.3.1: 분산 비동기 시스템](./10-03-01-distributed-async.md) - 마이크로서비스 패턴
 - [Chapter 14: 분산 시스템](../chapter-14-distributed-systems/) - 확장성 패턴
 
 ## 8. 마무리: 코루틴의 미래
@@ -159,7 +139,7 @@ priority_score: 5
 
 ---
 
-**시작하기**: [10-02-coroutine-fundamentals.md](./10-02-coroutine-fundamentals.md)에서 코루틴의 기초 개념부터 학습을 시작하세요!
+**시작하기**: [10-01-02-coroutine-fundamentals.md](./10-01-02-coroutine-fundamentals.md)에서 코루틴의 기초 개념부터 학습을 시작하세요!
 
 ## 📚 관련 문서
 
@@ -177,11 +157,11 @@ priority_score: 5
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

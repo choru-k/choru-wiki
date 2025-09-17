@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# 8.1 Promise/Future 패턴 개요
+# 10.2.1: Promise와 Future 상세 구현
 
 ## 🎁 비동기 프로그래밍의 핵심 패턴
 
@@ -25,35 +25,35 @@ Promise와 Future는 현대 비동기 프로그래밍의 핵심 패턴입니다.
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [기본 개념과 구현](./10-01-promise-future-basics.md)
+### 1️⃣ [기본 개념과 구현](./10-01-01-promise-future-basics.md)
 
 - Promise와 Future의 차이점과 공통점
 - C++ SharedState 기반 구현
 - JavaScript Promise/A+ 스펙 구현
 - 상태 전환과 콜백 체인의 동작 원리
 
-### 2️⃣ [비동기 연산 조합](./10-11-async-composition.md)
+### 2️⃣ [비동기 연산 조합](./10-02-02-async-composition.md)
 
 - Promise.all, race, allSettled 활용법
 - 순차/병렬/제한적 실행 패턴
 - Map-Reduce 패턴과 비동기 파이프라인
 - 재시도, 디바운스, 쓰로틀 구현
 
-### 3️⃣ [취소와 타임아웃](./10-12-cancellation-timeout.md)
+### 3️⃣ [취소와 타임아웃](./10-02-03-cancellation-timeout.md)
 
 - CancellationToken으로 협조적 취소
 - AbortController/AbortSignal 활용
 - 타임아웃과 재시도 로직 with 백오프
 - 사용자 취소와 메모리 누수 방지
 
-### 4️⃣ [실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+### 4️⃣ [실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 - 실행자(Executor) 패턴과 스레드 풀
 - 마이크로태스크 vs 매크로태스크
 - 이벤트 루프 시뮬레이션
 - 우선순위 기반 스케줄링
 
-### 5️⃣ [에러 처리 패턴](./10-40-error-handling.md)
+### 5️⃣ [에러 처리 패턴](./10-05-01-error-handling.md)
 
 - Circuit Breaker로 장애 격리
 - Bulkhead 패턴으로 리소스 보호
@@ -90,41 +90,21 @@ Promise와 Future는 현대 비동기 프로그래밍의 핵심 패턴입니다.
 - AbortController로 네트워크 요청 관리
 - 애니메이션 프레임 동기화
 
-## 🎭 학습 전략
-
-### 초보자 (1-2주)
-
-1. [기본 개념](./10-01-promise-future-basics.md) → Promise/Future 차이 이해
-2. [조합 패턴](./10-11-async-composition.md) → 실전 예제로 연습
-3. 간단한 비동기 함수 직접 구현해보기
-
-### 중급자 (2-3주)
-
-1. [취소와 타임아웃](./10-12-cancellation-timeout.md) → 사용자 경험 개선
-2. [실행 모델](./10-13-execution-scheduling.md) → 성능 최적화 기법
-3. 실제 프로젝트에 적용하고 성능 측정
-
-### 고급자 (3-4주)
-
-1. [에러 처리](./10-40-error-handling.md) → 견고한 시스템 구축
-2. 커스텀 Promise/Future 라이브러리 구현
-3. 대규모 시스템에서의 패턴 최적화
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [4장 스레드와 동기화](../chapter-04-process-thread/) - 동시성 기초
-- [7장 네트워킹](../chapter-07-networking/) - 비동기 I/O
+- [4장 스레드와 동기화](../chapter-01-process-thread/) - 동시성 기초
+- [7장 네트워킹](../chapter-07-network-programming/) - 비동기 I/O
 
 ### 후속 학습
 
-- [8.2 이벤트 루프](02-event-loop-concurrency.md) - 이벤트 기반 동시성
-- [8.3 Generator와 Async/Await](03-generator-async-await.md) - 언어 레벨 지원
+- [10.2.5 이벤트 루프](./10-02-05-event-loop.md) - 이벤트 기반 동시성
+- [10.2.6 코루틴 상세 구현](./10-02-06-coroutine.md) - 언어 레벨 지원
 
 ---
 
-**다음**: Promise/Future의 기초를 탄탄히 다지고 싶다면 [8.1a 기본 개념과 구현](./10-01-promise-future-basics.md)부터 시작하세요!
+**다음**: Promise/Future의 기초를 탄탄히 다지고 싶다면 [8.1a 기본 개념과 구현](./10-01-01-promise-future-basics.md)부터 시작하세요!
 
 ## 📚 관련 문서
 
@@ -142,11 +122,11 @@ Promise와 Future는 현대 비동기 프로그래밍의 핵심 패턴입니다.
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
-- [8.1e 에러 처리 패턴](./10-40-error-handling.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
+- [8.1e 에러 처리 패턴](./10-05-01-error-handling.md)
 
 ### 🏷️ 관련 키워드
 

@@ -15,7 +15,7 @@ main_topic: "분산 시스템"
 priority_score: 4
 ---
 
-# Chapter 8-4A: 분산 트랜잭션의 딜레마와 Saga 패턴
+# 10.3.2: 분산 트랜잭션
 
 ## 🎯 이 섹션에서 배울 내용
 
@@ -318,7 +318,7 @@ class PaymentService:
 
 ---
 
-**다음**: [04b-event-sourcing-cqrs.md](./04b-event-sourcing-cqrs.md)에서 Event Sourcing과 CQRS 패턴을 학습합니다.
+**다음**: [10.6.1 이벤트 소싱과 CQRS](./10-06-01-event-sourcing-cqrs.md)에서 Event Sourcing과 CQRS 패턴을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -336,11 +336,11 @@ class PaymentService:
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

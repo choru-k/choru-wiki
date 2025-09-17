@@ -14,7 +14,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 0
 ---
 
-# C 기반 모니터링 시스템
+# 10.5.5: C 모니터링 시스템
 
 포괄적인 이벤트 루프 상태 분석을 위한 고성능 C 기반 모니터링 도구를 구현해보겠습니다. 이 도구는 네이티브 성능으로 실시간 데이터를 수집하고 분석할 수 있습니다.
 
@@ -621,8 +621,8 @@ CPU, 메모리, 핸들 수 등 다양한 시스템 메트릭을 종합하여 이
 
 ---
 
-**이전**: [이벤트 루프 기초와 모니터링](./10-04-event-loop-fundamentals.md)  
-**다음**: [JavaScript 분석 도구](./05c-javascript-analyzer.md)에서 Node.js 통합 분석 도구를 학습합니다.
+**이전**: [이벤트 루프 기초와 모니터링](./10-01-04-event-loop-fundamentals.md)  
+**다음**: [10.5.3 JavaScript 분석 도구](./10-05-03-javascript-analyzer.md)에서 Node.js 통합 분석 도구를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -640,11 +640,11 @@ CPU, 메모리, 핸들 수 등 다양한 시스템 메트릭을 종합하여 이
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

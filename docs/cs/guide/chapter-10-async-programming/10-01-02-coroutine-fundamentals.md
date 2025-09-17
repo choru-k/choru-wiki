@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# Chapter 8-3A: 코루틴 기초와 역사
+# 10.1.2: 코루틴 기초
 
 ## 🎯 코루틴의 탄생과 본질 이해
 
@@ -213,7 +213,7 @@ Stackful은 성능과 유연성을, Stackless는 단순성과 메모리 효율�
 
 ---
 
-**다음**: [10-16-python-asyncio-implementation.md](./10-16-python-asyncio-implementation.md)에서 Python의 Generator 기반 asyncio 구현을 살펴봅니다.
+**다음**: [10-02-07-python-asyncio-implementation.md](./10-02-07-python-asyncio-implementation.md)에서 Python의 Generator 기반 asyncio 구현을 살펴봅니다.
 
 ## 📚 관련 문서
 
@@ -231,11 +231,11 @@ Stackful은 성능과 유연성을, Stackless는 단순성과 메모리 효율�
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

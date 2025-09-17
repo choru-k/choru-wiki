@@ -15,7 +15,7 @@ main_topic: "분산 시스템"
 priority_score: 5
 ---
 
-# Chapter 8-4B: Event Sourcing과 CQRS 패턴
+# 10.6.1: 이벤트 소싱과 CQRS
 
 ## 🎯 이 섹션에서 배울 내용
 
@@ -577,8 +577,8 @@ class CausalConsistencyManager {
 
 ---
 
-**이전**: [08-19-distributed-transactions.md](./08-19-distributed-transactions.md)
-**다음**: [04c-message-streaming.md](./04c-message-streaming.md)에서 메시지 큐와 스트리밍을 학습합니다.
+**이전**: [10.3.2 분산 트랜잭션](./10-03-02-distributed-transactions.md)
+**다음**: [10.6.2 메시지 스트리밍](./10-06-02-message-streaming.md)에서 메시지 스트리밍을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -596,11 +596,11 @@ class CausalConsistencyManager {
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./08-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./08-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./08-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./08-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./08-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [10.2.2 비동기 컴포지션](./10-02-02-async-composition.md)
+- [10.2.3 취소와 타임아웃](./10-02-03-cancellation-timeout.md)
+- [10.2.4 실행 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

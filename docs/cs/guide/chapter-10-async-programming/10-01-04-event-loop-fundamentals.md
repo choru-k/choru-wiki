@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# 이벤트 루프 기초와 모니터링
+# 10.1.4: 이벤트 루프 기초
 
 ## 상황: 응답하지 않는 이벤트 루프
 
@@ -502,8 +502,8 @@ CPU 집약적 작업은 Worker Thread로, 대량 데이터 처리는 비동기 �
 
 ---
 
-**이전**: [이벤트 루프 디버깅 개요](./10-42-event-loop-debugging.md)  
-**다음**: [C 기반 모니터링 시스템](./10-43-c-monitoring-system.md)에서 고성능 네이티브 모니터링 도구를 학습합니다.
+**이전**: [이벤트 루프 디버깅 개요](./10-05-04-event-loop-debugging.md)  
+**다음**: [C 기반 모니터링 시스템](./10-05-05-c-monitoring-system.md)에서 고성능 네이티브 모니터링 도구를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -521,11 +521,11 @@ CPU 집약적 작업은 Worker Thread로, 대량 데이터 처리는 비동기 �
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./10-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./10-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./10-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./10-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./10-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [8.1b 비동기 연산 조합과 병렬 처리](./10-02-02-async-composition.md)
+- [8.1c 취소와 타임아웃 처리](./10-02-03-cancellation-timeout.md)
+- [8.1d 실행 모델과 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 

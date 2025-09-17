@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# JavaScript 분석 도구
+# 10.5.3: JavaScript 분석기
 
 Node.js 환경에서 이벤트 루프를 분석하기 위한 전용 JavaScript 도구를 구현해보겠습니다. 이 도구는 애플리케이션에 직접 통합하여 실시간으로 성능을 모니터링할 수 있습니다.
 
@@ -675,8 +675,8 @@ Async Hooks와 Performance Observer를 통해 실행 중인 애플리케이션�
 
 ---
 
-**이전**: [C 기반 모니터링 시스템](./08-43-c-monitoring-system.md)  
-**다음**: [코루틴과 비동기 패턴](./08-15-coroutine.md)에서 고급 비동기 프로그래밍 기법을 학습합니다.
+**이전**: [10.5.5 C 모니터링 시스템](./10-05-05-c-monitoring-system.md)  
+**다음**: [10.2.6 코루틴 상세](./10-02-06-coroutine.md)에서 고급 비동기 프로그래밍 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -694,11 +694,11 @@ Async Hooks와 Performance Observer를 통해 실행 중인 애플리케이션�
 
 ### 📂 같은 챕터 (chapter-10-async-programming)
 
-- [8.1 Promise/Future 패턴 개요](./08-10-promise-future.md)
-- [8.1a Promise/Future 기본 개념과 구현](./08-01-promise-future-basics.md)
-- [8.1b 비동기 연산 조합과 병렬 처리](./08-11-async-composition.md)
-- [8.1c 취소와 타임아웃 처리](./08-12-cancellation-timeout.md)
-- [8.1d 실행 모델과 스케줄링](./08-13-execution-scheduling.md)
+- [8.1 Promise/Future 패턴 개요](./10-02-01-promise-future.md)
+- [8.1a Promise/Future 기본 개념과 구현](./10-01-01-promise-future-basics.md)
+- [10.2.2 비동기 컴포지션](./10-02-02-async-composition.md)
+- [10.2.3 취소와 타임아웃](./10-02-03-cancellation-timeout.md)
+- [10.2.4 실행 스케줄링](./10-02-04-execution-scheduling.md)
 
 ### 🏷️ 관련 키워드
 
