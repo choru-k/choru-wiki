@@ -37,42 +37,43 @@ priority_score: 4
 
 ## 📚 이 챕터의 구성
 
-### 8.1 메모리 할당자
+### 8.1 메모리 할당자 기초
 
-- [09-01: Malloc Fundamentals](./09-01-malloc-fundamentals.md)
-- [09-10: Memory Allocator](./09-10-memory-allocator.md)
-- [09-11: Allocator Comparison](./09-11-allocator-comparison.md)
-- [09-12: Custom Allocators](./09-12-custom-allocators.md)
+- [08-01-01: malloc 기본 동작](./08-01-01-malloc-fundamentals.md)
+- [08-01-02: 메모리 할당자 상세](./08-01-02-memory-allocator.md)
+- [08-01-03: 메모리 할당자 비교](./08-01-03-allocator-comparison.md)
+- [08-01-04: 커스텀 할당자](./08-01-04-custom-allocators.md)
 
 ### 8.2 가비지 컬렉션 기초
 
-- [09-02: Basic GC Algorithms](./09-02-basic-gc-algorithms.md)
-- [09-03: GC History Basics](./09-03-gc-history-basics.md)
-- [09-04: Advanced GC Concepts](./09-04-advanced-gc-concepts.md)
-- [09-13: GC Algorithms](./09-13-gc-algorithms.md)
-- [09-16: Modern GC Algorithms](./09-16-modern-gc-algorithms.md)
-- [09-17: Modern GC Implementations](./09-17-modern-gc-implementations.md)
+- [08-02-01: GC 기본 알고리즘](./08-02-01-basic-gc-algorithms.md)
+- [08-02-02: GC 역사와 기초](./08-02-02-gc-history-basics.md)
+- [08-02-03: 고급 GC 개념](./08-02-03-advanced-gc-concepts.md)
+- [08-02-04: GC 알고리즘 비교](./08-02-04-gc-algorithms.md)
+- [08-02-05: 현대 GC 알고리즘](./08-02-05-modern-gc-algorithms.md)
+- [08-02-06: 현대 GC 구현](./08-02-06-modern-gc-implementations.md)
 
 ### 8.3 언어별 GC 구현
 
-- [09-19: Java GC](./09-19-java-gc.md)
-- [03b-go: GC](./03b-go-gc.md)
-- [03c-python: GC](./03c-python-gc.md)
-- [09-05: Python GC Fundamentals](./09-05-1-python-gc-fundamentals.md)
-- [09-32: Python GC Optimization](./09-32-2-python-gc-optimization.md)
-- [09-50: Python GC Production](./09-50-3-python-gc-production.md)
-- [09-06: V8 GC Architecture](./09-06-1-v8-gc-architecture.md)
+- [08-03-01: Java GC 시스템](./08-03-01-java-gc.md)
+- [08-03-02: Go 언어 GC](./08-03-02-go-gc.md)
+- [08-03-03: Python GC 기초](./08-03-03-python-gc-fundamentals.md)
+- [08-03-04: Python GC 상세](./08-03-04-python-gc.md)
+- [08-03-05: Python GC 최적화](./08-03-05-python-gc-optimization.md)
+- [08-03-06: V8 GC 아키텍처](./08-03-06-v8-gc-architecture.md)
 
-### 8.4 실전 튜닝
+### 8.4 GC 튜닝과 최적화
 
-- [09-31: GC Tuning Practices](./09-31-gc-tuning-practices.md)
+- [08-04-01: GC 튜닝 노하우](./08-04-01-gc-tuning-practices.md)
+- [08-04-02: Python GC 프로덕션](./08-04-02-python-gc-production.md)
 
 ## 🔗 관련 챕터
 
 ### 📚 시스템 프로그래밍 기초
 
-- [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
 - [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
+- [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
+- [Chapter 4: 시스템콜과 커널](../chapter-04-syscall-kernel/index.md)
 
 ### 🚀 성능 관련  
 

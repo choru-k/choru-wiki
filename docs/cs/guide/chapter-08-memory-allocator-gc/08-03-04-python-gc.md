@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# Chapter 9-3c: Python GC 개요
+# 8.3.4: Python GC 상세
 
 ## 🎯 Python 가비지 컬렉션 완전 정복
 
@@ -25,21 +25,21 @@ Python의 메모리 관리는 Reference Counting과 Cycle Detection이라는 독
 
 이 섹션은 3개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [Python GC 기본 구조와 동작 원리](./09-05-1-python-gc-fundamentals.md)
+### 1️⃣ [Python GC 기본 구조와 동작 원리](./08-03-03-python-gc-fundamentals.md)
 
 - Reference Counting vs Cycle Detection 이중 구조
 - Generational GC의 3세대 시스템 분석
 - 메모리 프로파일링과 누수 탐지 기법
 - 순환 참조 문제와 해결 방법
 
-### 2️⃣ [Python GC 최적화 전략과 기법](./09-32-2-python-gc-optimization.md)
+### 2️⃣ [Python GC 최적화 전략과 기법](./08-03-05-python-gc-optimization.md)
 
 - 코드 레벨 메모리 최적화 (__slots__, weak references)
 - 배치 처리 시 GC 제어 기법
 - 메모리 효율성 비교와 측정 방법
 - 실전 성능 개선 패턴
 
-### 3️⃣ [실제 서비스 GC 최적화 사례](./09-50-3-python-gc-production.md)
+### 3️⃣ [실제 서비스 GC 최적화 사례](./08-04-02-python-gc-production.md)
 
 - Instagram Django 서비스 최적화 사례
 - Dropbox 대용량 파일 처리 최적화
@@ -69,37 +69,17 @@ Django, Flask 등의 웹 애플리케이션에서 요청별 메모리 관리와 
 
 데몬 프로세스나 백그라운드 서비스에서 메모리 누수 방지와 안정적인 메모리 사용량 유지
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. [Python GC 기본 구조](./09-05-1-python-gc-fundamentals.md) → Reference Counting과 Cycle Detection 이해
-2. [최적화 전략](./09-32-2-python-gc-optimization.md) → 실용적인 메모리 최적화 기법 학습
-3. 간단한 메모리 프로파일링 실습
-
-### 중급자 (심화 학습)
-
-1. [프로덕션 사례](./09-50-3-python-gc-production.md) → 실제 대규모 서비스 최적화 경험
-2. [최적화 전략](./09-32-2-python-gc-optimization.md) → 고급 최적화 패턴 적용
-3. 실제 서비스에서 GC 최적화 적용
-
-### 고급자 (전문가 과정)
-
-1. 모든 문서 통합 학습
-2. CPython 소스 코드 분석
-3. 커스텀 GC 전략 설계 및 구현
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [메모리 할당자](./09-10-memory-allocator.md) - 메모리 할당의 기본 원리
-- [GC 알고리즘](./09-13-gc-algorithms.md) - 다양한 GC 알고리즘 비교
+- [메모리 할당자](./08-01-02-memory-allocator.md) - 메모리 할당의 기본 원리
+- [GC 알고리즘](./08-02-04-gc-algorithms.md) - 다양한 GC 알고리즘 비교
 
 ### 후속 학습
 
-- [Java GC](./09-19-java-gc.md) - 다른 언어와의 GC 비교
-- [Go GC](./03b-go-gc.md) - 현대적인 GC 설계
+- [Java GC](./08-03-01-java-gc.md) - 다른 언어와의 GC 비교
+- [Go GC](./08-03-02-go-gc.md) - 현대적인 GC 설계
 - [메모리 최적화](chapter-09-advanced-memory-management/09-34-memory-optimization.md) - 언어 무관 최적화 기법
 
 ## 💡 학습 목표 달성 확인
@@ -113,7 +93,7 @@ Django, Flask 등의 웹 애플리케이션에서 요청별 메모리 관리와 
 
 ---
 
-**시작하기**: [Python GC 기본 구조와 동작 원리](./09-05-1-python-gc-fundamentals.md)에서 Python 메모리 관리의 핵심 원리를 학습하세요.
+**시작하기**: [Python GC 기본 구조와 동작 원리](./08-03-03-python-gc-fundamentals.md)에서 Python 메모리 관리의 핵심 원리를 학습하세요.
 
 ## 1. Python GC의 이중 구조: Reference Counting + Cycle Detection
 
@@ -1223,11 +1203,11 @@ Python GC는 완벽하지 않지만, 특성을 이해하고 적절히 대응하�
 
 ### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./09-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](./09-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./09-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](./09-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/09-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](./08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](./08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](./08-01-04-custom-allocators.md)
+- [Production: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/09-30-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

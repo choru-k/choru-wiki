@@ -15,7 +15,7 @@ main_topic: "애플리케이션 개발"
 priority_score: 4
 ---
 
-# Chapter 9-3c3: 실제 서비스 GC 최적화 사례
+# 8.4.2: Python GC 프로덕션
 
 ## 🎯 대규모 서비스의 실전 Python GC 최적화
 
@@ -744,7 +744,7 @@ Python GC는 완벽하지 않지만, 특성을 이해하고 적절히 대응하�
 
 ---
 
-**이전**: [Python GC 최적화 전략](./08-32-2-python-gc-optimization.md)  
+**이전**: [Python GC 최적화 전략](./08-03-05-python-gc-optimization.md)  
 **관련 학습**: [메모리 최적화](../chapter-09-advanced-memory-management/08-34-memory-optimization.md)에서 언어 무관 최적화 기법을 학습하세요.
 
 ## 📚 관련 문서
@@ -763,11 +763,11 @@ Python GC는 완벽하지 않지만, 특성을 이해하고 적절히 대응하�
 
 ### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](./08-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](./08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](./08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](./08-01-04-custom-allocators.md)
+- [Production: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

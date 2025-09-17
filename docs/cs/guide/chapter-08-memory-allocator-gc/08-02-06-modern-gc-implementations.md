@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 5
 ---
 
-# Chapter 9-2C: 현대적 GC 구현
+# 8.2.6: 현대 GC 구현
 
 ## G1GC (Garbage First)
 
@@ -830,8 +830,8 @@ public class ModernGCComparison {
 
 ---
 
-**이전**: [세대별 및 동시 GC](./08-04-advanced-gc-concepts.md)  
-**다음**: [GC 튜닝과 실전 활용](./08-31-gc-tuning-practices.md)에서 실제 프로덕션 환경에서의 GC 선택과 튜닝 전략을 학습합니다.
+**이전**: [세대별 및 동시 GC](./08-02-03-advanced-gc-concepts.md)  
+**다음**: [GC 튜닝과 실전 활용](./08-04-01-gc-tuning-practices.md)에서 실제 프로덕션 환경에서의 GC 선택과 튜닝 전략을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -849,11 +849,11 @@ public class ModernGCComparison {
 
 ### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](./08-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](./08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](./08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](./08-01-04-custom-allocators.md)
+- [Production: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

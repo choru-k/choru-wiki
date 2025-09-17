@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter.09-02D GC 튜닝과 실전 활용: 이론에서 프로덕션으로
+# 8.4.1: GC 튜닝 노하우
 
 "GC 로그를 읽을 줄 안다면 절반은 성공"이라고 합니다. 실제 프로덕션 환경에서 GC를 모니터링하고, 문제를 진단하고, 성능을 최적화하는 실전 기법들을 알아보겠습니다.
 
@@ -868,7 +868,7 @@ GC 로그를 통해 allocation rate, promotion rate, pause time 등 핵심 지�
 
 ---
 
-**이전**: [08-16-modern-gc-algorithms.md](./08-16-modern-gc-algorithms.md)  
+**이전**: [08-16-modern-gc-algorithms.md](./08-02-05-modern-gc-algorithms.md)  
 **다음**: [Chapter 09 Index](index.md)에서 메모리 관리의 다른 주제들을 탐색하세요.
 
 ## 📚 관련 문서
@@ -887,11 +887,11 @@ GC 로그를 통해 allocation rate, promotion rate, pause time 등 핵심 지�
 
 ### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](./08-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](./08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](./08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](./08-01-04-custom-allocators.md)
+- [Production: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

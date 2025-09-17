@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter.09-02C 현대적 GC 알고리즘: 초저지연의 꿈을 현실로
+# 8.2.5: 현대 GC 알고리즘
 
 "10ms도 길다"는 현대 애플리케이션의 요구에 맞춰 GC는 어떻게 진화했을까요? G1GC의 예측 가능성부터 ZGC의 1ms 마법까지, 현대 GC 알고리즘의 혁신을 탐험해보겠습니다.
 
@@ -552,7 +552,7 @@ Colored pointer, Multi-mapping 등 하드웨어 특성을 적극 활용한 최�
 ---
 
 **이전**: [08-14-generational-concurrent-gc.md](chapter-09-advanced-memory-management/08-14-generational-concurrent-gc.md)  
-**다음**: [08-31-gc-tuning-practices.md](./08-31-gc-tuning-practices.md)에서 실전 GC 튜닝과 문제 해결 방법을 학습합니다.
+**다음**: [08-31-gc-tuning-practices.md](./08-04-01-gc-tuning-practices.md)에서 실전 GC 튜닝과 문제 해결 방법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -570,11 +570,11 @@ Colored pointer, Multi-mapping 등 하드웨어 특성을 적극 활용한 최�
 
 ### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](./08-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](./08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](./08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](./08-01-04-custom-allocators.md)
+- [Production: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

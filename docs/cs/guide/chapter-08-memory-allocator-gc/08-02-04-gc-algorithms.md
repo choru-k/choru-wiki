@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter 9-2: GC 알고리즘과 구현 원리 개요
+# 8.2.4: GC 알고리즘 비교
 
 ## 🎯 가비지 컬렉션의 세계로
 
@@ -25,28 +25,28 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [기본 GC 알고리즘](./08-02-basic-gc-algorithms.md)
+### 1️⃣ [기본 GC 알고리즘](./08-02-01-basic-gc-algorithms.md)
 
 - Mark & Sweep: 가장 직관적인 방법의 장단점
 - Copying Collector: 단편화 해결을 위한 혁신
 - Mark & Compact: 두 알고리즘의 장점을 결합한 접근법
 - 각 알고리즘의 실제 구현과 성능 특성 분석
 
-### 2️⃣ [세대별 및 동시 GC](./08-04-advanced-gc-concepts.md)
+### 2️⃣ [세대별 및 동시 GC](./08-02-03-advanced-gc-concepts.md)
 
 - Weak Generational Hypothesis와 세대별 GC의 핵심 원리
 - Tri-color Marking을 통한 동시 실행 가능한 GC
 - CMS (Concurrent Mark Sweep)의 구현과 문제점
 - Write Barrier와 Card Table을 활용한 최적화
 
-### 3️⃣ [현대적 GC 구현](./08-17-modern-gc-implementations.md)
+### 3️⃣ [현대적 GC 구현](./08-02-06-modern-gc-implementations.md)
 
 - G1GC: Region 기반 가비지 컬렉션의 혁신
 - ZGC: Colored Pointers를 통한 10ms 이하 지연 시간 달성
 - Shenandoah: Brooks Pointer를 활용한 Red Hat의 접근법
 - 각 GC의 실제 프로덕션 성능과 사용 사례
 
-### 4️⃣ [GC 튜닝과 실전 활용](./08-31-gc-tuning-practices.md)
+### 4️⃣ [GC 튜닝과 실전 활용](./08-04-01-gc-tuning-practices.md)
 
 - GC 로그 분석과 성능 지표 해석
 - 워크로드별 GC 선택 가이드
@@ -90,37 +90,17 @@ priority_score: 4
 - 이유: 메모리와 CPU 사용량 최소화
 - 튜닝: 힙 크기 고정, GC 빈도 예측
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. [기본 GC 알고리즘](./08-02-basic-gc-algorithms.md) → GC의 기본 원리와 고전적 방법들 이해
-2. [세대별 및 동시 GC](./08-04-advanced-gc-concepts.md) → 실용적인 최적화 기법 학습
-3. 간단한 GC 구현 또는 벤치마크 테스트 진행
-
-### 중급자 (심화 학습)
-
-1. [현대적 GC 구현](./08-17-modern-gc-implementations.md) → 최신 GC 기술과 혁신 이해
-2. [GC 튜닝과 실전 활용](./08-31-gc-tuning-practices.md) → 실제 프로덕션 환경 최적화
-3. 자신의 워크로드에 맞는 GC 전략 수립
-
-### 전문가 (마스터리)
-
-- 각 문서의 실습 코드를 직접 구현하고 성능 비교
-- 실제 프로덕션 시스템에서 GC 로그 분석 및 튜닝 경험
-- 새로운 GC 알고리즘의 논문 읽기와 구현
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [메모리 관리 기초](../chapter-02-memory/) - 힙과 스택의 이해
-- [프로세스와 스레드](../chapter-04-process-thread/) - 멀티스레딩 환경의 GC
+- [메모리 관리 기초](../chapter-03-memory-system/) - 힙과 스택의 이해
+- [프로세스와 스레드](../chapter-01-process-thread/) - 멀티스레딩 환경의 GC
 
 ### 후속 학습
 
 - [JVM 튜닝 가이드](../../java/jvm-tuning.md) - Java 환경에서의 실전 적용
-- [시스템 설계 패턴](../chapter-16-system-design-patterns/) - 대용량 시스템에서의 메모리 관리
+- [시스템 설계 패턴](../chapter-16-distributed-system-patterns/) - 대용량 시스템에서의 메모리 관리
 
 ## 💡 GC 진화의 역사
 
@@ -263,7 +243,7 @@ void* roots[] = {
 
 ---
 
-**다음**: [기본 GC 알고리즘](./08-02-basic-gc-algorithms.md)에서 Mark & Sweep, Copying, Mark & Compact의 구현 원리를 상세히 학습합니다.
+**다음**: [기본 GC 알고리즘](./08-02-01-basic-gc-algorithms.md)에서 Mark & Sweep, Copying, Mark & Compact의 구현 원리를 상세히 학습합니다.
 
 ## 📚 관련 문서
 
@@ -281,11 +261,11 @@ void* roots[] = {
 
 ### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
-- [Chapter 9-1: 메모리 할당자의 내부 구현 개요](./08-10-memory-allocator.md)
-- [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](./08-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
+- [8.1.2: 메모리 할당자의 내부 구현 개요](./08-01-02-memory-allocator.md)
+- [8.1.1: malloc 내부 동작의 진실](./08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](./08-01-04-custom-allocators.md)
+- [Production: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
 
 ### 🏷️ 관련 키워드
 

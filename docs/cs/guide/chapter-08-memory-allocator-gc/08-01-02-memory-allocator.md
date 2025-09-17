@@ -15,7 +15,7 @@ main_topic: "시스템 프로그래밍"
 priority_score: 4
 ---
 
-# Chapter 9-1: 메모리 할당자의 내부 구현 개요
+# 8.1.2: 메모리 할당자 상세
 
 ## 🎯 메모리 할당자의 숨겨진 세계
 
@@ -32,28 +32,28 @@ priority_score: 4
 
 이 섹션은 4개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)
+### 1️⃣ [malloc 내부 동작의 진실](./08-01-01-malloc-fundamentals.md)
 
 - malloc이 시스템 콜이 아닌 라이브러리 함수라는 충격적 진실
 - glibc ptmalloc2의 Arena, Bin, Chunk 구조 분석
 - 메모리 단편화(Swiss cheese) 현상과 해결책
 - 실제 코드와 함께하는 내부 동작 원리
 
-### 2️⃣ [메모리 할당자 대전: 성능 비교](./08-11-allocator-comparison.md)
+### 2️⃣ [메모리 할당자 대전: 성능 비교](./08-01-03-allocator-comparison.md)
 
 - TCMalloc: Google의 Thread-local 캐시 혁신
 - JEMalloc: Facebook의 Arena 기반 NUMA 최적화
 - MIMalloc: Microsoft의 최신 Sharded free list
 - 실제 벤치마크 결과와 성능 비교 분석
 
-### 3️⃣ [커스텀 메모리 할당자 구현](./08-12-custom-allocators.md)
+### 3️⃣ [커스텀 메모리 할당자 구현](./08-01-04-custom-allocators.md)
 
 - Memory Pool: Frame Allocator와 Ring Buffer의 게임 엔진 활용
 - Slab Allocator: Linux 커널의 같은 크기 객체 전용 최적화
 - Buddy System: 2의 거듭제곱 분할/병합으로 단편화 방지
 - 각 할당자의 구현과 성능 특성 비교
 
-### 4️⃣ [실전 메모리 최적화 사례](chapter-09-advanced-memory-management/08-30-production-optimization.md)
+### 4️⃣ [실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/09-04-02-production-optimization.md)
 
 - Netflix의 jemalloc 환경별 최적화 설정
 - Discord의 Go 메모리 70% 절약 기법
@@ -92,37 +92,17 @@ priority_score: 4
 - Huge Pages와 결합한 메모리 효율성
 - 메모리 압박 상황 대응 전략
 
-## 🎭 학습 전략
-
-### 초보자 (추천 순서)
-
-1. [malloc 기초](./08-01-malloc-fundamentals.md) → 메모리 할당의 본질 이해
-2. [할당자 비교](./08-11-allocator-comparison.md) → 성능 차이 체감
-3. 간단한 Memory Pool 구현 연습
-
-### 중급자 (심화 학습)
-
-1. [커스텀 할당자](./08-12-custom-allocators.md) → 직접 구현 경험
-2. [실전 최적화](chapter-09-advanced-memory-management/08-30-production-optimization.md) → 프로덕션 적용
-3. 실제 프로젝트에서 성능 측정과 튜닝
-
-### 고급자 (전문가 과정)
-
-1. 모든 섹션의 고급 기법 마스터
-2. NUMA, CPU 캐시 고려 최적화
-3. 커널 레벨 메모리 관리 연구
-
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [프로세스 메모리 구조](../chapter-03-memory-system/02-10-process-memory.md) - 메모리 레이아웃 기초
-- [스택과 힙](../chapter-03-memory-system/02-11-stack-heap.md) - 메모리 영역 이해
+- [프로세스 메모리 구조](../chapter-03-memory-system/03-01-04-process-memory.md) - 메모리 레이아웃 기초
+- [스택과 힙](../chapter-03-memory-system/03-01-01-stack-fundamentals.md) - 메모리 영역 이해
 
 ### 후속 학습
 
-- [가비지 컬렉션 기초](./08-13-gc-algorithms.md) - 자동 메모리 관리
-- [메모리 누수 탐지](chapter-09-advanced-memory-management/05-memory-leak-detection.md) - 문제 진단과 해결
+- [가비지 컬렉션 기초](./08-02-04-gc-algorithms.md) - 자동 메모리 관리
+- [메모리 누수 탐지](../chapter-09-advanced-memory-management/09-03-01-memory-leak-detection.md) - 문제 진단과 해결
 
 ## 이 문서를 읽으면 답할 수 있는 질문들
 
@@ -158,7 +138,7 @@ priority_score: 4
 
 ---
 
-**다음**: [malloc 기초부터 시작](./08-01-malloc-fundamentals.md)하여 메모리 할당의 진실을 파헤쳐보세요.
+**다음**: [malloc 기초부터 시작](./08-01-01-malloc-fundamentals.md)하여 메모리 할당의 진실을 파헤쳐보세요.
 
 ## 📚 관련 문서
 
@@ -176,11 +156,11 @@ priority_score: 4
 
 ### 📂 같은 챕터 (chapter-08-memory-allocator-gc)
 
-- [Chapter 9-1A: malloc 내부 동작의 진실](./08-01-malloc-fundamentals.md)
-- [Chapter 9-1B: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-11-allocator-comparison.md)
-- [Chapter 9-1C: 커스텀 메모리 할당자 구현](./08-12-custom-allocators.md)
-- [Chapter 9-1D: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/08-30-production-optimization.md)
-- [Chapter 9-2: GC 알고리즘과 구현 원리 개요](./08-13-gc-algorithms.md)
+- [8.1.1: malloc 내부 동작의 진실](./08-01-01-malloc-fundamentals.md)
+- [8.1.3: 메모리 할당자 대전: tcmalloc vs jemalloc vs mimalloc](./08-01-03-allocator-comparison.md)
+- [8.1.4: 커스텀 메모리 할당자 구현](./08-01-04-custom-allocators.md)
+- [Production: 실전 메모리 최적화 사례](../chapter-09-advanced-memory-management/09-04-02-production-optimization.md)
+- [8.2.4: GC 알고리즘과 구현 원리 개요](./08-02-04-gc-algorithms.md)
 
 ### 🏷️ 관련 키워드
 
