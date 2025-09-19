@@ -234,6 +234,64 @@ bad_fork_cleanup_mm:
 // - perf record -g ./program: fork() 오버헤드 성능 분석
 ```
 
+### fork() 내부 프로세스 흐름: 6단계 상세 분석
+
+fork() 시스템 콜의 내부 동작을 단계별로 시각화하면 다음과 같습니다:
+
+```mermaid
+flowchart TD
+    START["fork() 시스템 콜 호출"] --> STEP1["1단계: PCB 할당<br/>alloc_task_struct()"]
+    
+    STEP1 --> CHECK1{"메모리 충분?"}
+    CHECK1 -->|No| ERROR1["ENOMEM 반환<br/>fork() 실패"]
+    CHECK1 -->|Yes| STEP2["2단계: 프로세스 복사<br/>copy_process()"]
+    
+    STEP2 --> SUBSTEPS["프로세스 복사 세부단계"]
+    
+    subgraph COPY_DETAILS["copy_process() 내부"]
+        COPY1["컨텍스트 복사<br/>*p = *current"]
+        COPY2["메모리 공간 복사<br/>Copy-on-Write 설정"]
+        COPY3["파일 디스크립터 복사<br/>copy_files()"]
+        COPY4["시그널 핸들러 복사<br/>copy_sighand()"]
+        COPY5["네임스페이스 복사<br/>copy_namespaces()"]
+        COPY6["CPU 컨텍스트 복사<br/>copy_thread_tls()"]
+        
+        COPY1 --> COPY2 --> COPY3 --> COPY4 --> COPY5 --> COPY6
+    end
+    
+    SUBSTEPS --> COPY1
+    COPY6 --> CHECK2{"복사 성공?"}
+    CHECK2 -->|No| CLEANUP["에러 정리<br/>bad_fork_cleanup_*"]
+    CHECK2 -->|Yes| STEP3["3단계: PID 할당<br/>alloc_pid()"]
+    
+    STEP3 --> CHECK3{"PID 사용 가능?"}
+    CHECK3 -->|No| ERROR2["PID 고갈<br/>fork() 실패"]
+    CHECK3 -->|Yes| STEP4["4단계: 계층 구조 설정<br/>parent-child 관계"]
+    
+    STEP4 --> FAMILY["부모 설정: p->parent = current<br/>자식 리스트 추가"]
+    FAMILY --> STEP5["5단계: 스케줄러 등록<br/>wake_up_new_task()"]
+    
+    STEP5 --> SCHEDULE["상태: TASK_RUNNING<br/>실행 대기열 추가"]
+    SCHEDULE --> STEP6["6단계: 마법의 리턴"]
+    
+    STEP6 --> MAGIC["동시 리턴<br/>부모: 자식 PID<br/>자식: 0"]
+    
+    MAGIC --> PARENT_PATH["부모 프로세스<br/>실행 계속"]
+    MAGIC --> CHILD_PATH["자식 프로세스<br/>실행 시작"]
+    
+    CLEANUP --> ERROR1
+    ERROR2 --> ERROR1
+    
+    style START fill:#4CAF50
+    style MAGIC fill:#FF9800
+    style PARENT_PATH fill:#2196F3
+    style CHILD_PATH fill:#9C27B0
+    style ERROR1 fill:#F44336
+    style COPY_DETAILS fill:#E3F2FD
+```
+
+이 다이어그램은 fork() 시스템 콜이 어떻게 하나의 프로세스를 두 개의 독립적인 프로세스로 분할하는지 보여줍니다. 특히 Copy-on-Write 메커니즘이 2단계에서 어떻게 작동하는지 주목하세요.
+
 ### 실제 fork() 사용 예제: 실무에서 겪은 함정들
 
 ```c
@@ -334,10 +392,121 @@ void fork_bomb() {
     // ulimit -u 100  # 프로세스 개수 제한
 }
 
+### 다중 워커 프로세스 생성 패턴 시각화
+
+실제 웹서버(Nginx, Apache)에서 사용하는 마스터-워커 패턴의 fork() 흐름:
+
+```mermaid
+sequenceDiagram
+    participant M as Master Process
+    participant K as Kernel
+    participant W1 as Worker 1
+    participant W2 as Worker 2
+    participant W3 as Worker 3
+    
+    Note over M: 워커 생성 루프 시작
+    
+    M->>K: fork() 호출 #1
+    K-->>M: 자식 PID 반환
+    K-->>W1: 0 반환 (자식)
+    
+    Note over W1: Worker 1 초기화
+    W1->>W1: CPU 친화도 설정
+    W1->>W1: HTTP 요청 처리 준비
+    
+    M->>K: fork() 호출 #2
+    K-->>M: 자식 PID 반환
+    K-->>W2: 0 반환 (자식)
+    
+    Note over W2: Worker 2 초기화
+    W2->>W2: 독립적인 이벤트 루프
+    
+    M->>K: fork() 호출 #3
+    K-->>M: 자식 PID 반환
+    K-->>W3: 0 반환 (자식)
+    
+    Note over W3: Worker 3 초기화
+    
+    par 병렬 작업
+        W1->>W1: HTTP 요청 처리
+    and
+        W2->>W2: HTTP 요청 처리
+    and
+        W3->>W3: HTTP 요청 처리
+    end
+    
+    Note over M: 모든 워커 생성 완료<br/>wait() 모드 진입
+    
+    W1->>M: exit(0) - 작업 완료
+    W2->>M: exit(0) - 작업 완료  
+    W3->>M: exit(0) - 작업 완료
+    
+    M->>M: 모든 워커 정리 완료
+```
+
+### 프로세스 트리 구조 시각화
+
+```mermaid
+graph TD
+    subgraph MASTER["Master Process (PID 1000)"]
+        MASTER_FUNC["마스터 기능<br/>• 설정 관리<br/>• 워커 모니터링<br/>• 신호 처리"]
+    end
+    
+    subgraph WORKERS["Worker Processes"]
+        W1["Worker 1<br/>PID 1001<br/>CPU Core 0"]
+        W2["Worker 2<br/>PID 1002<br/>CPU Core 1"]  
+        W3["Worker 3<br/>PID 1003<br/>CPU Core 2"]
+        W4["Worker 4<br/>PID 1004<br/>CPU Core 3"]
+    end
+    
+    subgraph SHARED_RESOURCES["공유 자원"]
+        CONFIG["설정 파일<br/>(읽기 전용)"]
+        SOCKETS["Listen Socket<br/>(공유)"]
+        LOGS["로그 파일<br/>(공유)"]
+    end
+    
+    MASTER --> W1
+    MASTER --> W2  
+    MASTER --> W3
+    MASTER --> W4
+    
+    W1 --> CONFIG
+    W2 --> CONFIG
+    W3 --> CONFIG
+    W4 --> CONFIG
+    
+    W1 --> SOCKETS
+    W2 --> SOCKETS
+    W3 --> SOCKETS
+    W4 --> SOCKETS
+    
+    W1 --> LOGS
+    W2 --> LOGS
+    W3 --> LOGS
+    W4 --> LOGS
+    
+    style MASTER fill:#4CAF50
+    style W1 fill:#2196F3
+    style W2 fill:#2196F3
+    style W3 fill:#2196F3
+    style W4 fill:#2196F3
+    style CONFIG fill:#FFF3E0
+    style SOCKETS fill:#E8F5E8
+    style LOGS fill:#F3E5F5
+```
+
+이 패턴의 핵심 장점:
+
+1. **장애 격리**: 하나의 워커가 크래시해도 다른 워커는 계속 작동
+2. **CPU 활용**: 멀티코어 시스템에서 각 코어별로 워커 할당 가능
+3. **메모리 효율**: Copy-on-Write로 설정 데이터는 공유, 작업 데이터만 독립
+4. **확장성**: 부하에 따라 워커 수를 동적으로 조정 가능
+
+```c
 // 안전한 다중 프로세스 생성 (실제 웹서버 구현에서 발췌)
 void create_worker_processes(int num_workers) {
     printf("\n=== Nginx처럼 워커 프로세스 생성하기 ===\n");
-    
+
     // 시스템 리소스 체크 및 최적 워커 수 결정
     int cpu_count = sysconf(_SC_NPROCESSORS_ONLN);
     printf("CPU 코어 수: %d, 워커 수: %d\n", cpu_count, num_workers);
@@ -439,6 +608,98 @@ fork();  // 실제 복사되는 메모리: 거의 0!
 
 **Copy-on-Write**라는 마법 때문입니다. 부모와 자식이 메모리를 공유하다가, 누군가 수정하려고 할 때만 복사합니다. 마치 **시험지를 복사하지 않고 같이 보다가, 답을 쓸 때만 새 종이를 주는 것**과 같죠.
 
+### Copy-on-Write 메모리 동작 시각화
+
+Copy-on-Write의 동작 과정을 단계별로 살펴보겠습니다:
+
+```mermaid
+graph TD
+    subgraph BEFORE_FORK["fork() 호출 전"]
+        PM1["부모 프로세스<br/>메모리 영역"]
+        PAGE1["페이지 1: 읽기/쓰기"]
+        PAGE2["페이지 2: 읽기/쓰기"]
+        PAGE3["페이지 3: 읽기/쓰기"]
+        
+        PM1 --> PAGE1
+        PM1 --> PAGE2
+        PM1 --> PAGE3
+    end
+    
+    subgraph AFTER_FORK["fork() 호출 직후 (Copy-on-Write 설정)"]
+        PP1["부모 프로세스"]
+        CP1["자식 프로세스"]
+        
+        SHARED1["공유 페이지 1<br/>읽기 전용"]
+        SHARED2["공유 페이지 2<br/>읽기 전용"]
+        SHARED3["공유 페이지 3<br/>읽기 전용"]
+        
+        PP1 --> SHARED1
+        PP1 --> SHARED2
+        PP1 --> SHARED3
+        CP1 --> SHARED1
+        CP1 --> SHARED2
+        CP1 --> SHARED3
+    end
+    
+    subgraph WRITE_ATTEMPT["자식이 페이지 2에 쓰기 시도"]
+        CP2["자식 프로세스<br/>쓰기 시도"]
+        FAULT["Page Fault<br/>발생!"]
+        
+        CP2 --> FAULT
+    end
+    
+    subgraph COPY_TRIGGERED["실제 복사 수행"]
+        KERNEL["커널이 개입"]
+        NEW_PAGE["새 페이지 2' 할당"]
+        COPY_DATA["데이터 복사"]
+        UPDATE_PT["페이지 테이블 업데이트"]
+        
+        FAULT --> KERNEL
+        KERNEL --> NEW_PAGE
+        NEW_PAGE --> COPY_DATA
+        COPY_DATA --> UPDATE_PT
+    end
+    
+    subgraph FINAL_STATE["최종 상태"]
+        PP2["부모 프로세스"]
+        CP3["자식 프로세스"]
+        
+        ORIG_SHARED1["공유 페이지 1<br/>여전히 공유"]
+        ORIG_PAGE2["원본 페이지 2<br/>부모 전용"]
+        COPY_PAGE2["복사 페이지 2'<br/>자식 전용"]
+        ORIG_SHARED3["공유 페이지 3<br/>여전히 공유"]
+        
+        PP2 --> ORIG_SHARED1
+        PP2 --> ORIG_PAGE2
+        PP2 --> ORIG_SHARED3
+        CP3 --> ORIG_SHARED1
+        CP3 --> COPY_PAGE2
+        CP3 --> ORIG_SHARED3
+    end
+    
+    BEFORE_FORK --> AFTER_FORK
+    AFTER_FORK --> WRITE_ATTEMPT
+    WRITE_ATTEMPT --> COPY_TRIGGERED
+    COPY_TRIGGERED --> FINAL_STATE
+    
+    style SHARED1 fill:#E8F5E8
+    style SHARED2 fill:#E8F5E8
+    style SHARED3 fill:#E8F5E8
+    style FAULT fill:#FFCDD2
+    style NEW_PAGE fill:#FFF3E0
+    style COPY_PAGE2 fill:#E1F5FE
+    style ORIG_PAGE2 fill:#F3E5F5
+```
+
+이 다이어그램이 보여주는 핵심:
+
+1. **fork() 직후**: 모든 메모리 페이지가 부모와 자식 간에 공유됨 (읽기 전용)
+2. **쓰기 시도**: 어느 프로세스든 메모리 수정 시 page fault 발생
+3. **실제 복사**: 커널이 해당 페이지만 복사하여 독립적인 공간 생성
+4. **선택적 복사**: 수정되지 않은 페이지는 계속 공유 상태 유지
+
+**성능상 이점**: 1GB 프로세스라도 실제 수정되는 페이지만 복사하므로 fork() 속도가 극도로 빠름!
+
 ### Chrome이 탭마다 프로세스를 만드는 이유
 
 한 번은 Chrome 브라우저가 왜 그렇게 많은 프로세스를 생성하는지 궁금해서 조사한 적이 있습니다. 탭 10개를 열었더니 프로세스가 30개나 생겼더군요!
@@ -457,6 +718,90 @@ chrome(1234)─┬─chrome(1235)  # GPU 프로세스
 ```
 
 각 탭이 독립 프로세스인 이유? **하나가 죽어도 나머지는 살아있기 때문입니다!** 이것이 바로 프로세스 격리의 힘이죠.
+
+### 프로세스 상태 전이도: fork() 생명주기
+
+fork() 과정에서 프로세스가 거치는 상태 변화를 시각화해보겠습니다:
+
+```mermaid
+stateDiagram-v2
+    [*] --> TASK_RUNNING : 부모 프로세스 실행 중
+    
+    TASK_RUNNING --> FORK_CALL : fork() 시스템 콜 호출
+    
+    FORK_CALL --> TASK_UNINTERRUPTIBLE : 자식 PCB 생성 중
+    note right of TASK_UNINTERRUPTIBLE : 커널이 copy_process() 실행
+    
+    TASK_UNINTERRUPTIBLE --> ALLOCATION_CHECK : 자원 할당 체크
+    
+    state ALLOCATION_CHECK <<choice>>
+    ALLOCATION_CHECK --> ERROR_STATE : 메모리/PID 부족
+    ALLOCATION_CHECK --> READY_CHILD : 할당 성공
+    
+    ERROR_STATE --> TASK_RUNNING : ENOMEM 반환
+    note left of ERROR_STATE : cleanup 함수들 실행
+    
+    READY_CHILD --> DUAL_RETURN : 마법의 리턴 발생
+    
+    state DUAL_RETURN <<fork>>
+    DUAL_RETURN --> PARENT_CONTEXT : 부모 프로세스
+    DUAL_RETURN --> CHILD_CONTEXT : 자식 프로세스
+    
+    state PARENT_CONTEXT {
+        [*] --> PARENT_RUNNING : 자식 PID 획득
+        PARENT_RUNNING --> WAIT_STATE : wait() 호출
+        WAIT_STATE --> PARENT_RUNNING : 자식 종료 시그널
+    }
+    
+    state CHILD_CONTEXT {
+        [*] --> CHILD_RUNNING : 0 반환 받음
+        CHILD_RUNNING --> CHILD_WORKING : 독립 작업 수행
+        CHILD_WORKING --> CHILD_EXIT : exit() 호출
+    }
+    
+    PARENT_RUNNING --> [*] : 정상 종료
+    CHILD_EXIT --> [*] : 자식 프로세스 종료
+    
+    style FORK_CALL fill:#4CAF50
+    style DUAL_RETURN fill:#FF9800
+    style ERROR_STATE fill:#F44336
+    style PARENT_CONTEXT fill:#2196F3
+    style CHILD_CONTEXT fill:#9C27B0
+```
+
+### 시간축에 따른 fork() 동작 흐름
+
+```mermaid
+gantt
+    title fork() 시스템 콜 실행 타임라인
+    dateFormat X
+    axisFormat %L ms
+    
+    section 커널 작업
+    PCB 할당        :pcb, 0, 1
+    메모리 복사(CoW) :cow, after pcb, 2  
+    PID 할당        :pid, after cow, 1
+    스케줄러 등록    :sched, after pid, 1
+    
+    section 부모 프로세스
+    fork() 호출     :parent_call, 0, 1
+    자식 PID 반환   :parent_return, after sched, 1
+    wait() 대기     :parent_wait, after parent_return, 8
+    정리 작업       :parent_cleanup, after parent_wait, 1
+    
+    section 자식 프로세스  
+    스케줄링 대기   :child_wait, after sched, 2
+    실행 시작       :child_start, after child_wait, 5
+    작업 완료       :child_finish, after child_start, 1
+    exit() 호출     :child_exit, after child_finish, 1
+```
+
+이 다이어그램들이 보여주는 중요한 통찰:
+
+1. **비동기 특성**: 부모와 자식이 독립적으로 스케줄링됨
+2. **짧은 커널 시간**: 실제 fork() 커널 작업은 5ms 이내
+3. **Copy-on-Write 효과**: 메모리 복사 시간이 크기와 무관
+4. **동시 실행**: fork() 완료 후 두 프로세스가 병렬 실행
 
 ## 핵심 요점
 

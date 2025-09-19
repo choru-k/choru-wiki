@@ -136,6 +136,106 @@ void flush_old_exec(struct linux_binprm *bprm) {
 }
 ```
 
+### exec() 메모리 교체 과정: 기억 지우기의 시각화
+
+exec() 시스템 콜이 어떻게 프로세스의 메모리를 완전히 교체하는지 단계별로 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph BEFORE["exec() 호출 전"]
+        OLD_CODE["코드 섹션<br/>(기존 프로그램)"]
+        OLD_DATA["데이터 섹션<br/>(전역 변수)"]
+        OLD_HEAP["힙 영역<br/>(동적 할당)"]
+        OLD_STACK["스택 영역<br/>(지역 변수, 함수 호출)"]
+        
+        OLD_CODE --> OLD_DATA
+        OLD_DATA --> OLD_HEAP
+        OLD_HEAP --> OLD_STACK
+    end
+    
+    subgraph EXEC_PROCESS["exec() 처리 과정"]
+        STEP1["1. 실행 파일 열기<br/>open_exec()"]
+        STEP2["2. ELF 헤더 파싱<br/>바이너리 형식 확인"]
+        STEP3["3. 기존 메모리 해제<br/>flush_old_exec()"]
+        STEP4["4. 새 메모리 매핑<br/>setup_new_exec()"]
+        STEP5["5. 프로그램 로딩<br/>코드/데이터 섹션"]
+        STEP6["6. 스택 초기화<br/>argc, argv, envp 설정"]
+        STEP7["7. 엔트리 포인트 점프<br/>start_thread()"]
+        
+        STEP1 --> STEP2
+        STEP2 --> STEP3
+        STEP3 --> STEP4
+        STEP4 --> STEP5
+        STEP5 --> STEP6
+        STEP6 --> STEP7
+    end
+    
+    subgraph AFTER["exec() 완료 후"]
+        NEW_CODE["새 코드 섹션<br/>(새 프로그램)"]
+        NEW_DATA["새 데이터 섹션<br/>(초기화된 변수)"]
+        NEW_HEAP["새 힙 영역<br/>(비어있음)"]
+        NEW_STACK["새 스택 영역<br/>(main 함수 준비)"]
+        
+        NEW_CODE --> NEW_DATA
+        NEW_DATA --> NEW_HEAP
+        NEW_HEAP --> NEW_STACK
+    end
+    
+    subgraph PRESERVED["유지되는 정보"]
+        PID["프로세스 ID<br/>(변경 없음)"]
+        PARENT["부모-자식 관계<br/>(변경 없음)"]
+        FILES["파일 디스크립터<br/>(close-on-exec 제외)"]
+        SIGNALS["일부 시그널 설정<br/>(default로 초기화)"]
+    end
+    
+    BEFORE --> EXEC_PROCESS
+    EXEC_PROCESS --> AFTER
+    
+    style STEP3 fill:#FF5252
+    style STEP7 fill:#4CAF50
+    style NEW_CODE fill:#E3F2FD
+    style NEW_DATA fill:#F3E5F5
+    style NEW_HEAP fill:#E8F5E8
+    style NEW_STACK fill:#FFF3E0
+    style PID fill:#FFE082
+```
+
+### Point of No Return: 되돌릴 수 없는 순간
+
+```mermaid
+sequenceDiagram
+    participant App as "실행 중 프로그램"
+    participant Kernel as "커널"
+    participant Loader as "프로그램 로더"
+    participant NewApp as "새 프로그램"
+    
+    Note over App: execve("/bin/ls", ...) 호출
+    
+    App->>Kernel: exec() 시스템 콜
+    Kernel->>Kernel: 권한 검사
+    Kernel->>Kernel: 파일 존재 확인
+    
+    Note over Kernel: Point of No Return!<br/>이 시점부터 되돌릴 수 없음
+    
+    Kernel->>Loader: 기존 메모리 해제 시작
+    Loader->>Loader: 코드/데이터/힙/스택 정리
+    
+    Note over App: 기존 프로그램 완전 소멸
+    
+    Loader->>Loader: 새 프로그램 로딩
+    Loader->>NewApp: 메모리 매핑 완료
+    
+    NewApp->>NewApp: main() 함수 시작
+    
+    Note over NewApp: 완전히 다른 프로그램이 됨<br/>PID는 동일하지만 내용은 완전 변경
+    
+    style Kernel fill:#FF9800
+    style Loader fill:#2196F3
+    style NewApp fill:#4CAF50
+```
+
+**중요한 통찰**: exec() 호출 후의 `printf("You will never see this!");`가 실행되지 않는 이유는 이미 다른 프로그램이 되어버렸기 때문입니다!
+
 ### exec() 패밀리 사용: 6형제의 차이점
 
 exec() 패밀리를 처음 봤을 때 혼란스러웠던 기억이 납니다. 왜 이렇게 많은 버전이?
@@ -174,6 +274,84 @@ void demonstrate_exec_family() {
     // exec 이후 코드는 실행되지 않음
     printf("This will never be printed\n");
 }
+```
+
+### exec() 함수 선택 플로우차트
+
+어떤 exec() 함수를 써야 할지 헷갈릴 때 사용하는 의사결정 다이어그램:
+
+```mermaid
+flowchart TD
+    START["exec() 함수 선택하기"] --> Q1{"인자를 어떻게<br/>전달할 것인가?"}
+    
+    Q1 -->|"직접 나열<br/>(고정된 인자)"| LIST_TYPE["List 타입<br/>(l로 끝남)"]
+    Q1 -->|"배열로 전달<br/>(동적 인자)"| VECTOR_TYPE["Vector 타입<br/>(v로 시작)"]
+    
+    LIST_TYPE --> Q2L{"PATH에서<br/>프로그램을 찾을까?"}
+    VECTOR_TYPE --> Q2V{"PATH에서<br/>프로그램을 찾을까?"}
+    
+    Q2L -->|"예<br/>(편리함)"| Q3LP{"환경변수를<br/>어떻게 할까?"}
+    Q2L -->|"아니오<br/>(정확한 경로)"| Q3L{"환경변수를<br/>어떻게 할까?"}
+    
+    Q2V -->|"예<br/>(편리함)"| Q3VP{"환경변수를<br/>어떻게 할까?"}
+    Q2V -->|"아니오<br/>(정확한 경로)"| Q3V{"환경변수를<br/>어떻게 할까?"}
+    
+    Q3LP -->|"부모 상속"| EXECLP["execlp()<br/>가장 편리"]
+    Q3LP -->|"명시적 전달"| IMPOSSIBLE1["❌ 불가능<br/>execelp() 없음"]
+    
+    Q3L -->|"부모 상속"| EXECL["execl()<br/>간단한 경우"]
+    Q3L -->|"명시적 전달"| EXECLE["execle()<br/>보안 중요"]
+    
+    Q3VP -->|"부모 상속"| EXECVP["execvp()<br/>최고 유연성"]
+    Q3VP -->|"명시적 전달"| IMPOSSIBLE2["❌ 불가능<br/>execvpe() 비표준"]
+    
+    Q3V -->|"부모 상속"| EXECV["execv()<br/>배열 사용"]
+    Q3V -->|"명시적 전달"| EXECVE["execve()<br/>시스템 콜"]
+    
+    style START fill:#4CAF50
+    style EXECLP fill:#2196F3
+    style EXECVP fill:#FF9800
+    style EXECVE fill:#9C27B0
+    style IMPOSSIBLE1 fill:#F44336
+    style IMPOSSIBLE2 fill:#F44336
+```
+
+### exec() 함수별 사용 시나리오
+
+```mermaid
+graph LR
+    subgraph SIMPLE["간단한 경우"]
+        EXECL_USE["execl()<br/>• 인자 개수 고정<br/>• 절대 경로 사용<br/>• 빠른 프로토타입"]
+    end
+    
+    subgraph CONVENIENT["편리한 경우"]
+        EXECLP_USE["execlp()<br/>• PATH 검색 필요<br/>• 쉘 명령어 실행<br/>• 일반적 사용"]
+    end
+    
+    subgraph SECURE["보안 중요"]
+        EXECLE_USE["execle()<br/>• 깨끗한 환경<br/>• CGI 스크립트<br/>• 권한 분리"]
+    end
+    
+    subgraph DYNAMIC["동적 인자"]
+        EXECV_USE["execv()<br/>• 런타임 인자 생성<br/>• 설정 파일 기반<br/>• 절대 경로"]
+        
+        EXECVP_USE["execvp()<br/>• 최대 유연성<br/>• 쉘 구현<br/>• 명령어 파서"]
+    end
+    
+    subgraph SYSTEM["시스템 레벨"]
+        EXECVE_USE["execve()<br/>• 시스템 콜<br/>• 완전 제어<br/>• 모든 exec 기반"]
+    end
+    
+    style SIMPLE fill:#E8F5E8
+    style CONVENIENT fill:#E3F2FD
+    style SECURE fill:#FFF3E0
+    style DYNAMIC fill:#F3E5F5
+    style SYSTEM fill:#FFEBEE
+```
+
+이제 각 함수의 실제 사용 예제를 보겠습니다:
+
+```c
 
 // fork + exec 패턴: 쉘의 핵심 메커니즘
 void spawn_program(const char *program, char *const argv[]) {
@@ -203,12 +381,118 @@ void spawn_program(const char *program, char *const argv[]) {
     }
 }
 
+### 파이프라인 구현: 유닉스 철학의 시각화
+
+`ls | grep '.txt' | wc -l` 명령이 어떻게 3개의 프로세스가 협력하여 동작하는지 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph SHELL["Shell Process"]
+        SHELL_MAIN["bash<br/>파이프라인 파싱"]
+    end
+    
+    subgraph PIPES["파이프 생성"]
+        PIPE1["pipe1[2]<br/>ls → grep"]
+        PIPE2["pipe2[2]<br/>grep → wc"]
+    end
+    
+    subgraph PROCESSES["프로세스 생성과 연결"]
+        PROC1["Process 1<br/>ls"]
+        PROC2["Process 2<br/>grep '.txt'"]
+        PROC3["Process 3<br/>wc -l"]
+    end
+    
+    subgraph DATA_FLOW["데이터 흐름"]
+        FILES["파일 목록"] --> FILTER["필터링된<br/>.txt 파일"] --> COUNT["파일 개수"]
+    end
+    
+    SHELL_MAIN --> PIPE1
+    SHELL_MAIN --> PIPE2
+    
+    PIPE1 --> PROC1
+    PIPE1 --> PROC2
+    PIPE2 --> PROC2
+    PIPE2 --> PROC3
+    
+    PROC1 --> FILES
+    FILES --> PROC2
+    PROC2 --> FILTER
+    FILTER --> PROC3
+    PROC3 --> COUNT
+    
+    style SHELL fill:#4CAF50
+    style PROC1 fill:#2196F3
+    style PROC2 fill:#FF9800
+    style PROC3 fill:#9C27B0
+    style COUNT fill:#4CAF50
+```
+
+### 파이프라인 실행 시퀀스
+
+```mermaid
+sequenceDiagram
+    participant Shell as "Shell"
+    participant Kernel as "Kernel"
+    participant LS as "ls 프로세스"
+    participant Grep as "grep 프로세스"
+    participant WC as "wc 프로세스"
+    
+    Note over Shell: 파이프라인 파싱: ls | grep | wc
+    
+    Shell->>Kernel: pipe() - pipe1 생성
+    Shell->>Kernel: pipe() - pipe2 생성
+    
+    par 프로세스 생성
+        Shell->>Kernel: fork() - ls용
+        Kernel->>LS: 자식 프로세스 생성
+        LS->>LS: dup2(pipe1[1], STDOUT)
+        LS->>LS: 모든 파이프 닫기
+        LS->>Kernel: exec("ls")
+    and
+        Shell->>Kernel: fork() - grep용
+        Kernel->>Grep: 자식 프로세스 생성
+        Grep->>Grep: dup2(pipe1[0], STDIN)
+        Grep->>Grep: dup2(pipe2[1], STDOUT)
+        Grep->>Grep: 모든 파이프 닫기
+        Grep->>Kernel: exec("grep", ".txt")
+    and
+        Shell->>Kernel: fork() - wc용
+        Kernel->>WC: 자식 프로세스 생성
+        WC->>WC: dup2(pipe2[0], STDIN)
+        WC->>WC: 모든 파이프 닫기
+        WC->>Kernel: exec("wc", "-l")
+    end
+    
+    Shell->>Shell: 모든 파이프 닫기
+    
+    Note over LS,WC: 동시 실행 및 데이터 파이프를 통해 흐름
+    
+    LS->>Grep: 파일 목록 데이터
+    Grep->>WC: 필터링된 .txt 파일들
+    WC->>Shell: 최종 카운트 결과
+    
+    par 프로세스 종료 대기
+        Shell->>Kernel: wait() - ls
+        Shell->>Kernel: wait() - grep
+        Shell->>Kernel: wait() - wc
+    end
+    
+    Note over Shell: 파이프라인 완료
+    
+    style LS fill:#2196F3
+    style Grep fill:#FF9800
+    style WC fill:#9C27B0
+```
+
+이 패턴이 바로 **유닉스 철학**의 핵심입니다: "작은 도구들이 파이프로 연결되어 큰 일을 해낸다!"
+
+```c
 // 파이프라인 구현: 유닉스 철학의 정수
 void create_pipeline() {
     printf("\n=== 파이프라인 마법: ls | grep '.txt' | wc -l ===\n");
     // 이렇게 3개 프로세스가 협력한다!
     int pipe1[2], pipe2[2];
-    
+
     pipe(pipe1);
     pipe(pipe2);
     

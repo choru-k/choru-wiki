@@ -551,11 +551,11 @@ kill -USR1 PID    # 사용자 정의 시그널
 
 ### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
+- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-02-01-process-creation.md)
+- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
+- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
+- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-02-04-process-termination-zombies.md)
+- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-05-01-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 

@@ -37,6 +37,105 @@ systemd─┬─NetworkManager───2*[{NetworkManager}]
 
 ### 프로세스 계층 구조: 디지털 족보
 
+리눅스 시스템의 실제 프로세스 트리 구조를 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph SYSTEM_ROOT["시스템 루트"]
+        INIT["systemd (PID 1)<br/>• 시스템 최상위 조상<br/>• 모든 고아의 부모<br/>• 불사신 프로세스"]
+    end
+    
+    subgraph SYSTEM_SERVICES["시스템 서비스"]
+        NETWORK["NetworkManager<br/>네트워크 관리"]
+        SSH["sshd<br/>SSH 데몬"]
+        DOCKER["dockerd<br/>컨테이너 런타임"]
+        CRON["cron<br/>스케줄 작업"]
+    end
+    
+    subgraph USER_PROCESSES["사용자 프로세스"]
+        LOGIN["login session"]
+        BASH["bash shell"]
+        CHROME["chrome browser"]
+        VIM["vim editor"]
+    end
+    
+    subgraph WORKER_PROCESSES["워커 프로세스"]
+        SSH_SESSION["ssh session"]
+        CHROME_TABS["chrome tabs<br/>(여러 프로세스)"]
+        CHROME_GPU["chrome GPU<br/>프로세스"]
+        DOCKER_CONTAINERS["container<br/>프로세스들"]
+    end
+    
+    INIT --> NETWORK
+    INIT --> SSH
+    INIT --> DOCKER
+    INIT --> CRON
+    INIT --> LOGIN
+    
+    LOGIN --> BASH
+    BASH --> CHROME
+    BASH --> VIM
+    
+    SSH --> SSH_SESSION
+    CHROME --> CHROME_TABS
+    CHROME --> CHROME_GPU
+    DOCKER --> DOCKER_CONTAINERS
+    
+    subgraph PROCESS_STATES["프로세스 상태 표시"]
+        RUNNING["🏃 R: Running"]
+        SLEEPING["😴 S: Sleeping"]
+        WAITING["💀 D: Disk Wait"]
+        ZOMBIE["🧟 Z: Zombie"]
+    end
+    
+    style INIT fill:#4CAF50
+    style SSH fill:#2196F3
+    style CHROME fill:#FF9800
+    style ZOMBIE fill:#F44336
+```
+
+### 프로세스 관계 분석: 부모-자식 추적
+
+```mermaid
+flowchart LR
+    subgraph INVESTIGATION["프로세스 관계 조사"]
+        FIND_PROC["문제 프로세스 발견<br/>PID: 12345"]
+        CHECK_PARENT["부모 프로세스 확인<br/>PPID: 1234"]
+        CHECK_CHILDREN["자식 프로세스 확인<br/>children: 12346, 12347"]
+    end
+    
+    subgraph ANALYSIS["관계 분석"]
+        PARENT_INFO["부모: nginx (1234)<br/>• 웹서버 마스터<br/>• 워커 관리 역할"]
+        CURRENT_INFO["현재: nginx worker (12345)<br/>• HTTP 요청 처리<br/>• CPU 99% 사용"]
+        CHILD_INFO["자식: 없음<br/>• 워커 프로세스<br/>• 단순 작업 수행"]
+    end
+    
+    subgraph ACTIONS["대응 방안"]
+        GENTLE["1. 부드러운 종료<br/>kill -TERM 12345"]
+        FORCE["2. 강제 종료<br/>kill -KILL 12345"]
+        RESTART["3. 서비스 재시작<br/>systemctl restart nginx"]
+        MONITOR["4. 지속 모니터링<br/>watch 'ps aux | grep nginx'"]
+    end
+    
+    FIND_PROC --> CHECK_PARENT
+    CHECK_PARENT --> CHECK_CHILDREN
+    CHECK_PARENT --> PARENT_INFO
+    FIND_PROC --> CURRENT_INFO
+    CHECK_CHILDREN --> CHILD_INFO
+    
+    CURRENT_INFO --> GENTLE
+    GENTLE --> FORCE
+    FORCE --> RESTART
+    RESTART --> MONITOR
+    
+    style FIND_PROC fill:#FF5722
+    style CURRENT_INFO fill:#FF9800
+    style GENTLE fill:#4CAF50
+    style FORCE fill:#F44336
+```
+
+### 프로세스 트리 구현: 계층 구조 시각화
+
 ```c
 // 프로세스 트리 출력
 void print_process_tree(pid_t pid, int level) {
@@ -204,6 +303,112 @@ Apache 웹서버의 prefork 모드를 분석하면서 배운 프로세스 풀의
 트래픽 감소 → 천천히 감소 (급격한 변화 방지)
 ```
 
+### Apache Prefork 모델 시각화: 효율적인 프로세스 관리
+
+```mermaid
+graph TD
+    subgraph MASTER["마스터 프로세스"]
+        APACHE_MASTER["Apache Master<br/>• 설정 관리<br/>• 워커 생성/제거<br/>• 로드 모니터링"]
+    end
+    
+    subgraph WORKER_POOL["워커 프로세스 풀"]
+        W1["Worker 1<br/>🟢 Idle"]
+        W2["Worker 2<br/>🟡 Busy"]
+        W3["Worker 3<br/>🟡 Busy"]
+        W4["Worker 4<br/>🟢 Idle"]
+        W5["Worker 5<br/>🟢 Idle"]
+        DOTS["..."]
+        W256["Worker 256<br/>🔴 Max Reached"]
+    end
+    
+    subgraph CLIENTS["클라이언트 요청"]
+        C1["Browser 1"]
+        C2["Browser 2"]
+        C3["Browser 3"]
+        C4["API Client"]
+    end
+    
+    subgraph LOAD_BALANCING["로드 밸런싱"]
+        LB["요청 분배<br/>• Round Robin<br/>• Least Connections<br/>• Available Worker"]
+    end
+    
+    APACHE_MASTER --> W1
+    APACHE_MASTER --> W2
+    APACHE_MASTER --> W3
+    APACHE_MASTER --> W4
+    APACHE_MASTER --> W5
+    APACHE_MASTER --> W256
+    
+    C1 --> LB
+    C2 --> LB
+    C3 --> LB
+    C4 --> LB
+    
+    LB --> W1
+    LB --> W4
+    LB --> W5
+    
+    subgraph SCALING["동적 스케일링"]
+        SCALE_UP["트래픽 증가<br/>→ 워커 추가<br/>(최대 256개)"]
+        SCALE_DOWN["트래픽 감소<br/>→ 점진적 감소<br/>(최소 5개 유지)"]
+    end
+    
+    APACHE_MASTER --> SCALE_UP
+    APACHE_MASTER --> SCALE_DOWN
+    
+    style APACHE_MASTER fill:#4CAF50
+    style W2 fill:#FF9800
+    style W3 fill:#FF9800
+    style W256 fill:#F44336
+    style LB fill:#2196F3
+```
+
+### 프로세스 풀 통신 아키텍처: 파이프 기반 IPC
+
+```mermaid
+sequenceDiagram
+    participant Master as "마스터 프로세스"
+    participant Pool as "프로세스 풀"
+    participant W1 as "Worker 1"
+    participant W2 as "Worker 2"
+    participant Client as "클라이언트"
+    
+    Note over Master,Client: 프로세스 풀 초기화 및 작업 분배
+    
+    Master->>Pool: 프로세스 풀 생성 (5개)
+    Pool->>W1: fork() → Worker 1 생성
+    Pool->>W2: fork() → Worker 2 생성
+    
+    Note over W1,W2: 파이프 연결 설정
+    W1->>Master: pipe_from_workers[1] 연결
+    W2->>Master: pipe_from_workers[1] 연결
+    
+    loop 작업 대기 상태
+        W1->>W1: read(pipe_to_workers[0]) 대기
+        W2->>W2: read(pipe_to_workers[0]) 대기
+    end
+    
+    Client->>Master: HTTP 요청 도착
+    Master->>Pool: write(pipe_to_workers[1], task)
+    
+    alt Worker 1이 먼저 읽음
+        Pool->>W1: 작업 할당
+        W1->>W1: process_request() 실행
+        W1->>Master: write(pipe_from_workers[1], result)
+        Master->>Client: HTTP 응답 전송
+    end
+    
+    Note over Master: 워커 상태 모니터링
+    Master->>Master: 유휴 워커 < 2개?
+    
+    alt 워커 부족
+        Master->>Pool: 새 워커 생성
+        Pool->>Master: 최대 256개까지 확장
+    else 워커 과다
+        Master->>Pool: 유휴 워커 점진적 제거
+    end
+```
+
 ### 프로세스 풀 구현: 미리 만들어 놓고 재사용
 
 ```c
@@ -338,10 +543,113 @@ process_info_t* get_process_info(pid_t pid) {
     return info;
 }
 
+### 시스템 모니터링 아키텍처: 전체 생태계
+
+```mermaid
+graph TD
+    subgraph KERNEL["커널 레벨"]
+        PROC_FS["/proc 파일시스템<br/>• 실시간 프로세스 정보<br/>• 메모리 맵핑<br/>• 파일 디스크립터"]
+        SYS_FS["/sys 파일시스템<br/>• 하드웨어 정보<br/>• 커널 파라미터<br/>• 디바이스 상태"]
+        PERF["perf 이벤트<br/>• CPU 성능 카운터<br/>• 트레이싱 포인트<br/>• 프로파일링 데이터"]
+    end
+    
+    subgraph TOOLS["모니터링 도구"]
+        BASIC["기본 도구<br/>• ps, top, htop<br/>• vmstat, iostat<br/>• free, uptime"]
+        ADVANCED["고급 도구<br/>• strace, ltrace<br/>• perf, valgrind<br/>• gdb, lsof"]
+        NETWORK["네트워크<br/>• netstat, ss<br/>• tcpdump, wireshark<br/>• iftop, nethogs"]
+    end
+    
+    subgraph AUTOMATION["자동화 시스템"]
+        SCRIPTS["모니터링 스크립트<br/>• Bash 스크립트<br/>• Python 대시보드<br/>• 알람 시스템"]
+        AGENTS["에이전트<br/>• collectd<br/>• node_exporter<br/>• zabbix_agentd"]
+        METRICS["메트릭 수집<br/>• Prometheus<br/>• InfluxDB<br/>• Grafana"]
+    end
+    
+    subgraph ALERTING["알람 및 대응"]
+        MONITORING["모니터링 시스템<br/>• Nagios<br/>• Zabbix<br/>• AlertManager"]
+        NOTIFICATION["알림 채널<br/>• Email, SMS<br/>• Slack, PagerDuty<br/>• Webhook"]
+        ACTIONS["자동 대응<br/>• 프로세스 재시작<br/>• 스케일링<br/>• 로드밸런싱"]
+    end
+    
+    PROC_FS --> BASIC
+    PROC_FS --> ADVANCED
+    SYS_FS --> BASIC
+    PERF --> ADVANCED
+    
+    BASIC --> SCRIPTS
+    ADVANCED --> SCRIPTS
+    NETWORK --> SCRIPTS
+    
+    SCRIPTS --> AGENTS
+    AGENTS --> METRICS
+    METRICS --> MONITORING
+    
+    MONITORING --> NOTIFICATION
+    MONITORING --> ACTIONS
+    
+    style PROC_FS fill:#4CAF50
+    style BASIC fill:#2196F3
+    style SCRIPTS fill:#FF9800
+    style MONITORING fill:#9C27B0
+```
+
+### /proc 파일시스템 활용 맵: 프로세스 정보의 보물창고
+
+```mermaid
+graph LR
+    subgraph PROC_ROOT["/proc 디렉토리 구조"]
+        PROC_PID["/proc/[PID]/<br/>개별 프로세스 정보"]
+        PROC_SYS["/proc/sys/<br/>커널 파라미터"]
+        PROC_NET["/proc/net/<br/>네트워크 정보"]
+        PROC_MEM["/proc/meminfo<br/>메모리 정보"]
+    end
+    
+    subgraph PID_DETAILS["프로세스별 상세 정보"]
+        STATUS["/proc/PID/status<br/>• 상태 정보<br/>• 메모리 사용량<br/>• 신호 마스크"]
+        CMDLINE["/proc/PID/cmdline<br/>• 명령행 인자<br/>• 실행 경로"]
+        MAPS["/proc/PID/maps<br/>• 메모리 맵<br/>• 라이브러리 위치<br/>• 권한 정보"]
+        FD["/proc/PID/fd/<br/>• 파일 디스크립터<br/>• 소켓 연결<br/>• 파이프 정보"]
+        STAT["/proc/PID/stat<br/>• CPU 시간<br/>• 상태 코드<br/>• 우선순위"]
+    end
+    
+    subgraph SYSTEM_WIDE["시스템 전체 정보"]
+        LOADAVG["/proc/loadavg<br/>로드 애버리지"]
+        UPTIME["/proc/uptime<br/>시스템 가동시간"]
+        CPUINFO["/proc/cpuinfo<br/>CPU 상세 정보"]
+        DISKSTATS["/proc/diskstats<br/>디스크 I/O 통계"]
+    end
+    
+    subgraph MONITORING_USES["모니터링 활용"]
+        HTOP_USE["htop<br/>• /proc/PID/stat<br/>• /proc/meminfo<br/>• /proc/loadavg"]
+        PS_USE["ps 명령어<br/>• /proc/PID/status<br/>• /proc/PID/cmdline<br/>• /proc/PID/stat"]
+        CUSTOM_USE["커스텀 모니터<br/>• Python psutil<br/>• 직접 파일 읽기<br/>• 실시간 대시보드"]
+    end
+    
+    PROC_PID --> STATUS
+    PROC_PID --> CMDLINE
+    PROC_PID --> MAPS
+    PROC_PID --> FD
+    PROC_PID --> STAT
+    
+    PROC_ROOT --> LOADAVG
+    PROC_ROOT --> UPTIME
+    PROC_ROOT --> CPUINFO
+    PROC_ROOT --> DISKSTATS
+    
+    STATUS --> HTOP_USE
+    STAT --> PS_USE
+    LOADAVG --> CUSTOM_USE
+    
+    style PROC_PID fill:#4CAF50
+    style STATUS fill:#2196F3
+    style HTOP_USE fill:#FF9800
+```
+
+```c
 // 프로세스 모니터: 미니 htop
 void monitor_processes() {
     printf("\n=== 실시간 프로세스 모니터 (Ctrl+C로 종료) ===\n");
-    
+
     while (1) {
         system("clear");
         printf("🖥️  프로세스 모니터 - %s\n", get_current_time());
@@ -497,6 +805,99 @@ void set_realtime_priority() {
 ```
 
 ## 장애 대응 시나리오
+
+### 시스템 장애 진단 플로우차트: 문제 해결의 체계적 접근
+
+```mermaid
+flowchart TD
+    START["시스템 장애 발생"] --> SYMPTOMS{"증상 확인"}
+    
+    SYMPTOMS -->|"CPU 100%"| CPU_HIGH["🔥 CPU 과부하"]
+    SYMPTOMS -->|"메모리 부족"| MEM_HIGH["💾 메모리 부족"]
+    SYMPTOMS -->|"응답 없음"| HANG["🚫 시스템 행"]
+    SYMPTOMS -->|"디스크 Full"| DISK_FULL["💽 디스크 풀"]
+    SYMPTOMS -->|"좀비 대량"| ZOMBIE_ISSUE["🧟 좀비 대량"]
+    
+    CPU_HIGH --> CPU_DIAG{"TOP으로 원인 분석"}
+    CPU_DIAG -->|"특정 프로세스"| SINGLE_PROC["개별 프로세스 문제<br/>strace -p PID<br/>gdb -p PID"]
+    CPU_DIAG -->|"시스템 전체"| SYSTEM_WIDE["시스템 전반 문제<br/>vmstat, iostat<br/>sar 분석"]
+    
+    MEM_HIGH --> MEM_DIAG{"메모리 사용 분석"}
+    MEM_DIAG -->|"메모리 누수"| MEM_LEAK["메모리 누수<br/>valgrind 검사<br/>pmap 분석"]
+    MEM_DIAG -->|"캐시 과다"| CACHE_CLEAR["캐시 정리<br/>echo 3 > /proc/sys/vm/drop_caches"]
+    
+    HANG --> HANG_DIAG{"프로세스 상태 확인"}
+    HANG_DIAG -->|"D state 많음"| IO_WAIT["I/O 대기 상태<br/>iostat -x<br/>iotop 확인"]
+    HANG_DIAG -->|"데드락"| DEADLOCK["데드락 상황<br/>strace 추적<br/>gdb 스택 분석"]
+    
+    ZOMBIE_ISSUE --> ZOMBIE_PARENT["부모 프로세스 확인<br/>ps -eo pid,ppid,state"]
+    ZOMBIE_PARENT --> RESTART_PARENT["부모 프로세스 재시작<br/>systemctl restart service"]
+    
+    subgraph SOLUTIONS["해결 방안"]
+        GENTLE_KILL["1. 정상 종료<br/>kill -TERM PID"]
+        FORCE_KILL["2. 강제 종료<br/>kill -KILL PID"]
+        SERVICE_RESTART["3. 서비스 재시작<br/>systemctl restart"]
+        SYSTEM_REBOOT["4. 시스템 재부팅<br/>(최후 수단)"]
+    end
+    
+    SINGLE_PROC --> GENTLE_KILL
+    MEM_LEAK --> GENTLE_KILL
+    GENTLE_KILL --> FORCE_KILL
+    FORCE_KILL --> SERVICE_RESTART
+    SERVICE_RESTART --> SYSTEM_REBOOT
+    
+    style START fill:#FF5722
+    style CPU_HIGH fill:#FF9800
+    style MEM_HIGH fill:#2196F3
+    style ZOMBIE_ISSUE fill:#9C27B0
+    style SYSTEM_REBOOT fill:#F44336
+```
+
+### 성능 병목 진단 트리: 단계별 성능 분석
+
+```mermaid
+flowchart LR
+    PERF_ISSUE["성능 저하 발생"] --> METRIC_CHECK{"기본 메트릭 확인"}
+    
+    METRIC_CHECK --> CPU_CHECK["CPU 사용률<br/>top, htop"]
+    METRIC_CHECK --> MEM_CHECK["메모리 사용률<br/>free -h"]
+    METRIC_CHECK --> IO_CHECK["디스크 I/O<br/>iostat -x"]
+    METRIC_CHECK --> NET_CHECK["네트워크<br/>iftop, ss"]
+    
+    CPU_CHECK --> CPU_ANALYSIS{"CPU 분석"}
+    CPU_ANALYSIS -->|"> 80%"| CPU_BOTTLENECK["CPU 병목<br/>• 프로세스 최적화<br/>• CPU 업그레이드<br/>• 로드밸런싱"]
+    CPU_ANALYSIS -->|"< 50%"| NOT_CPU["CPU 아님<br/>다른 원인 조사"]
+    
+    MEM_CHECK --> MEM_ANALYSIS{"메모리 분석"}
+    MEM_ANALYSIS -->|"> 90%"| MEM_BOTTLENECK["메모리 병목<br/>• 메모리 누수 수정<br/>• 캐시 조정<br/>• 메모리 증설"]
+    MEM_ANALYSIS -->|"< 70%"| NOT_MEM["메모리 아님<br/>다른 원인 조사"]
+    
+    IO_CHECK --> IO_ANALYSIS{"I/O 분석"}
+    IO_ANALYSIS -->|"await > 100ms"| IO_BOTTLENECK["I/O 병목<br/>• SSD 업그레이드<br/>• I/O 스케줄러 조정<br/>• 파일시스템 최적화"]
+    IO_ANALYSIS -->|"await < 10ms"| NOT_IO["I/O 아님<br/>다른 원인 조사"]
+    
+    NET_CHECK --> NET_ANALYSIS{"네트워크 분석"}
+    NET_ANALYSIS -->|"bandwidth > 80%"| NET_BOTTLENECK["네트워크 병목<br/>• 대역폭 증설<br/>• 트래픽 최적화<br/>• CDN 도입"]
+    NET_ANALYSIS -->|"bandwidth < 50%"| NOT_NET["네트워크 아님<br/>다른 원인 조사"]
+    
+    subgraph MONITORING["지속 모니터링"]
+        SETUP_ALERT["알람 설정<br/>• 임계값 설정<br/>• 자동 알림<br/>• 대시보드 구성"]
+        TREND_ANALYSIS["트렌드 분석<br/>• 장기 추이<br/>• 패턴 인식<br/>• 용량 계획"]
+    end
+    
+    CPU_BOTTLENECK --> SETUP_ALERT
+    MEM_BOTTLENECK --> SETUP_ALERT
+    IO_BOTTLENECK --> SETUP_ALERT
+    NET_BOTTLENECK --> SETUP_ALERT
+    
+    SETUP_ALERT --> TREND_ANALYSIS
+    
+    style PERF_ISSUE fill:#FF5722
+    style CPU_BOTTLENECK fill:#FF9800
+    style MEM_BOTTLENECK fill:#2196F3
+    style IO_BOTTLENECK fill:#4CAF50
+    style NET_BOTTLENECK fill:#9C27B0
+```
 
 ### 시나리오 1: 프로세스 폭주
 
@@ -678,8 +1079,8 @@ if __name__ == "__main__":
 
 ---
 
-**이전**: [01-13-process-termination-zombies.md](./04-13-process-termination-zombies.md)  
-**다음**: [01-14-thread-synchronization.md](./04-14-thread-synchronization.md)에서 스레드와 동기화 기법을 학습합니다.
+**이전**: [01-13-process-termination-zombies.md](./01-02-04-process-termination-zombies.md)  
+**다음**: [01-14-thread-synchronization.md](./01-03-02-thread-synchronization.md)에서 스레드와 동기화 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -697,11 +1098,11 @@ if __name__ == "__main__":
 
 ### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
-- [4.2 스레드 동기화 개요: 멀티스레딩 마스터로드맵](./04-14-thread-synchronization.md)
+- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-02-01-process-creation.md)
+- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
+- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
+- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-02-04-process-termination-zombies.md)
+- [1.3.2 스레드 동기화 개요: 멀티스레딩 마스터로드맵](./01-03-02-thread-synchronization.md)
 
 ### 🏷️ 관련 키워드
 

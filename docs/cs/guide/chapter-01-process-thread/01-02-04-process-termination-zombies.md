@@ -219,7 +219,101 @@ void prevent_zombies_signal() {
     // 부모는 다른 작업 수행
     sleep(10);
 }
+```
 
+### SIGCHLD 핸들러 동작 메커니즘 시각화
+
+SIGCHLD 시그널이 어떻게 좀비 프로세스를 자동으로 처리하는지 시각화해보겠습니다:
+
+```mermaid
+sequenceDiagram
+    participant Parent as "부모 프로세스"
+    participant Kernel as "커널"
+    participant Child1 as "자식 1"
+    participant Child2 as "자식 2"
+    participant Handler as "SIGCHLD 핸들러"
+    
+    Note over Parent: SIGCHLD 핸들러 등록
+    Parent->>Kernel: sigaction(SIGCHLD, handler)
+    
+    Note over Parent: 여러 자식 프로세스 생성
+    Parent->>Child1: fork() → 자식1 생성
+    Parent->>Child2: fork() → 자식2 생성
+    
+    par 자식들의 독립적 실행
+        Child1->>Child1: 작업 수행 중...
+        Child2->>Child2: 작업 수행 중...
+    end
+    
+    Note over Child1: 자식1 먼저 종료
+    Child1->>Kernel: exit(0)
+    Kernel->>Kernel: 자식1을 좀비 상태로 변경
+    Kernel->>Parent: SIGCHLD 시그널 전송
+    
+    Parent->>Handler: 시그널 핸들러 호출
+    Handler->>Kernel: waitpid(-1, NULL, WNOHANG)
+    Kernel->>Handler: 자식1 PID 반환
+    Note over Handler: 자식1 좀비 수거 완료
+    Handler->>Parent: 핸들러 종료, 원래 작업 복구
+    
+    Note over Child2: 자식2도 종료
+    Child2->>Kernel: exit(0)
+    Kernel->>Kernel: 자식2를 좀비 상태로 변경
+    Kernel->>Parent: SIGCHLD 시그널 전송 (2번째)
+    
+    Parent->>Handler: 시그널 핸들러 재호출
+    Handler->>Kernel: waitpid(-1, NULL, WNOHANG)
+    Kernel->>Handler: 자식2 PID 반환
+    Note over Handler: 자식2 좀비 수거 완료
+    Handler->>Parent: 핸들러 종료
+    
+    Note over Parent: 모든 자식 자동 정리 완료<br/>좀비 없음!
+    
+    style Handler fill:#4CAF50
+    style Child1 fill:#FF9800
+    style Child2 fill:#2196F3
+```
+
+### wait() vs WNOHANG 비교
+
+```mermaid
+graph TD
+    subgraph BLOCKING_WAIT["블로킹 wait()"]
+        BW_CALL["wait(&status)"]
+        BW_BLOCK["부모 프로세스 블로킹<br/>자식 종료까지 대기"]
+        BW_RETURN["자식 종료 시 즉시 반환<br/>좀비 수거됨"]
+        
+        BW_CALL --> BW_BLOCK
+        BW_BLOCK --> BW_RETURN
+    end
+    
+    subgraph NONBLOCKING_WAIT["논블로킹 waitpid(WNOHANG)"]
+        NW_CALL["waitpid(-1, NULL, WNOHANG)"]
+        NW_CHECK{"종료된 자식이<br/>있는가?"}
+        NW_IMMEDIATE["즉시 반환<br/>0 또는 PID"]
+        NW_CONTINUE["부모 계속 실행<br/>블로킹 없음"]
+        
+        NW_CALL --> NW_CHECK
+        NW_CHECK -->|있음| NW_IMMEDIATE
+        NW_CHECK -->|없음| NW_CONTINUE
+        NW_IMMEDIATE --> NW_CONTINUE
+    end
+    
+    subgraph SIGNAL_HANDLER["시그널 핸들러에서"]
+        SH_LOOP["while(waitpid(-1, NULL, WNOHANG) > 0)"]
+        SH_BENEFIT["모든 좀비를 한 번에 수거<br/>여러 자식이 동시 종료되어도 OK"]
+        
+        SH_LOOP --> SH_BENEFIT
+    end
+    
+    style BW_BLOCK fill:#FFCDD2
+    style NW_CONTINUE fill:#C8E6C9
+    style SH_BENEFIT fill:#BBDEFB
+```
+
+**핵심 포인트**: SIGCHLD 핸들러는 논블로킹 `waitpid()`를 사용해야 합니다. 블로킹 `wait()`를 사용하면 시그널 핸들러가 멈춰버릴 수 있어요!
+
+```c
 // 좀비 방지 패턴 2: 이중 fork (데모의 정석)
 void prevent_zombies_double_fork() {
     printf("\n=== 좀비 안 만들기: 이중 fork 기법 ===\n");
@@ -485,7 +579,7 @@ cat /proc/PID/stat    # 통계 정보
 - [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
 - [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
 - [Chapter 4-1D: 프로세스 관리와 모니터링](./01-05-01-process-management-monitoring.md)
-- [4.2 스레드 동기화 개요: 멀티스레딩 마스터로드맵](./01-03-02-thread-synchronization.md)
+- [1.3.2 스레드 동기화 개요: 멀티스레딩 마스터로드맵](./01-03-02-thread-synchronization.md)
 
 ### 🏷️ 관련 키워드
 

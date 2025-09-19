@@ -25,35 +25,35 @@ priority_score: 4
 
 이 섹션은 5개의 전문화된 문서로 구성되어 있습니다:
 
-### 1️⃣ [CPU 친화도 기초와 분석 도구](./04-06-cpu-affinity-fundamentals.md)
+### 1️⃣ [CPU 친화도 기초와 분석 도구](./01-06-07-cpu-affinity-fundamentals.md)
 
 - CPU 친화도의 기본 개념과 작동 원리
 - C 기반 포괄적 분석 도구 구현
 - CPU 토폴로지, 캐시 성능, 마이그레이션 통계 수집
 - NUMA 아키텍처와 메모리 지역성 최적화
 
-### 2️⃣ [Bash 스크립트를 통한 친화도 관리](./07b-cpu-affinity-scripts.md)
+### 2️⃣ [Bash 스크립트를 통한 친화도 관리](./01-06-05-cpu-affinity-scripts.md)
 
 - 실무에서 바로 사용 가능한 Bash 기반 관리 스크립트
 - 워크로드별 최적화 전략 자동 적용
 - CPU 마이그레이션 실시간 모니터링
 - 시스템 관리자를 위한 완전 자동화 솔루션
 
-### 3️⃣ [Python 기반 고급 관리 도구](./04-22-python-advanced-manager.md)
+### 3️⃣ [Python 기반 고급 관리 도구](./01-06-01-python-advanced-manager.md)
 
 - 지능형 워크로드 패턴 분석과 자동 분류 시스템
 - 데이터 기반 CPU 친화도 추천 알고리즘
 - NUMA 인식 최적화 및 동적 성능 조정
 - 머신러닝적 접근을 통한 워크로드 특성 분석
 
-### 4️⃣ [실시간 성능 시각화](./04-31-performance-visualization.md)
+### 4️⃣ [실시간 성능 시각화](./01-05-03-performance-visualization.md)
 
 - matplotlib 기반 4패널 실시간 대시보드
 - CPU 사용률, 메모리, CPU 분포, 마이그레이션 동시 모니터링
 - 최적화 전후 효과의 시각적 검증
 - 성능 임계점 감지 및 알림 시스템
 
-### 5️⃣ [최적화 전략과 실전 시나리오](./04-32-optimization-strategies.md)
+### 5️⃣ [최적화 전략과 실전 시나리오](./01-05-04-optimization-strategies.md)
 
 - 게임 서버, 데이터베이스, 웹 서버별 실전 최적화 사례
 - ROI 계산과 비즈니스 가치 연계
@@ -93,13 +93,13 @@ priority_score: 4
 
 ### 선행 학습
 
-- [프로세스 생성과 관리](./04-10-process-creation.md) - 기본 프로세스 개념
-- [CPU 아키텍처 기초](../chapter-02-cpu-interrupt/02-01-cpu-architecture.md) - CPU 구조 이해
+- [프로세스 생성과 관리](./01-02-01-process-creation.md) - 기본 프로세스 개념
+- [CPU 아키텍처 기초](../chapter-02-cpu-interrupt/index.md) - CPU 구조 이해
 
 ### 후속 학습  
 
-- [컨텍스트 스위칭 최적화](../chapter-02-cpu-interrupt/02-16-context-switching.md) - 관련 최적화 기법
-- [프로세스 스케줄링](./04-16-scheduling.md) - 스케줄러와 CPU 할당
+- [컨텍스트 스위칭 최적화](../chapter-02-cpu-interrupt/index.md) - 관련 최적화 기법
+- [프로세스 스케줄링](./01-04-01-scheduling.md) - 스케줄러와 CPU 할당
 
 ## 핵심 요점
 
@@ -121,7 +121,7 @@ priority_score: 4
 
 ---
 
-**다음**: [CPU 친화도 기초와 분석 도구](./04-06-cpu-affinity-fundamentals.md)에서 구체적인 구현 방법을 학습합니다.
+**다음**: [CPU 친화도 기초와 분석 도구](./01-06-07-cpu-affinity-fundamentals.md)에서 구체적인 구현 방법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -139,11 +139,11 @@ priority_score: 4
 
 ### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
+- [Chapter 1-2-1: 프로세스 생성과 종료 개요](./01-02-01-process-creation.md)
+- [Chapter 1-2-2: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
+- [Chapter 1-2-3: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
+- [Chapter 1-2-4: 프로세스 종료와 좀비 처리](./01-02-04-process-termination-zombies.md)
+- [Chapter 1-5-1: 프로세스 관리와 모니터링](./01-05-01-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 

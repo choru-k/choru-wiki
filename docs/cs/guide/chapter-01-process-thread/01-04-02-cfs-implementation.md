@@ -33,6 +33,94 @@ nice 차이 20 = 1.25^20 ≈ 100배
 
 이렇게 기하급수적으로 증가해서 세밀한 제어가 가능합니다.
 
+### Nice 값과 CPU 시간의 관계: 1.25의 마법
+
+```mermaid
+graph TD
+    subgraph NICE_SCALE["Nice 값 스케일"]
+        N20["-20<br/>최고 우선순위<br/>Weight: 88761"]
+        N10["-10<br/>높은 우선순위<br/>Weight: 9548"]
+        N0["0<br/>기본값<br/>Weight: 1024"]
+        N10P["10<br/>낮은 우선순위<br/>Weight: 110"]
+        N19["19<br/>최저 우선순위<br/>Weight: 15"]
+    end
+    
+    subgraph CPU_TIME["실제 CPU 시간 (10초 중)"]
+        T95["9.5초<br/>(95%)"]
+        T72["7.2초<br/>(72%)"]
+        T50["5.0초<br/>(50%)"]
+        T18["1.8초<br/>(18%)"]
+        T05["0.5초<br/>(5%)"]
+    end
+    
+    N20 --> T95
+    N10 --> T72
+    N0 --> T50
+    N10P --> T18
+    N19 --> T05
+    
+    subgraph FORMULA["1.25 공식"]
+        RULE["Nice 차이 = n<br/>CPU 시간 비율 = 1.25^n"]
+        EXAMPLE1["Nice 0 vs Nice 5<br/>1.25^5 ≈ 3배 차이"]
+        EXAMPLE2["Nice 0 vs Nice 10<br/>1.25^10 ≈ 10배 차이"]
+        EXAMPLE3["Nice 0 vs Nice 20<br/>1.25^20 ≈ 100배 차이"]
+    end
+    
+    style N20 fill:#F44336
+    style N10 fill:#FF9800
+    style N0 fill:#4CAF50
+    style N10P fill:#2196F3
+    style N19 fill:#9C27B0
+    style T95 fill:#FFCDD2
+    style T50 fill:#E8F5E8
+    style T05 fill:#F3E5F5
+```
+
+### Weight 테이블 시각화: 기하급수적 증가
+
+```mermaid
+graph LR
+    subgraph WEIGHTS["Weight 값 분포"]
+        W1["Nice -20<br/>Weight: 88761<br/>🔴 독점적"]
+        W2["Nice -10<br/>Weight: 9548<br/>🟠 높음"]  
+        W3["Nice 0<br/>Weight: 1024<br/>🟢 기준"]
+        W4["Nice 10<br/>Weight: 110<br/>🔵 낮음"]
+        W5["Nice 19<br/>Weight: 15<br/>🟣 최소"]
+    end
+    
+    subgraph RATIO["상대적 비율"]
+        R1["5914배"]
+        R2["9.3배"]
+        R3["1배<br/>(기준)"]
+        R4["0.11배"]
+        R5["0.015배"]
+    end
+    
+    W1 --> R1
+    W2 --> R2  
+    W3 --> R3
+    W4 --> R4
+    W5 --> R5
+    
+    subgraph USAGE["실제 용도"]
+        U1["시스템 중요<br/>프로세스만"]
+        U2["실시간<br/>애플리케이션"]
+        U3["일반<br/>프로세스"]
+        U4["배치<br/>작업"]
+        U5["백그라운드<br/>작업만"]
+    end
+    
+    R1 --> U1
+    R2 --> U2
+    R3 --> U3  
+    R4 --> U4
+    R5 --> U5
+    
+    style W1 fill:#FFEBEE
+    style W3 fill:#E8F5E8
+    style W5 fill:#F3E5F5
+```
+
 **실제 활용 사례**
 
 제가 만든 백업 스크립트:
@@ -204,6 +292,79 @@ static u64 __sched_period(unsigned long nr_running) {
 }
 ```
 
+### CFS Timeslice 계산 알고리즘: 공정성의 핵심
+
+CFS가 어떻게 각 프로세스에 CPU 시간을 배분하는지 시각화해보겠습니다:
+
+```mermaid
+flowchart TD
+    START["CFS Timeslice 계산 시작"] --> COUNT_TASKS["런큐의 태스크 개수<br/>nr_running 확인"]
+    
+    COUNT_TASKS --> CALC_PERIOD{"태스크가 많은가?<br/>(nr_running > sched_nr_latency)"}
+    
+    CALC_PERIOD -->|"많음 (8개 이상)"| DYNAMIC_PERIOD["동적 Period 계산<br/>nr_running × min_granularity<br/>예: 10개 × 0.75ms = 7.5ms"]
+    
+    CALC_PERIOD -->|"적음 (8개 미만)"| FIXED_PERIOD["고정 Period 사용<br/>sched_latency (기본 6ms)"]
+    
+    DYNAMIC_PERIOD --> CALC_TOTAL_WEIGHT["런큐 총 Weight 계산<br/>모든 태스크 weight 합계"]
+    FIXED_PERIOD --> CALC_TOTAL_WEIGHT
+    
+    CALC_TOTAL_WEIGHT --> CALC_SLICE["개별 Timeslice 계산<br/>slice = period × (task_weight / total_weight)"]
+    
+    CALC_SLICE --> EXAMPLE["💡 실제 예시<br/>Period: 6ms, Total Weight: 2048<br/>• Nice 0 (weight 1024): 3ms<br/>• Nice 5 (weight 335): 1ms<br/>• Nice -5 (weight 3121): 9ms"]
+    
+    EXAMPLE --> APPLY["프로세스에 적용<br/>해당 시간만큼 CPU 할당"]
+    
+    style START fill:#4CAF50
+    style CALC_SLICE fill:#2196F3
+    style EXAMPLE fill:#FFE0B2
+    style APPLY fill:#C8E6C9
+```
+
+### CFS Red-Black Tree: 효율적인 프로세스 관리
+
+CFS가 사용하는 Red-Black Tree 구조와 vruntime 기반 정렬:
+
+```mermaid
+graph TD
+    subgraph RB_TREE["CFS Red-Black Tree (vruntime 기준 정렬)"]
+        ROOT["Root<br/>vruntime: 1000ms<br/>Nice: 0"]
+        
+        LEFT1["Left Child<br/>vruntime: 500ms<br/>Nice: -5<br/>(높은 우선순위)"]
+        RIGHT1["Right Child<br/>vruntime: 1500ms<br/>Nice: 5<br/>(낮은 우선순위)"]
+        
+        LEFT2["vruntime: 200ms<br/>Nice: -10"]
+        LEFT3["vruntime: 800ms<br/>Nice: 0"]
+        RIGHT2["vruntime: 1200ms<br/>Nice: 0"]
+        RIGHT3["vruntime: 2000ms<br/>Nice: 10"]
+    end
+    
+    ROOT --> LEFT1
+    ROOT --> RIGHT1
+    LEFT1 --> LEFT2
+    LEFT1 --> LEFT3
+    RIGHT1 --> RIGHT2
+    RIGHT1 --> RIGHT3
+    
+    subgraph LEFTMOST["다음 실행 프로세스"]
+        NEXT["Leftmost Node<br/>vruntime: 200ms<br/>가장 적게 실행된 프로세스"]
+    end
+    
+    LEFT2 -.->|"O(log n) 검색"| NEXT
+    
+    subgraph OPERATIONS["주요 연산"]
+        INSERT["새 프로세스 삽입<br/>O(log n)"]
+        REMOVE["프로세스 제거<br/>O(log n)"]
+        FIND_MIN["최소 vruntime 검색<br/>O(1) - leftmost 캐시"]
+        UPDATE["vruntime 업데이트 후<br/>재정렬 O(log n)"]
+    end
+    
+    style ROOT fill:#4CAF50
+    style LEFT2 fill:#FF9800
+    style NEXT fill:#2196F3
+    style FIND_MIN fill:#E8F5E8
+```
+
 ### CFS 성능 최적화 기법
 
 ```c
@@ -294,6 +455,79 @@ static int update_entity_load_avg(struct sched_entity *se, int update_cfs_rq) {
     
     return 1;  // 업데이트 수행됨
 }
+```
+
+### PELT 알고리즘 시각화: 동적 로드 추적의 핵심
+
+PELT(Per-Entity Load Tracking)가 어떻게 프로세스별 부하를 추적하는지 시각화해보겠습니다:
+
+```mermaid
+sequenceDiagram
+    participant Task as "프로세스"
+    participant PELT as "PELT 추적기"
+    participant Scheduler as "CFS 스케줄러"
+    participant Timeline as "시간축"
+    
+    Note over Task,Timeline: PELT 동적 로드 추적 과정
+    
+    Timeline->>PELT: 1024μs 간격으로 업데이트
+    
+    loop 지속적 추적
+        Task->>PELT: 프로세스 상태 변경
+        
+        alt 프로세스가 실행 중
+            PELT->>PELT: load_avg += weight<br/>util_avg += scale_load(weight)
+            Note over PELT: 현재 기여도 추가
+        else 프로세스가 sleep
+            PELT->>PELT: load_avg = decay(load_avg)<br/>util_avg = decay(util_avg)
+            Note over PELT: 지수적 감소만 적용
+        end
+        
+        PELT->>PELT: 지수적 가중 이동 평균 계산<br/>new_avg = old_avg × 0.9785 + current × 0.0215
+        
+        PELT->>Scheduler: 업데이트된 로드 정보 전달
+        Scheduler->>Scheduler: 공정한 스케줄링 결정
+    end
+    
+    Note over PELT: 최근 1초 활동에 더 큰 가중치<br/>과거 활동은 기하급수적으로 감소
+```
+
+### PELT 가중치 감소 패턴: 최근성이 핵심
+
+```mermaid
+graph TD
+    subgraph TIMELINE["시간에 따른 가중치 변화"]
+        T0["현재<br/>가중치: 100%<br/>📈"]
+        T1["1초 전<br/>가중치: 97.85%<br/>📊"]
+        T2["2초 전<br/>가중치: 95.73%<br/>📉"]
+        T3["5초 전<br/>가중치: 89.44%<br/>📉"]
+        T4["10초 전<br/>가중치: 79.98%<br/>📉"]
+        T5["30초 전<br/>가중치: 51.18%<br/>📉"]
+        T6["60초 전<br/>가중치: 26.21%<br/>📉"]
+    end
+    
+    T0 --> T1 --> T2 --> T3 --> T4 --> T5 --> T6
+    
+    subgraph DECAY_FORMULA["감쇠 공식"]
+        FORMULA["weight(t) = weight(0) × (0.9785)^t"]
+        HALF_LIFE["반감기: 약 32초<br/>32초 후 영향력 50%로 감소"]
+        PRACTICAL["실용성: 최근 활동 우선<br/>오래된 패턴 자동 무시"]
+    end
+    
+    subgraph APPLICATIONS["실제 적용"]
+        INTERACTIVE["대화형 프로세스<br/>갑작스런 활성화에<br/>빠르게 반응"]
+        BATCH["배치 프로세스<br/>지속적 부하 패턴<br/>안정적 추적"]
+        BURSTY["버스트 워크로드<br/>짧은 활동 후<br/>빠른 가중치 감소"]
+    end
+    
+    T0 --> INTERACTIVE
+    T3 --> BATCH
+    T6 --> BURSTY
+    
+    style T0 fill:#4CAF50
+    style T3 fill:#FF9800
+    style T6 fill:#9C27B0
+    style HALF_LIFE fill:#E3F2FD
 ```
 
 ## 실전 성능 튜닝 가이드
@@ -398,6 +632,90 @@ int tune_cfs_for_workload(const char* workload) {
 }
 ```
 
+### CFS 파라미터 튜닝 효과 시각화
+
+다양한 워크로드에 맞는 CFS 파라미터 조정 효과를 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph WORKLOAD_TYPES["워크로드 타입"]
+        INTERACTIVE["🖥️ 대화형<br/>• 데스크톱 앱<br/>• 웹 브라우저<br/>• 편집기"]
+        THROUGHPUT["⚡ 처리량 우선<br/>• 웹 서버<br/>• 데이터베이스<br/>• 계산 작업"]
+        BALANCED["⚖️ 균형<br/>• 범용 서버<br/>• 개발 환경<br/>• 기본 설정"]
+    end
+    
+    subgraph PARAM_SETTINGS["파라미터 설정"]
+        INT_PARAMS["sched_latency: 3ms<br/>min_granularity: 0.5ms<br/>wakeup_granularity: 0.5ms"]
+        THR_PARAMS["sched_latency: 12ms<br/>min_granularity: 1.5ms<br/>wakeup_granularity: 2ms"]
+        BAL_PARAMS["sched_latency: 6ms<br/>min_granularity: 0.75ms<br/>wakeup_granularity: 1ms"]
+    end
+    
+    subgraph EFFECTS["성능 효과"]
+        INT_EFFECT["✅ 높은 응답성<br/>✅ 낮은 지연시간<br/>❌ 높은 컨텍스트 스위치<br/>❌ 낮은 처리량"]
+        THR_EFFECT["✅ 높은 처리량<br/>✅ 낮은 오버헤드<br/>❌ 높은 지연시간<br/>❌ 낮은 응답성"]
+        BAL_EFFECT["✅ 균형잡힌 성능<br/>✅ 범용 적합<br/>⚖️ 중간 수준 모든 지표"]
+    end
+    
+    INTERACTIVE --> INT_PARAMS --> INT_EFFECT
+    THROUGHPUT --> THR_PARAMS --> THR_EFFECT
+    BALANCED --> BAL_PARAMS --> BAL_EFFECT
+    
+    subgraph METRICS["성능 지표 비교"]
+        LATENCY_CHART["지연시간<br/>Interactive: 🟢 3ms<br/>Balanced: 🟡 6ms<br/>Throughput: 🔴 12ms"]
+        
+        CONTEXT_SWITCH["컨텍스트 스위치/초<br/>Interactive: 🔴 높음<br/>Balanced: 🟡 중간<br/>Throughput: 🟢 낮음"]
+        
+        OVERALL_PERF["전체 처리량<br/>Interactive: 🔴 85%<br/>Balanced: 🟡 100%<br/>Throughput: 🟢 115%"]
+    end
+    
+    style INTERACTIVE fill:#2196F3
+    style THROUGHPUT fill:#4CAF50  
+    style BALANCED fill:#FF9800
+    style INT_EFFECT fill:#BBDEFB
+    style THR_EFFECT fill:#C8E6C9
+    style BAL_EFFECT fill:#FFE0B2
+```
+
+### 실시간 튜닝 효과 모니터링
+
+```mermaid
+sequenceDiagram
+    participant Admin as "시스템 관리자"
+    participant Tuner as "튜닝 도구"  
+    participant CFS as "CFS 스케줄러"
+    participant Monitor as "성능 모니터"
+    participant Workload as "워크로드"
+    
+    Note over Admin,Workload: CFS 파라미터 실시간 튜닝 과정
+    
+    Admin->>Tuner: 워크로드 타입 지정<br/>"interactive"/"throughput"/"balanced"
+    
+    Tuner->>CFS: /proc/sys/kernel/sched_* 파라미터 변경
+    Note over CFS: sched_latency_ns<br/>sched_min_granularity_ns<br/>sched_wakeup_granularity_ns
+    
+    CFS->>Workload: 새 스케줄링 정책 적용
+    
+    loop 성능 모니터링 (30초간)
+        Workload->>Monitor: 성능 지표 수집
+        Monitor->>Monitor: 지연시간, 처리량, CPU 사용률 측정
+        
+        Monitor->>Admin: 실시간 성능 리포트
+        Note over Admin: • 평균 응답시간<br/>• 컨텍스트 스위치 빈도<br/>• 전체 처리량 변화
+        
+        alt 성능 개선됨
+            Admin->>Admin: 설정 유지
+        else 성능 악화됨  
+            Admin->>Tuner: 파라미터 롤백
+            Tuner->>CFS: 이전 설정 복구
+        end
+    end
+    
+    Admin->>Admin: 최적 설정 문서화<br/>프로덕션 적용
+    
+    style CFS fill:#4CAF50
+    style Monitor fill:#2196F3
+```
+
 ## 핵심 요점
 
 ### 1. Nice 값은 기하급수적으로 작동한다
@@ -418,8 +736,8 @@ Per-Entity Load Tracking으로 각 태스크의 최근 활동 패턴을 추적�
 
 ---
 
-**이전**: [4.3a 스케줄링 기초와 CFS 원리](./04-03-scheduling-fundamentals.md)  
-**다음**: [4.3c 실시간 스케줄링](./04-18-realtime-scheduling.md)에서 FIFO, RR, DEADLINE 스케줄링을 학습합니다.
+**이전**: [1.1.3 스케줄링 기초와 CFS 원리](./01-01-03-scheduling-fundamentals.md)  
+**다음**: [1.4.3 실시간 스케줄링](./01-04-03-realtime-scheduling.md)에서 FIFO, RR, DEADLINE 스케줄링을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -437,11 +755,11 @@ Per-Entity Load Tracking으로 각 태스크의 최근 활동 패턴을 추적�
 
 ### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
+- [Chapter 1-2-1: 프로세스 생성과 종료 개요](./01-02-01-process-creation.md)
+- [Chapter 1-2-2: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
+- [Chapter 1-2-3: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
+- [Chapter 1-2-4: 프로세스 종료와 좀비 처리](./01-02-04-process-termination-zombies.md)
+- [Chapter 1-5-1: 프로세스 관리와 모니터링](./01-05-01-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 

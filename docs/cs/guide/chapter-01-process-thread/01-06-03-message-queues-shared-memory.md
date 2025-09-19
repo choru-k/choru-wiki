@@ -63,6 +63,122 @@ void log_collector() {
 대신 메시지 큐는 선택적 수신 가능!
 ```
 
+### 메시지 큐 아키텍처: 우체국 사서함 시스템
+
+메시지 큐가 어떻게 타입별로 메시지를 분류하고 우선순위를 처리하는지 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph SENDERS["송신자들"]
+        SENDER1["Error Logger<br/>mtype = 1 (긴급)"]
+        SENDER2["Warning Logger<br/>mtype = 2 (중요)"]
+        SENDER3["Info Logger<br/>mtype = 3 (일반)"]
+        SENDER4["Debug Logger<br/>mtype = 4 (디버그)"]
+    end
+    
+    subgraph MSGQUEUE["Message Queue (Kernel)"]
+        subgraph QUEUE_STRUCTURE["큐 내부 구조"]
+            MSG1["[Type:1] 'Database connection failed!'"]
+            MSG2["[Type:2] 'Memory usage 85%'"]
+            MSG3["[Type:1] 'System overheating!'"]
+            MSG4["[Type:3] 'User login successful'"]
+            MSG5["[Type:2] 'Disk space low'"]
+            MSG6["[Type:4] 'Function xyz() called'"]
+        end
+        
+        subgraph QUEUE_MGMT["큐 관리"]
+            QUEUE_SIZE["Max Messages: 16<br/>Max Size: 8KB/msg"]
+            QUEUE_ORDER["저장 순서: FIFO<br/>수신 순서: Type 기반"]
+        end
+    end
+    
+    subgraph RECEIVERS["수신자들"]
+        EMERGENCY["Emergency Handler<br/>msgrcv(type=1)"]
+        MONITOR["System Monitor<br/>msgrcv(type=2)"]
+        LOGGER["File Logger<br/>msgrcv(type=0) 모든 타입"]
+    end
+    
+    SENDER1 --> MSG1
+    SENDER2 --> MSG2
+    SENDER1 --> MSG3
+    SENDER3 --> MSG4
+    SENDER2 --> MSG5
+    SENDER4 --> MSG6
+    
+    MSG1 --> EMERGENCY
+    MSG3 --> EMERGENCY
+    MSG2 --> MONITOR
+    MSG5 --> MONITOR
+    MSG4 --> LOGGER
+    MSG6 --> LOGGER
+    
+    style SENDER1 fill:#FF5252
+    style MSG1 fill:#FFCDD2
+    style MSG3 fill:#FFCDD2
+    style EMERGENCY fill:#FFCDD2
+    style SENDER2 fill:#FF9800
+    style MSG2 fill:#FFE0B2
+    style MSG5 fill:#FFE0B2
+    style MONITOR fill:#FFE0B2
+```
+
+**메시지 큐의 핵심 특징**:
+
+1. **타입 기반 수신**: 특정 타입의 메시지만 선택적으로 수신 가능
+2. **우선순위 처리**: 낮은 타입 번호가 높은 우선순위 (1 > 2 > 3)
+3. **비동기 통신**: 송신자와 수신자가 서로 기다리지 않음
+4. **지속성**: 프로세스가 종료되어도 메시지는 큐에 남아있음
+
+### System V vs POSIX IPC 비교: 레거시 vs 모던
+
+```mermaid
+graph TD
+    subgraph SYSTEM_V["System V IPC (레거시)"]
+        SV_ID["키 기반 식별<br/>• ftok() 함수 사용<br/>• 숫자 키 (0x1234)<br/>• 충돌 가능성"]
+        SV_PERSIST["커널 지속성<br/>• 프로세스 종료 후에도 유지<br/>• 명시적 삭제 필요<br/>• ipcs/ipcrm 도구"]
+        SV_PERF["성능<br/>• 커널 레벨 최적화<br/>• 오래된 구현<br/>• 안정적"]
+        SV_PORT["이식성<br/>• 모든 Unix 지원<br/>• 오래된 표준<br/>• 호환성 좋음"]
+    end
+    
+    subgraph POSIX_IPC["POSIX IPC (모던)"]
+        POSIX_ID["이름 기반 식별<br/>• 문자열 이름 사용<br/>• '/queue_name' 형식<br/>• 명확하고 직관적"]
+        POSIX_PERSIST["파일시스템 연동<br/>• /dev/shm에 실제 파일<br/>• 권한 관리 용이<br/>• 자동 정리 가능"]
+        POSIX_PERF["성능<br/>• 현대적 구현<br/>• 더 나은 에러 처리<br/>• 논블로킹 지원"]
+        POSIX_PORT["이식성<br/>• POSIX 표준<br/>• 최신 시스템<br/>• 리눅스/macOS"]
+    end
+    
+    subgraph COMPARISON["선택 기준"]
+        LEGACY["레거시 시스템<br/>• 기존 코드베이스<br/>• 최대 호환성 필요<br/>• 모든 Unix 지원"]
+        MODERN["신규 프로젝트<br/>• 현대적 개발<br/>• 명확한 API<br/>• 리눅스 중심"]
+        PERFORMANCE["고성능 필요<br/>• 대용량 처리<br/>• 최적화 중요<br/>• 벤치마크 권장"]
+    end
+    
+    subgraph REAL_EXAMPLES["실제 사용 사례"]
+        SV_EXAMPLES["System V 사용<br/>• Oracle Database<br/>• 은행 시스템<br/>• 대형 ERP"]
+        POSIX_EXAMPLES["POSIX 사용<br/>• 웹 서버<br/>• 클라우드 앱<br/>• 마이크로서비스"]
+    end
+    
+    SV_ID --> LEGACY
+    POSIX_ID --> MODERN
+    SV_PERF --> PERFORMANCE
+    POSIX_PERF --> PERFORMANCE
+    
+    LEGACY --> SV_EXAMPLES
+    MODERN --> POSIX_EXAMPLES
+    
+    style SYSTEM_V fill:#FFEB3B
+    style POSIX_IPC fill:#4CAF50
+    style LEGACY fill:#FFE0B2
+    style MODERN fill:#C8E6C9
+```
+
+**실무 선택 가이드**:
+
+- **기존 시스템**: System V (호환성 우선)
+- **신규 개발**: POSIX (현대적 API)
+- **성능 중요**: 벤치마크 후 결정
+- **크로스 플랫폼**: System V (더 넓은 지원)
+
 ## 3.1 System V 메시지 큐: 레거시의 힘
 
 ```c
@@ -293,6 +409,61 @@ void nonblocking_mqueue() {
 
 공유 메모리는 F1 레이싱카처럼 빠릅니다. 다른 IPC들이 데이터를 복사하는 동안, 공유 메모리는 그냥 포인터만 공유!
 
+### 공유 메모리 아키텍처: 메모리 공간의 마법
+
+공유 메모리가 어떻게 여러 프로세스 간에 같은 물리 메모리를 공유하는지 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph PHYSICAL_MEMORY["물리 메모리"]
+        SHARED_SEGMENT["공유 메모리 세그먼트<br/>물리 주소: 0x7F000000<br/>크기: 4KB<br/>내용: [counter=42, data='Hello']"] 
+    end
+    
+    subgraph PROCESS_A["프로세스 A"]
+        VIRTUAL_A["가상 주소 공간"]
+        VA_MAPPING["0x40000000<br/>↓ 매핑"]
+        VA_POINTER["int* counter = (int*)0x40000000<br/>*counter = 42"]
+    end
+    
+    subgraph PROCESS_B["프로세스 B"]
+        VIRTUAL_B["가상 주소 공간"]
+        VB_MAPPING["0x50000000<br/>↓ 매핑"]
+        VB_POINTER["int* counter = (int*)0x50000000<br/>*counter = 42 (같은 값!)"]
+    end
+    
+    subgraph KERNEL["커널 메모리 관리"]
+        PAGE_TABLE_A["프로세스 A 페이지 테이블<br/>0x40000000 → 0x7F000000"]
+        PAGE_TABLE_B["프로세스 B 페이지 테이블<br/>0x50000000 → 0x7F000000"]
+        MMU["MMU (Memory Management Unit)<br/>가상 주소 → 물리 주소 변환"]
+    end
+    
+    subgraph IPC_COMPARISON["다른 IPC와 비교"]
+        PIPE_COPY["파이프: 데이터 복사<br/>Process A → Kernel → Process B<br/>비용: O(n)"]
+        SHARED_DIRECT["공유 메모리: 직접 접근<br/>Process A ← 물리 메모리 → Process B<br/>비용: O(1)"]
+    end
+    
+    VA_MAPPING --> PAGE_TABLE_A
+    VB_MAPPING --> PAGE_TABLE_B
+    PAGE_TABLE_A --> MMU
+    PAGE_TABLE_B --> MMU
+    MMU --> SHARED_SEGMENT
+    
+    VA_POINTER -.->|"읽기/쓰기"| SHARED_SEGMENT
+    VB_POINTER -.->|"읽기/쓰기"| SHARED_SEGMENT
+    
+    style SHARED_SEGMENT fill:#4CAF50
+    style VA_POINTER fill:#E3F2FD
+    style VB_POINTER fill:#E3F2FD
+    style SHARED_DIRECT fill:#C8E6C9
+    style PIPE_COPY fill:#FFCDD2
+```
+
+**핵심 인사이트**:
+
+1. **물리 메모리 공유**: 같은 물리 메모리를 다른 가상 주소로 매핑
+2. **Zero-Copy**: 데이터 복사 없이 직접 접근으로 극한의 성능
+3. **MMU 활용**: 하드웨어 레벨에서 주소 변환으로 투명한 공유
+
 **실제 비교: Redis의 비밀**
 
 ```c
@@ -321,6 +492,63 @@ void redis_fork_snapshot() {
 TCP 소켓: 1,800ms
 공유 메모리: 0.5ms 🚀 (4000배 빠름!)
 ```
+
+### System V vs POSIX 공유 메모리 구현 차이
+
+두 방식의 내부 구현과 생명주기를 비교해보겠습니다:
+
+```mermaid
+sequenceDiagram
+    participant App as "Application"
+    participant Kernel as "Kernel"
+    participant FS as "File System"
+    participant MM as "Memory Manager"
+    
+    Note over App,MM: System V 공유 메모리 생명주기
+    
+    App->>Kernel: shmget(key, size, IPC_CREAT)
+    Kernel->>MM: 공유 메모리 세그먼트 생성
+    MM->>Kernel: shmid 반환
+    Kernel->>App: shmid
+    
+    App->>Kernel: shmat(shmid, addr, flags)
+    Kernel->>MM: 프로세스 주소공간에 매핑
+    MM->>App: 가상 주소 반환
+    
+    Note over App: 메모리 사용 (읽기/쓰기)
+    
+    App->>Kernel: shmdt(addr) - 매핑 해제
+    App->>Kernel: shmctl(IPC_RMID) - 세그먼트 삭제
+    Kernel->>MM: 물리 메모리 해제
+    
+    Note over App,MM: POSIX 공유 메모리 생명주기
+    
+    App->>Kernel: shm_open("/name", O_CREAT, mode)
+    Kernel->>FS: /dev/shm에 파일 생성
+    FS->>Kernel: 파일 디스크립터 반환
+    Kernel->>App: fd
+    
+    App->>Kernel: ftruncate(fd, size)
+    App->>Kernel: mmap(NULL, size, PROT_RW, MAP_SHARED, fd, 0)
+    Kernel->>MM: 파일을 메모리에 매핑
+    MM->>App: 가상 주소 반환
+    
+    Note over App: 메모리 사용 (mmap 기반)
+    
+    App->>Kernel: munmap(addr, size) - 매핑 해제
+    App->>Kernel: shm_unlink("/name") - 파일 삭제
+    Kernel->>FS: /dev/shm에서 파일 제거
+    
+    style App fill:#2196F3
+    style Kernel fill:#FF9800
+    style FS fill:#4CAF50
+    style MM fill:#9C27B0
+```
+
+**주요 차이점**:
+
+- **System V**: 커널 내부 테이블 관리, 숫자 ID 사용
+- **POSIX**: 파일시스템 기반, 이름 기반 식별, 표준 파일 연산 활용
 
 ## 4.1 System V 공유 메모리: 위험한 속도광
 
@@ -501,6 +729,69 @@ void produce(ring_buffer_t* ring, const char* msg) {
 // 성능: 초당 100만 메시지 처리! 🚀
 ```
 
+### POSIX mmap 공유 메모리: 파일 기반 공유
+
+mmap이 어떻게 파일을 메모리에 매핑하여 프로세스 간 공유를 구현하는지 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph FILE_SYSTEM["/dev/shm (tmpfs)"]
+        SHM_FILE["/dev/shm/test_shm<br/>파일 크기: 4KB<br/>내용: 실제 공유 데이터"]
+    end
+    
+    subgraph PROCESS_1["프로세스 1"]
+        P1_FD["파일 디스크립터<br/>fd = 3"]
+        P1_MMAP["mmap(NULL, 4KB,<br/>PROT_RW, MAP_SHARED, fd, 0)"]
+        P1_PTR["void* ptr = 0x7f8a12000000<br/>직접 메모리 접근"]
+    end
+    
+    subgraph PROCESS_2["프로세스 2"]
+        P2_FD["파일 디스크립터<br/>fd = 4 (다른 번호)"]
+        P2_MMAP["mmap(NULL, 4KB,<br/>PROT_RW, MAP_SHARED, fd, 0)"]
+        P2_PTR["void* ptr = 0x7f8b34000000<br/>다른 주소, 같은 내용"]
+    end
+    
+    subgraph KERNEL_MM["커널 메모리 관리"]
+        PAGE_CACHE["페이지 캐시<br/>파일 내용을 메모리에 캐싱"]
+        VMA1["VMA (Virtual Memory Area)<br/>프로세스 1 매핑 정보"]
+        VMA2["VMA (Virtual Memory Area)<br/>프로세스 2 매핑 정보"]
+    end
+    
+    subgraph SYNC_MECHANISM["동기화 메커니즘"]
+        MSYNC["msync() - 강제 동기화<br/>메모리 → 파일"]
+        AUTO_SYNC["자동 동기화<br/>커널이 주기적으로 수행"]
+        MLOCK["mlock() - 스왑 방지<br/>중요한 데이터 보호"]
+    end
+    
+    SHM_FILE --> PAGE_CACHE
+    
+    P1_FD --> P1_MMAP
+    P1_MMAP --> VMA1
+    VMA1 --> PAGE_CACHE
+    PAGE_CACHE --> P1_PTR
+    
+    P2_FD --> P2_MMAP
+    P2_MMAP --> VMA2
+    VMA2 --> PAGE_CACHE
+    PAGE_CACHE --> P2_PTR
+    
+    P1_PTR -.->|"쓰기 시"| MSYNC
+    P2_PTR -.->|"읽기 시"| AUTO_SYNC
+    
+    style SHM_FILE fill:#4CAF50
+    style PAGE_CACHE fill:#FF9800
+    style P1_PTR fill:#E3F2FD
+    style P2_PTR fill:#E3F2FD
+    style MSYNC fill:#FFE0B2
+```
+
+**POSIX mmap의 장점**:
+
+1. **파일시스템 통합**: 표준 파일 연산 활용 가능
+2. **자동 동기화**: 커널이 메모리-파일 간 동기화 관리
+3. **권한 관리**: 파일 권한으로 접근 제어
+4. **투명성**: /dev/shm에서 실제 파일로 확인 가능
+
 ```c
 // POSIX 공유 메모리
 void posix_shared_memory() {
@@ -624,7 +915,177 @@ void shared_ring_buffer() {
         shm_unlink("/ring");
     }
 }
+
+### Lock-Free 링 버퍼 구현: 무한 성능의 비밀
+
+Atomic 연산을 활용한 링 버퍼가 어떻게 뮤텍스 없이 동시성을 보장하는지 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph RING_BUFFER["Lock-Free Ring Buffer"]
+        subgraph BUFFER_ARRAY["버퍼 배열 (1024 slots)"]
+            SLOT0["[0] 'Message 0'"]
+            SLOT1["[1] 'Message 1'"]
+            SLOT2["[2] 'Message 2'"]
+            SLOT3["[3] 'Message 3'"]
+            SLOT4["[4] 'Message 4'"]
+            DOTTED["..."]
+            SLOT1023["[1023] empty"]
+        end
+        
+        HEAD["atomic_uint head = 5<br/>(다음 쓰기 위치)"]
+        TAIL["atomic_uint tail = 2<br/>(다음 읽기 위치)"]
+    end
+    
+    subgraph PRODUCER["Producer Process"]
+        PROD_LOGIC["
+        1. head_current = atomic_load(&head)
+        2. next = (head_current + 1) % 1024
+        3. if (next != tail) // 버퍼 가득 확인
+        4.     write_data(buffer[head_current])
+        5.     atomic_store(&head, next) // 원자적 업데이트
+        "]
+    end
+    
+    subgraph CONSUMER["Consumer Process"]
+        CONS_LOGIC["
+        1. tail_current = atomic_load(&tail)
+        2. if (tail_current != head) // 데이터 있는지 확인
+        3.     read_data(buffer[tail_current])
+        4.     next = (tail_current + 1) % 1024
+        5.     atomic_store(&tail, next) // 원자적 업데이트
+        "]
+    end
+    
+    subgraph ATOMIC_GUARANTEES["Atomic 연산 보장"]
+        ATOMICITY["원자성 (Atomicity)<br/>읽기/쓰기가 분할 불가능"]
+        VISIBILITY["가시성 (Visibility)<br/>다른 프로세스에 즉시 반영"]
+        ORDERING["순서 (Ordering)<br/>메모리 재배치 방지"]
+    end
+    
+    subgraph PERFORMANCE["성능 비교"]
+        MUTEX_PERF["뮤텍스 기반<br/>• 시스템 콜 오버헤드<br/>• 컨텍스트 스위칭<br/>• 100만 ops: 2.5초"]
+        LOCKFREE_PERF["Lock-Free<br/>• 사용자 공간 연산<br/>• CAS 명령어 활용<br/>• 100만 ops: 0.1초"]
+    end
+    
+    HEAD --> SLOT4
+    TAIL --> SLOT2
+    
+    PROD_LOGIC --> HEAD
+    CONS_LOGIC --> TAIL
+    
+    HEAD -.-> ATOMICITY
+    TAIL -.-> VISIBILITY
+    SLOT0 -.-> ORDERING
+    
+    style HEAD fill:#4CAF50
+    style TAIL fill:#2196F3
+    style SLOT2 fill:#BBDEFB
+    style SLOT3 fill:#C8E6C9
+    style SLOT4 fill:#DCEDC8
+    style LOCKFREE_PERF fill:#C8E6C9
+    style MUTEX_PERF fill:#FFCDD2
 ```
+
+**Lock-Free의 핵심 원리**:
+
+1. **CAS (Compare-And-Swap)**: 하드웨어 레벨에서 원자적 업데이트 보장
+2. **ABA 문제 해결**: 포인터 대신 인덱스 사용으로 회피
+3. **메모리 배리어**: 컴파일러/CPU 재배치 방지
+4. **스핀 대기**: 블로킹 없이 지속적 시도
+
+### 종합 IPC 성능 비교: 언제 무엇을 선택할까?
+
+실제 측정 데이터를 바탕으로 한 IPC 메커니즘별 성능과 특성을 비교해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph PERFORMANCE_MATRIX["성능 매트릭스 (1MB 데이터 전송)"]
+        subgraph LATENCY["지연 시간 (μs)"]
+            SHARED_LAT["공유 메모리: 0.5"]
+            PIPE_LAT["파이프: 2,100"]
+            SOCKET_LAT["소켓: 1,800"]
+            MSGQ_LAT["메시지 큐: 3,500"]
+        end
+        
+        subgraph THROUGHPUT["처리량 (MB/s)"]
+            SHARED_THRU["공유 메모리: 8,000"]
+            PIPE_THRU["파이프: 476"]
+            SOCKET_THRU["소켓: 556"]
+            MSGQ_THRU["메시지 큐: 286"]
+        end
+        
+        subgraph COMPLEXITY["구현 복잡도"]
+            PIPE_COMPLEX["파이프: 1/5 ⭐"]
+            SOCKET_COMPLEX["소켓: 2/5 ⭐⭐"]
+            MSGQ_COMPLEX["메시지 큐: 3/5 ⭐⭐⭐"]
+            SHARED_COMPLEX["공유 메모리: 5/5 ⭐⭐⭐⭐⭐"]
+        end
+    end
+    
+    subgraph USE_CASES["사용 사례별 권장"]
+        subgraph HIGH_PERF["고성능 요구"]
+            HFT["고빈도 거래<br/>→ 공유 메모리"]
+            GAMING["게임 엔진<br/>→ 공유 메모리"]
+            VIDEO["비디오 스트리밍<br/>→ 공유 메모리"]
+        end
+        
+        subgraph STRUCTURED["구조화된 통신"]
+            LOGGING["로깅 시스템<br/>→ 메시지 큐"]
+            WORKFLOW["워크플로우<br/>→ 메시지 큐"]
+            PRIORITY["우선순위 작업<br/>→ 메시지 큐"]
+        end
+        
+        subgraph SIMPLE["간단한 통신"]
+            CLI["CLI 도구<br/>→ 파이프"]
+            FILTER["데이터 필터링<br/>→ 파이프"]
+            SHELL["쉘 스크립트<br/>→ 파이프"]
+        end
+        
+        subgraph NETWORK["네트워크 호환"]
+            MICROSERVICE["마이크로서비스<br/>→ 소켓"]
+            DISTRIBUTED["분산 시스템<br/>→ 소켓"]
+            RPC["RPC 통신<br/>→ 소켓"]
+        end
+    end
+    
+    subgraph DECISION_TREE["선택 기준"]
+        Q1{"성능이 최우선인가?"}
+        Q2{"구조화된 메시지가<br/>필요한가?"}
+        Q3{"네트워크 확장성이<br/>필요한가?"}
+        Q4{"단순한 데이터<br/>파이프라인인가?"}
+    end
+    
+    Q1 -->|"예"| SHARED_LAT
+    Q1 -->|"아니오"| Q2
+    Q2 -->|"예"| MSGQ_LAT
+    Q2 -->|"아니오"| Q3
+    Q3 -->|"예"| SOCKET_LAT
+    Q3 -->|"아니오"| Q4
+    Q4 -->|"예"| PIPE_LAT
+    
+    SHARED_LAT --> HFT
+    MSGQ_LAT --> LOGGING
+    SOCKET_LAT --> MICROSERVICE
+    PIPE_LAT --> CLI
+    
+    style SHARED_LAT fill:#4CAF50
+    style SHARED_THRU fill:#4CAF50
+    style MSGQ_LAT fill:#FF9800
+    style PIPE_LAT fill:#2196F3
+    style SOCKET_LAT fill:#9C27B0
+    style SHARED_COMPLEX fill:#F44336
+    style PIPE_COMPLEX fill:#4CAF50
+```
+
+**실무 선택 가이드**:
+
+| 요구사항 | 1순위 | 2순위 | 주의사항 |
+|---------|-------|-------|----------|
+| **극한 성능** | 공유 메모리 | 파이프 | 동기화 복잡성 |
+| **구조화된 통신** | 메시지 큐 | 소켓 | 큐 크기 제한 |
+| **네트워크 확장** | 소켓 | 메시지 큐 | 네트워크 지연 |
+| **개발 속도** | 파이프 | 소켓 | 기능 제약 |
 
 ## 실전 활용 패턴
 
@@ -719,7 +1180,93 @@ void worker_pool_with_queues() {
     distribute_tasks(task_queue);
     collect_results(result_queue);
 }
+
+### IPC 조합 패턴: 현실적인 아키텍처
+
+실제 시스템에서는 여러 IPC 메커니즘을 조합하여 사용합니다:
+
+```mermaid
+graph TD
+    subgraph REAL_SYSTEM["실제 시스템 아키텍처 예: 대용량 웹 서버"]
+        subgraph NGINX["Nginx Master"]
+            MASTER["Master Process<br/>설정 관리, 워커 생성"]
+        end
+        
+        subgraph WORKERS["Worker Processes"]
+            WORKER1["Worker 1<br/>HTTP 요청 처리"]
+            WORKER2["Worker 2<br/>HTTP 요청 처리"]
+            WORKER3["Worker 3<br/>HTTP 요청 처리"]
+        end
+        
+        subgraph SHARED_RESOURCES["공유 리소스"]
+            SHM_CACHE["공유 메모리<br/>HTTP 캐시<br/>성능: 최고"]
+            SHM_STATS["공유 메모리<br/>통계 카운터<br/>원자적 업데이트"]
+        end
+        
+        subgraph LOGGING["로깅 시스템"]
+            LOG_QUEUE["메시지 큐<br/>접근 로그<br/>우선순위: ERROR > WARN > INFO"]
+            LOG_PROCESSOR["Log Processor<br/>파일 쓰기, 회전"]
+        end
+        
+        subgraph CLIENTS["클라이언트 통신"]
+            TCP_SOCK["TCP 소켓<br/>클라이언트 연결<br/>네트워크 투명성"]
+            UNIX_SOCK["Unix 소켓<br/>FastCGI/PHP-FPM<br/>로컬 고성능"]
+        end
+        
+        subgraph CONTROL["제어 인터페이스"]
+            SIGNAL_PIPE["시그널 + 파이프<br/>graceful reload<br/>설정 업데이트"]
+        end
+    end
+    
+    subgraph PERFORMANCE_PROFILE["성능 프로파일"]
+        HOT_PATH["Hot Path (요청 처리)<br/>TCP 소켓 → 공유 메모리 캐시<br/>지연시간: < 1ms"]
+        COLD_PATH["Cold Path (로깅, 통계)<br/>메시지 큐 → 파일 시스템<br/>처리량: 100K ops/sec"]
+        ADMIN_PATH["관리 경로 (설정 변경)<br/>시그널 → 파이프 → 설정 리로드<br/>빈도: 낮음, 안정성 중요"]
+    end
+    
+    MASTER --> WORKER1
+    MASTER --> WORKER2  
+    MASTER --> WORKER3
+    
+    WORKER1 --> SHM_CACHE
+    WORKER2 --> SHM_CACHE
+    WORKER3 --> SHM_CACHE
+    
+    WORKER1 --> SHM_STATS
+    WORKER2 --> SHM_STATS
+    WORKER3 --> SHM_STATS
+    
+    WORKER1 --> LOG_QUEUE
+    WORKER2 --> LOG_QUEUE
+    WORKER3 --> LOG_QUEUE
+    LOG_QUEUE --> LOG_PROCESSOR
+    
+    TCP_SOCK --> WORKER1
+    TCP_SOCK --> WORKER2
+    TCP_SOCK --> WORKER3
+    
+    UNIX_SOCK --> WORKER1
+    
+    SIGNAL_PIPE --> MASTER
+    
+    SHM_CACHE --> HOT_PATH
+    LOG_QUEUE --> COLD_PATH
+    SIGNAL_PIPE --> ADMIN_PATH
+    
+    style SHM_CACHE fill:#4CAF50
+    style LOG_QUEUE fill:#FF9800
+    style TCP_SOCK fill:#2196F3
+    style HOT_PATH fill:#C8E6C9
+    style COLD_PATH fill:#FFE0B2
+    style ADMIN_PATH fill:#E1F5FE
 ```
+
+**아키텍처 설계 원칙**:
+
+1. **Hot Path 최적화**: 자주 사용되는 경로는 공유 메모리로
+2. **Cold Path 분리**: 로깅, 통계는 비동기 메시지 큐로
+3. **제어 평면 분리**: 관리 기능은 별도 IPC로 격리
+4. **장애 격리**: 한 IPC 실패가 전체 시스템에 영향 없도록 설계
 
 ## 핵심 요점
 
@@ -741,8 +1288,8 @@ Atomic 연산을 활용한 링 버퍼 등으로 뮤텍스 오버헤드를 제거
 
 ---
 
-**이전**: [4.4b 파이프와 FIFO](./04b-pipes-fifos.md)
-**다음**: [4.4d 소켓과 고급 IPC](./04-21-sockets-advanced-ipc.md)에서 네트워크 통신과 이벤트 기반 IPC를 학습합니다.
+**이전**: [1.6.2 파이프와 FIFO](./01-06-02-pipes-fifos.md)
+**다음**: [1.3.6 소켓과 고급 IPC](./01-03-06-sockets-advanced-ipc.md)에서 네트워크 통신과 이벤트 기반 IPC를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -760,11 +1307,11 @@ Atomic 연산을 활용한 링 버퍼 등으로 뮤텍스 오버헤드를 제거
 
 ### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./04-10-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./04-11-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./04-12-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./04-13-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./04-40-process-management-monitoring.md)
+- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-02-01-process-creation.md)
+- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
+- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
+- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-02-04-process-termination-zombies.md)
+- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-05-01-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 

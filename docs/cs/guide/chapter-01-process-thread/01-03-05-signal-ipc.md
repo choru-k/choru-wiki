@@ -190,15 +190,15 @@ void hft_trading_engine() {
 
 ### 선행 학습 권장
 
-- [4.1 프로세스 기초](../01-process-basics.md) - 프로세스 생명주기
-- [4.2 스레드 동기화](./01-03-02-thread-synchronization.md) - 동기화 메커니즘
-- [4.3 스케줄링](./01-04-01-scheduling.md) - CPU 자원 관리
+- [1.2.1 프로세스 생성 개요](./01-02-01-process-creation.md) - 프로세스 생명주기
+- [1.3.2 스레드 동기화](./01-03-02-thread-synchronization.md) - 동기화 메커니즘
+- [1.4.1 스케줄링](./01-04-01-scheduling.md) - CPU 자원 관리
 
 ### 후속 학습 추천  
 
 - [메모리 관리](../../memory/) - 가상 메모리와 성능
 - [네트워크 프로그래밍](../../network/) - 소켓 심화
-- [분산 시스템](../distributed-systems/) - 확장성과 내결함성
+- [Chapter 14: 분산 시스템](../chapter-14-distributed-systems/) - 확장성과 내결함성
 
 ## 💡 마지막 조언
 
@@ -217,7 +217,7 @@ IPC는 **시스템 아키텍처의 핵심**입니다. 올바른 선택이 성능
 
 ---
 
-**다음**: [4.4a 시그널 기초](./01-01-04-signals-basics.md)에서 비동기 통신의 핵심부터 차근차근 시작하세요!
+**다음**: [1.1.4 시그널 기초](./01-01-04-signals-basics.md)에서 비동기 통신의 핵심부터 차근차근 시작하세요!
 
 ## 📚 관련 문서
 
@@ -235,11 +235,11 @@ IPC는 **시스템 아키텍처의 핵심**입니다. 올바른 선택이 성능
 
 ### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-02-01-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-02-04-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-05-01-process-management-monitoring.md)
+- [Chapter 1-2-1: 프로세스 생성과 종료 개요](./01-02-01-process-creation.md)
+- [Chapter 1-2-2: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
+- [Chapter 1-2-3: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
+- [Chapter 1-2-4: 프로세스 종료와 좀비 처리](./01-02-04-process-termination-zombies.md)
+- [Chapter 1-5-1: 프로세스 관리와 모니터링](./01-05-01-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 
