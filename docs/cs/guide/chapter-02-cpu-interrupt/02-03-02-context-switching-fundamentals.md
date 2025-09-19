@@ -45,6 +45,73 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
 # 40ms면 충분합니다! 인간은 50ms 이하 지연을 느끼지 못하거든요
 ```
 
+## ⏱️ 컨텍스트 스위칭 타임라인
+
+```mermaid
+graph LR
+    subgraph "크롬 브라우저 멀티탭 처리 (10ms 타임슬라이스)"
+        subgraph "CPU 코어 1"
+            A1["0-10ms:<br/>유튜브 탭"]
+            A2["10-20ms:<br/>Gmail 탭"]
+            A3["20-30ms:<br/>구글독스 탭"]
+        end
+        
+        subgraph "CPU 코어 2"
+            B1["0-10ms:<br/>광고 스크립트"]
+            B2["10-20ms:<br/>이미지 로딩"]
+            B3["20-30ms:<br/>CSS 렌더링"]
+        end
+        
+        subgraph "사용자 경험"
+            C1["끊김 없는 동영상"]
+            C2["타이핑 반응성"]
+            C3["페이지 스크롤"]
+        end
+    end
+    
+    A1 --> A2 --> A3
+    B1 --> B2 --> B3
+    
+    style A1 fill:#ff5722,color:#fff
+    style A2 fill:#4caf50,color:#fff
+    style A3 fill:#2196f3,color:#fff
+    style B1 fill:#ff9800,color:#fff
+    style B2 fill:#9c27b0,color:#fff
+    style B3 fill:#607d8b,color:#fff
+```
+
+## 🎪 CPU 저글링 비유
+
+```mermaid
+graph LR
+    subgraph "시간: 0-10ms"
+        A1["🏀 Process A<br/>실행 중"]
+        B1["⚾ Process B<br/>대기"]
+        C1["🎾 Process C<br/>대기"]
+    end
+    
+    subgraph "시간: 10-20ms"
+        A2["🏀 Process A<br/>저장됨"]
+        B2["⚾ Process B<br/>실행 중"]
+        C2["🎾 Process C<br/>대기"]
+    end
+    
+    subgraph "시간: 20-30ms"
+        A3["🏀 Process A<br/>대기"]
+        B3["⚾ Process B<br/>저장됨"]
+        C3["🎾 Process C<br/>실행 중"]
+    end
+    
+    A1 -->|"컨텍스트 스위칭<br/>레지스터 저장"| A2
+    B1 -->|"컨텍스트 복원<br/>실행 시작"| B2
+    B2 -->|"컨텍스트 스위칭<br/>레지스터 저장"| B3
+    C2 -->|"컨텍스트 복원<br/>실행 시작"| C3
+    
+    style A1 fill:#4caf50,color:#fff
+    style B2 fill:#4caf50,color:#fff
+    style C3 fill:#4caf50,color:#fff
+```
+
 ### CPU의 저글링 - 프로세스 공을 떨어뜨리지 마라
 
 서커스 저글러를 상상해보세요:

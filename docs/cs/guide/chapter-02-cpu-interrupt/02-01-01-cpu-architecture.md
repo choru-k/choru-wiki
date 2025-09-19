@@ -65,6 +65,39 @@ priority_score: 4
 | **캐시** | 메모리 대기시간 감소 | 10-100배 | 높음 | 자주 사용하는 데이터를 고속 저장 |
 | **SIMD** | 데이터 병렬성 | 4-16배 | 중간 | 한 번에 여러 데이터 동시 처리 |
 
+## 🏗️ CPU 아키텍처 전체 구조
+
+```mermaid
+graph TD
+    A["CPU 아키텍처"] --> B["명령어 처리"]
+    A --> C["메모리 시스템"]
+    A --> D["병렬 처리"]
+    A --> E["전력 관리"]
+    
+    B --> B1["파이프라인<br/>5-10배 성능향상"]
+    B --> B2["분기 예측<br/>95% 정확도"]
+    B --> B3["Out-of-Order 실행<br/>명령어 재정렬"]
+    
+    C --> C1["L1 캐시<br/>1-2 cycles"]
+    C --> C2["L2 캐시<br/>10-20 cycles"] 
+    C --> C3["L3 캐시<br/>40-75 cycles"]
+    C --> C4["메인 메모리<br/>200-300 cycles"]
+    
+    D --> D1["SIMD 벡터화<br/>4-16배 처리량"]
+    D --> D2["멀티코어<br/>병렬 실행"]
+    D --> D3["하이퍼스레딩<br/>논리적 2배"]
+    
+    E --> E1["DVFS<br/>동적 주파수 조절"]
+    E --> E2["C-States<br/>절전 모드"]
+    E --> E3["Turbo Boost<br/>순간 성능 향상"]
+
+    style A fill:#4a90e2,color:#fff
+    style B fill:#7ed321,color:#fff
+    style C fill:#f5a623,color:#fff
+    style D fill:#d0021b,color:#fff
+    style E fill:#9013fe,color:#fff
+```
+
 ## 🚀 실전 활용 시나리오
 
 ### 게임 엔진 최적화

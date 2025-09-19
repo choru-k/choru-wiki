@@ -50,6 +50,38 @@ priority_score: 4
 
 **단 6마이크로초**. 당신이 눈 깜빡이는 시간의 1/50000에 모든 일이 끝납니다.
 
+## ⚡ 키보드 인터럽트 처리 과정
+
+```mermaid
+sequenceDiagram
+    participant K as 키보드
+    participant PIC as 인터럽트 컨트롤러
+    participant CPU as CPU
+    participant OS as 운영체제
+    participant APP as 응용프로그램
+    
+    Note over K: 사용자가 'A' 키 누름
+    K->>PIC: IRQ1 신호 발생 (스캔코드 0x1E)
+    PIC->>CPU: INT 21h 인터럽트 요청
+    
+    Note over CPU: 현재 실행 중인 명령어 완료
+    CPU->>CPU: 레지스터 상태 스택에 저장
+    CPU->>CPU: 인터럽트 플래그 비활성화 (CLI)
+    
+    CPU->>OS: 키보드 인터럽트 핸들러 호출
+    OS->>K: 스캔코드 0x1E 읽기
+    OS->>OS: 스캔코드를 ASCII 'A'로 변환
+    OS->>OS: 키보드 버퍼에 저장
+    
+    OS->>PIC: EOI(End of Interrupt) 신호
+    OS->>CPU: 인터럽트 핸들러 종료
+    
+    CPU->>CPU: 저장된 레지스터 상태 복구
+    CPU->>APP: 원래 프로그램 실행 재개
+    
+    Note over CPU,APP: 전체 과정: 6μs
+```
+
 ### 인터럽트는 레스토랑의 주문 벨과 같다
 
 고급 레스토랑을 상상해보세요:
@@ -228,6 +260,79 @@ void set_idt_entry(int vector, void* handler, int type, int dpl) {
     idt[vector].offset_high = (handler_addr >> 32) & 0xFFFFFFFF;
     idt[vector].reserved = 0;
 }
+```
+
+## 📋 인터럽트 벡터 테이블 (IDT) 구조
+
+```mermaid
+graph TB
+    subgraph "CPU"
+        IDTR["IDTR 레지스터<br/>Base: 0xFFFF800000000000<br/>Limit: 4095"]
+    end
+    
+    subgraph "메모리의 IDT"
+        IDT0["벡터 0: Divide Error<br/>Handler: 0x12345678"]
+        IDT1["벡터 1: Debug<br/>Handler: 0x12345700"]
+        IDT2["벡터 2: NMI<br/>Handler: 0x12345800"]
+        IDT_DOT["..."]
+        IDT32["벡터 32 (IRQ0): Timer<br/>Handler: 0x12346000"]
+        IDT33["벡터 33 (IRQ1): Keyboard<br/>Handler: 0x12346100"]
+        IDT_DOT2["..."]
+        IDT128["벡터 128: 시스템콜<br/>Handler: 0x12347000"]
+        IDT_DOT3["..."]
+        IDT255["벡터 255: Spurious<br/>Handler: 0x12348000"]
+    end
+    
+    subgraph "인터럽트 핸들러들"
+        H1["divide_error_handler()"]
+        H2["debug_handler()"]
+        H3["nmi_handler()"]
+        H4["timer_handler()"]
+        H5["keyboard_handler()"]
+        H6["syscall_handler()"]
+    end
+    
+    IDTR --> IDT0
+    IDT0 --> H1
+    IDT1 --> H2
+    IDT2 --> H3
+    IDT32 --> H4
+    IDT33 --> H5
+    IDT128 --> H6
+    
+    style IDTR fill:#4CAF50,color:#fff
+    style IDT33 fill:#FF9800,color:#fff
+    style H5 fill:#FF9800,color:#fff
+```
+
+## 🔄 인터럽트 vs 폴링 비교
+
+```mermaid
+graph LR
+    subgraph "폴링 방식 (비효율적)"
+        P1["CPU"] --> P2["장치1 확인"]
+        P2 --> P3["장치2 확인"]
+        P3 --> P4["장치3 확인"]
+        P4 --> P5["...반복"]
+        P5 --> P1
+        
+        note1["⏰ 계속 확인<br/>💸 CPU 낭비<br/>⏱️ 지연 발생"]
+    end
+    
+    subgraph "인터럽트 방식 (효율적)"
+        I1["CPU<br/>다른 작업 수행"] 
+        I2["장치에서<br/>인터럽트 발생"]
+        I3["즉시 처리"]
+        I4["원래 작업 복귀"]
+        
+        I2 -.->|"IRQ 신호"| I1
+        I1 --> I3 --> I4 --> I1
+        
+        note2["⚡ 필요할 때만<br/>💰 CPU 효율적<br/>🚀 즉시 반응"]
+    end
+    
+    style note1 fill:#f44336,color:#fff
+    style note2 fill:#4caf50,color:#fff
 ```
 
 ## 핵심 요점

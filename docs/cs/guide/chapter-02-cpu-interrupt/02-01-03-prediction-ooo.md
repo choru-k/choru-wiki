@@ -55,6 +55,59 @@ Loop 4: if(true)  → 예측: true  ✅
 정확도: 처음 50% → 학습 후 95%
 ```
 
+## 🧠 분기 예측기 작동 원리
+
+```mermaid
+graph TD
+    A["프로그램 실행"] --> B["if 문 발견"]
+    B --> C["분기 예측기 조회"]
+    C --> D{"예측 결과"}
+    
+    D --> |"taken"| E["점프할 주소로<br/>파이프라인 채움"]
+    D --> |"not taken"| F["순차 실행으로<br/>파이프라인 채움"]
+    
+    E --> G["실제 분기 결과 확인"]
+    F --> G
+    
+    G --> H{"예측이 맞았나?"}
+    
+    H --> |"맞음 ✅"| I["계속 실행<br/>예측기 강화 학습"]
+    H --> |"틀림 ❌"| J["파이프라인 플러시<br/>20 사이클 손실"]
+    
+    J --> K["올바른 주소로 점프"]
+    K --> L["예측기 패턴 업데이트"]
+    I --> L
+    L --> A
+    
+    style D fill:#ffeb3b,color:#000
+    style I fill:#4caf50,color:#fff
+    style J fill:#f44336,color:#fff
+```
+
+## 📊 분기 예측 성능 비교
+
+```mermaid
+graph LR
+    subgraph "정렬되지 않은 배열"
+        A1["if(data[0] >= 128)"] --> A2["50% 확률"]
+        A2 --> A3["예측 어려움"]
+        A3 --> A4["11.5초"]
+    end
+    
+    subgraph "정렬된 배열"
+        B1["if(data[0] >= 128)"] --> B2["패턴 존재"]
+        B2 --> B3["예측 쉬움"]
+        B3 --> B4["2.8초"]
+    end
+    
+    A4 --> C["4배 차이!"]
+    B4 --> C
+    
+    style A4 fill:#f44336,color:#fff
+    style B4 fill:#4caf50,color:#fff
+    style C fill:#ff9800,color:#fff
+```
+
 ```c
 // 2비트 포화 카운터 분기 예측기
 // 각 분기 명령어의 과거 행동을 학습하여 미래를 예측한다
@@ -275,6 +328,98 @@ c = z * 2;         // 1 사이클
 b = x + y;         // 즉시 실행!
 c = z * 2;         // 즉시 실행!
 a = memory[1000];  // 기다리는 동안 위 두 개 완료
+```
+
+## 🏗️ Out-of-Order 실행 과정
+
+```mermaid
+graph TD
+    subgraph "Instruction Queue"
+        I1["1. a = mem[1000]<br/>(100 cycles)"]
+        I2["2. b = x + y<br/>(1 cycle)"]
+        I3["3. c = z * 2<br/>(1 cycle)"]
+    end
+    
+    subgraph "Reservation Stations"
+        RS1["Load Unit"]
+        RS2["ALU Unit 1"]
+        RS3["ALU Unit 2"]
+    end
+    
+    subgraph "Execution (Out-of-Order)"
+        E1["mem[1000] 로딩...<br/>⏳ 100 cycles"]
+        E2["x + y 계산<br/>✅ 1 cycle"]
+        E3["z * 2 계산<br/>✅ 1 cycle"]
+    end
+    
+    subgraph "Reorder Buffer"
+        R1["1. a = ? (대기중)"]
+        R2["2. b = result ✅"]
+        R3["3. c = result ✅"]
+    end
+    
+    subgraph "Commit (In-Order)"
+        C1["1. a 완료 대기"]
+        C2["2. b 커밋 대기"]
+        C3["3. c 커밋 대기"]
+    end
+    
+    I1 --> RS1 --> E1 --> R1
+    I2 --> RS2 --> E2 --> R2
+    I3 --> RS3 --> E3 --> R3
+    
+    R1 --> C1
+    R2 --> C2
+    R3 --> C3
+    
+    style E2 fill:#4caf50,color:#fff
+    style E3 fill:#4caf50,color:#fff
+    style E1 fill:#ff9800,color:#fff
+    style R1 fill:#f44336,color:#fff
+    style R2 fill:#4caf50,color:#fff
+    style R3 fill:#4caf50,color:#fff
+```
+
+## 🍽️ 식당 비유로 본 Out-of-Order 실행
+
+```mermaid
+graph LR
+    subgraph "주문 (Program Order)"
+        O1["주문 1: 스테이크<br/>(15분)"]
+        O2["주문 2: 샐러드<br/>(3분)"]
+        O3["주문 3: 스프<br/>(5분)"]
+    end
+    
+    subgraph "주방 (Execution Units)"
+        K1["🥩 그릴<br/>스테이크 조리중..."]
+        K2["🥗 샐러드 스테이션<br/>완료! ✅"]
+        K3["🍲 스프 스테이션<br/>완료! ✅"]
+    end
+    
+    subgraph "완성 대기 (Reorder Buffer)"
+        W1["1번 테이블<br/>스테이크 대기중 ⏳"]
+        W2["2번 테이블<br/>샐러드 준비됨 ✅"]
+        W3["3번 테이블<br/>스프 준비됨 ✅"]
+    end
+    
+    subgraph "서빙 (Commit In-Order)"
+        S1["1번부터 순서대로<br/>서빙 대기"]
+    end
+    
+    O1 --> K1 --> W1
+    O2 --> K2 --> W2
+    O3 --> K3 --> W3
+    
+    W1 --> S1
+    W2 --> S1
+    W3 --> S1
+    
+    style K2 fill:#4caf50,color:#fff
+    style K3 fill:#4caf50,color:#fff
+    style K1 fill:#ff9800,color:#fff
+    style W2 fill:#4caf50,color:#fff
+    style W3 fill:#4caf50,color:#fff
+    style W1 fill:#f44336,color:#fff
 ```
 
 **실제 성능 차이**

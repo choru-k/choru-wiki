@@ -50,6 +50,73 @@ class GameEngine:
             # 프레임 드롭 없음! 🎮
 ```
 
+## 🎮 게임 엔진 컨텍스트 스위칭 타이밍
+
+```mermaid
+graph LR
+    subgraph "60 FPS 게임 엔진의 16.67ms 프레임 스케줄링"
+        subgraph "Frame Processing"
+            F1["0-2ms:<br/>Physics Engine"]
+            F2["2-5ms:<br/>AI Processing"]
+            F3["5-7ms:<br/>Network Sync"]
+            F4["7-15ms:<br/>Rendering"]
+            F5["15-16ms:<br/>Audio Mix"]
+            F6["16-16.67ms:<br/>VSync Wait"]
+        end
+        
+        subgraph "Context Switches"
+            S1["2ms: Switch to AI"]
+            S2["5ms: Switch to Network"]
+            S3["7ms: Switch to Render"]
+            S4["15ms: Switch to Audio"]
+            S5["16.67ms: Frame Complete"]
+        end
+    end
+    
+    F1 --> F2 --> F3 --> F4 --> F5 --> F6
+    
+    style F1 fill:#f44336,color:#fff
+    style F2 fill:#4caf50,color:#fff
+    style F3 fill:#2196f3,color:#fff
+    style F4 fill:#ff9800,color:#fff
+    style F5 fill:#9c27b0,color:#fff
+    style F6 fill:#607d8b,color:#fff
+```
+
+## ⚙️ 컨텍스트 스위칭 결정 과정
+
+```mermaid
+flowchart TD
+    A["프로세스 실행 중"] --> B["스케줄링 포인트<br/>도달"]
+    
+    B --> C{"컨텍스트 스위칭<br/>필요한가?"}
+    
+    C -->|"타이머 만료"| D["시간 할당량 소진"]
+    C -->|"높은 우선순위"| E["우선순위 태스크<br/>깨어남"]
+    C -->|"자발적 양보"| F["yield/sleep/wait<br/>호출"]
+    C -->|"시스템콜 완료"| G["커널에서 복귀"]
+    
+    D --> H["need_resched 플래그<br/>설정"]
+    E --> H
+    F --> H
+    G --> H
+    
+    H --> I["schedule() 호출"]
+    I --> J["다음 태스크 선택<br/>pick_next_task()"]
+    J --> K["context_switch()<br/>실행"]
+    
+    K --> L["새로운 프로세스<br/>실행 시작"]
+    
+    C -->|"변경 불필요"| M["기존 프로세스<br/>계속 실행"]
+    M --> A
+    L --> A
+    
+    style D fill:#ff9800,color:#fff
+    style E fill:#f44336,color:#fff
+    style F fill:#4caf50,color:#fff
+    style G fill:#2196f3,color:#fff
+```
+
 ### 1. 스케줄러 호출 시점 - 언제 공을 바꿔 잡을까?
 
 ```c
@@ -121,6 +188,75 @@ Load new context:   230 ns  # 새 컨텍스트 로드
 Cache warm-up:      970 ns  # 캐시 워밍업
 --------------------------
 Total:             3000 ns  # 3 마이크로초!
+```
+
+## 🔄 컨텍스트 스위칭 상세 단계
+
+```mermaid
+sequenceDiagram
+    participant P1 as Process A
+    participant SCHED as Scheduler
+    participant CPU as CPU Registers
+    participant MMU as Memory Manager
+    participant P2 as Process B
+    
+    Note over P1: 실행 중 (120ns)
+    P1->>SCHED: 타이머 인터럽트 발생
+    
+    Note over SCHED: 스케줄링 결정 (80ns)
+    SCHED->>CPU: 현재 레지스터 상태 저장
+    Note over CPU: RAX, RBX, RCX... 저장 (120ns)
+    
+    SCHED->>CPU: FPU/SSE/AVX 상태 저장
+    Note over CPU: XMM0-15, YMM0-15... (340ns)
+    
+    SCHED->>MMU: 페이지 테이블 포인터 변경
+    Note over MMU: CR3 레지스터 업데이트 (450ns)
+    
+    SCHED->>MMU: TLB 플러시 실행
+    Note over MMU: 가상주소 변환 캐시 초기화 (890ns)
+    
+    SCHED->>CPU: Process B 컨텍스트 로드
+    Note over CPU: 저장된 레지스터 복원 (230ns)
+    
+    SCHED->>P2: 실행 재개
+    Note over P2: 캐시 워밍업 중... (970ns)
+    Note over P2: 전체 과정 완료: 3.0μs
+```
+
+## ⚡ 레지스터 저장/복원 과정 (어셈블리 레벨)
+
+```mermaid
+graph TD
+    subgraph "현재 프로세스 (Process A)"
+        A1["RAX = 0x12345678<br/>RBX = 0xABCDEF00<br/>RCX = 0x11111111<br/>..."]
+        A2["XMM0 = [1.5, 2.7, 3.9, 4.1]<br/>YMM1 = [벡터 데이터]<br/>..."]
+        A3["CR3 = 0x200000<br/>(페이지 테이블)"]
+    end
+    
+    subgraph "컨텍스트 저장 영역"
+        S1["task_struct->thread.regs<br/>레지스터 덤프"]
+        S2["task_struct->thread.fpu<br/>FPU 상태"]
+        S3["task_struct->mm->pgd<br/>메모리 맵"]
+    end
+    
+    subgraph "새 프로세스 (Process B)"
+        B1["RAX = 0x87654321<br/>RBX = 0x00FEDCBA<br/>RCX = 0x22222222<br/>..."]
+        B2["XMM0 = [5.1, 6.3, 7.5, 8.7]<br/>YMM1 = [다른 벡터]<br/>..."]
+        B3["CR3 = 0x300000<br/>(다른 페이지 테이블)"]
+    end
+    
+    A1 -->|"120ns<br/>푸시 명령어"| S1
+    A2 -->|"340ns<br/>FXSAVE"| S2
+    A3 -->|"450ns<br/>MOV 명령어"| S3
+    
+    S1 -->|"230ns<br/>팝 명령어"| B1
+    S2 -->|"포함됨<br/>FXRSTOR"| B2
+    S3 -->|"포함됨<br/>MOV CR3"| B3
+    
+    style A1 fill:#ff9800,color:#fff
+    style S1 fill:#607d8b,color:#fff
+    style B1 fill:#4caf50,color:#fff
 ```
 
 ```c
