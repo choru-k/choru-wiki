@@ -125,6 +125,34 @@ int main() {
 
 ## 2. 왜 이런 차이가 날까?
 
+성능 차이의 근본 원인을 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph "스택 할당 (⚡ 빠름)"
+        STACK_REQ["메모리 요청"] --> STACK_OP["RSP 포인터 이동"]
+        STACK_OP --> STACK_DONE["할당 완료"]
+        STACK_TIME["1-2 CPU 사이클"]
+    end
+
+    subgraph "힙 할당 (🐌 느림)"
+        HEAP_REQ["메모리 요청"] --> MALLOC["malloc() 호출"]
+        MALLOC --> SEARCH["Free List 탐색"]
+        SEARCH --> FIND["적합 블록 찾기"]
+        FIND --> SPLIT["블록 분할"]
+        SPLIT --> META["메타데이터 업데이트"]
+        META --> SYNC["스레드 동기화"]
+        SYNC --> SYSCALL["시스템 콜 가능성"]
+        SYSCALL --> HEAP_DONE["할당 완료"]
+        HEAP_TIME["100-1000 CPU 사이클"]
+    end
+
+    style STACK_DONE fill:#c8e6c9
+    style HEAP_DONE fill:#ffcccb
+    style STACK_TIME fill:#81c784
+    style HEAP_TIME fill:#e57373
+```
+
 스택과 힙의 속도 차이를 해부해보면:
 
 ```text
@@ -308,6 +336,41 @@ void heap_overflow_demo() {
 ```
 
 ## 4. 디버깅 도구: 버그 사냥꾼의 무기
+
+메모리 버그 탐지와 디버깅 워크플로우를 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph "메모리 버그 탐지 워크플로우"
+        PROBLEM["성능 문제 발견"] --> MONITOR["시스템 모니터링"]
+        MONITOR --> ANALYZE{버그 유형 분석}
+        
+        ANALYZE -->|메모리 누수| VALGRIND["Valgrind<br/>leak-check"]
+        ANALYZE -->|Use-After-Free| ASAN["AddressSanitizer<br/>-fsanitize=address"]
+        ANALYZE -->|Buffer Overflow| BUFFER_CHECK["Buffer 검사 도구"]
+        ANALYZE -->|성능 문제| PERF["perf + 프로파일링"]
+        
+        VALGRIND --> LEAK_REPORT["누수 리포트"]
+        ASAN --> UAF_REPORT["UAF 스택 트레이스"]
+        BUFFER_CHECK --> OVERFLOW_REPORT["오버플로우 위치"]
+        PERF --> HOTSPOT["성능 핫스팟"]
+        
+        LEAK_REPORT --> FIX["버그 수정"]
+        UAF_REPORT --> FIX
+        OVERFLOW_REPORT --> FIX
+        HOTSPOT --> OPTIMIZE["성능 최적화"]
+        
+        FIX --> VERIFY["수정 검증"]
+        OPTIMIZE --> VERIFY
+        VERIFY --> DONE["완료"]
+    end
+
+    style PROBLEM fill:#ffcccb
+    style DONE fill:#c8e6c9
+    style VALGRIND fill:#81c784
+    style ASAN fill:#81c784
+    style PERF fill:#64b5f6
+```
 
 ### 4.1 프로덕션 환경에서의 메모리 모니터링
 

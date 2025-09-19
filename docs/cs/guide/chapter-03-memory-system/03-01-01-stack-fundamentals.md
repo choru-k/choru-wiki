@@ -63,6 +63,35 @@ Final result: 24
 
 주소를 보세요! `add` 함수의 지역 변수들이 낮은 주소에 있습니다. 이것은 스택이 높은 주소에서 낮은 주소로 "자라기" 때문입니다.
 
+## 🎭 함수 호출 시퀀스 다이어그램
+
+```mermaid
+sequenceDiagram
+    participant Main as main()
+    participant Mult as multiply(3, 4)
+    participant Add as add(12, 12)
+    participant Stack as Stack Memory
+    
+    Main->>Stack: 스택 프레임 생성
+    Note over Stack: main의 지역변수 공간
+    
+    Main->>Mult: multiply(3, 4) 호출
+    Mult->>Stack: 새 스택 프레임 생성
+    Note over Stack: multiply의 지역변수<br/>product=12
+    
+    Mult->>Add: add(12, 12) 호출
+    Add->>Stack: 새 스택 프레임 생성
+    Note over Stack: add의 지역변수<br/>sum=24
+    
+    Add->>Mult: return 24
+    Note over Stack: add 프레임 제거
+    
+    Mult->>Main: return 24
+    Note over Stack: multiply 프레임 제거
+    
+    Note over Stack: main 프레임만 남음
+```
+
 ## 2. 스택 프레임: 함수의 무대
 
 각 함수가 호출될 때 스택에는 '스택 프레임'이라는 무대가 만들어집니다. 이 무대에는 함수가 필요한 모든 것이 준비됩니다:
@@ -99,6 +128,65 @@ multiply(3, 4) 호출 시 스택 상태:
 
 - 인자는 rbp보다 높은 주소에 (양수 오프셋)
 - 지역 변수는 rbp보다 낮은 주소에 (음수 오프셋)
+
+## 📊 스택 메모리 레이아웃 상세
+
+```mermaid
+graph TB
+    subgraph "스택 메모리 구조 (높은 주소 → 낮은 주소)"
+        A1["0x7ffe5c3b7a50<br/>운영체제 영역"]
+        A2["0x7ffe5c3b7a40<br/>main 리턴 주소"]
+        A3["0x7ffe5c3b7a38<br/>이전 RBP 백업"]
+        A4["0x7ffe5c3b7a30<br/>result 변수"] 
+        
+        B1["0x7ffe5c3b7a28<br/>multiply 리턴 주소"]
+        B2["0x7ffe5c3b7a20<br/>main RBP 백업"]
+        B3["0x7ffe5c3b7a18<br/>x = 3 (매개변수)"]
+        B4["0x7ffe5c3b7a10<br/>y = 4 (매개변수)"]
+        B5["0x7ffe5c3b7a08<br/>product = 12"]
+        B6["0x7ffe5c3b7a00<br/>doubled 변수"]
+        
+        C1["0x7ffe5c3b79f8<br/>add 리턴 주소"]
+        C2["0x7ffe5c3b79f0<br/>multiply RBP 백업"]
+        C3["0x7ffe5c3b79e8<br/>a = 12 (매개변수)"]
+        C4["0x7ffe5c3b79e0<br/>b = 12 (매개변수)"]
+        C5["0x7ffe5c3b79d8<br/>sum = 24"]
+        C6["0x7ffe5c3b79d0<br/>RSP (현재 스택 포인터)"]
+    end
+    
+    subgraph "스택 프레임들"
+        SF1["main() 스택 프레임"]
+        SF2["multiply() 스택 프레임"] 
+        SF3["add() 스택 프레임"]
+    end
+    
+    A1 --> A2 --> A3 --> A4
+    B1 --> B2 --> B3 --> B4 --> B5 --> B6
+    C1 --> C2 --> C3 --> C4 --> C5 --> C6
+    
+    SF1 -.-> A4
+    SF2 -.-> B6
+    SF3 -.-> C6
+    
+    style A1 fill:#e1f5fe
+    style A2 fill:#fff3e0
+    style A3 fill:#f3e5f5
+    style A4 fill:#e8f5e8
+    
+    style B1 fill:#fff3e0
+    style B2 fill:#f3e5f5
+    style B3 fill:#e8f5e8
+    style B4 fill:#e8f5e8
+    style B5 fill:#fff9c4
+    style B6 fill:#fff9c4
+    
+    style C1 fill:#fff3e0
+    style C2 fill:#f3e5f5
+    style C3 fill:#e8f5e8
+    style C4 fill:#e8f5e8
+    style C5 fill:#fff9c4
+    style C6 fill:#ffebee
+```
 
 ## 3. 함수 호출 규약: 국제 표준 같은 약속
 
@@ -138,6 +226,60 @@ void examine_assembly() {
 ```
 
 왜 이렇게 복잡한 규칙이 필요할까요? 바로 **성능** 때문입니다! 레지스터는 메모리보다 100배 이상 빠릅니다. 자주 사용되는 처음 몇 개의 인자를 레지스터에 전달하면 성능이 크게 향상됩니다.
+
+## 🔄 x86-64 함수 호출 규약
+
+```mermaid
+graph LR
+    subgraph "함수 매개변수 전달 방식"
+        subgraph "레지스터 전달 (1-6번째 인자)"
+            R1["1번째 인자<br/>RDI 레지스터"]
+            R2["2번째 인자<br/>RSI 레지스터"]
+            R3["3번째 인자<br/>RDX 레지스터"]
+            R4["4번째 인자<br/>RCX 레지스터"]
+            R5["5번째 인자<br/>R8 레지스터"]
+            R6["6번째 인자<br/>R9 레지스터"]
+        end
+        
+        subgraph "스택 전달 (7번째 이후)"
+            S1["7번째 인자<br/>스택 [RSP+8]"]
+            S2["8번째 인자<br/>스택 [RSP+16]"]
+            S3["...<br/>계속 스택에"]
+        end
+        
+        subgraph "반환값"
+            RET["반환값<br/>RAX 레지스터"]
+        end
+    end
+    
+    subgraph "성능 비교"
+        FAST["레지스터 접근<br/>1 사이클"]
+        SLOW["메모리 접근<br/>100+ 사이클"]
+    end
+    
+    R1 --> FAST
+    R2 --> FAST
+    R3 --> FAST
+    R4 --> FAST
+    R5 --> FAST
+    R6 --> FAST
+    
+    S1 --> SLOW
+    S2 --> SLOW
+    S3 --> SLOW
+    
+    style R1 fill:#4caf50,color:#fff
+    style R2 fill:#4caf50,color:#fff
+    style R3 fill:#4caf50,color:#fff
+    style R4 fill:#4caf50,color:#fff
+    style R5 fill:#4caf50,color:#fff
+    style R6 fill:#4caf50,color:#fff
+    style S1 fill:#ff9800,color:#fff
+    style S2 fill:#ff9800,color:#fff
+    style S3 fill:#ff9800,color:#fff
+    style FAST fill:#4caf50,color:#fff
+    style SLOW fill:#f44336,color:#fff
+```
 
 ## 4. 스택의 놀라운 속도 비밀
 
@@ -185,6 +327,56 @@ void show_stack_assembly() {
 2. **메타데이터 없음**: 크기나 상태를 기록할 필요 없음
 3. **단편화 없음**: 항상 연속된 공간 사용
 4. **캐시 친화적**: 최근 사용한 메모리 근처를 계속 사용
+
+## ⚡ 스택 vs 힙 할당 속도 비교
+
+```mermaid
+graph LR
+    subgraph "스택 할당 (극도로 빠름)"
+        S1["RSP 포인터<br/>조작만"]
+        S2["sub rsp, 40<br/>(1 명령어)"]
+        S3["할당 완료<br/>1-2 사이클"]
+        S4["add rsp, 40<br/>(해제도 1 명령어)"]
+        
+        S1 --> S2 --> S3 --> S4
+    end
+    
+    subgraph "힙 할당 (상대적으로 느림)"
+        H1["malloc() 호출"]
+        H2["가용 블록 검색"]
+        H3["메타데이터 업데이트"]
+        H4["메모리 분할/병합"]
+        H5["포인터 반환"]
+        H6["free() 시 추가 작업"]
+        
+        H1 --> H2 --> H3 --> H4 --> H5 --> H6
+    end
+    
+    subgraph "성능 차이"
+        STACK_TIME["스택: 1-2ns"]
+        HEAP_TIME["힙: 50-200ns"]
+        DIFF["100배 차이!"]
+    end
+    
+    S3 --> STACK_TIME
+    H5 --> HEAP_TIME
+    STACK_TIME --> DIFF
+    HEAP_TIME --> DIFF
+    
+    style S1 fill:#4caf50,color:#fff
+    style S2 fill:#4caf50,color:#fff
+    style S3 fill:#4caf50,color:#fff
+    style S4 fill:#4caf50,color:#fff
+    style H1 fill:#ff9800,color:#fff
+    style H2 fill:#ff9800,color:#fff
+    style H3 fill:#ff9800,color:#fff
+    style H4 fill:#ff9800,color:#fff
+    style H5 fill:#ff9800,color:#fff
+    style H6 fill:#ff9800,color:#fff
+    style STACK_TIME fill:#4caf50,color:#fff
+    style HEAP_TIME fill:#f44336,color:#fff
+    style DIFF fill:#9c27b0,color:#fff
+```
 
 ## 5. 스택 관련 버그들
 

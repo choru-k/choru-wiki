@@ -75,6 +75,82 @@ priority_score: 4
 | **영향도** | 무시 가능 | 성능 저하 | 프로그램 크래시 |
 | **최적화** | Prefaulting | Page Cache | 코드 검토 |
 
+## 💥 페이지 폴트 발생과 처리 과정
+
+```mermaid
+graph TD
+    subgraph "CPU에서 메모리 접근"
+        CPU["CPU가 가상 주소 접근<br/>예: ptr = 0x12345000<br/>*ptr = 42"]
+    end
+    
+    subgraph "MMU 주소 변환 시도"
+        MMU["MMU가 주소 변환 시도"]
+        TLB["TLB 캐시 확인"]
+        PT["페이지 테이블 확인"]
+    end
+    
+    subgraph "페이지 폴트 유형 분석"
+        PF_TYPE{"페이지 폴트 유형"}
+        MINOR["Minor Fault<br/>💛 빠른 해결<br/>~0.001ms"]
+        MAJOR["Major Fault<br/>🔴 느린 해결<br/>~5ms"]
+        INVALID["Invalid Fault<br/>💀 프로그램 종료<br/>SIGSEGV"]
+    end
+    
+    subgraph "Minor Fault 처리"
+        MINOR_CHECK["메모리 할당됨?"]
+        MINOR_ALLOC["물리 페이지 할당"]
+        MINOR_MAP["페이지 테이블 업데이트"]
+        MINOR_TLB["TLB 플러시"]
+    end
+    
+    subgraph "Major Fault 처리"
+        MAJOR_CHECK["스왑/파일에 있음?"]
+        MAJOR_IO["디스크 I/O 수행<br/>페이지 읽기"]
+        MAJOR_ALLOC["물리 메모리 할당"]
+        MAJOR_MAP["페이지 테이블 업데이트"]
+    end
+    
+    subgraph "Invalid Fault 처리"
+        INVALID_CHECK["잘못된 접근"]
+        SEGFAULT["SIGSEGV 시그널 발생"]
+        TERMINATE["프로세스 종료"]
+    end
+    
+    CPU --> MMU
+    MMU --> TLB
+    TLB -->|"miss"| PT
+    PT -->|"페이지 없음"| PF_TYPE
+    
+    PF_TYPE --> MINOR
+    PF_TYPE --> MAJOR  
+    PF_TYPE --> INVALID
+    
+    MINOR --> MINOR_CHECK
+    MINOR_CHECK --> MINOR_ALLOC
+    MINOR_ALLOC --> MINOR_MAP
+    MINOR_MAP --> MINOR_TLB
+    
+    MAJOR --> MAJOR_CHECK
+    MAJOR_CHECK --> MAJOR_IO
+    MAJOR_IO --> MAJOR_ALLOC
+    MAJOR_ALLOC --> MAJOR_MAP
+    
+    INVALID --> INVALID_CHECK
+    INVALID_CHECK --> SEGFAULT
+    SEGFAULT --> TERMINATE
+    
+    MINOR_TLB --> CPU
+    MAJOR_MAP --> CPU
+    
+    style CPU fill:#4a90e2,color:#fff
+    style MINOR fill:#fff176,color:#000
+    style MAJOR fill:#ff5722,color:#fff
+    style INVALID fill:#d32f2f,color:#fff
+    style MAJOR_IO fill:#ff9800,color:#fff
+    style SEGFAULT fill:#d32f2f,color:#fff
+    style TERMINATE fill:#d32f2f,color:#fff
+```
+
 ## 🚀 실전 활용 시나리오
 
 ### Redis 백그라운드 저장
@@ -326,8 +402,8 @@ vmstat 1                                      # 실시간 모니터링
 
 ### 📂 같은 챕터 (chapter-03-memory-system)
 
-- [Chapter 3-1: 주소 변환은 어떻게 동작하는가](./03-02-01-address-translation.md)
-- [Chapter 3-2: TLB와 캐싱은 어떻게 동작하는가](./03-02-02-tlb-caching.md)
+- [Chapter 3-2-1: 주소 변환은 어떻게 동작하는가](./03-02-01-address-translation.md)
+- [Chapter 3-2-2: TLB와 캐싱은 어떻게 동작하는가](./03-02-02-tlb-caching.md)
 - [Chapter 3-2-4: 페이지 폴트 종류와 처리 메커니즘](./03-02-04-page-fault-handling.md)
 - [Chapter 3-2-5: Copy-on-Write (CoW) - fork()가 빠른 이유](./03-02-05-copy-on-write.md)
 - [Chapter 3-2-6: Demand Paging - 게으른 메모리 할당의 미학](./03-02-06-demand-paging.md)

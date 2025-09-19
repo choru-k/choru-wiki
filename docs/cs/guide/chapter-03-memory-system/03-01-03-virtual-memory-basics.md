@@ -66,6 +66,39 @@ int main() {
 
 놀랍지 않나요? 부모와 자식이 **같은 주소**를 가지고 있는데 **다른 값**을 보고 있습니다! 이것이 가상 메모리의 마법입니다.
 
+## 🎭 가상 메모리의 마법: 같은 주소, 다른 값
+
+```mermaid
+graph LR
+    subgraph "부모 프로세스"
+        VP1["가상 주소<br/>0x7ffe5a3b7a2c<br/>값: 42"]
+    end
+    
+    subgraph "자식 프로세스"
+        VP2["가상 주소<br/>0x7ffe5a3b7a2c<br/>값: 100"]
+    end
+    
+    subgraph "물리 메모리"
+        PM1["물리 주소<br/>0x12345000<br/>값: 42"]
+        PM2["물리 주소<br/>0x67890000<br/>값: 100"]
+    end
+    
+    subgraph "MMU 변환"
+        MMU1["페이지 테이블 1<br/>(부모용)"]
+        MMU2["페이지 테이블 2<br/>(자식용)"]
+    end
+    
+    VP1 --> MMU1 --> PM1
+    VP2 --> MMU2 --> PM2
+    
+    style VP1 fill:#4caf50,color:#fff
+    style VP2 fill:#2196f3,color:#fff
+    style PM1 fill:#4caf50,color:#fff
+    style PM2 fill:#2196f3,color:#fff
+    style MMU1 fill:#ff9800,color:#fff
+    style MMU2 fill:#9c27b0,color:#fff
+```
+
 ### 1.2 가상 메모리가 해결하는 문제들
 
 가상 메모리가 없던 시절을 상상해봅시다:
@@ -271,6 +304,59 @@ int main() {
 }
 ```
 
+## 🔄 MMU 주소 변환 과정 상세
+
+```mermaid
+graph TD
+    subgraph "CPU에서 메모리 접근 요청"
+        CPU["CPU<br/>가상 주소 접근<br/>0x12345678"]
+    end
+    
+    subgraph "MMU (메모리 관리 장치)"
+        MMU_START["MMU 시작"]
+        SPLIT["주소 분해<br/>페이지 번호: 0x12345<br/>오프셋: 0x678"]
+        TLB_CHECK{"TLB 캐시<br/>확인"}
+        PAGE_WALK["페이지 테이블<br/>워킹"]
+        PERM_CHECK{"권한 검사<br/>읽기/쓰기/실행"}
+        COMBINE["물리 주소 조합<br/>프레임 + 오프셋"]
+    end
+    
+    subgraph "페이지 테이블 (메모리)"
+        PT["페이지 테이블<br/>가상→물리 매핑"]
+    end
+    
+    subgraph "물리 메모리"
+        PHYS_MEM["물리 메모리<br/>0x87654678"]
+    end
+    
+    subgraph "예외 처리"
+        PAGE_FAULT["페이지 폴트<br/>페이지가 없음"]
+        PROT_FAULT["보호 폴트<br/>권한 위반"]
+    end
+    
+    CPU --> MMU_START
+    MMU_START --> SPLIT
+    SPLIT --> TLB_CHECK
+    
+    TLB_CHECK -->|"캐시 히트"| PERM_CHECK
+    TLB_CHECK -->|"캐시 미스"| PAGE_WALK
+    
+    PAGE_WALK --> PT
+    PT --> PERM_CHECK
+    
+    PERM_CHECK -->|"권한 OK"| COMBINE
+    PERM_CHECK -->|"권한 없음"| PROT_FAULT
+    PERM_CHECK -->|"페이지 없음"| PAGE_FAULT
+    
+    COMBINE --> PHYS_MEM
+    
+    style CPU fill:#4a90e2,color:#fff
+    style TLB_CHECK fill:#7ed321,color:#fff
+    style PERM_CHECK fill:#f5a623,color:#fff
+    style PHYS_MEM fill:#4caf50,color:#fff
+    style PAGE_FAULT fill:#f44336,color:#fff
+    style PROT_FAULT fill:#f44336,color:#fff
+
 ## 3. 프로세스별 독립된 주소 공간
 
 ### 3.1 주소 공간 격리의 실제
@@ -388,6 +474,67 @@ int main() {
     analyze_memory_layout();
     return 0;
 }
+```
+
+## 🏗️ 프로세스 메모리 레이아웃 구조
+
+```mermaid
+graph TB
+    subgraph "64비트 프로세스 가상 주소 공간"
+        subgraph "높은 주소 영역 (0x7F... ~ 0xFF...)"
+            KERNEL["🔒 커널 공간<br/>0xFFFF800000000000+<br/>시스템 콜, 커널 코드"]
+            KERNEL_USER["커널-사용자 경계<br/>0x800000000000"]
+        end
+        
+        subgraph "사용자 공간 (0x00... ~ 0x7F...)"
+            STACK["📚 스택 영역<br/>0x7FFE5C3B0000<br/>함수 호출, 지역변수<br/>아래쪽으로 성장"]
+            
+            MMAP["🗺️ 메모리 맵 영역<br/>0x7F8000000000<br/>라이브러리, mmap<br/>익명 매핑"]
+            
+            HEAP["🧱 힙 영역<br/>0x55F4A9C2B000<br/>동적 할당 (malloc)<br/>위쪽으로 성장"]
+            
+            BSS["📊 BSS 세그먼트<br/>0x55F4A9C20000<br/>초기화되지 않은<br/>전역/정적 변수"]
+            
+            DATA["📈 데이터 세그먼트<br/>0x55F4A9C1F000<br/>초기화된<br/>전역/정적 변수"]
+            
+            TEXT["📖 텍스트 세그먼트<br/>0x55F4A9C00000<br/>실행 코드<br/>읽기 전용"]
+        end
+        
+        subgraph "주소 성장 방향"
+            STACK_GROW["⬇️ 스택 성장"]
+            HEAP_GROW["⬆️ 힙 성장"]
+        end
+    end
+    
+    subgraph "메모리 속성"
+        PROPS["📋 각 영역의 속성"]
+        STACK_PROP["스택: RW- (읽기/쓰기)"]
+        HEAP_PROP["힙: RW- (읽기/쓰기)"]
+        DATA_PROP["데이터: RW- (읽기/쓰기)"]
+        TEXT_PROP["텍스트: R-X (읽기/실행)"]
+        MMAP_PROP["mmap: 매핑에 따라 다름"]
+    end
+    
+    KERNEL --> KERNEL_USER --> STACK --> MMAP --> HEAP --> BSS --> DATA --> TEXT
+    
+    STACK -.-> STACK_GROW
+    HEAP -.-> HEAP_GROW
+    
+    PROPS --> STACK_PROP
+    PROPS --> HEAP_PROP
+    PROPS --> DATA_PROP
+    PROPS --> TEXT_PROP
+    PROPS --> MMAP_PROP
+    
+    style KERNEL fill:#f44336,color:#fff
+    style STACK fill:#2196f3,color:#fff
+    style MMAP fill:#ff9800,color:#fff
+    style HEAP fill:#4caf50,color:#fff
+    style BSS fill:#9c27b0,color:#fff
+    style DATA fill:#607d8b,color:#fff
+    style TEXT fill:#795548,color:#fff
+    style STACK_GROW fill:#e91e63,color:#fff
+    style HEAP_GROW fill:#009688,color:#fff
 ```
 
 ## 핵심 요점

@@ -103,6 +103,38 @@ void trace_malloc_journey() {
 2. 하지만 실제 요청보다 **훨씬 많이** 확장합니다 (135KB!)
 3. 큰 요청에는 **mmap**으로 완전히 다른 영역을 사용합니다
 
+## 🗺️ malloc의 메모리 할당 전략
+
+```mermaid
+graph TD
+    A["malloc(size) 호출"] --> B{"크기 분류"}
+    
+    B -->|"< 64KB<br/>(작은 요청)"| C["brk() 시스템콜"]
+    B -->|"> 512KB<br/>(큰 요청)"| D["mmap() 시스템콜"]
+    B -->|"64KB~512KB<br/>(중간 요청)"| E{"Free List 확인"}
+    
+    C --> C1["힙 영역 확장<br/>(연속된 메모리)"]
+    C1 --> C2["청크 할당<br/>남은 공간은 free list에"]
+    
+    D --> D1["별도 메모리 영역<br/>(가상 주소 임의 위치)"]
+    D1 --> D2["직접 반환<br/>free시 즉시 munmap"]
+    
+    E -->|"적절한 블록 있음"| F["기존 블록 재사용"]
+    E -->|"블록 부족"| C
+    
+    F --> F1["블록 분할 또는<br/>전체 사용"]
+    
+    C2 --> G["사용자에게 포인터 반환"]
+    D2 --> G
+    F1 --> G
+    
+    style A fill:#4a90e2,color:#fff
+    style C fill:#7ed321,color:#fff
+    style D fill:#f5a623,color:#fff
+    style E fill:#d0021b,color:#fff
+    style G fill:#9013fe,color:#fff
+```
+
 ## 2. 메모리 청크: 힙의 레고 블록
 
 힙 메모리는 '청크(chunk)'라는 블록으로 관리됩니다. 각 청크는 레고 블록처럼 헤더를 가지고 있습니다:
@@ -158,6 +190,57 @@ void examine_chunk() {
 - **할당된 청크**: 헤더 + 사용자 데이터
 - **해제된 청크**: 헤더 + Free List 포인터 (사용자 데이터 영역 재활용!)
 - **크기 필드의 하위 3비트**: 플래그로 사용 (PREV_INUSE, IS_MMAPPED, NON_MAIN_ARENA)
+
+## 🧱 메모리 청크 구조 분석
+
+```mermaid
+graph TB
+    subgraph "할당된 청크 (malloc 반환 후)"
+        A1["prev_size<br/>(8 bytes)<br/>이전 청크가 해제된 경우만 사용"]
+        A2["size + flags<br/>(8 bytes)<br/>현재 청크 크기 + 상태 비트"]
+        A3["사용자 데이터<br/>(요청 크기)<br/>실제 사용 가능한 메모리"]
+        A4["패딩<br/>(0-15 bytes)<br/>16바이트 정렬용"]
+    end
+    
+    subgraph "해제된 청크 (free 호출 후)"
+        B1["prev_size<br/>(8 bytes)<br/>이전 청크 크기 정보"]
+        B2["size + flags<br/>(8 bytes)<br/>현재 청크 크기 + FREE 표시"]
+        B3["fd (forward)<br/>(8 bytes)<br/>다음 free 청크 포인터"]
+        B4["bk (backward)<br/>(8 bytes)<br/>이전 free 청크 포인터"]
+        B5["미사용 공간<br/>(가변)<br/>원래 사용자 데이터 영역"]
+    end
+    
+    subgraph "크기 필드의 비트 플래그"
+        F1["PREV_INUSE (bit 0)<br/>이전 청크 사용 중"]
+        F2["IS_MMAPPED (bit 1)<br/>mmap으로 할당됨"]
+        F3["NON_MAIN_ARENA (bit 2)<br/>메인 아레나 아님"]
+        F4["실제 크기 (bit 3-63)<br/>청크 크기 정보"]
+    end
+    
+    A1 --> A2 --> A3 --> A4
+    B1 --> B2 --> B3 --> B4 --> B5
+    
+    A2 -.-> F1
+    A2 -.-> F2
+    A2 -.-> F3
+    A2 -.-> F4
+    
+    style A1 fill:#e3f2fd
+    style A2 fill:#fff3e0
+    style A3 fill:#e8f5e8
+    style A4 fill:#f3e5f5
+    
+    style B1 fill:#e3f2fd
+    style B2 fill:#fff3e0
+    style B3 fill:#ffebee
+    style B4 fill:#ffebee
+    style B5 fill:#f5f5f5
+    
+    style F1 fill:#4caf50,color:#fff
+    style F2 fill:#2196f3,color:#fff
+    style F3 fill:#ff9800,color:#fff
+    style F4 fill:#9c27b0,color:#fff
+```
 
 ## 3. Free List: 빈 메모리의 연결 리스트
 
@@ -229,6 +312,66 @@ Free List: [100B] -> [50B] -> [200B] -> [80B]
 60B 요청 → [200B] 선택 (큰 블록 유지)
 ```
 
+## 🔗 Free List 동작 과정
+
+```mermaid
+graph TD
+    subgraph "초기 상태: 메모리 할당됨"
+        M1["청크 A<br/>(64B)<br/>할당됨"]
+        M2["청크 B<br/>(64B)<br/>할당됨"]
+        M3["청크 C<br/>(64B)<br/>할당됨"]
+        M4["청크 D<br/>(64B)<br/>할당됨"]
+    end
+    
+    subgraph "B와 C 해제 후"
+        N1["청크 A<br/>(64B)<br/>할당됨"]
+        N2["청크 B<br/>(64B)<br/>FREE"]
+        N3["청크 C<br/>(64B)<br/>FREE"]
+        N4["청크 D<br/>(64B)<br/>할당됨"]
+    end
+    
+    subgraph "Free List 구조"
+        FL_HEAD["Free List Head"]
+        FL_C["청크 C<br/>fd: B주소<br/>bk: NULL"]
+        FL_B["청크 B<br/>fd: NULL<br/>bk: C주소"]
+    end
+    
+    subgraph "새 할당 요청 (64B)"
+        R1["malloc(64) 호출"]
+        R2["Free List 검색"]
+        R3["청크 C 선택<br/>(LIFO 방식)"]
+        R4["C를 Free List에서 제거"]
+        R5["사용자에게 반환"]
+    end
+    
+    M1 --> M2 --> M3 --> M4
+    M1 --> N1
+    M2 --> N2
+    M3 --> N3
+    M4 --> N4
+    
+    FL_HEAD --> FL_C
+    FL_C --> FL_B
+    
+    R1 --> R2 --> R3 --> R4 --> R5
+    
+    style M1 fill:#4caf50,color:#fff
+    style M2 fill:#4caf50,color:#fff
+    style M3 fill:#4caf50,color:#fff
+    style M4 fill:#4caf50,color:#fff
+    
+    style N1 fill:#4caf50,color:#fff
+    style N2 fill:#ff9800,color:#fff
+    style N3 fill:#ff9800,color:#fff
+    style N4 fill:#4caf50,color:#fff
+    
+    style FL_C fill:#ff9800,color:#fff
+    style FL_B fill:#ff9800,color:#fff
+    
+    style R3 fill:#2196f3,color:#fff
+    style R5 fill:#4caf50,color:#fff
+```
+
 ## 4. 메모리 단편화: 힙의 고질병
 
 단편화는 힙 메모리의 암과 같습니다. 천천히 퍼져서 시스템을 마비시킬 수 있습니다:
@@ -283,6 +426,73 @@ void demonstrate_fragmentation() {
 
     printf(", 교훈: 단편화는 메모리가 있어도 사용할 수 없게 만듭니다!, ");
 }
+```
+
+## 💔 메모리 단편화 시각화
+
+```mermaid
+graph TD
+    subgraph "1단계: 초기 상태 (1000개 메시지 할당)"
+        S1_1["메시지 1<br/>(랜덤 크기)"]
+        S1_2["메시지 2<br/>(랜덤 크기)"]
+        S1_3["메시지 3<br/>(랜덤 크기)"]
+        S1_4["..."]
+        S1_5["메시지 1000<br/>(랜덤 크기)"]
+    end
+    
+    subgraph "2단계: 홀수 메시지 해제 (체크보드 패턴)"
+        S2_1["메시지 1<br/>✅ 사용중"]
+        S2_2["메시지 2<br/>❌ 해제됨"]
+        S2_3["메시지 3<br/>✅ 사용중"]
+        S2_4["메시지 4<br/>❌ 해제됨"]
+        S2_5["..."]
+    end
+    
+    subgraph "3단계: 큰 메시지 할당 시도 (5KB)"
+        S3_PROB["문제 발생!"]
+        S3_SMALL1["50B 빈공간"]
+        S3_SMALL2["120B 빈공간"]
+        S3_SMALL3["80B 빈공간"]
+        S3_SMALL4["300B 빈공간"]
+        S3_NEED["5KB 필요"]
+        S3_SOLUTION["새 영역에<br/>할당해야 함"]
+    end
+    
+    subgraph "메모리 상태 비교"
+        BEFORE["사용 가능:<br/>총 2.5KB의 빈 공간"]
+        AFTER["실제 사용 불가:<br/>최대 300B 블록뿐"]
+        WASTE["낭비: 2.2KB<br/>사용할 수 없음"]
+    end
+    
+    S1_1 --> S1_2 --> S1_3 --> S1_4 --> S1_5
+    S2_1 --> S2_2 --> S2_3 --> S2_4 --> S2_5
+    
+    S3_SMALL1 --> S3_SMALL2 --> S3_SMALL3 --> S3_SMALL4
+    S3_NEED --> S3_SOLUTION
+    
+    BEFORE --> AFTER --> WASTE
+    
+    style S1_1 fill:#4caf50,color:#fff
+    style S1_2 fill:#4caf50,color:#fff
+    style S1_3 fill:#4caf50,color:#fff
+    style S1_5 fill:#4caf50,color:#fff
+    
+    style S2_1 fill:#4caf50,color:#fff
+    style S2_2 fill:#ff9800,color:#fff
+    style S2_3 fill:#4caf50,color:#fff
+    style S2_4 fill:#ff9800,color:#fff
+    
+    style S3_PROB fill:#f44336,color:#fff
+    style S3_SMALL1 fill:#ff9800,color:#fff
+    style S3_SMALL2 fill:#ff9800,color:#fff
+    style S3_SMALL3 fill:#ff9800,color:#fff
+    style S3_SMALL4 fill:#ff9800,color:#fff
+    style S3_NEED fill:#2196f3,color:#fff
+    style S3_SOLUTION fill:#9c27b0,color:#fff
+    
+    style BEFORE fill:#4caf50,color:#fff
+    style AFTER fill:#ff9800,color:#fff
+    style WASTE fill:#f44336,color:#fff
 ```
 
 ## 5. 힙 관리 전략

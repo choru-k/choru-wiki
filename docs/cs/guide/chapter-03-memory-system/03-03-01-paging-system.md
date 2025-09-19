@@ -219,6 +219,24 @@ PTE 크기: 8 bytes
 
 해결책: 다단계 페이지 테이블!
 
+```mermaid
+graph TD
+    subgraph "단일 레벨 페이지 테이블 문제"
+        VA1["가상 주소 공간: 256TB"] --> SINGLE["단일 페이지 테이블"]
+        SINGLE --> SIZE["테이블 크기: 512GB"]
+        SIZE --> PROBLEM["각 프로세스마다 512GB!"]
+    end
+
+    subgraph "다단계 페이지 테이블 해결책"
+        VA2["가상 주소 공간: 256TB"] --> MULTI["4단계 페이지 테이블"]
+        MULTI --> SPARSE["희소 주소 공간"]
+        SPARSE --> EFFICIENT["실제 사용: 1-10MB"]
+    end
+
+    style PROBLEM fill:#ffcccb
+    style EFFICIENT fill:#c8e6c9
+```
+
 ### 3.2 x86-64의 4단계 페이징
 
 ```c
@@ -272,6 +290,38 @@ int main() {
 
     return 0;
 }
+```
+
+이제 4단계 페이지 테이블의 주소 변환 과정을 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph "가상 주소 분해"
+        VA["가상 주소 (48비트)"] 
+        VA --> PML4_IDX["PML4 인덱스<br/>(47-39비트)"]
+        VA --> PDPT_IDX["PDPT 인덱스<br/>(38-30비트)"]
+        VA --> PD_IDX["PD 인덱스<br/>(29-21비트)"]
+        VA --> PT_IDX["PT 인덱스<br/>(20-12비트)"]
+        VA --> OFFSET["오프셋<br/>(11-0비트)"]
+    end
+
+    subgraph "4단계 변환 과정"
+        CR3["CR3 레지스터"] --> PML4["PML4 테이블"]
+        PML4 --> |"PML4[인덱스]"| PDPT["PDPT 테이블"]
+        PDPT --> |"PDPT[인덱스]"| PD["PD 테이블"]
+        PD --> |"PD[인덱스]"| PT["PT 테이블"]
+        PT --> |"PT[인덱스]"| FRAME["물리 프레임"]
+        FRAME --> |"+ 오프셋"| PHYSICAL["물리 주소"]
+    end
+
+    PML4_IDX -.-> PML4
+    PDPT_IDX -.-> PDPT
+    PD_IDX -.-> PD
+    PT_IDX -.-> PT
+    OFFSET -.-> PHYSICAL
+
+    style PHYSICAL fill:#c8e6c9
+    style CR3 fill:#81c784
 ```
 
 ### 3.3 다단계 페이징의 메모리 절약 효과
@@ -331,6 +381,51 @@ int main() {
 ```
 
 ## 4. 페이지 테이블 워킹 (Page Table Walking)
+
+페이지 테이블 워킹 과정을 시각화해보겠습니다:
+
+```mermaid
+graph TD
+    subgraph "페이지 테이블 워킹 과정"
+        START["가상 주소 접근"] --> STEP1["1단계: PML4 테이블"]
+        STEP1 --> CHECK1{Present?}
+        CHECK1 -->|No| FAULT1["페이지 폴트"]
+        CHECK1 -->|Yes| STEP2["2단계: PDPT 테이블"]
+        
+        STEP2 --> CHECK2{Present?}
+        CHECK2 -->|No| FAULT2["페이지 폴트"]
+        CHECK2 -->|Yes| STEP3["3단계: PD 테이블"]
+        
+        STEP3 --> CHECK3{Present?}
+        CHECK3 -->|No| FAULT3["페이지 폴트"]
+        CHECK3 -->|Yes| STEP4["4단계: PT 테이블"]
+        
+        STEP4 --> CHECK4{Present?}
+        CHECK4 -->|No| FAULT4["페이지 폴트"]
+        CHECK4 -->|Yes| FRAME["물리 프레임"]
+        FRAME --> ADDR["물리 주소 완성"]
+    end
+
+    subgraph "메모리 접근 카운트"
+        MEM1["메모리 접근 #1<br/>PML4 읽기"]
+        MEM2["메모리 접근 #2<br/>PDPT 읽기"]
+        MEM3["메모리 접근 #3<br/>PD 읽기"]
+        MEM4["메모리 접근 #4<br/>PT 읽기"]
+        MEM5["메모리 접근 #5<br/>실제 데이터"]
+    end
+
+    STEP1 -.-> MEM1
+    STEP2 -.-> MEM2
+    STEP3 -.-> MEM3
+    STEP4 -.-> MEM4
+    ADDR -.-> MEM5
+
+    style FAULT1 fill:#ffcccb
+    style FAULT2 fill:#ffcccb
+    style FAULT3 fill:#ffcccb
+    style FAULT4 fill:#ffcccb
+    style ADDR fill:#c8e6c9
+```
 
 ### 4.1 하드웨어 페이지 테이블 워킹
 
