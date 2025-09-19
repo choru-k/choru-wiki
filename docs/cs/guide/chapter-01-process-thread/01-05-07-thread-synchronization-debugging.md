@@ -818,7 +818,7 @@ graph LR
 
 ### 다음 단계
 
-다음 섹션 [4-7: CPU 친화도 설정과 최적화](./01-04-04-cpu-affinity.md)에서는 스레드를 특정 CPU 코어에 바인딩하여 성능을 최적화하는 방법을 다룹니다.
+다음 섹션 [1.4.4: CPU 친화도 설정과 최적화](./01-04-04-cpu-affinity.md)에서는 스레드를 특정 CPU 코어에 바인딩하여 성능을 최적화하는 방법을 다룹니다.
 
 안전하고 효율적인 스레드 동기화로 견고한 멀티스레드 애플리케이션을 구축해봅시다! 🧵
 
@@ -838,11 +838,11 @@ graph LR
 
 ### 📂 같은 챕터 (chapter-01-process-thread)
 
-- [Chapter 4-1: 프로세스 생성과 종료 개요](./01-02-01-process-creation.md)
-- [Chapter 4-1A: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
-- [Chapter 4-1B: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
-- [Chapter 4-1C: 프로세스 종료와 좀비 처리](./01-02-04-process-termination-zombies.md)
-- [Chapter 4-1D: 프로세스 관리와 모니터링](./01-05-01-process-management-monitoring.md)
+- [1.2.1: 프로세스 생성과 종료 개요](./01-02-01-process-creation.md)
+- [1.2.2: fork() 시스템 콜과 프로세스 복제 메커니즘](./01-02-02-process-creation-fork.md)
+- [1.2.3: exec() 패밀리와 프로그램 교체 메커니즘](./01-02-03-program-replacement-exec.md)
+- [1.2.4: 프로세스 종료와 좀비 처리](./01-02-04-process-termination-zombies.md)
+- [1.5.1: 프로세스 관리와 모니터링](./01-05-01-process-management-monitoring.md)
 
 ### 🏷️ 관련 키워드
 
