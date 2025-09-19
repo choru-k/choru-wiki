@@ -96,19 +96,149 @@ priority_score: 4
 - 시스템 호출 기반 보안 모델 설계
 - 컨테이너 격리 기술의 커널 수준 구현
 
+## 🏗️ 리눅스 커널 전체 아키텍처 개요
+
+커널의 각 서브시스템이 어떻게 상호작용하는지 전체적인 그림을 먼저 이해해봅시다:
+
+```mermaid
+graph TB
+    subgraph "사용자 공간 (User Space)"
+        APP1[애플리케이션]
+        APP2[시스템 데몬]
+        APP3[셸 & 유틸리티]
+        LIB[시스템 라이브러리 glibc]
+    end
+
+    subgraph "시스템 호출 인터페이스"
+        SYSCALL[시스템 호출 레이어]
+        VDSO[vDSO 최적화]
+    end
+
+    subgraph "커널 핵심 (Kernel Core)"
+        subgraph "프로세스 관리"
+            SCHED[스케줄러 CFS/RT]
+            FORK[프로세스 생성]
+            SIG[신호 처리]
+        end
+
+        subgraph "메모리 관리"
+            VMM[가상 메모리 관리]
+            SLAB[SLAB/SLUB 할당자]
+            SWAP[스와핑 시스템]
+        end
+
+        subgraph "파일 시스템"
+            VFS[가상 파일시스템]
+            CACHE[페이지 캐시]
+            FS_TYPES[ext4, xfs, btrfs]
+        end
+
+        subgraph "네트워크 스택"
+            NETCORE[네트워크 코어]
+            TCP_UDP[TCP/UDP 스택]
+            FILTER[패킷 필터링]
+        end
+
+        subgraph "I/O 서브시스템"
+            BLOCK[블록 레이어]
+            ELEVATOR[I/O 스케줄러]
+            DM[디바이스 매퍼]
+        end
+    end
+
+    subgraph "커널 서비스"
+        IRQ[인터럽트 처리]
+        TIMER[타이머 서비스]
+        LOCK[락킹 프리미티브]
+        RCU[RCU 동기화]
+    end
+
+    subgraph "모듈 & 확장"
+        MODULES[동적 모듈]
+        EBPF[eBPF 서브시스템]
+        LSM[보안 모듈 LSM]
+    end
+
+    subgraph "하드웨어 추상화"
+        DRV_CHAR[캐릭터 드라이버]
+        DRV_BLOCK[블록 드라이버]
+        DRV_NET[네트워크 드라이버]
+        ACPI[ACPI/전원 관리]
+    end
+
+    subgraph "하드웨어"
+        CPU[프로세서]
+        MEM[메모리]
+        STORAGE[스토리지]
+        NETWORK[네트워크 카드]
+        PCI[PCI 디바이스들]
+    end
+
+    %% 연결 관계
+    APP1 --> LIB
+    APP2 --> LIB
+    APP3 --> LIB
+    LIB --> SYSCALL
+    SYSCALL --> VDSO
+
+    SYSCALL --> SCHED
+    SYSCALL --> VMM
+    SYSCALL --> VFS
+    SYSCALL --> NETCORE
+
+    SCHED --> IRQ
+    VMM --> SLAB
+    VFS --> CACHE
+    NETCORE --> FILTER
+
+    BLOCK --> ELEVATOR
+    IRQ --> TIMER
+    MODULES --> EBPF
+
+    DRV_CHAR --> CPU
+    DRV_BLOCK --> STORAGE
+    DRV_NET --> NETWORK
+    ACPI --> CPU
+
+    VMM --> MEM
+    BLOCK --> STORAGE
+    NETCORE --> NETWORK
+
+    %% 스타일링
+    style SYSCALL fill:#FFE082
+    style SCHED fill:#E8F5E9
+    style VMM fill:#E3F2FD
+    style VFS fill:#FFF3E0
+    style NETCORE fill:#F3E5F5
+    style IRQ fill:#FFCDD2
+    style MODULES fill:#E1F5FE
+```
+
+## 📊 커널 서브시스템 성능 특성
+
+각 서브시스템의 주요 성능 특성과 최적화 포인트:
+
+| 서브시스템 | 주요 지표 | 최적화 포인트 | 모니터링 도구 |
+|-----------|----------|--------------|-------------|
+| **프로세스 스케줄러** | 지연시간, 처리량 | CFS 튜닝, CPU 친화성 | `/proc/schedstat`, perf |
+| **메모리 관리** | 페이지 폴트, 메모리 사용률 | 페이지 크기, NUMA 설정 | `/proc/meminfo`, vmstat |
+| **파일 시스템** | IOPS, 처리량 | 페이지 캐시, I/O 스케줄러 | iostat, iotop |
+| **네트워크 스택** | 패킷/초, 지연시간 | 인터럽트 밸런싱, 큐 크기 | ss, netstat, ethtool |
+| **인터럽트 처리** | 인터럽트 빈도, CPU 사용률 | IRQ 밸런싱, NAPI | `/proc/interrupts` |
+
 ## 🔗 연관 학습
 
 ### 선행 학습
 
-- [Chapter 4: 프로세스와 스레드](../chapter-01-process-thread/) - 프로세스 관리 기초
-- [Chapter 5: CPU와 인터럽트](../chapter-02-cpu-interrupt/) - 하드웨어 이해
-- [Chapter 6: 파일 I/O](../chapter-06-file-io/) - 파일시스템 기본
+- [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md) - 프로세스 관리 기초
+- [Chapter 2: CPU와 인터럽트](../chapter-02-cpu-interrupt/index.md) - 하드웨어 이해
+- [Chapter 6: 파일 시스템과 I/O](../chapter-06-file-io/index.md) - 파일시스템 기본
 
 ### 후속 학습
 
-- [4.1.7: 시스템 호출 내부 구현](./04-01-07-system-call-implementation.md) - 커널-사용자 공간 인터페이스
-- [Chapter 17: 보안 엔지니어링](../chapter-17-security-engineering/) - 보안 메커니즘
-- [Chapter 11: 성능 최적화](../chapter-11-performance-optimization/) - 고성능 시스템 구현
+- [Chapter 4.1.7: 시스템 호출 내부 구현](./04-01-07-system-call-implementation.md) - 커널-사용자 공간 인터페이스
+- [Chapter 17: 보안 엔지니어링](../chapter-17-security-engineering/index.md) - 보안 메커니즘
+- [Chapter 11: 성능 최적화](../chapter-11-performance-optimization/index.md) - 고성능 시스템 구현
 
 ## 💡 학습 효과 극대화 팁
 
@@ -119,7 +249,7 @@ priority_score: 4
 
 ---
 
-**시작**: [4.1.3: 커널 설계 철학과 전체 구조](./04-01-03-kernel-design-philosophy.md)에서 리눅스 커널의 설계 철학부터 시작합니다.
+**시작**: [Chapter 4.1.3: 커널 설계 철학과 전체 구조](./04-01-03-kernel-design-philosophy.md)에서 리눅스 커널의 설계 철학부터 시작합니다.
 
 ## 📚 관련 문서
 

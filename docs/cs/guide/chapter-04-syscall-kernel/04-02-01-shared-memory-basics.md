@@ -208,7 +208,7 @@ int main(int argc, char *argv[]) {
 
 ---
 
-**다음**: [4.2.2: 기본 신호 통신](04-02-02-basic-signal-communication.md)에서 신호 기반 통신을 학습합니다.
+**다음**: [Chapter 4.2.2: 기본 신호 통신](04-02-02-basic-signal-communication.md)에서 신호 기반 통신을 학습합니다.
 
 ## 📚 관련 문서
 

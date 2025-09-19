@@ -283,8 +283,8 @@ Python 스크립트를 통해 OOM 이벤트를 자동으로 파싱하고 분석�
 
 ---
 
-**이전**: [03-01-oom-fundamentals.md](./03-06-01-oom-fundamentals.md)  
-**다음**: [08c-cgroup-container-oom.md](./03-06-04-cgroup-container-oom.md)에서 cgroup 및 컴테이너 OOM 디버깅을 학습합니다.
+**이전**: [Chapter 3.6.1: OOM 기초 개념](./03-06-01-oom-fundamentals.md)  
+**다음**: [Chapter 3.6.4: 컨테이너 OOM](./03-06-04-cgroup-container-oom.md)에서 cgroup 및 컨테이너 OOM 디버깅을 학습합니다.
 
 ## 📚 관련 문서
 

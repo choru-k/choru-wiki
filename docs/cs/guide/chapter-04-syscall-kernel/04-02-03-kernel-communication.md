@@ -131,8 +131,8 @@ pip install psutil pandas numpy
 
 ### 📂 같은 챕터 (chapter-04-syscall-kernel)
 
-- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-system-call-basics.md)
-- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-02-kernel-architecture.md)
+- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-01-system-call-basics.md)
+- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-01-02-kernel-architecture.md)
 - [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-01-03-kernel-design-philosophy.md)
 - [Chapter 4-1-3: 커널 설계 철학과 전체 구조](./04-01-04-kernel-design-structure.md)
 - [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-01-05-core-subsystems.md)

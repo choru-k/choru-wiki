@@ -453,8 +453,8 @@ void use_dangling_pointer() {
 
 ---
 
-**이전**: [스택과 힙 개요](./03-01-01-stack-fundamentals.md)  
-**다음**: [힙의 상세 동작](./03-01-02-heap-fundamentals.md)에서 malloc의 복잡한 여정을 탐구합니다.
+**이전**: [Chapter 3 메모리 시스템 개요](./index.md)  
+**다음**: [Chapter 3.1.2: 힙 메모리 기초](./03-01-02-heap-fundamentals.md)에서 malloc의 복잡한 여정을 탐구합니다.
 
 ## 📚 관련 문서
 
@@ -472,11 +472,11 @@ void use_dangling_pointer() {
 
 ### 📂 같은 챕터 (chapter-03-memory-system)
 
-- [Chapter 3-1-4: 프로세스 메모리 구조는 어떻게 구성되는가](./03-01-04-process-memory.md)
-- [Chapter 3-1-1: 스택 메모리 기초](./03-01-01-stack-fundamentals.md)
-- [Chapter 3-1-2: 힙의 상세 동작 - 도시 계획과 같은 복잡성](./03-01-02-heap-fundamentals.md)
-- [Chapter 3-7-1: 성능 비교와 메모리 버그 - 숫자로 보는 차이와 버그 사냥](./03-07-01-performance-debugging.md)
-- [Chapter 3-4-4: 고급 메모리 관리 기법 - 성능을 극대화하는 전략들](./03-04-04-advanced-techniques.md)
+- [Chapter 3.1.4: 프로세스 메모리 구조](./03-01-04-process-memory.md)
+- [Chapter 3.1.1: 스택 메모리 기초](./03-01-01-stack-fundamentals.md)
+- [Chapter 3.1.2: 힙 메모리 기초](./03-01-02-heap-fundamentals.md)
+- [Chapter 3.7.1: 성능 디버깅](./03-07-01-performance-debugging.md)
+- [Chapter 3.4.4: 고급 메모리 관리 기법](./03-04-04-advanced-techniques.md)
 
 ### 🏷️ 관련 키워드
 

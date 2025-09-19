@@ -30,6 +30,105 @@ priority_score: 4
 
 netlink 소켓은 커널과 사용자 공간 사이의 양방향 통신을 위한 특별한 소켓입니다:
 
+## 🔄 Netlink 소켓 통신 아키텍처
+
+```mermaid
+graph TB
+    subgraph "사용자 공간 (User Space)"
+        APP1[네트워크 관리 도구]
+        APP2[시스템 모니터링]
+        APP3[라우팅 데몬]
+        
+        subgraph "Netlink 라이브러리"
+            LIBNL[libnl]
+            SOCKET_API[소켓 API]
+        end
+    end
+
+    subgraph "커널 공간 (Kernel Space)"
+        subgraph "Netlink 서브시스템"
+            NL_CORE[Netlink Core]
+            NL_ROUTE[NETLINK_ROUTE]
+            NL_AUDIT[NETLINK_AUDIT]
+            NL_FIREWALL[NETLINK_FIREWALL]
+            NL_CRYPTO[NETLINK_CRYPTO]
+        end
+
+        subgraph "커널 모듈들"
+            RTNETLINK[rtnetlink 모듈]
+            NETWORK[네트워크 스택]
+            IPTABLES[iptables/netfilter]
+            CRYPTO_ALG[암호화 알고리즘]
+        end
+    end
+
+    subgraph "메시지 흐름"
+        direction LR
+        MSG_UP[이벤트 알림 ↑]
+        MSG_DOWN[요청/응답 ↓]
+    end
+
+    %% 연결 관계
+    APP1 --> LIBNL
+    APP2 --> SOCKET_API
+    APP3 --> LIBNL
+
+    LIBNL --> NL_CORE
+    SOCKET_API --> NL_CORE
+
+    NL_CORE --> NL_ROUTE
+    NL_CORE --> NL_AUDIT
+    NL_CORE --> NL_FIREWALL
+    NL_CORE --> NL_CRYPTO
+
+    NL_ROUTE --> RTNETLINK
+    NL_ROUTE --> NETWORK
+    NL_FIREWALL --> IPTABLES
+    NL_CRYPTO --> CRYPTO_ALG
+
+    %% 메시지 흐름
+    NETWORK -.-> MSG_UP
+    MSG_UP -.-> NL_ROUTE
+    NL_ROUTE -.-> MSG_DOWN
+    MSG_DOWN -.-> APP1
+
+    %% 스타일링
+    style NL_CORE fill:#FFE082
+    style RTNETLINK fill:#E8F5E9
+    style NETWORK fill:#E3F2FD
+    style MSG_UP fill:#FFCDD2
+    style MSG_DOWN fill:#C8E6C9
+```
+
+## 📨 Netlink 메시지 구조
+
+```mermaid
+graph LR
+    subgraph "Netlink 메시지 패킷"
+        subgraph "헤더 (nlmsghdr)"
+            LEN[길이 nlmsg_len]
+            TYPE[타입 nlmsg_type]
+            FLAGS[플래그 nlmsg_flags]
+            SEQ[시퀀스 nlmsg_seq]
+            PID[프로세스ID nlmsg_pid]
+        end
+        
+        subgraph "페이로드"
+            PROTO_HDR[프로토콜 헤더]
+            ATTRS[속성들 rtattr]
+            DATA[실제 데이터]
+        end
+    end
+
+    LEN --> TYPE --> FLAGS --> SEQ --> PID
+    PID --> PROTO_HDR --> ATTRS --> DATA
+
+    style LEN fill:#FFE082
+    style TYPE fill:#E8F5E9
+    style FLAGS fill:#E3F2FD
+    style ATTRS fill:#F3E5F5
+```
+
 ### 1.1 기본 사용법
 
 ```c

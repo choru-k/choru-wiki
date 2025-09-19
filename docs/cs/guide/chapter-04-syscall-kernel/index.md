@@ -98,15 +98,15 @@ priority_score: 4
 
 ### 📚 시스템 프로그래밍 기초
 
-- [Chapter 1: 프로세스와 스레드](.../chapter-01-process-thread/index.md)
-- [Chapter 2: CPU와 인터럽트](.../chapter-02-cpu-interrupt/index.md)
-- [Chapter 3: 메모리 시스템](.../chapter-03-memory-system/index.md)
+- [Chapter 1: 프로세스와 스레드](../chapter-01-process-thread/index.md)
+- [Chapter 2: CPU와 인터럽트](../chapter-02-cpu-interrupt/index.md)
+- [Chapter 3: 메모리 시스템](../chapter-03-memory-system/index.md)
 
 ### 🚀 성능 관련  
 
-- [Chapter 11: 성능 최적화](.../chapter-11-performance-optimization/index.md)
+- [Chapter 11: 성능 최적화](../chapter-11-performance-optimization/index.md)
 
 ### 🔧 고급 주제
 
-- [Chapter 6: 파일 시스템과 I/O](.../chapter-06-file-io/index.md)
-- [Chapter 17: 보안 엔지니어링](.../chapter-17-security-engineering/index.md)
+- [Chapter 6: 파일 시스템과 I/O](../chapter-06-file-io/index.md)
+- [Chapter 17: 보안 엔지니어링](../chapter-17-security-engineering/index.md)

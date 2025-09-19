@@ -527,7 +527,7 @@ gcc -o signalfd_monitoring signalfd_monitoring.c
 
 고급 이벤트 메커니즘을 익혔다면, 다음 문서에서 모든 이벤트 소스를 통합하는 방법을 학습하세요:
 
-- [Chapter 10-4d4: 통합 이벤트 시스템](04d4-integrated-event-system.md) - 모든 이벤트 메커니즘 통합
+- [Chapter 10-4d4: 통합 이벤트 시스템](04-02-10-integrated-event-system.md) - 모든 이벤트 메커니즘 통합
 
 ## 📚 관련 문서
 
@@ -545,11 +545,11 @@ gcc -o signalfd_monitoring signalfd_monitoring.c
 
 ### 📂 같은 챕터 (chapter-04-syscall-kernel)
 
-- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-system-call-basics.md)
-- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-02-kernel-architecture.md)
-- [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-10-kernel-design-philosophy.md)
+- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-01-system-call-basics.md)
+- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-01-02-kernel-architecture.md)
+- [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-01-03-kernel-design-philosophy.md)
 - [Chapter 4-1-3: 커널 설계 철학과 전체 구조](./04-01-04-kernel-design-structure.md)
-- [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-12-core-subsystems.md)
+- [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-01-05-core-subsystems.md)
 
 ### 🏷️ 관련 키워드
 

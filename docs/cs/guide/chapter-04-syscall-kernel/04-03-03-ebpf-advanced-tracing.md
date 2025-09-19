@@ -521,5 +521,5 @@ eBPF를 통해 사용자 공간의 오버헤드 없이 커널 이벤트를 실�
 
 ---
 
-**이전**: [06a. 종합 커널 진단 시스템](04-42-comprehensive-diagnostic-system.md)  
-**다음**: [06c. 실무 적용 사례 및 추가 리소스](04-51-practical-cases-resources.md)에서 실제 프로덕션 환경에서의 디버깅 사례를 학습합니다.
+**이전**: [06a. 종합 커널 진단 시스템](04-05-03-comprehensive-diagnostic-system.md)  
+**다음**: [06c. 실무 적용 사례 및 추가 리소스](04-06-02-practical-cases-resources.md)에서 실제 프로덕션 환경에서의 디버깅 사례를 학습합니다.

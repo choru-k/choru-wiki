@@ -725,7 +725,7 @@ void optimize_numa_page_tables() {
 
 ### 선행 지식
 
-- [Chapter 2: Virtual Memory](./03-01-03-virtual-memory-basics.md) - 가상 메모리 기초
+- [가상 메모리 기초](./03-01-03-virtual-memory-basics.md) - 가상 메모리 기초
 - [Process Memory Structure](./03-01-04-process-memory.md) - 프로세스 메모리 구조
 
 ### 관련 주제

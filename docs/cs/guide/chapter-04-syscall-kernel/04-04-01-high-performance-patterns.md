@@ -447,8 +447,8 @@ int main() {
 
 ---
 
-**이전**: [mmap과 파일 기반 통신](04-19-2-mmap-file-communication.md)  
-**다음**: [성능 최적화와 캐시 관리](04-31-4-performance-optimization.md)에서 False Sharing 방지와 캐시 라인 정렬 기법을 학습합니다.
+**이전**: [mmap과 파일 기반 통신](04-02-07-mmap-file-communication.md)  
+**다음**: [성능 최적화와 캐시 관리](04-04-02-performance-optimization.md)에서 False Sharing 방지와 캐시 라인 정렬 기법을 학습합니다.
 
 ## 📚 관련 문서
 
@@ -466,11 +466,11 @@ int main() {
 
 ### 📂 같은 챕터 (chapter-04-syscall-kernel)
 
-- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-system-call-basics.md)
-- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-02-kernel-architecture.md)
-- [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-10-kernel-design-philosophy.md)
+- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-01-system-call-basics.md)
+- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-01-02-kernel-architecture.md)
+- [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-01-03-kernel-design-philosophy.md)
 - [Chapter 4-1-3: 커널 설계 철학과 전체 구조](./04-01-04-kernel-design-structure.md)
-- [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-12-core-subsystems.md)
+- [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-01-05-core-subsystems.md)
 
 ### 🏷️ 관련 키워드
 

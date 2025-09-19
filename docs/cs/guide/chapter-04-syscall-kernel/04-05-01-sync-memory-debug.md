@@ -481,8 +481,8 @@ printk, /proc, /sys 파일시스템을 활용하여 시스템 상태를 모니�
 
 ---
 
-**이전**: [04-01-06-interrupt-module-system.md](04-01-06-interrupt-module-system.md)  
-**다음**: [04-50-practical-kernel-module.md](04-50-practical-kernel-module.md)에서 실직적인 커널 모듈 개발 예제를 학습합니다.
+**이전**: [Chapter 4.1.6: 인터럽트 및 모듈 시스템](04-01-06-interrupt-module-system.md)  
+**다음**: [Chapter 4.6.1: 실무 커널 모듈 개발](04-06-01-practical-kernel-module.md)에서 실질적인 커널 모듈 개발 예제를 학습합니다.
 
 ## 📚 관련 문서
 
@@ -500,11 +500,11 @@ printk, /proc, /sys 파일시스템을 활용하여 시스템 상태를 모니�
 
 ### 📂 같은 챕터 (chapter-04-syscall-kernel)
 
-- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-system-call-basics.md)
-- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-02-kernel-architecture.md)
-- [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-10-kernel-design-philosophy.md)
+- [Chapter 4-1-1: 시스템 호출 기초와 인터페이스](./04-01-01-system-call-basics.md)
+- [Chapter 4-1-2: 리눅스 커널 아키텍처 개요](./04-01-02-kernel-architecture.md)
+- [Chapter 4-1-3: 커널 설계 철학과 아키텍처 기초](./04-01-03-kernel-design-philosophy.md)
 - [Chapter 4-1-3: 커널 설계 철학과 전체 구조](./04-01-04-kernel-design-structure.md)
-- [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-12-core-subsystems.md)
+- [Chapter 4-1-5: 핵심 서브시스템 탐구](./04-01-05-core-subsystems.md)
 
 ### 🏷️ 관련 키워드
 
