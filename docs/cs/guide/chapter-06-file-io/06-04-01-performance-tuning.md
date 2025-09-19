@@ -19,6 +19,53 @@ priority_score: 4
 
 ## 성능 최적화와 튜닝
 
+### I/O 스택 최적화 지점
+
+```mermaid
+graph TB
+    subgraph "I/O 성능 최적화 스택"
+        subgraph "Application Layer"
+            APP1["Application"]
+            OPT1["버퍼링 최적화"]
+            OPT2["배치 처리"]
+            OPT3["비동기 I/O"]
+        end
+        
+        subgraph "VFS Layer"
+            VFS1["VFS"]
+            OPT4["dentry cache 튜닝"]
+            OPT5["inode cache 최적화"]
+            OPT6["page cache 조정"]
+        end
+        
+        subgraph "File System Layer"
+            FS1["ext4/XFS/Btrfs"]
+            OPT7["마운트 옵션 최적화"]
+            OPT8["저널링 모드"]
+            OPT9["extent 크기"]
+        end
+        
+        subgraph "Block Layer"
+            BLK1["Block Layer"]
+            OPT10["I/O 스케줄러"]
+            OPT11["큐 깊이"]
+            OPT12["병합 설정"]
+        end
+        
+        subgraph "Device Layer"
+            DEV1["Storage Device"]
+            OPT13["RAID 설정"]
+            OPT14["SSD TRIM"]
+            OPT15["NCQ 설정"]
+        end
+    end
+    
+    APP1 --> VFS1
+    VFS1 --> FS1
+    FS1 --> BLK1
+    BLK1 --> DEV1
+```
+
 ### 🎯 VFS 튜닝: 성능의 비밀 레시피
 
 제가 프로덕션 서버를 튜닝하며 배운 노하우:

@@ -120,9 +120,9 @@ graph TD
 
 ### 선행 학습
 
-- [File Descriptor 시스템](./06-02-01-file-descriptor.md) - I/O 기초 개념
-- [VFS와 파일시스템](./06-02-04-vfs-filesystem.md) - 파일시스템 이해
-- [Block I/O 아키텍처](./06-02-09-block-io.md) - 블록 장치 I/O
+- [Chapter 6.2.1: File Descriptor 시스템](./06-02-01-file-descriptor.md) - I/O 기초 개념
+- [Chapter 6.2.4: VFS와 파일시스템](./06-02-04-vfs-filesystem.md) - 파일시스템 이해
+- [Chapter 6.2.9: Block I/O 아키텍처](./06-02-09-block-io.md) - 블록 장치 I/O
 
 ### 후속 학습
 

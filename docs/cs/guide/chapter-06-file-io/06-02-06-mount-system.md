@@ -530,8 +530,8 @@ mount -o remount,ro,bind /container/config
 
 ---
 
-**이전**: [경로명 조회와 덴트리 캐시](./06-02-05-path-lookup.md)  
-**다음**: [VFS 캐시 시스템](./06-02-07-vfs-cache.md)에서 3단계 캐시 메커니즘의 성능 비밀을 학습합니다.
+**이전**: [Chapter 6.2.5: 경로명 조회와 덴트리 캐시](./06-02-05-path-lookup.md)  
+**다음**: [Chapter 6.2.7: VFS 캐시 시스템](./06-02-07-vfs-cache.md)에서 3단계 캐시 메커니즘의 성능 비밀을 학습합니다.
 
 ## 📚 관련 문서
 

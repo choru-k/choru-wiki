@@ -130,25 +130,25 @@ openat(AT_FDCWD, "/etc/passwd", O_RDONLY) = 3
 ```mermaid
 graph TB
     subgraph "Process Space"
-        FDT["File Descriptor Table]
-        FD0[fd 0: stdin"]
-        FD1["fd 1: stdout]
-        FD2[fd 2: stderr"]
-        FD3["fd 3: file.txt]
-        FD4[fd 4: socket"]
+        FDT["File Descriptor Table"]
+        FD0["fd 0: stdin"]
+        FD1["fd 1: stdout"]
+        FD2["fd 2: stderr"]
+        FD3["fd 3: file.txt"]
+        FD4["fd 4: socket"]
     end
 
     subgraph "System-wide File Table"
-        FT1["File Table Entry 1]
-        FT2[File Table Entry 2"]
-        FT3["File Table Entry 3]
-        FT4[File Table Entry 4"]
+        FT1["File Table Entry 1"]
+        FT2["File Table Entry 2"]
+        FT3["File Table Entry 3"]
+        FT4["File Table Entry 4"]
     end
 
     subgraph "Inode/Socket Table"
-        IN1["Inode: /dev/tty]
-        IN2[Inode: file.txt"]
-        IN3[Socket: TCP]
+        IN1["Inode: /dev/tty"]
+        IN2["Inode: file.txt"]
+        IN3["Socket: TCP"]
     end
 
     FD0 --> FT1

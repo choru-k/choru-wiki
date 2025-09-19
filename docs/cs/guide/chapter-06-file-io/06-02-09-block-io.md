@@ -93,12 +93,12 @@ priority_score: 4
 
 ### 선행 학습
 
-- [파일 디스크립터와 VFS](./06-02-01-file-descriptor.md) - I/O 인터페이스 기초
-- [가상 파일시스템](./06-02-04-vfs-filesystem.md) - 상위 계층 이해
+- [Chapter 6.2.1: 파일 디스크립터와 VFS](./06-02-01-file-descriptor.md) - I/O 인터페이스 기초
+- [Chapter 6.2.4: 가상 파일시스템](./06-02-04-vfs-filesystem.md) - 상위 계층 이해
 
 ### 후속 학습  
 
-- [비동기 I/O 기초와 핵심개념](./06-03-01-async-io-fundamentals.md) - 응용 계층 최적화
+- [Chapter 6.3.1: 비동기 I/O 기초와 핵심개념](./06-03-01-async-io-fundamentals.md) - 응용 계층 최적화
 - [네트워크 I/O와 소켓](../chapter-07-network-programming/07-01-01-socket-basics.md) - 네트워크 I/O 확장
 
 ## 도입: 스토리지 성능의 병목

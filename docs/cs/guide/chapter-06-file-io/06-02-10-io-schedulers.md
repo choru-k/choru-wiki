@@ -33,11 +33,96 @@ avg-cpu:  %iowait
 # 응답 시간 70% 감소!
 ```
 
+### I/O 스케줄러 비교
+
+```mermaid
+graph TB
+    subgraph "I/O 스케줄러 특성 비교"
+        subgraph "NOOP (No Operation)"
+            N1["FIFO 순서"]
+            N2["매우 낮은 오버헤드"]
+            N3["SSD/NVMe 최적화"]
+            N4["시크 타임 고려 안함"]
+        end
+        
+        subgraph "Deadline"
+            D1["읽기/쓰기 대기열 분리"]
+            D2["마감시간 보장"]
+            D3["배치 및 병합"]
+            D4["실시간 시스템 적합"]
+        end
+        
+        subgraph "BFQ (Budget Fair Queuing)"
+            B1["프로세스별 공정성"]
+            B2["가중치 기반 분배"]
+            B3["대화형 응용 우선"]
+            B4["데스크탑 최적화"]
+        end
+        
+        subgraph "mq-deadline (Multi-Queue)"
+            M1["다중 큐 지원"]
+            M2["CPU 코어별 큐"]
+            M3["NUMA 인식"]
+            M4["고성능 스토리지"]
+        end
+    end
+```
+
+### 스케줄러별 적용 시나리오
+
+```mermaid
+graph LR
+    subgraph "스토리지 타입별 최적 스케줄러"
+        SSD["SSD/NVMe"] --> NOOP_OPT["NOOP 권장"]
+        HDD["Traditional HDD"] --> DEAD_OPT["Deadline 권장"]
+        HYBRID["Hybrid Storage"] --> BFQ_OPT["BFQ 권장"]
+    end
+    
+    subgraph "워크로드별 최적 스케줄러"
+        DB["Database"] --> DEAD_DB["Deadline"]
+        WEB["Web Server"] --> MQ_WEB["mq-deadline"]
+        DESKTOP["Desktop"] --> BFQ_DESK["BFQ"]
+        BATCH["Batch Processing"] --> NOOP_BATCH["NOOP"]
+    end
+```
+
 각 스케줄러의 특징:
 
 - **NOOP**: "그냥 들어온 순서대로" (SSD에 최적)
 - **Deadline**: "마감 시간 보장" (데이터베이스에 최적)
 - **BFQ**: "모두에게 공정하게" (데스크탑에 최적)
+
+### 스케줄러 동작 방식
+
+```mermaid
+sequenceDiagram
+    participant App as Application
+    participant VFS as VFS Layer
+    participant BL as Block Layer
+    participant SCH as I/O Scheduler
+    participant DEV as Device
+
+    Note over App,DEV: I/O 요청 처리 과정
+    
+    App->>VFS: read()/write() 호출
+    VFS->>BL: 블록 I/O 요청 생성
+    BL->>SCH: 요청을 스케줄러 큐에 추가
+    
+    Note over SCH: 스케줄러별 처리 방식
+    alt NOOP Scheduler
+        SCH->>SCH: FIFO 순서로 처리
+    else Deadline Scheduler
+        SCH->>SCH: 읽기/쓰기 분리, 마감시간 체크
+    else BFQ Scheduler
+        SCH->>SCH: 프로세스별 공정성 고려
+    end
+    
+    SCH->>DEV: 최적화된 순서로 요청 전달
+    DEV->>SCH: 완료 신호
+    SCH->>BL: I/O 완료 통지
+    BL->>VFS: 결과 반환
+    VFS->>App: 시스템콜 완료
+```
 
 ## NOOP 스케줄러: 단순함의 미학
 
