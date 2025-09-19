@@ -51,6 +51,44 @@ int main() {
 
 커널은 항상 **가장 작은 사용 가능한 번호**를 할당합니다. 이를 위해 비트맵을 사용하죠.
 
+### FD 할당 알고리즘
+
+```mermaid
+graph TD
+    subgraph "FD 할당 과정"
+        A["open() 시스템 콜"] --> B["alloc_fd() 호출"]
+        B --> C{next_fd 힌트 사용}
+        C -->|Yes| D["next_fd부터 검색 시작"]
+        C -->|No| E["0부터 검색 시작"]
+        
+        D --> F["비트맵에서 빈 슬롯 찾기"]
+        E --> F
+        
+        F --> G{빈 슬롯 발견?}
+        G -->|Yes| H["해당 비트 설정"]
+        G -->|No| I{테이블 확장 가능?}
+        
+        I -->|Yes| J["FD 테이블 확장"]
+        I -->|No| K["EMFILE 에러 반환"]
+        
+        J --> F
+        H --> L["next_fd 힌트 업데이트"]
+        L --> M["새 FD 반환"]
+    end
+    
+    subgraph "비트맵 구조"
+        BM1["open_fds: 사용 중인 FD"]
+        BM2["close_on_exec: exec시 닫을 FD"]
+        BM3["full_fds_bits: 가득 찬 섹션"]
+    end
+    
+    subgraph "최적화 기법"
+        OPT1["next_fd 힌트로 O(1) 할당"]
+        OPT2["full_fds_bits로 빠른 스킵"]
+        OPT3["64비트 단위 병렬 검색"]
+    end
+```
+
 ### 빠른 할당을 위한 비트맵 기반 관리
 
 ```c

@@ -19,6 +19,77 @@ priority_score: 4
 
 ## 고성능 네트워크 프로그래밍 기법
 
+### Zero-copy 기술 비교
+
+```mermaid
+graph TD
+    subgraph "전통적인 read/write 방식"
+        A1["파일"] --> A2["페이지 캐시"]
+        A2 --> A3["사용자 버퍼"]
+        A3 --> A4["소켓 버퍼"]
+        A4 --> A5["네트워크 카드"]
+        
+        A_COPY1["복사 1: 커널 → 사용자"]
+        A_COPY2["복사 2: 사용자 → 커널"]
+    end
+    
+    subgraph "sendfile 방식 (Zero-copy)"
+        B1["파일"] --> B2["페이지 캐시"]
+        B2 --> B3["소켓 버퍼"]
+        B3 --> B4["네트워크 카드"]
+        
+        B_COPY["복사 1: 커널 내부만"]
+    end
+    
+    subgraph "splice 방식 (Advanced Zero-copy)"
+        C1["파일"] --> C2["페이지 캐시"]
+        C2 --> C3["파이프 버퍼"]
+        C3 --> C4["소켓 버퍼"]
+        C4 --> C5["네트워크 카드"]
+        
+        C_COPY["DMA 직접 전송"]
+    end
+```
+
+### 네트워크 최적화 기법
+
+```mermaid
+graph LR
+    subgraph "소켓 레벨 최적화"
+        SO1["SO_REUSEPORT"]
+        SO2["TCP_NODELAY"]
+        SO3["SO_SNDBUF/SO_RCVBUF"]
+        SO4["TCP_FASTOPEN"]
+    end
+    
+    subgraph "커널 레벨 최적화"
+        K1["tcp_rmem/tcp_wmem"]
+        K2["tcp_congestion_control"]
+        K3["net.core.netdev_budget"]
+        K4["IRQ 밸런싱"]
+    end
+    
+    subgraph "애플리케이션 레벨"
+        APP1["배치 처리"]
+        APP2["연결 풀링"]
+        APP3["비동기 I/O"]
+        APP4["Zero-copy API"]
+    end
+    
+    SO1 --> PERF["높은 성능"]
+    SO2 --> PERF
+    SO3 --> PERF
+    SO4 --> PERF
+    K1 --> PERF
+    K2 --> PERF
+    K3 --> PERF
+    K4 --> PERF
+    APP1 --> PERF
+    APP2 --> PERF
+    APP3 --> PERF
+    APP4 --> PERF
+```
+
 ### Zero-copy 네트워킹
 
 ```c

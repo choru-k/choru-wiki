@@ -57,6 +57,78 @@ proc on /proc type proc          # 호스트 proc
 tmpfs on /tmp type tmpfs         # 호스트 tmp
 ```
 
+### 마운트 시스템 구조
+
+```mermaid
+graph TD
+    subgraph "호스트 마운트 네임스페이스"
+        HOST_ROOT["/"]
+        HOST_HOME["/home"]
+        HOST_TMP["/tmp"]
+        HOST_PROC["/proc"]
+        
+        HOST_ROOT --- HOST_HOME
+        HOST_ROOT --- HOST_TMP
+        HOST_ROOT --- HOST_PROC
+        
+        HOST_ROOT --> EXT4_ROOT["ext4 on /dev/sda1"]
+        HOST_HOME --> EXT4_HOME["ext4 on /dev/sdb1"]
+        HOST_TMP --> TMPFS_HOST["tmpfs"]
+        HOST_PROC --> PROCFS_HOST["procfs"]
+    end
+    
+    subgraph "컨테이너 A 마운트 네임스페이스"
+        CONT_A_ROOT["/"]
+        CONT_A_TMP["/tmp"]
+        CONT_A_PROC["/proc"]
+        
+        CONT_A_ROOT --- CONT_A_TMP
+        CONT_A_ROOT --- CONT_A_PROC
+        
+        CONT_A_ROOT --> OVERLAY_A["overlay"]
+        CONT_A_TMP --> TMPFS_A["tmpfs"]
+        CONT_A_PROC --> PROCFS_A["procfs"]
+    end
+    
+    subgraph "컨테이너 B 마운트 네임스페이스"
+        CONT_B_ROOT["/"]
+        CONT_B_TMP["/tmp"]
+        CONT_B_PROC["/proc"]
+        
+        CONT_B_ROOT --- CONT_B_TMP
+        CONT_B_ROOT --- CONT_B_PROC
+        
+        CONT_B_ROOT --> OVERLAY_B["overlay"]
+        CONT_B_TMP --> TMPFS_B["tmpfs"]
+        CONT_B_PROC --> PROCFS_B["procfs"]
+    end
+```
+
+### 마운트 전파 메커니즘
+
+```mermaid
+graph LR
+    subgraph "마운트 전파 타입"
+        SHARED["shared"]
+        PRIVATE["private"]
+        SLAVE["slave"]
+        UNBINDABLE["unbindable"]
+    end
+    
+    subgraph "전파 동작"
+        SHARED --> BIDIRECTIONAL["양방향 전파"]
+        PRIVATE --> ISOLATED["격리 (전파 없음)"]
+        SLAVE --> UNIDIRECTIONAL["단방향 전파 (수신만)"]
+        UNBINDABLE --> NO_BIND["바인드 마운트 금지"]
+    end
+    
+    subgraph "컨테이너 활용"
+        DOCKER_ROOT["컨테이너 루트: private"]
+        DOCKER_VOL["볼륨 마운트: shared/slave"]
+        DOCKER_TMPFS["tmpfs: private"]
+    end
+```
+
 각자 자신만의 "마운트 우주"에 살고 있습니다!
 
 ## 마운트 구조체와 네임스페이스

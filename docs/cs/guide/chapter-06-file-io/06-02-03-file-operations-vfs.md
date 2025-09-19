@@ -56,6 +56,49 @@ struct file_operations pipe_file_operations = {
 };
 ```
 
+### VFS 다형성 메커니즘
+
+```mermaid
+graph TD
+    subgraph "VFS 다형성 동작 과정"
+        A["read(fd, buf, size)"] --> B["VFS Layer"]
+        B --> C["file 구조체 조회"]
+        C --> D["file->f_op 포인터 확인"]
+        
+        D --> E{파일 타입 확인}
+        E -->|일반 파일| F["ext4_file_operations"]
+        E -->|소켓| G["socket_file_operations"]
+        E -->|파이프| H["pipe_file_operations"]
+        E -->|디바이스| I["device_file_operations"]
+        
+        F --> F1["ext4_file_read()"]
+        G --> G1["sock_read()"]
+        H --> H1["pipe_read()"]
+        I --> I1["device_read()"]
+        
+        F1 --> J["실제 데이터 반환"]
+        G1 --> J
+        H1 --> J
+        I1 --> J
+    end
+    
+    subgraph "함수 포인터 테이블"
+        FOP["file_operations"]
+        FOP --> READ["read()"]
+        FOP --> WRITE["write()"]
+        FOP --> OPEN["open()"]
+        FOP --> CLOSE["close()"]
+        FOP --> IOCTL["ioctl()"]
+    end
+    
+    subgraph "파일 시스템별 구현"
+        EXT4["ext4: 디스크 기반"]
+        SOCK["socket: 네트워크"]
+        PIPE["pipe: 메모리 기반"]
+        DEV["device: 하드웨어"]
+    end
+```
+
 이제 `read(fd, buf, size)`를 호출하면:
 
 1. fd로 file 구조체를 찾고
