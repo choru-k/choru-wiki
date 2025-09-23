@@ -185,18 +185,18 @@ graph TB
         Active[Active State]
 
         subgraph "P-States (Performance)"
-            P0["P0: Max Performance]
-            P1[P1: Reduced Freq"]
-            P2["P2: Lower Freq]
-            Pn[Pn: Min Freq"]
+            P0["P0: Max Performance"]
+            P1["P1: Reduced Freq"]
+            P2["P2: Lower Freq"]
+            Pn["Pn: Min Freq"]
         end
 
         subgraph "C-States (Idle)"
-            C0["C0: Active]
-            C1[C1: Halt"]
-            C2["C2: Stop Clock]
-            C3[C3: Deep Sleep"]
-            C6[C6: Deep Power Down]
+            C0["C0: Active"]
+            C1["C1: Halt"]
+            C2["C2: Stop Clock"]
+            C3["C3: Deep Sleep"]
+            C6["C6: Deep Power Down"]
         end
 
         Active --> P0
@@ -211,7 +211,7 @@ graph TB
         C3 --> C6
     end
 
-    P0 -.->|"High Power"| Power[Power Consumption]
+    P0 -.->|"High Power"| Power["Power Consumption"]
     Pn -.->|"Low Power"| Power
     C6 -.->|"Minimal Power"| Power
 ```

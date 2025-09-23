@@ -225,7 +225,28 @@ graph TD
 **Issue**: HTML `<br/>` tags in Mermaid diagrams may not render correctly, especially with Korean text.
 **Solution**: Use quoted strings with actual line breaks or keep text on a single line.
 
-**6.5 Validation Best Practices**:
+**6.5 SequenceDiagram Specific Issues**:
+```mermaid
+# Bad - Style declarations cause parse errors in sequence diagrams
+sequenceDiagram
+    participant A as 부모프로세스  # Bad - unquoted Korean
+    A->>B: fork() → 자식 생성     # Bad - Unicode arrow
+    style A fill:#4CAF50          # Bad - style declarations
+    
+# Good - Corrected version
+sequenceDiagram
+    participant A as "부모프로세스"  # Good - quoted Korean
+    A->>B: fork() - 자식 생성      # Good - ASCII dash
+    # No style declarations        # Good - styles removed
+```
+**Issue**: SequenceDiagram has unique syntax requirements that differ from other Mermaid diagram types.
+**Solution**: 
+- Always quote Korean text in participant `as` declarations
+- Remove `style` declarations (they cause parse errors in sequence diagrams)
+- Use ASCII characters instead of Unicode symbols (→ becomes -)
+- Replace HTML `<br/>` with actual line breaks in quoted strings
+
+**6.6 Validation Best Practices**:
 - **Always test diagrams**: Use `npm run lint:mermaid` to validate all diagrams
 - **Use Worker-based validation**: Current script validates 341 diagrams in ~117 seconds with 14 workers
 - **No false positives**: Validation uses actual mmdc rendering, ensuring only real errors are reported
