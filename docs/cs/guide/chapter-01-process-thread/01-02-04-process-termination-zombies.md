@@ -227,23 +227,22 @@ SIGCHLD 시그널이 어떻게 좀비 프로세스를 자동으로 처리하는�
 
 ```mermaid
 sequenceDiagram
-    participant Parent as "부모 프로세스"
+    participant Parent as "부모프로세스"
     participant Kernel as "커널"
-    participant Child1 as "자식 1"
-    participant Child2 as "자식 2"
-    participant Handler as "SIGCHLD 핸들러"
+    participant Child1 as "자식1"
+    participant Child2 as "자식2"
+    participant Handler as "SIGCHLD핸들러"
     
     Note over Parent: SIGCHLD 핸들러 등록
     Parent->>Kernel: sigaction(SIGCHLD, handler)
     
     Note over Parent: 여러 자식 프로세스 생성
-    Parent->>Child1: fork() → 자식1 생성
-    Parent->>Child2: fork() → 자식2 생성
+    Parent->>Child1: fork() - 자식1 생성
+    Parent->>Child2: fork() - 자식2 생성
     
-    par 자식들의 독립적 실행
-        Child1->>Child1: 작업 수행 중...
-        Child2->>Child2: 작업 수행 중...
-    end
+    Note over Child1,Child2: 자식들의 독립적 실행
+    Child1->>Child1: 작업 수행 중...
+    Child2->>Child2: 작업 수행 중...
     
     Note over Child1: 자식1 먼저 종료
     Child1->>Kernel: exit(0)
@@ -267,12 +266,7 @@ sequenceDiagram
     Note over Handler: 자식2 좀비 수거 완료
     Handler->>Parent: 핸들러 종료
     
-    Note over Parent: "모든 자식 자동 정리 완료
-    좀비 없음!"
-    
-    style Handler fill:#4CAF50
-    style Child1 fill:#FF9800
-    style Child2 fill:#2196F3
+    Note over Parent: 모든 자식 자동 정리 완료 - 좀비 없음!
 ```
 
 ### wait() vs WNOHANG 비교
