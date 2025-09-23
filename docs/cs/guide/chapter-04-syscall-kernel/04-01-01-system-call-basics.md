@@ -83,16 +83,16 @@ graph TB
 graph TB
     subgraph "CPU 특권 레벨"
         R0["Ring 0 (커널 모드)
-        - 모든 CPU 명령어 사용 가능
-        - 물리 메모리 직접 접근
-        - 하드웨어 제어
-        - 인터럽트 처리"]
+모든 CPU 명령어 사용 가능
+물리 메모리 직접 접근
+하드웨어 제어
+인터럽트 처리"]
         
-        R3["Ring 3 (사용자 모드)  
-        - 제한된 명령어만 사용
-        - 가상 메모리만 접근
-        - 하드웨어 직접 제어 불가
-        - 시스템 호출로만 커널 요청"]
+        R3["Ring 3 (사용자 모드)
+제한된 명령어만 사용
+가상 메모리만 접근
+하드웨어 직접 제어 불가
+시스템 호출로만 커널 요청"]
     end
     
     R3 -."시스템 호출".-> R0
@@ -514,17 +514,17 @@ void demonstrate_network_syscalls() {
 ```mermaid
 graph TD
     subgraph USER_PROG["사용자 프로그램"]
-        CALL[printf함수호출]
+        CALL["printf 함수 호출"]
     end
     
     subgraph GLIBC["glibc 라이브러리"]
-        PRINTF[printf함수]
-        WRITE[write함수]
+        PRINTF["printf 함수"]
+        WRITE["write 함수"]
         SYSCALL["syscall stub"]
     end
     
     subgraph KERNEL["커널"]
-        HANDLER[sys_write함수]
+        HANDLER["sys_write 함수"]
         VFS["VFS 레이어"]
         TTY["TTY 드라이버"]
     end

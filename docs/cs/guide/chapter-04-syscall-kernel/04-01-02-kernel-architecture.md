@@ -103,75 +103,75 @@ priority_score: 4
 ```mermaid
 graph TB
     subgraph "사용자 공간 (User Space)"
-        APP1[애플리케이션]
-        APP2[시스템 데몬]
-        APP3[셸 & 유틸리티]
-        LIB[시스템 라이브러리 glibc]
+        APP1["애플리케이션"]
+        APP2["시스템 데몬"]
+        APP3["셸 & 유틸리티"]
+        LIB["시스템 라이브러리 glibc"]
     end
 
     subgraph "시스템 호출 인터페이스"
-        SYSCALL[시스템 호출 레이어]
-        VDSO[vDSO 최적화]
+        SYSCALL["시스템 호출 레이어"]
+        VDSO["vDSO 최적화"]
     end
 
     subgraph "커널 핵심 (Kernel Core)"
         subgraph "프로세스 관리"
-            SCHED[스케줄러 CFS/RT]
-            FORK[프로세스 생성]
-            SIG[신호 처리]
+            SCHED["스케줄러 CFS/RT"]
+            FORK["프로세스 생성"]
+            SIG["신호 처리"]
         end
 
         subgraph "메모리 관리"
-            VMM[가상 메모리 관리]
-            SLAB[SLAB/SLUB 할당자]
-            SWAP[스와핑 시스템]
+            VMM["가상 메모리 관리"]
+            SLAB["SLAB/SLUB 할당자"]
+            SWAP["스와핑 시스템"]
         end
 
         subgraph "파일 시스템"
-            VFS[가상 파일시스템]
-            CACHE[페이지 캐시]
-            FS_TYPES[ext4, xfs, btrfs]
+            VFS["가상 파일시스템"]
+            CACHE["페이지 캐시"]
+            FS_TYPES["ext4, xfs, btrfs"]
         end
 
         subgraph "네트워크 스택"
-            NETCORE[네트워크 코어]
-            TCP_UDP[TCP/UDP 스택]
-            FILTER[패킷 필터링]
+            NETCORE["네트워크 코어"]
+            TCP_UDP["TCP/UDP 스택"]
+            FILTER["패킷 필터링"]
         end
 
         subgraph "I/O 서브시스템"
-            BLOCK[블록 레이어]
-            ELEVATOR[I/O 스케줄러]
-            DM[디바이스 매퍼]
+            BLOCK["블록 레이어"]
+            ELEVATOR["I/O 스케줄러"]
+            DM["디바이스 매퍼"]
         end
     end
 
     subgraph "커널 서비스"
-        IRQ[인터럽트 처리]
-        TIMER[타이머 서비스]
-        LOCK[락킹 프리미티브]
-        RCU[RCU 동기화]
+        IRQ["인터럽트 처리"]
+        TIMER["타이머 서비스"]
+        LOCK["락킹 프리미티브"]
+        RCU["RCU 동기화"]
     end
 
     subgraph "모듈 & 확장"
-        MODULES[동적 모듈]
-        EBPF[eBPF 서브시스템]
-        LSM[보안 모듈 LSM]
+        MODULES["동적 모듈"]
+        EBPF["eBPF 서브시스템"]
+        LSM["보안 모듈 LSM"]
     end
 
     subgraph "하드웨어 추상화"
-        DRV_CHAR[캐릭터 드라이버]
-        DRV_BLOCK[블록 드라이버]
-        DRV_NET[네트워크 드라이버]
-        ACPI[ACPI/전원 관리]
+        DRV_CHAR["캐릭터 드라이버"]
+        DRV_BLOCK["블록 드라이버"]
+        DRV_NET["네트워크 드라이버"]
+        ACPI["ACPI/전원 관리"]
     end
 
     subgraph "하드웨어"
-        CPU[프로세서]
-        MEM[메모리]
-        STORAGE[스토리지]
-        NETWORK[네트워크 카드]
-        PCI[PCI 디바이스들]
+        CPU["프로세서"]
+        MEM["메모리"]
+        STORAGE["스토리지"]
+        NETWORK["네트워크 카드"]
+        PCI["PCI 디바이스들"]
     end
 
     %% 연결 관계

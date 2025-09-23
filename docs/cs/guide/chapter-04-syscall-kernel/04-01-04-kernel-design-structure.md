@@ -33,33 +33,33 @@ priority_score: 4
 ```mermaid
 graph TB
     subgraph "사용자 공간"
-        APP1[웹 브라우저]
-        APP2[텍스트 에디터]
-        APP3[게임]
-        APP4[컴파일러]
+        APP1["웹 브라우저"]
+        APP2["텍스트 에디터"]
+        APP3["게임"]
+        APP4["컴파일러"]
     end
 
     subgraph "커널 공간 - 리눅스 커널"
-        SYSCALL[시스템 호출 인터페이스]
+        SYSCALL["시스템 호출 인터페이스"]
 
         subgraph "핵심 서브시스템"
-            SCHED[프로세스 스케줄러]
-            MM[메모리 관리]
-            VFS[가상 파일시스템]
-            NET[네트워크 스택]
+            SCHED["프로세스 스케줄러"]
+            MM["메모리 관리"]
+            VFS["가상 파일시스템"]
+            NET["네트워크 스택"]
         end
 
         subgraph "하드웨어 추상화"
-            IRQ[인터럽트 처리]
-            DRV[디바이스 드라이버]
+            IRQ["인터럽트 처리"]
+            DRV["디바이스 드라이버"]
         end
     end
 
     subgraph "하드웨어"
         CPU[CPU]
-        RAM[메모리]
-        DISK[저장장치]
-        NIC[네트워크 카드]
+        RAM["메모리"]
+        DISK["저장장치"]
+        NIC["네트워크 카드"]
     end
 
     APP1 --> SYSCALL
@@ -97,19 +97,22 @@ graph TB
 ```mermaid
 graph TB
     subgraph MONO_KERNEL["모놀리식 커널 (리눅스)"]
-        MONO[하나의 큰 커널]
-        MONO --> FS1[파일시스템]
-        MONO --> NET1[네트워크 스택]
-        MONO --> DRV1[디바이스 드라이버]
-        MONO --> MM1[메모리 관리]
-        MONO --> SCHED1[스케줄러]
+        MONO["하나의 큰 커널"]
+        MONO --> FS1["파일시스템"]
+        MONO --> NET1["네트워크 스택"]
+        MONO --> DRV1["디바이스 드라이버"]
+        MONO --> MM1["메모리 관리"]
+        MONO --> SCHED1["스케줄러"]
     end
 
     subgraph MICRO_KERNEL["마이크로커널 (Minix, QNX)"]
-        MICRO[작은 핵심 커널]
-        MICRO -.-> FS2["파일 서버 사용자프로세스"]
-        MICRO -.-> NET2["네트워크 서버 사용자프로세스"]
-        MICRO -.-> DRV2["드라이버 사용자프로세스"]
+        MICRO["작은 핵심 커널"]
+        MICRO -.-> FS2["파일 서버
+사용자 프로세스"]
+        MICRO -.-> NET2["네트워크 서버
+사용자 프로세스"]
+        MICRO -.-> DRV2["드라이버
+사용자 프로세스"]
     end
 
     style MONO fill:#FFCDD2
@@ -201,17 +204,23 @@ description:    Fourth Extended Filesystem
 ```mermaid
 graph TB
     subgraph VMEM["가상 메모리 공간 (x86-64)"]
-        subgraph USER_SPACE["사용자 공간 (0x0000000000000000 - 0x00007FFFFFFFFFFF)"]
-            USER[사용자 프로그램들]
+        subgraph USER_SPACE["사용자 공간
+(0x0000000000000000 - 0x00007FFFFFFFFFFF)"]
+            USER["사용자 프로그램들"]
         end
 
-        subgraph KERNEL_SPACE["커널 공간 (0xFFFF800000000000 - 0xFFFFFFFFFFFFFFFF)"]
-            KCODE["커널 코드 text섹션"]
-            KDATA["커널 데이터 data,bss"]
-            VMALLOC["vmalloc 영역 커널동적할당"]
-            DIRECTMAP["직접매핑영역 물리메모리전체"]
-            FIXMAP[고정 매핑]
-            VSYSCALL[vsyscall 페이지]
+        subgraph KERNEL_SPACE["커널 공간
+(0xFFFF800000000000 - 0xFFFFFFFFFFFFFFFF)"]
+            KCODE["커널 코드
+text 섹션"]
+            KDATA["커널 데이터
+data, bss"]
+            VMALLOC["vmalloc 영역
+커널 동적 할당"]
+            DIRECTMAP["직접 매핑 영역
+물리 메모리 전체"]
+            FIXMAP["고정 매핑"]
+            VSYSCALL["vsyscall 페이지"]
         end
     end
 

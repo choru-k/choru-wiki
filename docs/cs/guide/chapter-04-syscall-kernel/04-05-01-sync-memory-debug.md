@@ -121,10 +121,10 @@ kfree(old_data);
 ```mermaid
 graph LR
     subgraph "락 타입별 성능"
-        SPIN["스핀락<br/>짧은 임계영역<br/>고성능"]
-        MUTEX["뮤텍스<br/>긴 임계영역<br/>수면가능"]
-        RWLOCK["읽기-쓰기 락<br/>읽기 병렬성<br/>중간 오버헤드"]
-        RCU["RCU<br/>읽기 무룩<br/>최고 성능"]
+        SPIN["스핀락\n짧은 임계영역\n고성능"]
+        MUTEX["뮤텍스\n긴 임계영역\n수면가능"]
+        RWLOCK["읽기-쓰기 락\n읽기 병렬성\n중간 오버헤드"]
+        RCU["RCU\n읽기 무룩\n최고 성능"]
     end
     
     SPIN --> FAST["빠름"]
@@ -220,14 +220,14 @@ flowchart TD
     SMALL -->|Yes| KMALLOC["kmalloc()"]
     SMALL -->|No| VMALLOC["vmalloc()"]
     
-    KMALLOC --> FAST["Fast allocation<br/>Physically contiguous<br/>Cache-friendly"]
-    VMALLOC --> FLEXIBLE["Flexible size<br/>May be fragmented<br/>TLB overhead"]
+    KMALLOC --> FAST["Fast allocation\nPhysically contiguous\nCache-friendly"]
+    VMALLOC --> FLEXIBLE["Flexible size\nMay be fragmented\nTLB overhead"]
     
     REQUEST --> FREQUENT{"Frequent allocation?"}
     FREQUENT -->|Yes| SLAB["slab/slub cache"]
     FREQUENT -->|No| GENERAL["General allocator"]
     
-    SLAB --> OPTIMIZED["Optimized for objects<br/>Reduced fragmentation<br/>Better performance"]
+    SLAB --> OPTIMIZED["Optimized for objects\nReduced fragmentation\nBetter performance"]
     
     style KMALLOC fill:#E8F5E9
     style VMALLOC fill:#E3F2FD

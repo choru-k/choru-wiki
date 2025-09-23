@@ -78,10 +78,10 @@ static struct task_struct *pick_next_task_fair(struct rq *rq) {
 ```mermaid
 graph LR
     subgraph "CFS 런큐 (Red-Black Tree)"
-        A["Task A<br/>vruntime: 100ms"]
-        B["Task B<br/>vruntime: 150ms"]
-        C["Task C<br/>vruntime: 75ms"]
-        D["Task D<br/>vruntime: 200ms"]
+        A["Task A\nvruntime: 100ms"]
+        B["Task B\nvruntime: 150ms"]
+        C["Task C\nvruntime: 75ms"]
+        D["Task D\nvruntime: 200ms"]
     end
     
     C -->|"가장 작은 vruntime"| RUNNING["현재 실행 중"]
@@ -136,19 +136,19 @@ struct vm_area_struct {
 ```mermaid
 graph TB
     subgraph "프로세스 가상 메모리 공간"
-        STACK["스택 영역<br/>지역 변수, 함수 호출"]
-        HEAP["힙 영역<br/>동적 할당 (malloc)"]
-        BSS["BSS 영역<br/>초기화되지 않은 전역 변수"]
-        DATA["데이터 영역<br/>초기화된 전역 변수"]
-        TEXT["텍스트 영역<br/>프로그램 코드"]
+        STACK["스택 영역\n지역 변수, 함수 호출"]
+        HEAP["힙 영역\n동적 할당 (malloc)"]
+        BSS["BSS 영역\n초기화되지 않은 전역 변수"]
+        DATA["데이터 영역\n초기화된 전역 변수"]
+        TEXT["텍스트 영역\n프로그램 코드"]
     end
     
     subgraph "VMA 구조체들"
-        VMA1["VMA 1<br/>스택"]
-        VMA2["VMA 2<br/>힙"]
-        VMA3["VMA 3<br/>BSS"]
-        VMA4["VMA 4<br/>데이터"]
-        VMA5["VMA 5<br/>텍스트"]
+        VMA1["VMA 1\n스택"]
+        VMA2["VMA 2\n힙"]
+        VMA3["VMA 3\nBSS"]
+        VMA4["VMA 4\n데이터"]
+        VMA5["VMA 5\n텍스트"]
     end
     
     STACK -.-> VMA1
@@ -223,8 +223,8 @@ graph TD
     subgraph "VFS 계층"
         SYSCALL["시스템 호출 인터페이스"]
         VFS["VFS 공통 인터페이스"]
-        DENTRY["Dentry Cache<br/>디렉토리 엔트리"]
-        INODE["Inode Cache<br/>파일 메타데이터"]
+        DENTRY["Dentry Cache\n디렉토리 엔트리"]
+        INODE["Inode Cache\n파일 메타데이터"]
     end
     
     subgraph "구체적 파일시스템"
