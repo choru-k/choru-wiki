@@ -137,24 +137,24 @@ flowchart TD
         SYSCALL[System Call Interface]
 
         subgraph "VFS Layer"
-            VFS["VFS Core]
-            DCACHE[Dentry Cache"]
-            ICACHE["Inode Cache]
-            PCACHE[Page Cache"]
+            VFS["VFS Core"]
+            DCACHE["Dentry Cache"]
+            ICACHE["Inode Cache"]
+            PCACHE["Page Cache"]
         end
 
         subgraph "File Systems"
-            EXT4["ext4]
-            XFS[XFS"]
-            BTRFS["Btrfs]
-            NFS[NFS"]
-            PROC["procfs]
-            TMPFS[tmpfs"]
+            EXT4["ext4"]
+            XFS["XFS"]
+            BTRFS["Btrfs"]
+            NFS["NFS"]
+            PROC["procfs"]
+            TMPFS["tmpfs"]
         end
 
         subgraph "Block Layer"
-            BIO["Block I/O]
-            SCHED[I/O Scheduler"]
+            BIO["Block I/O"]
+            SCHED["I/O Scheduler"]
         end
 
         DEVICE[Block Device Drivers]
