@@ -538,11 +538,6 @@ sequenceDiagram
     App->>Kernel: munmap(addr, size) - 매핑 해제
     App->>Kernel: shm_unlink("/name") - 파일 삭제
     Kernel->>FS: /dev/shm에서 파일 제거
-    
-    style App fill:#2196F3
-    style Kernel fill:#FF9800
-    style FS fill:#4CAF50
-    style MM fill:#9C27B0
 ```
 
 **주요 차이점**:

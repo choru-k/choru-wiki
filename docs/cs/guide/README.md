@@ -61,10 +61,10 @@
 
 ### 인프라스트럭처 (104개 문서, 24.7%)
 
-- [Chapter 12: Container & Kubernetes - 애플리케이션 격리와 오케스트레이션](./chapter-12-container-kubernetes/)
-- [Chapter 13: Observability & Debugging - 시스템의 눈과 귀 만들기](./chapter-13-observability-debugging/)
+- [Chapter 12: Container & Kubernetes - 애플리케이션 격리와 오케스트레이션](./chapter-13-container-kubernetes/)
+- [Chapter 13: Observability & Debugging - 시스템의 눈과 귀 만들기](./chapter-12-observability-debugging/)
 - [Chapter 14: Distributed Systems - 분산의 복잡성을 다루는 기술](./chapter-14-distributed-systems/)
-- [Chapter 16: System Design Patterns - 확장 가능한 아키텍처의 예술](./chapter-16-system-design-patterns/)
+- [Chapter 16: System Design Patterns - 확장 가능한 아키텍처의 예술](./chapter-16-distributed-system-patterns/)
 
 ### 애플리케이션 개발 (81개 문서, 19.2%)
 
@@ -92,21 +92,14 @@
 
 ### 인프라와 운영
 
-- [Chapter 12: 컨테이너와 쿠버네티스](./chapter-12-container-kubernetes/) - 현대적 배포
-- [Chapter 13: 관찰성과 디버깅](./chapter-13-observability-debugging/) - 시스템 모니터링
+- [Chapter 12: 컨테이너와 쿠버네티스](./chapter-13-container-kubernetes/) - 현대적 배포
+- [Chapter 13: 관찰성과 디버깅](./chapter-12-observability-debugging/) - 시스템 모니터링
 - [Chapter 14: 분산 시스템](./chapter-14-distributed-systems/) - 대규모 시스템 설계
 - [Chapter 15: 마이크로서비스 아키텍처](./chapter-15-microservices-architecture/) - 분산 시스템 구현
 - [Chapter 16: 분산 시스템 패턴](./chapter-16-distributed-system-patterns/) - 아키텍처 패턴
 - [Chapter 17: 보안 엔지니어링](./chapter-17-security-engineering/) - 안전한 시스템
 
 ## 💡 효과적인 학습 방법
-
-### 🎯 학습 전략
-
-1. **체계적 접근**: 자신의 수준에 맞는 경로에서 시작
-2. **실습 중심**: 모든 예제 코드를 직접 실행
-3. **점진적 학습**: 어려운 개념은 기초부터 차근차근
-4. **연결성 이해**: 각 주제 간의 관계 파악
 
 ### ⏰ 시간 투자 가이드
 

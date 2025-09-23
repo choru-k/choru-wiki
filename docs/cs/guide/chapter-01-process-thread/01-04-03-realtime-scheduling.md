@@ -78,12 +78,6 @@ sequenceDiagram
     Note over High: 버스 관리 작업 완료
     
     WDT->>WDT: 정상 동작 (리셋 없음)
-    
-    style High fill:#FFCDD2
-    style Med fill:#FFF3E0
-    style Low fill:#C8E6C9
-    style Mutex fill:#E1F5FE
-    style WDT fill:#FFEBEE
 ```
 
 **Mars Pathfinder 해결 과정**:
@@ -209,31 +203,33 @@ void* video_thread(void* arg) {
 세 가지 실시간 스케줄링 정책이 실제로 어떻게 다르게 동작하는지 시각화해보겠습니다:
 
 ```mermaid
-gantt
-    title 실시간 스케줄링 정책 비교 (3개 태스크, 같은 우선순위)
-    dateFormat X
-    axisFormat %L
+graph LR
+    subgraph SCHED_FIFO["SCHED_FIFO 스케줄링"]
+        F1["Task A 실행 (0-100ms)"]
+        F2["Task B 실행 (100-150ms)"]
+        F3["Task C 실행 (150-200ms)"]
+        F1 --> F2 --> F3
+    end
     
-    section SCHED_FIFO
-    Task A 실행        :active, fifo-a1, 0, 50
-    Task A 계속        :active, fifo-a2, 50, 100
-    Task A 자발적 양보   :milestone, fifo-yield, 100, 0
-    Task B 실행        :active, fifo-b1, 100, 150
-    Task B 자발적 양보   :milestone, fifo-yield2, 150, 0
-    Task C 실행        :active, fifo-c1, 150, 200
+    subgraph SCHED_RR["SCHED_RR 스케줄링"]
+        R1["Task A (0-100ms)"]
+        R2["Task B (100-200ms)"] 
+        R3["Task C (200-300ms)"]
+        R4["Task A (300-400ms)"]
+        R1 --> R2 --> R3 --> R4
+    end
     
-    section SCHED_RR
-    Task A (100ms)     :active, rr-a1, 0, 100
-    Task B (100ms)     :active, rr-b1, 100, 200
-    Task C (100ms)     :active, rr-c1, 200, 300
-    Task A (100ms)     :active, rr-a2, 300, 400
+    subgraph SCHED_DEADLINE["SCHED_DEADLINE 스케줄링"]
+        D1["Task A D:50ms (0-30ms)"]
+        D2["Task B D:100ms (30-60ms)"]
+        D3["Task A D:50ms (60-90ms)"]
+        D4["Task C D:150ms (90-120ms)"]
+        D1 --> D2 --> D3 --> D4
+    end
     
-    section SCHED_DEADLINE
-    Task A (D:50ms)    :active, dl-a1, 0, 30
-    Task B (D:100ms)   :active, dl-b1, 30, 60
-    Task A (D:50ms)    :active, dl-a2, 60, 90
-    Task C (D:150ms)   :active, dl-c1, 90, 120
-    Task B (D:100ms)   :active, dl-b2, 120, 150
+    style SCHED_FIFO fill:#FFCDD2
+    style SCHED_RR fill:#C8E6C9  
+    style SCHED_DEADLINE fill:#E3F2FD
 ```
 
 **핵심 차이점**:
@@ -610,23 +606,39 @@ graph TD
 다음 시나리오에서 EDF와 고정 우선순위 스케줄링의 차이를 보겠습니다:
 
 ```mermaid
-gantt
-    title EDF vs 고정 우선순위 스케줄링 비교
-    dateFormat X
-    axisFormat %L
+graph LR
+    subgraph EDF_SCHED["EDF 스케줄링 (모든 태스크 성공)"]
+        E1["Task C D:8ms (0-20ms)"]
+        E2["Task A D:10ms (20-50ms)"]  
+        E3["Task B D:15ms (50-90ms)"]
+        E1 --> E2 --> E3
+        E1_OK["✅ 완료"]
+        E2_OK["✅ 완료"] 
+        E3_OK["✅ 완료"]
+        E1 -.-> E1_OK
+        E2 -.-> E2_OK
+        E3 -.-> E3_OK
+    end
     
-    section EDF 스케줄링
-    Task C (D:8)      :active, edf-c1, 0, 20
-    Task A (D:10)     :active, edf-a1, 20, 50
-    Task B (D:15)     :active, edf-b1, 50, 90
-    Task A 완료       :milestone, edf-a-done, 80, 0
-    Task B 완료       :milestone, edf-b-done, 90, 0
+    subgraph FIXED_PRIO["고정 우선순위 (일부 실패)"]
+        F1["Task A High (0-30ms)"]
+        F2["Task B Medium (30-70ms)"]
+        F3["Task C Low (70-90ms)"]
+        F1 --> F2 --> F3
+        F1_OK["✅ 완료"]
+        F2_OK["✅ 완료"]
+        F3_FAIL["❌ 데드라인 미스<br/>(목표: 8ms, 실제: 70ms)"]
+        F1 -.-> F1_OK
+        F2 -.-> F2_OK  
+        F3 -.-> F3_FAIL
+    end
     
-    section 고정 우선순위
-    Task A (High)     :active, fp-a1, 0, 30
-    Task B (Medium)   :active, fp-b1, 30, 70
-    Task C (Low)      :active, fp-c1, 70, 90
-    Task C 데드라인 미스 :crit, fp-miss, 80, 90
+    style EDF_SCHED fill:#C8E6C9
+    style FIXED_PRIO fill:#FFCDD2
+    style E1_OK fill:#4CAF50
+    style E2_OK fill:#4CAF50
+    style E3_OK fill:#4CAF50
+    style F3_FAIL fill:#F44336
 ```
 
 **결과 분석**:

@@ -495,12 +495,6 @@ sequenceDiagram
     Note over Main: 서버 종료 시그널
     Main->>Pool: pthread_join() × 모든 워커
     Pool->>Main: 모든 스레드 정리 완료
-    
-    style Main fill:#4CAF50
-    style Worker1 fill:#2196F3
-    style Worker2 fill:#FF9800
-    style Worker3 fill:#9C27B0
-    style Client fill:#E91E63
 ```
 
 ### pthread API 흐름도: 올바른 스레드 관리

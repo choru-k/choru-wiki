@@ -197,10 +197,6 @@ sequenceDiagram
         Parent->>Kernel: close(pipefd[1])
         Parent->>Kernel: wait(NULL) - 자식 종료 대기
     end
-    
-    style Parent fill:#E8F5E8
-    style Child fill:#E3F2FD
-    style Pipe fill:#FFF3E0
 ```
 
 **중요한 포인트**:
@@ -595,10 +591,6 @@ sequenceDiagram
     
     Player->>FS: unlink("/tmp/video_stream")
     FS->>FS: FIFO 파일 삭제
-    
-    style Downloader fill:#4CAF50
-    style Player fill:#2196F3
-    style FIFO fill:#FF9800
 ```
 
 **실무 인사이트**:
@@ -624,57 +616,40 @@ int fd = open("/tmp/myfifo", O_WRONLY | O_NONBLOCK);
 stateDiagram-v2
     [*] --> FIFO_Created: mkfifo() 호출
     
-    state "FIFO 파일 생성됨" as FIFO_Created {
-        [*] --> Waiting_For_Connection
-        Waiting_For_Connection: 파일 시스템에 FIFO 존재
-        Waiting_For_Connection: 아직 연결된 프로세스 없음
-    }
+    FIFO_Created: FIFO 파일 생성됨
+    FIFO_Created: 파일 시스템에 FIFO 존재
+    FIFO_Created: 아직 연결된 프로세스 없음
     
     FIFO_Created --> Writer_Attempts: Writer가 열기 시도
     
-    state "Writer 대기 상태" as Writer_Attempts {
-        [*] --> Blocking_Open
-        Blocking_Open: open(O_WRONLY) 호출
-        Blocking_Open: Reader 연결까지 블로킹
-        
-        state "블로킹 vs 논블로킹" as Block_Choice {
-            Blocking: O_WRONLY만 사용
-            NonBlocking: O_WRONLY | O_NONBLOCK
-        }
-        
-        Blocking_Open --> Block_Choice
-        Block_Choice --> Blocking: 기본 모드
-        Block_Choice --> NonBlocking: 명시적 설정
-        
-        Blocking --> [*]: Reader 연결까지 대기
-        NonBlocking --> EAGAIN_Error: 즉시 EAGAIN 에러 반환
-    }
+    Writer_Attempts: Writer 대기 상태
+    Writer_Attempts: open(O_WRONLY) 호출
+    Writer_Attempts: Reader 연결까지 블로킹
     
-    Writer_Attempts --> Reader_Connects: Reader가 연결
-    Reader_Connects --> Connected: 양쪽 모두 연결됨
+    Writer_Attempts --> Block_Choice: 모드 선택
     
-    state "연결 성공" as Connected {
-        [*] --> Data_Transfer
-        Data_Transfer: write()/read() 가능
-        Data_Transfer: 정상적인 파이프 동작
-    }
+    Block_Choice: 블로킹 vs 논블로킹
+    Block_Choice --> Blocking: O_WRONLY만 사용 (기본)
+    Block_Choice --> NonBlocking: O_WRONLY | O_NONBLOCK
     
-    Connected --> Writer_Closes: Writer 종료
-    Writer_Closes --> Reader_EOF: Reader가 EOF 수신
-    Reader_EOF --> [*]: FIFO 사용 완료
+    Blocking: Reader 연결까지 무한 대기
+    NonBlocking: 즉시 EAGAIN 에러 반환
+    
+    Blocking --> Reader_Connects: Reader가 연결됨
+    NonBlocking --> EAGAIN_Error: 에러 발생
     
     EAGAIN_Error --> Retry_Later: 나중에 다시 시도
     Retry_Later --> Writer_Attempts
     
-    note right of Block_Choice
-        블로킹 모드 (기본):
-        • Writer는 Reader가 올 때까지 무한 대기
-        • 안전하지만 응답성 문제 가능
-        
-        논블로킹 모드:
-        • 즉시 EAGAIN 에러 반환
-        • 폴링이나 재시도 로직 필요
-    end note
+    Reader_Connects --> Connected: 양쪽 모두 연결됨
+    
+    Connected: 연결 성공
+    Connected: write()/read() 가능
+    Connected: 정상적인 파이프 동작
+    
+    Connected --> Writer_Closes: Writer 종료
+    Writer_Closes --> Reader_EOF: Reader가 EOF 수신
+    Reader_EOF --> [*]: FIFO 사용 완료
 ```
 
 ### FIFO 블로킹 시나리오 실제 예제
@@ -722,10 +697,6 @@ sequenceDiagram
     
     W->>K: open("/tmp/myfifo", O_WRONLY | O_NONBLOCK)
     K->>W: 성공! Reader 존재함
-    
-    style W fill:#E8F5E8
-    style R fill:#E3F2FD
-    style F fill:#FFF3E0
 ```
 
 **실무 교훈**:

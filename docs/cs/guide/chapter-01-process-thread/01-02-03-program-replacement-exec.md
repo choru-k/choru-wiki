@@ -228,10 +228,6 @@ sequenceDiagram
     NewApp->>NewApp: main() 함수 시작
     
     Note over NewApp: 완전히 다른 프로그램이 됨<br/>PID는 동일하지만 내용은 완전 변경
-    
-    style Kernel fill:#FF9800
-    style Loader fill:#2196F3
-    style NewApp fill:#4CAF50
 ```
 
 **중요한 통찰**: exec() 호출 후의 `printf("You will never see this!");`가 실행되지 않는 이유는 이미 다른 프로그램이 되어버렸기 때문입니다!
@@ -478,10 +474,6 @@ sequenceDiagram
     end
     
     Note over Shell: 파이프라인 완료
-    
-    style LS fill:#2196F3
-    style Grep fill:#FF9800
-    style WC fill:#9C27B0
 ```
 
 이 패턴이 바로 **유닉스 철학**의 핵심입니다: "작은 도구들이 파이프로 연결되어 큰 일을 해낸다!"

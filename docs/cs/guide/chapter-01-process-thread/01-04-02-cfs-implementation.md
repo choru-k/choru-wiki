@@ -711,9 +711,6 @@ sequenceDiagram
     end
     
     Admin->>Admin: 최적 설정 문서화<br/>프로덕션 적용
-    
-    style CFS fill:#4CAF50
-    style Monitor fill:#2196F3
 ```
 
 ## 핵심 요점

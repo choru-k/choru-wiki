@@ -53,7 +53,7 @@ graph TD
         TLS1["TLS 영역<br/>• errno_tls<br/>• tls_buffer[8192]<br/>• thread_id"]
     end
     
-    subgraph THREAD2["스레드 2"] 
+    subgraph THREAD2["스레드 2"]
         STACK2["스택<br/>• 지역 변수<br/>• 함수 호출"]
         TLS2["TLS 영역<br/>• errno_tls<br/>• tls_buffer[8192]<br/>• thread_id"]
     end
@@ -115,9 +115,6 @@ sequenceDiagram
     TLS2->>T2: 13 (EACCES)
     
     Note over T1,T2: 각 스레드는 독립된 errno 값을 유지<br/>동기화 없이도 안전!
-    
-    style TLS1 fill:#C8E6C9
-    style TLS2 fill:#BBDEFB
 ```
 
 ### 7.1 TLS 구현: 성능 최적화의 비밀 무기
@@ -295,12 +292,6 @@ sequenceDiagram
         T3->>T3: post_process(section_3)
         T4->>T4: post_process(section_4)
     end
-    
-    style Barrier fill:#4CAF50
-    style T1 fill:#E3F2FD
-    style T2 fill:#F3E5F5
-    style T3 fill:#FFF3E0
-    style T4 fill:#E8F5E8
 ```
 
 ### 배리어 내부 동작: Generation 기반 재사용 메커니즘
@@ -321,15 +312,12 @@ stateDiagram-v2
         
         LastThread --> BroadcastAll: generation++
         BroadcastAll --> ResetCounter: waiting = 0
-        ResetCounter --> WakeAll: pthread_cond_broadcast()
+        ResetCounter --> WakeAllThreads: pthread_cond_broadcast()
     }
     
     Waiting --> Complete: 모든 스레드 통과
-    Complete --> [*]: barrier_wait() 종료
-    
-    state "재사용 준비" as WakeAll {
-        WakeAll --> [*]: 다음 배리어 사용 가능
-    }
+    Complete --> ReadyForReuse: 재사용 준비
+    ReadyForReuse --> [*]: barrier_wait() 종료
     
     note right of CheckGeneration
         Generation 기반 ABA 문제 해결:
@@ -696,9 +684,6 @@ sequenceDiagram
     rect rgb(255, 205, 210)
         Note over TA,SessionMutex: 시스템 멈춤!<br/>• 새로운 요청 처리 불가<br/>• CPU 사용률 급락<br/>• 서비스 장애
     end
-    
-    style UserMutex fill:#FFCDD2
-    style SessionMutex fill:#FFCDD2
 ```
 
 ### 락 순서 위반 감지: 자동화된 데드락 예방
