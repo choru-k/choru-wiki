@@ -267,7 +267,8 @@ sequenceDiagram
     Note over Handler: 자식2 좀비 수거 완료
     Handler->>Parent: 핸들러 종료
     
-    Note over Parent: 모든 자식 자동 정리 완료<br/>좀비 없음!
+    Note over Parent: "모든 자식 자동 정리 완료
+    좀비 없음!"
     
     style Handler fill:#4CAF50
     style Child1 fill:#FF9800
@@ -280,8 +281,10 @@ sequenceDiagram
 graph TD
     subgraph BLOCKING_WAIT["블로킹 wait()"]
         BW_CALL["wait(&status)"]
-        BW_BLOCK["부모 프로세스 블로킹<br/>자식 종료까지 대기"]
-        BW_RETURN["자식 종료 시 즉시 반환<br/>좀비 수거됨"]
+        BW_BLOCK["부모 프로세스 블로킹
+        자식 종료까지 대기"]
+        BW_RETURN["자식 종료 시 즉시 반환
+        좀비 수거됨"]
         
         BW_CALL --> BW_BLOCK
         BW_BLOCK --> BW_RETURN
@@ -289,9 +292,12 @@ graph TD
     
     subgraph NONBLOCKING_WAIT["논블로킹 waitpid(WNOHANG)"]
         NW_CALL["waitpid(-1, NULL, WNOHANG)"]
-        NW_CHECK{"종료된 자식이<br/>있는가?"}
-        NW_IMMEDIATE["즉시 반환<br/>0 또는 PID"]
-        NW_CONTINUE["부모 계속 실행<br/>블로킹 없음"]
+        NW_CHECK{"종료된 자식이
+        있는가?"}
+        NW_IMMEDIATE["즉시 반환
+        0 또는 PID"]
+        NW_CONTINUE["부모 계속 실행
+        블로킹 없음"]
         
         NW_CALL --> NW_CHECK
         NW_CHECK -->|있음| NW_IMMEDIATE
@@ -301,7 +307,8 @@ graph TD
     
     subgraph SIGNAL_HANDLER["시그널 핸들러에서"]
         SH_LOOP["while(waitpid(-1, NULL, WNOHANG) > 0)"]
-        SH_BENEFIT["모든 좀비를 한 번에 수거<br/>여러 자식이 동시 종료되어도 OK"]
+        SH_BENEFIT["모든 좀비를 한 번에 수거
+        여러 자식이 동시 종료되어도 OK"]
         
         SH_LOOP --> SH_BENEFIT
     end
