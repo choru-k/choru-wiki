@@ -80,7 +80,9 @@ priority_score: 4
 ```mermaid
 graph TD
     subgraph "CPU에서 메모리 접근"
-        CPU["CPU가 가상 주소 접근<br/>예: ptr = 0x12345000<br/>*ptr = 42"]
+        CPU["CPU가 가상 주소 접근
+예: ptr = 0x12345000
+*ptr = 42"]
     end
     
     subgraph "MMU 주소 변환 시도"
@@ -91,9 +93,15 @@ graph TD
     
     subgraph "페이지 폴트 유형 분석"
         PF_TYPE{"페이지 폴트 유형"}
-        MINOR["Minor Fault<br/>💛 빠른 해결<br/>~0.001ms"]
-        MAJOR["Major Fault<br/>🔴 느린 해결<br/>~5ms"]
-        INVALID["Invalid Fault<br/>💀 프로그램 종료<br/>SIGSEGV"]
+        MINOR["Minor Fault
+💛 빠른 해결
+~0.001ms"]
+        MAJOR["Major Fault
+🔴 느린 해결
+~5ms"]
+        INVALID["Invalid Fault
+💀 프로그램 종료
+SIGSEGV"]
     end
     
     subgraph "Minor Fault 처리"
@@ -105,7 +113,8 @@ graph TD
     
     subgraph "Major Fault 처리"
         MAJOR_CHECK["스왑/파일에 있음?"]
-        MAJOR_IO["디스크 I/O 수행<br/>페이지 읽기"]
+        MAJOR_IO["디스크 I/O 수행
+페이지 읽기"]
         MAJOR_ALLOC["물리 메모리 할당"]
         MAJOR_MAP["페이지 테이블 업데이트"]
     end
@@ -188,9 +197,15 @@ graph TD
 ```mermaid
 graph TD
     subgraph "페이지 폴트 성능 스팩트럼"
-        MINOR["Minor Fault<br/>0.001ms<br/>🟢 암묵적 성능"]
-        MAJOR["Major Fault<br/>5ms<br/>🟡 체감 가능"]
-        SEGV["Invalid Fault<br/>프로그램 종료<br/>🔴 재시작"]
+        MINOR["Minor Fault
+0.001ms
+🟢 암묵적 성능"]
+        MAJOR["Major Fault
+5ms
+🟡 체감 가능"]
+        SEGV["Invalid Fault
+프로그램 종료
+🔴 재시작"]
         
         MINOR --> MAJOR
         MAJOR --> SEGV

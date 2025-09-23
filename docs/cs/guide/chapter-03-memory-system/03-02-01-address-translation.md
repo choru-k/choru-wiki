@@ -213,29 +213,29 @@ uint32_t translate_address_simple(uint32_t virtual_addr) {
 
 ```mermaid
 graph TD
-    VA["가상 주소 48비트]
-    VA --> B1[비트 47-39
-PML4 인덱스"]
+    VA["가상 주소 48비트"]
+    VA --> B1["비트 47-39
+    PML4 인덱스"]
     VA --> B2["비트 38-30
-PDPT 인덱스"]
+    PDPT 인덱스"]
     VA --> B3["비트 29-21
-PD 인덱스"]
+    PD 인덱스"]
     VA --> B4["비트 20-12
-PT 인덱스"]
+    PT 인덱스"]
     VA --> B5["비트 11-0
-오프셋"]
+    오프셋"]
 
-    CR3["CR3 레지스터] --> PML4[PML4 테이블]
+    CR3["CR3 레지스터"] --> PML4["PML4 테이블"]
     B1 --> PML4
-    PML4 --> PDPT[PDPT 테이블"]
+    PML4 --> PDPT["PDPT 테이블"]
     B2 --> PDPT
-    PDPT --> PD["PD 테이블]
+    PDPT --> PD["PD 테이블"]
     B3 --> PD
-    PD --> PT[PT 테이블"]
+    PD --> PT["PT 테이블"]
     B4 --> PT
-    PT --> FRAME["물리 프레임]
+    PT --> FRAME["물리 프레임"]
     B5 --> FRAME
-    FRAME --> PA[물리 주소"]
+    FRAME --> PA["물리 주소"]
 
     style CR3 fill:#4CAF50
     style PA fill:#2196F3

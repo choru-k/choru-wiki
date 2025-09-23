@@ -24,17 +24,29 @@ madvise는 운영체제에게 메모리 사용 패턴을 알려줘서 최적화�
 ```mermaid
 graph LR
     subgraph "madvise 패턴들"
-        SEQUENTIAL["MADV_SEQUENTIAL<br/>순차 접근 예정<br/>→ 적극적 prefetch"]
-        RANDOM["MADV_RANDOM<br/>랜덤 접근 예정<br/>→ prefetch 비활성화"]
-        WILLNEED["MADV_WILLNEED<br/>곧 사용 예정<br/>→ 미리 로드"]
-        DONTNEED["MADV_DONTNEED<br/>더 이상 불필요<br/>→ 캐시에서 제거"]
+        SEQUENTIAL["MADV_SEQUENTIAL
+순차 접근 예정
+→ 적극적 prefetch"]
+        RANDOM["MADV_RANDOM
+랜덤 접근 예정
+→ prefetch 비활성화"]
+        WILLNEED["MADV_WILLNEED
+곧 사용 예정
+→ 미리 로드"]
+        DONTNEED["MADV_DONTNEED
+더 이상 불필요
+→ 캐시에서 제거"]
     end
 
     subgraph "성능 효과"
-        SEQUENTIAL --> PREFETCH["읽기 성능 향상<br/>캐시 히트율 증가"]
-        RANDOM --> EFFICIENT["불필요한 prefetch 방지<br/>메모리 절약"]
-        WILLNEED --> PRELOAD["접근 전 미리 로드<br/>지연시간 단축"]
-        DONTNEED --> MEMORY["메모리 확보<br/>다른 프로세스 도움"]
+        SEQUENTIAL --> PREFETCH["읽기 성능 향상
+캐시 히트율 증가"]
+        RANDOM --> EFFICIENT["불필요한 prefetch 방지
+메모리 절약"]
+        WILLNEED --> PRELOAD["접근 전 미리 로드
+지연시간 단축"]
+        DONTNEED --> MEMORY["메모리 확보
+다른 프로세스 도움"]
     end
 ```
 

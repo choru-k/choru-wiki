@@ -109,20 +109,28 @@ void trace_malloc_journey() {
 graph TD
     A["malloc(size) 호출"] --> B{"크기 분류"}
     
-    B -->|"< 64KB<br/>(작은 요청)"| C["brk() 시스템콜"]
-    B -->|"> 512KB<br/>(큰 요청)"| D["mmap() 시스템콜"]
-    B -->|"64KB~512KB<br/>(중간 요청)"| E{"Free List 확인"}
+    B -->|"< 64KB
+(작은 요청)"| C["brk() 시스템콜"]
+    B -->|"> 512KB
+(큰 요청)"| D["mmap() 시스템콜"]
+    B -->|"64KB~512KB
+(중간 요청)"| E{"Free List 확인"}
     
-    C --> C1["힙 영역 확장<br/>(연속된 메모리)"]
-    C1 --> C2["청크 할당<br/>남은 공간은 free list에"]
+    C --> C1["힙 영역 확장
+(연속된 메모리)"]
+    C1 --> C2["청크 할당
+남은 공간은 free list에"]
     
-    D --> D1["별도 메모리 영역<br/>(가상 주소 임의 위치)"]
-    D1 --> D2["직접 반환<br/>free시 즉시 munmap"]
+    D --> D1["별도 메모리 영역
+(가상 주소 임의 위치)"]
+    D1 --> D2["직접 반환
+free시 즉시 munmap"]
     
     E -->|"적절한 블록 있음"| F["기존 블록 재사용"]
     E -->|"블록 부족"| C
     
-    F --> F1["블록 분할 또는<br/>전체 사용"]
+    F --> F1["블록 분할 또는
+전체 사용"]
     
     C2 --> G["사용자에게 포인터 반환"]
     D2 --> G
@@ -196,25 +204,47 @@ void examine_chunk() {
 ```mermaid
 graph TB
     subgraph "할당된 청크 (malloc 반환 후)"
-        A1["prev_size<br/>(8 bytes)<br/>이전 청크가 해제된 경우만 사용"]
-        A2["size + flags<br/>(8 bytes)<br/>현재 청크 크기 + 상태 비트"]
-        A3["사용자 데이터<br/>(요청 크기)<br/>실제 사용 가능한 메모리"]
-        A4["패딩<br/>(0-15 bytes)<br/>16바이트 정렬용"]
+        A1["prev_size
+(8 bytes)
+이전 청크가 해제된 경우만 사용"]
+        A2["size + flags
+(8 bytes)
+현재 청크 크기 + 상태 비트"]
+        A3["사용자 데이터
+(요청 크기)
+실제 사용 가능한 메모리"]
+        A4["패딩
+(0-15 bytes)
+16바이트 정렬용"]
     end
     
     subgraph "해제된 청크 (free 호출 후)"
-        B1["prev_size<br/>(8 bytes)<br/>이전 청크 크기 정보"]
-        B2["size + flags<br/>(8 bytes)<br/>현재 청크 크기 + FREE 표시"]
-        B3["fd (forward)<br/>(8 bytes)<br/>다음 free 청크 포인터"]
-        B4["bk (backward)<br/>(8 bytes)<br/>이전 free 청크 포인터"]
-        B5["미사용 공간<br/>(가변)<br/>원래 사용자 데이터 영역"]
+        B1["prev_size
+(8 bytes)
+이전 청크 크기 정보"]
+        B2["size + flags
+(8 bytes)
+현재 청크 크기 + FREE 표시"]
+        B3["fd (forward)
+(8 bytes)
+다음 free 청크 포인터"]
+        B4["bk (backward)
+(8 bytes)
+이전 free 청크 포인터"]
+        B5["미사용 공간
+(가변)
+원래 사용자 데이터 영역"]
     end
     
     subgraph "크기 필드의 비트 플래그"
-        F1["PREV_INUSE (bit 0)<br/>이전 청크 사용 중"]
-        F2["IS_MMAPPED (bit 1)<br/>mmap으로 할당됨"]
-        F3["NON_MAIN_ARENA (bit 2)<br/>메인 아레나 아님"]
-        F4["실제 크기 (bit 3-63)<br/>청크 크기 정보"]
+        F1["PREV_INUSE (bit 0)
+이전 청크 사용 중"]
+        F2["IS_MMAPPED (bit 1)
+mmap으로 할당됨"]
+        F3["NON_MAIN_ARENA (bit 2)
+메인 아레나 아님"]
+        F4["실제 크기 (bit 3-63)
+청크 크기 정보"]
     end
     
     A1 --> A2 --> A3 --> A4
@@ -317,29 +347,50 @@ Free List: [100B] -> [50B] -> [200B] -> [80B]
 ```mermaid
 graph TD
     subgraph "초기 상태: 메모리 할당됨"
-        M1["청크 A<br/>(64B)<br/>할당됨"]
-        M2["청크 B<br/>(64B)<br/>할당됨"]
-        M3["청크 C<br/>(64B)<br/>할당됨"]
-        M4["청크 D<br/>(64B)<br/>할당됨"]
+        M1["청크 A
+(64B)
+할당됨"]
+        M2["청크 B
+(64B)
+할당됨"]
+        M3["청크 C
+(64B)
+할당됨"]
+        M4["청크 D
+(64B)
+할당됨"]
     end
     
     subgraph "B와 C 해제 후"
-        N1["청크 A<br/>(64B)<br/>할당됨"]
-        N2["청크 B<br/>(64B)<br/>FREE"]
-        N3["청크 C<br/>(64B)<br/>FREE"]
-        N4["청크 D<br/>(64B)<br/>할당됨"]
+        N1["청크 A
+(64B)
+할당됨"]
+        N2["청크 B
+(64B)
+FREE"]
+        N3["청크 C
+(64B)
+FREE"]
+        N4["청크 D
+(64B)
+할당됨"]
     end
     
     subgraph "Free List 구조"
         FL_HEAD["Free List Head"]
-        FL_C["청크 C<br/>fd: B주소<br/>bk: NULL"]
-        FL_B["청크 B<br/>fd: NULL<br/>bk: C주소"]
+        FL_C["청크 C
+fd: B주소
+bk: NULL"]
+        FL_B["청크 B
+fd: NULL
+bk: C주소"]
     end
     
     subgraph "새 할당 요청 (64B)"
         R1["malloc(64) 호출"]
         R2["Free List 검색"]
-        R3["청크 C 선택<br/>(LIFO 방식)"]
+        R3["청크 C 선택
+(LIFO 방식)"]
         R4["C를 Free List에서 제거"]
         R5["사용자에게 반환"]
     end
@@ -433,18 +484,26 @@ void demonstrate_fragmentation() {
 ```mermaid
 graph TD
     subgraph "1단계: 초기 상태 (1000개 메시지 할당)"
-        S1_1["메시지 1<br/>(랜덤 크기)"]
-        S1_2["메시지 2<br/>(랜덤 크기)"]
-        S1_3["메시지 3<br/>(랜덤 크기)"]
+        S1_1["메시지 1
+(랜덤 크기)"]
+        S1_2["메시지 2
+(랜덤 크기)"]
+        S1_3["메시지 3
+(랜덤 크기)"]
         S1_4["..."]
-        S1_5["메시지 1000<br/>(랜덤 크기)"]
+        S1_5["메시지 1000
+(랜덤 크기)"]
     end
     
     subgraph "2단계: 홀수 메시지 해제 (체크보드 패턴)"
-        S2_1["메시지 1<br/>✅ 사용중"]
-        S2_2["메시지 2<br/>❌ 해제됨"]
-        S2_3["메시지 3<br/>✅ 사용중"]
-        S2_4["메시지 4<br/>❌ 해제됨"]
+        S2_1["메시지 1
+✅ 사용중"]
+        S2_2["메시지 2
+❌ 해제됨"]
+        S2_3["메시지 3
+✅ 사용중"]
+        S2_4["메시지 4
+❌ 해제됨"]
         S2_5["..."]
     end
     
@@ -455,13 +514,17 @@ graph TD
         S3_SMALL3["80B 빈공간"]
         S3_SMALL4["300B 빈공간"]
         S3_NEED["5KB 필요"]
-        S3_SOLUTION["새 영역에<br/>할당해야 함"]
+        S3_SOLUTION["새 영역에
+할당해야 함"]
     end
     
     subgraph "메모리 상태 비교"
-        BEFORE["사용 가능:<br/>총 2.5KB의 빈 공간"]
-        AFTER["실제 사용 불가:<br/>최대 300B 블록뿐"]
-        WASTE["낭비: 2.2KB<br/>사용할 수 없음"]
+        BEFORE["사용 가능:
+총 2.5KB의 빈 공간"]
+        AFTER["실제 사용 불가:
+최대 300B 블록뿐"]
+        WASTE["낭비: 2.2KB
+사용할 수 없음"]
     end
     
     S1_1 --> S1_2 --> S1_3 --> S1_4 --> S1_5

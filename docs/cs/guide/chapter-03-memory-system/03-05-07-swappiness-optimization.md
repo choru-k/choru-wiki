@@ -28,10 +28,18 @@ priority_score: 4
 ```mermaid
 graph LR
     subgraph SWAPPINESS_VALUES["swappiness 값별 동작"]
-        ZERO["0<br/>스왑사용안함<br/>OOM위험"]
-        LOW["1-10<br/>최소한만사용<br/>서버권장"]
-        DEFAULT["60<br/>기본값<br/>데스크톱"]
-        HIGH["80-100<br/>적극적사용<br/>캐시우선"]
+        ZERO["0
+스왑사용안함
+OOM위험"]
+        LOW["1-10
+최소한만사용
+서버권장"]
+        DEFAULT["60
+기본값
+데스크톱"]
+        HIGH["80-100
+적극적사용
+캐시우선"]
     end
 
     subgraph "메모리 압박 시 우선순위"

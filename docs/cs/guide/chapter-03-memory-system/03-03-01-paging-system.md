@@ -298,11 +298,16 @@ int main() {
 graph TD
     subgraph "가상 주소 분해"
         VA["가상 주소 (48비트)"] 
-        VA --> PML4_IDX["PML4 인덱스<br/>(47-39비트)"]
-        VA --> PDPT_IDX["PDPT 인덱스<br/>(38-30비트)"]
-        VA --> PD_IDX["PD 인덱스<br/>(29-21비트)"]
-        VA --> PT_IDX["PT 인덱스<br/>(20-12비트)"]
-        VA --> OFFSET["오프셋<br/>(11-0비트)"]
+        VA --> PML4_IDX["PML4 인덱스
+(47-39비트)"]
+        VA --> PDPT_IDX["PDPT 인덱스
+(38-30비트)"]
+        VA --> PD_IDX["PD 인덱스
+(29-21비트)"]
+        VA --> PT_IDX["PT 인덱스
+(20-12비트)"]
+        VA --> OFFSET["오프셋
+(11-0비트)"]
     end
 
     subgraph "4단계 변환 과정"
@@ -407,11 +412,16 @@ graph TD
     end
 
     subgraph "메모리 접근 카운트"
-        MEM1["메모리 접근 #1<br/>PML4 읽기"]
-        MEM2["메모리 접근 #2<br/>PDPT 읽기"]
-        MEM3["메모리 접근 #3<br/>PD 읽기"]
-        MEM4["메모리 접근 #4<br/>PT 읽기"]
-        MEM5["메모리 접근 #5<br/>실제 데이터"]
+        MEM1["메모리 접근 #1
+PML4 읽기"]
+        MEM2["메모리 접근 #2
+PDPT 읽기"]
+        MEM3["메모리 접근 #3
+PD 읽기"]
+        MEM4["메모리 접근 #4
+PT 읽기"]
+        MEM5["메모리 접근 #5
+실제 데이터"]
     end
 
     STEP1 -.-> MEM1

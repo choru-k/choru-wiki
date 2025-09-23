@@ -57,15 +57,15 @@ Unified"]
         ITLB -->|miss| STLB
         DTLB -->|miss| STLB
 
-        STLB -->|miss| PWC["Page Walk Cache]
-        PWC -->|miss| WALK[Page Table Walk"]
+        STLB -->|miss| PWC["Page Walk Cache"]
+        PWC -->|miss| WALK["Page Table Walk"]
     end
 
     subgraph "접근 시간"
-        T1["1 cycle]
-        T2[7 cycles"]
-        T3["14 cycles]
-        T4[100+ cycles"]
+        T1["1 cycle"]
+        T2["7 cycles"]
+        T3["14 cycles"]
+        T4["100+ cycles"]
     end
 
     ITLB -.-> T1

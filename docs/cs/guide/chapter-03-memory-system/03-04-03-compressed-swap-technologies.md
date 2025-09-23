@@ -31,13 +31,17 @@ zram은 **RAM의 일부를 압축하여 가상의 스왑 디바이스**로 사�
 graph LR
     subgraph "일반 스왑"
         RAM1["물리 메모리"] --> DISK["디스크 스왑"]
-        DISK --> SLOW["느린 I/O<br/>수 밀리초"]
+        DISK --> SLOW["느린 I/O
+수 밀리초"]
     end
 
     subgraph "zram 스왑"
-        RAM2["물리 메모리"] --> COMPRESS["압축<br/>알고리즘"]
-        COMPRESS --> ZRAM["zram 디바이스<br/>압축된 RAM"]
-        ZRAM --> FAST["빠른 접근<br/>수 마이크로초"]
+        RAM2["물리 메모리"] --> COMPRESS["압축
+알고리즘"]
+        COMPRESS --> ZRAM["zram 디바이스
+압축된 RAM"]
+        ZRAM --> FAST["빠른 접근
+수 마이크로초"]
     end
 
     style FAST fill:#c8e6c9
@@ -338,10 +342,14 @@ zswap은 **페이지 캐시와 스왑 디바이스 사이의 중간층**으로 �
 
 ```mermaid
 graph TD
-    MEMORY["물리 메모리<br/>압박 발생"] --> ZSWAP_CACHE["zswap 압축 캐시<br/>(RAM 20% 사용)"]
+    MEMORY["물리 메모리
+압박 발생"] --> ZSWAP_CACHE["zswap 압축 캐시
+(RAM 20% 사용)"]
     ZSWAP_CACHE --> CACHE_FULL{"캐시 가득?"}
-    CACHE_FULL -->|No| FAST_ACCESS["빠른 압축 해제<br/>(마이크로초)"]
-    CACHE_FULL -->|Yes| DISK_SWAP["디스크 스왑<br/>(밀리초)"]
+    CACHE_FULL -->|No| FAST_ACCESS["빠른 압축 해제
+(마이크로초)"]
+    CACHE_FULL -->|Yes| DISK_SWAP["디스크 스왑
+(밀리초)"]
     
     style FAST_ACCESS fill:#c8e6c9
     style DISK_SWAP fill:#ffcccb

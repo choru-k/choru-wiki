@@ -71,21 +71,31 @@ int main() {
 ```mermaid
 graph LR
     subgraph "부모 프로세스"
-        VP1["가상 주소<br/>0x7ffe5a3b7a2c<br/>값: 42"]
+        VP1["가상 주소
+0x7ffe5a3b7a2c
+값: 42"]
     end
     
     subgraph "자식 프로세스"
-        VP2["가상 주소<br/>0x7ffe5a3b7a2c<br/>값: 100"]
+        VP2["가상 주소
+0x7ffe5a3b7a2c
+값: 100"]
     end
     
     subgraph "물리 메모리"
-        PM1["물리 주소<br/>0x12345000<br/>값: 42"]
-        PM2["물리 주소<br/>0x67890000<br/>값: 100"]
+        PM1["물리 주소
+0x12345000
+값: 42"]
+        PM2["물리 주소
+0x67890000
+값: 100"]
     end
     
     subgraph "MMU 변환"
-        MMU1["페이지 테이블 1<br/>(부모용)"]
-        MMU2["페이지 테이블 2<br/>(자식용)"]
+        MMU1["페이지 테이블 1
+(부모용)"]
+        MMU2["페이지 테이블 2
+(자식용)"]
     end
     
     VP1 --> MMU1 --> PM1
@@ -309,29 +319,41 @@ int main() {
 ```mermaid
 graph TD
     subgraph "CPU에서 메모리 접근 요청"
-        CPU["CPU<br/>가상 주소 접근<br/>0x12345678"]
+        CPU["CPU
+        가상 주소 접근
+        0x12345678"]
     end
     
     subgraph "MMU (메모리 관리 장치)"
         MMU_START["MMU 시작"]
-        SPLIT["주소 분해<br/>페이지 번호: 0x12345<br/>오프셋: 0x678"]
-        TLB_CHECK{"TLB 캐시<br/>확인"}
-        PAGE_WALK["페이지 테이블<br/>워킹"]
-        PERM_CHECK{"권한 검사<br/>읽기/쓰기/실행"}
-        COMBINE["물리 주소 조합<br/>프레임 + 오프셋"]
+        SPLIT["주소 분해
+        페이지 번호: 0x12345
+        오프셋: 0x678"]
+        TLB_CHECK{"TLB 캐시
+        확인"}
+        PAGE_WALK["페이지 테이블
+        워킹"]
+        PERM_CHECK{"권한 검사
+        읽기/쓰기/실행"}
+        COMBINE["물리 주소 조합
+        프레임 + 오프셋"]
     end
     
     subgraph "페이지 테이블 (메모리)"
-        PT["페이지 테이블<br/>가상→물리 매핑"]
+        PT["페이지 테이블
+        가상→물리 매핑"]
     end
     
     subgraph "물리 메모리"
-        PHYS_MEM["물리 메모리<br/>0x87654678"]
+        PHYS_MEM["물리 메모리
+        0x87654678"]
     end
     
     subgraph "예외 처리"
-        PAGE_FAULT["페이지 폴트<br/>페이지가 없음"]
-        PROT_FAULT["보호 폴트<br/>권한 위반"]
+        PAGE_FAULT["페이지 폴트
+        페이지가 없음"]
+        PROT_FAULT["보호 폴트
+        권한 위반"]
     end
     
     CPU --> MMU_START
@@ -356,6 +378,7 @@ graph TD
     style PHYS_MEM fill:#4caf50,color:#fff
     style PAGE_FAULT fill:#f44336,color:#fff
     style PROT_FAULT fill:#f44336,color:#fff
+```
 
 ## 3. 프로세스별 독립된 주소 공간
 
@@ -482,22 +505,43 @@ int main() {
 graph TB
     subgraph "64비트 프로세스 가상 주소 공간"
         subgraph "높은 주소 영역 (0x7F... ~ 0xFF...)"
-            KERNEL["🔒 커널 공간<br/>0xFFFF800000000000+<br/>시스템 콜, 커널 코드"]
-            KERNEL_USER["커널-사용자 경계<br/>0x800000000000"]
+            KERNEL["🔒 커널 공간
+0xFFFF800000000000+
+시스템 콜, 커널 코드"]
+            KERNEL_USER["커널-사용자 경계
+0x800000000000"]
         end
         
         subgraph "사용자 공간 (0x00... ~ 0x7F...)"
-            STACK["📚 스택 영역<br/>0x7FFE5C3B0000<br/>함수 호출, 지역변수<br/>아래쪽으로 성장"]
+            STACK["📚 스택 영역
+0x7FFE5C3B0000
+함수 호출, 지역변수
+아래쪽으로 성장"]
             
-            MMAP["🗺️ 메모리 맵 영역<br/>0x7F8000000000<br/>라이브러리, mmap<br/>익명 매핑"]
+            MMAP["🗺️ 메모리 맵 영역
+0x7F8000000000
+라이브러리, mmap
+익명 매핑"]
             
-            HEAP["🧱 힙 영역<br/>0x55F4A9C2B000<br/>동적 할당 (malloc)<br/>위쪽으로 성장"]
+            HEAP["🧱 힙 영역
+0x55F4A9C2B000
+동적 할당 (malloc)
+위쪽으로 성장"]
             
-            BSS["📊 BSS 세그먼트<br/>0x55F4A9C20000<br/>초기화되지 않은<br/>전역/정적 변수"]
+            BSS["📊 BSS 세그먼트
+0x55F4A9C20000
+초기화되지 않은
+전역/정적 변수"]
             
-            DATA["📈 데이터 세그먼트<br/>0x55F4A9C1F000<br/>초기화된<br/>전역/정적 변수"]
+            DATA["📈 데이터 세그먼트
+0x55F4A9C1F000
+초기화된
+전역/정적 변수"]
             
-            TEXT["📖 텍스트 세그먼트<br/>0x55F4A9C00000<br/>실행 코드<br/>읽기 전용"]
+            TEXT["📖 텍스트 세그먼트
+0x55F4A9C00000
+실행 코드
+읽기 전용"]
         end
         
         subgraph "주소 성장 방향"

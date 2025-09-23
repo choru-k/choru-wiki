@@ -24,15 +24,21 @@ priority_score: 4
 ```mermaid
 graph LR
     subgraph "일반 페이지 (4KB)"
-        NORMAL_DATA[1GB 데이터] --> NORMAL_PAGES["256,000개<br/>4KB 페이지"]
-        NORMAL_PAGES --> NORMAL_TLB["TLB 엔트리<br/>256,000개 필요"]
-        NORMAL_TLB --> NORMAL_MISS["TLB 미스<br/>빈번 발생"]
+        NORMAL_DATA[1GB 데이터] --> NORMAL_PAGES["256,000개
+4KB 페이지"]
+        NORMAL_PAGES --> NORMAL_TLB["TLB 엔트리
+256,000개 필요"]
+        NORMAL_TLB --> NORMAL_MISS["TLB 미스
+빈번 발생"]
     end
 
     subgraph "Huge 페이지 (2MB)"
-        HUGE_DATA[1GB 데이터] --> HUGE_PAGES["512개<br/>2MB 페이지"]
-        HUGE_PAGES --> HUGE_TLB["TLB 엔트리<br/>512개만 필요"]
-        HUGE_TLB --> HUGE_HIT["TLB 히트<br/>성능 향상"]
+        HUGE_DATA[1GB 데이터] --> HUGE_PAGES["512개
+2MB 페이지"]
+        HUGE_PAGES --> HUGE_TLB["TLB 엔트리
+512개만 필요"]
+        HUGE_TLB --> HUGE_HIT["TLB 히트
+성능 향상"]
     end
 
     style HUGE_HIT fill:#c8e6c9

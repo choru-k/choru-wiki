@@ -345,8 +345,10 @@ graph TD
         PROBLEM["성능 문제 발견"] --> MONITOR["시스템 모니터링"]
         MONITOR --> ANALYZE{버그 유형 분석}
         
-        ANALYZE -->|메모리 누수| VALGRIND["Valgrind<br/>leak-check"]
-        ANALYZE -->|Use-After-Free| ASAN["AddressSanitizer<br/>-fsanitize=address"]
+        ANALYZE -->|메모리 누수| VALGRIND["Valgrind
+leak-check"]
+        ANALYZE -->|Use-After-Free| ASAN["AddressSanitizer
+-fsanitize=address"]
         ANALYZE -->|Buffer Overflow| BUFFER_CHECK["Buffer 검사 도구"]
         ANALYZE -->|성능 문제| PERF["perf + 프로파일링"]
         

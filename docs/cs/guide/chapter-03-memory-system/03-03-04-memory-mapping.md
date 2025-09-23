@@ -73,17 +73,17 @@ void* mmap(void* addr,    // 희망 주소 (보통 NULL)
 graph TD
     MMAP["mmap()]
     MMAP --> FILE[파일 매핑"]
-    MMAP --> ANON["익명 매핑]
+    MMAP --> ANON["익명 매핑"]
 
-    FILE --> PRIV[MAP_PRIVATE
-Copy-on-Write"]
+    FILE --> PRIV["MAP_PRIVATE
+    Copy-on-Write"]
     FILE --> SHAR["MAP_SHARED
-공유"]
+    공유"]
 
     ANON --> APRIV["MAP_PRIVATE
-힙 대체"]
+    힙 대체"]
     ANON --> ASHAR["MAP_SHARED
-프로세스 간 공유"]
+    프로세스 간 공유"]
 
     style FILE fill:#E3F2FD
     style ANON fill:#FFF3E0

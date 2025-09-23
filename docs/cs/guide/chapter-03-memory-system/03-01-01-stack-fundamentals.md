@@ -134,24 +134,40 @@ multiply(3, 4) 호출 시 스택 상태:
 ```mermaid
 graph TB
     subgraph "스택 메모리 구조 (높은 주소 → 낮은 주소)"
-        A1["0x7ffe5c3b7a50<br/>운영체제 영역"]
-        A2["0x7ffe5c3b7a40<br/>main 리턴 주소"]
-        A3["0x7ffe5c3b7a38<br/>이전 RBP 백업"]
-        A4["0x7ffe5c3b7a30<br/>result 변수"] 
+        A1["0x7ffe5c3b7a50
+운영체제 영역"]
+        A2["0x7ffe5c3b7a40
+main 리턴 주소"]
+        A3["0x7ffe5c3b7a38
+이전 RBP 백업"]
+        A4["0x7ffe5c3b7a30
+result 변수"] 
         
-        B1["0x7ffe5c3b7a28<br/>multiply 리턴 주소"]
-        B2["0x7ffe5c3b7a20<br/>main RBP 백업"]
-        B3["0x7ffe5c3b7a18<br/>x = 3 (매개변수)"]
-        B4["0x7ffe5c3b7a10<br/>y = 4 (매개변수)"]
-        B5["0x7ffe5c3b7a08<br/>product = 12"]
-        B6["0x7ffe5c3b7a00<br/>doubled 변수"]
+        B1["0x7ffe5c3b7a28
+multiply 리턴 주소"]
+        B2["0x7ffe5c3b7a20
+main RBP 백업"]
+        B3["0x7ffe5c3b7a18
+x = 3 (매개변수)"]
+        B4["0x7ffe5c3b7a10
+y = 4 (매개변수)"]
+        B5["0x7ffe5c3b7a08
+product = 12"]
+        B6["0x7ffe5c3b7a00
+doubled 변수"]
         
-        C1["0x7ffe5c3b79f8<br/>add 리턴 주소"]
-        C2["0x7ffe5c3b79f0<br/>multiply RBP 백업"]
-        C3["0x7ffe5c3b79e8<br/>a = 12 (매개변수)"]
-        C4["0x7ffe5c3b79e0<br/>b = 12 (매개변수)"]
-        C5["0x7ffe5c3b79d8<br/>sum = 24"]
-        C6["0x7ffe5c3b79d0<br/>RSP (현재 스택 포인터)"]
+        C1["0x7ffe5c3b79f8
+add 리턴 주소"]
+        C2["0x7ffe5c3b79f0
+multiply RBP 백업"]
+        C3["0x7ffe5c3b79e8
+a = 12 (매개변수)"]
+        C4["0x7ffe5c3b79e0
+b = 12 (매개변수)"]
+        C5["0x7ffe5c3b79d8
+sum = 24"]
+        C6["0x7ffe5c3b79d0
+RSP (현재 스택 포인터)"]
     end
     
     subgraph "스택 프레임들"
@@ -233,28 +249,40 @@ void examine_assembly() {
 graph LR
     subgraph "함수 매개변수 전달 방식"
         subgraph "레지스터 전달 (1-6번째 인자)"
-            R1["1번째 인자<br/>RDI 레지스터"]
-            R2["2번째 인자<br/>RSI 레지스터"]
-            R3["3번째 인자<br/>RDX 레지스터"]
-            R4["4번째 인자<br/>RCX 레지스터"]
-            R5["5번째 인자<br/>R8 레지스터"]
-            R6["6번째 인자<br/>R9 레지스터"]
+            R1["1번째 인자
+RDI 레지스터"]
+            R2["2번째 인자
+RSI 레지스터"]
+            R3["3번째 인자
+RDX 레지스터"]
+            R4["4번째 인자
+RCX 레지스터"]
+            R5["5번째 인자
+R8 레지스터"]
+            R6["6번째 인자
+R9 레지스터"]
         end
         
         subgraph "스택 전달 (7번째 이후)"
-            S1["7번째 인자<br/>스택 [RSP+8]"]
-            S2["8번째 인자<br/>스택 [RSP+16]"]
-            S3["...<br/>계속 스택에"]
+            S1["7번째 인자
+스택 [RSP+8]"]
+            S2["8번째 인자
+스택 [RSP+16]"]
+            S3["...
+계속 스택에"]
         end
         
         subgraph "반환값"
-            RET["반환값<br/>RAX 레지스터"]
+            RET["반환값
+RAX 레지스터"]
         end
     end
     
     subgraph "성능 비교"
-        FAST["레지스터 접근<br/>1 사이클"]
-        SLOW["메모리 접근<br/>100+ 사이클"]
+        FAST["레지스터 접근
+1 사이클"]
+        SLOW["메모리 접근
+100+ 사이클"]
     end
     
     R1 --> FAST
@@ -333,10 +361,14 @@ void show_stack_assembly() {
 ```mermaid
 graph LR
     subgraph "스택 할당 (극도로 빠름)"
-        S1["RSP 포인터<br/>조작만"]
-        S2["sub rsp, 40<br/>(1 명령어)"]
-        S3["할당 완료<br/>1-2 사이클"]
-        S4["add rsp, 40<br/>(해제도 1 명령어)"]
+        S1["RSP 포인터
+조작만"]
+        S2["sub rsp, 40
+(1 명령어)"]
+        S3["할당 완료
+1-2 사이클"]
+        S4["add rsp, 40
+(해제도 1 명령어)"]
         
         S1 --> S2 --> S3 --> S4
     end

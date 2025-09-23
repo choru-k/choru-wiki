@@ -442,10 +442,14 @@ graph TD
     WORKLOAD --> BATCH["배치 처리"]
     WORKLOAD --> DEV["개발/테스트"]
 
-    API --> API_STRATEGY["스왑 금지<br/>레이턴시 민감"]
-    DB --> DB_STRATEGY["스왑 금지<br/>성능 예측성"]
-    BATCH --> BATCH_STRATEGY["스왑 허용<br/>처리량 우선"]
-    DEV --> DEV_STRATEGY["관대한 정책<br/>리소스 효율성"]
+    API --> API_STRATEGY["스왑 금지
+레이턴시 민감"]
+    DB --> DB_STRATEGY["스왑 금지
+성능 예측성"]
+    BATCH --> BATCH_STRATEGY["스왑 허용
+처리량 우선"]
+    DEV --> DEV_STRATEGY["관대한 정책
+리소스 효율성"]
 
     style API_STRATEGY fill:#ffcccb
     style DB_STRATEGY fill:#ffcccb  

@@ -79,15 +79,30 @@ graph TD
     WORKLOAD --> CONTAINER[컨테이너 서비스]
     WORKLOAD --> ML[머신러닝]
 
-    WEB --> WEB_STRATEGY["• 연결 수 제한<br/>• 메모리 기반 로드밸런싱<br/>• Graceful shutdown<br/>• 세션 스토리지 최적화"]
+    WEB --> WEB_STRATEGY["• 연결 수 제한
+• 메모리 기반 로드밸런싱
+• Graceful shutdown
+• 세션 스토리지 최적화"]
 
-    DB --> DB_STRATEGY["• max_connections 제한<br/>• query_cache_size 조정<br/>• InnoDB 버퍼 풀 최적화<br/>• 슬로우 쿼리 모니터링"]
+    DB --> DB_STRATEGY["• max_connections 제한
+• query_cache_size 조정
+• InnoDB 버퍼 풀 최적화
+• 슬로우 쿼리 모니터링"]
 
-    BATCH --> BATCH_STRATEGY["• 청크 단위 처리<br/>• 메모리 사용량 모니터링<br/>• 백프레셔 적용<br/>• 임시 파일 정리"]
+    BATCH --> BATCH_STRATEGY["• 청크 단위 처리
+• 메모리 사용량 모니터링
+• 백프레셔 적용
+• 임시 파일 정리"]
 
-    CONTAINER --> CONTAINER_STRATEGY["• requests/limits 설정<br/>• 리소스 쿼터 사용<br/>• HPA 메모리 기반 스케일링<br/>• Pod Disruption Budget"]
+    CONTAINER --> CONTAINER_STRATEGY["• requests/limits 설정
+• 리소스 쿼터 사용
+• HPA 메모리 기반 스케일링
+• Pod Disruption Budget"]
 
-    ML --> ML_STRATEGY["• 배치 크기 최적화<br/>• 모델 양자화<br/>• 메모리 매핑 활용<br/>• GPU 메모리 관리"]
+    ML --> ML_STRATEGY["• 배치 크기 최적화
+• 모델 양자화
+• 메모리 매핑 활용
+• GPU 메모리 관리"]
 ```
 
 ### 웹 애플리케이션 OOM 방지 전략

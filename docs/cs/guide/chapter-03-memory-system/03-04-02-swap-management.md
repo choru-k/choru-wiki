@@ -354,17 +354,17 @@ int main() {
 ```mermaid
 graph LR
     subgraph SWAPPINESS_VALUES["swappiness 값별 동작"]
-        ZERO[0 스왑사용안함 OOM위험]
-        LOW[1-10 최소한만사용 서버권장]
-        DEFAULT[60 기본값 데스크톱]
-        HIGH[80-100 적극적사용 캐시우선]
+        ZERO["0 스왑사용안함 OOM위험"]
+        LOW["1-10 최소한만사용 서버권장"]
+        DEFAULT["60 기본값 데스크톱"]
+        HIGH["80-100 적극적사용 캐시우선"]
     end
 
     subgraph "메모리 압박 시 우선순위"
-        ZERO --> ANON1[익명 페이지 유지]
-        LOW --> CACHE1[페이지 캐시 해제 우선]
-        DEFAULT --> BALANCE[균형잡힌 해제]
-        HIGH --> ANON2[익명 페이지 스왑아웃]
+        ZERO --> ANON1["익명 페이지 유지"]
+        LOW --> CACHE1["페이지 캐시 해제 우선"]
+        DEFAULT --> BALANCE["균형잡힌 해제"]
+        HIGH --> ANON2["익명 페이지 스왑아웃"]
     end
 
     style LOW fill:#c8e6c9
@@ -668,14 +668,14 @@ zram은 RAM의 일부를 압축하여 가상의 스왑 디바이스로 사용합
 ```mermaid
 graph LR
     subgraph "일반 스왑"
-        RAM1[물리 메모리] --> DISK[디스크 스왑]
-        DISK --> SLOW[느린 I/O, 수 밀리초]
+        RAM1["물리 메모리"] --> DISK["디스크 스왑"]
+        DISK --> SLOW["느린 I/O, 수 밀리초"]
     end
 
     subgraph "zram 스왑"
-        RAM2[물리 메모리] --> COMPRESS[압축, 알고리즘]
-        COMPRESS --> ZRAM[zram 디바이스, 압축된 RAM]
-        ZRAM --> FAST[빠른 접근, 수 마이크로초]
+        RAM2["물리 메모리"] --> COMPRESS["압축, 알고리즘"]
+        COMPRESS --> ZRAM["zram 디바이스, 압축된 RAM"]
+        ZRAM --> FAST["빠른 접근, 수 마이크로초"]
     end
 
     style FAST fill:#c8e6c9
@@ -1446,15 +1446,15 @@ spec:
 
 ```mermaid
 graph TD
-    WORKLOAD{워크로드 타입} --> DB[데이터베이스]
-    WORKLOAD --> WEB[웹 서버]
-    WORKLOAD --> BATCH[배치 처리]
-    WORKLOAD --> DESKTOP[데스크톱]
+    WORKLOAD{"워크로드 타입"} --> DB["데이터베이스"]
+    WORKLOAD --> WEB["웹 서버"]
+    WORKLOAD --> BATCH["배치 처리"]
+    WORKLOAD --> DESKTOP["데스크톱"]
 
-    DB --> DB_STRATEGY[swappiness=1, 최소 스왑 크기, zram 고려]
-    WEB --> WEB_STRATEGY[swappiness=10, 적당한 스왑, 프로세스별 모니터링]
-    BATCH --> BATCH_STRATEGY[swappiness=30, 큰 스왑 크기, 배치별 조정]
-    DESKTOP --> DESKTOP_STRATEGY[swappiness=60, 편의성 우선, 하이버네이션 지원]
+    DB --> DB_STRATEGY["swappiness=1, 최소 스왑 크기, zram 고려"]
+    WEB --> WEB_STRATEGY["swappiness=10, 적당한 스왑, 프로세스별 모니터링"]
+    BATCH --> BATCH_STRATEGY["swappiness=30, 큰 스왑 크기, 배치별 조정"]
+    DESKTOP --> DESKTOP_STRATEGY["swappiness=60, 편의성 우선, 하이버네이션 지원"]
 ```
 
 다음 섹션에서는 OOM 디버깅과 메모리 부족 상황 대응을 다뤄보겠습니다.
