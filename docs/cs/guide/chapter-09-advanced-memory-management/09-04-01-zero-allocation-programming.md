@@ -21,10 +21,10 @@ priority_score: 4
 
 이 섹션에서는:
 
-1. **High-Frequency Trading의 비밀** - Object Pool과 Primitive 활용
-2. **ByteBuffer와 StringBuilder 재사용** - 할당 없는 메시지 처리
-3. **게임 엔진의 프레임 할당자** - 60 FPS를 위한 메모리 전략
-4. **성능 벤치마크** - Zero-allocation의 실제 성능 향상 효과
+1.**High-Frequency Trading의 비밀**- Object Pool과 Primitive 활용
+2.**ByteBuffer와 StringBuilder 재사용**- 할당 없는 메시지 처리
+3.**게임 엔진의 프레임 할당자**- 60 FPS를 위한 메모리 전략
+4.**성능 벤치마크**- Zero-allocation의 실제 성능 향상 효과
 
 ## 1. High-Frequency Trading의 비밀
 
@@ -493,27 +493,27 @@ public class ChronicleMapExample {
 
 ### 1. Zero-allocation의 핵심 원칙
 
-- **Object Pool**: 객체 재사용으로 할당 비용 제거
-- **Primitive 우선**: 박싱/언박싱 비용 회피
-- **Buffer 재사용**: StringBuilder, ByteBuffer 등 재활용
+-**Object Pool**: 객체 재사용으로 할당 비용 제거
+-**Primitive 우선**: 박싱/언박싱 비용 회피
+-**Buffer 재사용**: StringBuilder, ByteBuffer 등 재활용
 
 ### 2. 메모리 할당 전략
 
-- **Frame Allocator**: 프레임 단위로 일괄 해제
-- **Stack Allocator**: LIFO 방식의 빠른 할당/해제
-- **Memory Pool**: 타입별 전용 풀로 관리
+-**Frame Allocator**: 프레임 단위로 일괄 해제
+-**Stack Allocator**: LIFO 방식의 빠른 할당/해제
+-**Memory Pool**: 타입별 전용 풀로 관리
 
 ### 3. 성능 향상 효과
 
-- **할당 속도**: 10-50배 향상 가능
-- **GC 압박 감소**: Pause time 대폭 단축
-- **캐시 효율성**: 메모리 locality 개선
+-**할당 속도**: 10-50배 향상 가능
+-**GC 압박 감소**: Pause time 대폭 단축
+-**캐시 효율성**: 메모리 locality 개선
 
 ### 4. 적용 영역
 
-- **고빈도 거래**: 마이크로초 단위 최적화
-- **게임 엔진**: 60 FPS 안정성 확보
-- **실시간 시스템**: 예측 가능한 성능
+-**고빈도 거래**: 마이크로초 단위 최적화
+-**게임 엔진**: 60 FPS 안정성 확보
+-**실시간 시스템**: 예측 가능한 성능
 
 ---
 
@@ -524,9 +524,9 @@ public class ChronicleMapExample {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 20-30시간
+-**난이도**: ADVANCED
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 20-30시간
 
 ### 🎯 학습 경로
 

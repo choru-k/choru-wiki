@@ -161,14 +161,17 @@ class Solution:
 
 ### LCA Variants
 
-1. **LCA in BST** - [235. LCA of BST](235-lca-bst.md)
-   - Can use BST properties for optimization
+1.**LCA in BST**- [235. LCA of BST](235-lca-bst.md)
 
-2. **LCA with Parent Pointers** - [1650. LCA III](1650-lca-iii.md)
-   - Convert to linked list intersection problem
+- Can use BST properties for optimization
 
-3. **LCA in DAG** - General directed graphs
-   - More complex, may have multiple LCAs
+2.**LCA with Parent Pointers**- [1650. LCA III](1650-lca-iii.md)
+
+- Convert to linked list intersection problem
+
+3.**LCA in DAG**- General directed graphs
+
+- More complex, may have multiple LCAs
 
 ### When to Use Each Approach
 
@@ -181,25 +184,27 @@ class Solution:
 
 ## Common Pitfalls
 
-1. **Not handling null nodes** - Check base cases
-2. **Assuming balanced tree** - Height can be O(n) in worst case
-3. **Parent pointer confusion** - In binary lifting, `parent[node][i]` means 2^i-th ancestor
+1.**Not handling null nodes**- Check base cases
+2.**Assuming balanced tree**- Height can be O(n) in worst case
+3.**Parent pointer confusion**- In binary lifting, `parent[node][i]` means 2^i-th ancestor
 
 ## Interview Tips
 
-1. **Clarify requirements**:
-   - Single query or multiple?
-   - Is it a BST?
-   - Do nodes have parent pointers?
+1.**Clarify requirements**:
 
-2. **Start simple**: Present recursive solution first
+- Single query or multiple?
+- Is it a BST?
+- Do nodes have parent pointers?
 
-3. **Optimize if needed**: Mention binary lifting for multiple queries
+2.**Start simple**: Present recursive solution first
 
-4. **Edge cases**:
-   - One node is ancestor of the other
-   - Root is one of the nodes
-   - Nodes at different depths
+3.**Optimize if needed**: Mention binary lifting for multiple queries
+
+4.**Edge cases**:
+
+- One node is ancestor of the other
+- Root is one of the nodes
+- Nodes at different depths
 
 ## Related Problems
 

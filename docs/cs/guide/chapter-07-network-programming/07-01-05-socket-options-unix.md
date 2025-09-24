@@ -23,10 +23,10 @@ priority_score: 4
 
 제가 실제로 경험한 사례들:
 
-1. **TCP_NODELAY**: 게임 서버에서 반응 속도 50% 개선
-2. **SO_REUSEADDR**: 서버 재시작 시간 30초 → 즉시
-3. **SO_KEEPALIVE**: 좀비 연결 자동 정리
-4. **SO_RCVBUF/SO_SNDBUF**: 대용량 전송 속도 3배 향상
+1.**TCP_NODELAY**: 게임 서버에서 반응 속도 50% 개선
+2.**SO_REUSEADDR**: 서버 재시작 시간 30초 → 즉시
+3.**SO_KEEPALIVE**: 좀비 연결 자동 정리
+4.**SO_RCVBUF/SO_SNDBUF**: 대용량 전송 속도 3배 향상
 
 ```bash
 # 실제 측정 결과
@@ -276,7 +276,7 @@ Latency: 2 μs  # 12배 빠름!
 - MySQL: `/var/run/mysqld/mysqld.sock`
 - systemd: `/run/systemd/journal/socket`
 
-가장 놀라운 기능: **파일 디스크립터 전달!**
+가장 놀라운 기능:**파일 디스크립터 전달!**
 부모 프로세스가 열어둔 파일을 자식에게 전달할 수 있습니다.
 
 ## 로컬 프로세스 간 통신
@@ -558,10 +558,10 @@ const char* tcp_state_to_string(int state) {
 
 ### 1. 소켓 옵션 활용
 
-- **SO_REUSEADDR**: 서버 재시작 시 필수
-- **TCP_NODELAY**: 실시간 통신에서 지연 최소화
-- **SO_KEEPALIVE**: 죽은 연결 자동 탐지
-- **버퍼 크기 조정**: 처리량 최적화
+-**SO_REUSEADDR**: 서버 재시작 시 필수
+-**TCP_NODELAY**: 실시간 통신에서 지연 최소화
+-**SO_KEEPALIVE**: 죽은 연결 자동 탐지
+-**버퍼 크기 조정**: 처리량 최적화
 
 ### 2. Unix 도메인 소켓 장점
 
@@ -585,9 +585,9 @@ const char* tcp_state_to_string(int state) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 8-12시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 8-12시간
 
 ### 🎯 학습 경로
 

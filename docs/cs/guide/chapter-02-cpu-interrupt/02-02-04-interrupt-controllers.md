@@ -407,9 +407,9 @@ void configure_msi_x(struct pci_device* dev) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

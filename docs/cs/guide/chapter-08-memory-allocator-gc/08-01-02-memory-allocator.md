@@ -23,10 +23,10 @@ priority_score: 4
 
 이 섹션을 마스터하면:
 
-1. **malloc의 진실을 알게 됩니다** - 시스템 콜이 아닌 라이브러리 함수의 비밀
-2. **최적의 할당자를 선택할 수 있습니다** - tcmalloc vs jemalloc vs mimalloc 비교
-3. **커스텀 할당자를 구현할 수 있습니다** - Memory Pool, Slab, Buddy System
-4. **실전 최적화를 적용할 수 있습니다** - Netflix, Discord, 게임 엔진의 사례
+1.**malloc의 진실을 알게 됩니다**- 시스템 콜이 아닌 라이브러리 함수의 비밀
+2.**최적의 할당자를 선택할 수 있습니다**- tcmalloc vs jemalloc vs mimalloc 비교
+3.**커스텀 할당자를 구현할 수 있습니다**- Memory Pool, Slab, Buddy System
+4.**실전 최적화를 적용할 수 있습니다**- Netflix, Discord, 게임 엔진의 사례
 
 ## 📚 학습 로드맵
 
@@ -64,13 +64,13 @@ priority_score: 4
 
 | 할당자 | 강점 | 적합한 상황 | 성능 특성 |
 |--------|------|------------|----------|
-| **glibc malloc** | 범용성 | 기본 애플리케이션 | 평균적 성능 |
-| **TCMalloc** | Thread-local 캐시 | 멀티스레드 heavy | Lock 경합 최소 |
-| **JEMalloc** | 메모리 효율성 | 서버 애플리케이션 | 균형잡힌 성능 |
-| **MIMalloc** | 최신 최적화 | 작은 객체 많음 | 최고 성능 |
-| **Memory Pool** | 예측 가능성 | 게임/실시간 | Zero allocation |
-| **Slab Allocator** | 단편화 없음 | 동일 크기 객체 | O(1) 할당 |
-| **Buddy System** | 단편화 최소 | 시스템 레벨 | 병합 효율적 |
+|**glibc malloc**| 범용성 | 기본 애플리케이션 | 평균적 성능 |
+|**TCMalloc**| Thread-local 캐시 | 멀티스레드 heavy | Lock 경합 최소 |
+|**JEMalloc**| 메모리 효율성 | 서버 애플리케이션 | 균형잡힌 성능 |
+|**MIMalloc**| 최신 최적화 | 작은 객체 많음 | 최고 성능 |
+|**Memory Pool**| 예측 가능성 | 게임/실시간 | Zero allocation |
+|**Slab Allocator**| 단편화 없음 | 동일 크기 객체 | O(1) 할당 |
+|**Buddy System**| 단편화 최소 | 시스템 레벨 | 병합 효율적 |
 
 ## 🚀 실전 활용 시나리오
 
@@ -144,9 +144,9 @@ priority_score: 4
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

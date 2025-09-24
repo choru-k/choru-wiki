@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 544](https://leetcode.com/problems/output-contest-matches/) • **Medium**
+[LeetCode 544](https://leetcode.com/problems/output-contest-matches/) •**Medium**
 
 ## 핵심 아이디어
 

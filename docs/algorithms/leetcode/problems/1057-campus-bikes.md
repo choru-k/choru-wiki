@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1057](https://leetcode.com/problems/campus-bikes/) • **Hard**
+[LeetCode 1057](https://leetcode.com/problems/campus-bikes/) •**Hard**
 
 ## Brute-force
 

@@ -21,10 +21,10 @@ priority_score: 4
 
 Java 19에서 도입된 Virtual Thread는 JVM 역사상 가장 혁신적인 기능 중 하나입니다:
 
-1. **Continuation 마법**: 실행 컨텍스트를 동결/해제하는 기술
-2. **Platform Thread와의 차이**: 성능과 메모리 사용량 비교 분석
-3. **Pinning 문제**: 동기화 블록에서의 제약과 해결방안
-4. **실전 활용**: 대규모 동시 연결 처리 비밀
+1.**Continuation 마법**: 실행 컨텍스트를 동결/해제하는 기술
+2.**Platform Thread와의 차이**: 성능과 메모리 사용량 비교 분석
+3.**Pinning 문제**: 동기화 블록에서의 제약과 해결방안
+4.**실전 활용**: 대규모 동시 연결 처리 비밀
 
 ## 4. Java Virtual Threads: Project Loom의 혁명
 
@@ -290,9 +290,9 @@ public class PinningProblem {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

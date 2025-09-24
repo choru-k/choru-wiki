@@ -71,9 +71,9 @@ graph TD
 
 이벤트 루프는 단일 스레드에서 비동기 작업을 처리하는 핵심 메커니즘입니다:
 
-1. **Call Stack 확인**: 현재 실행 중인 함수가 있는지 확인
-2. **Queue 우선순위**: Microtask Queue → Callback Queue → Timer Queue 순서로 처리
-3. **Non-blocking 보장**: I/O 작업은 별도 스레드에서 처리 후 콜백 등록
+1.**Call Stack 확인**: 현재 실행 중인 함수가 있는지 확인
+2.**Queue 우선순위**: Microtask Queue → Callback Queue → Timer Queue 순서로 처리
+3.**Non-blocking 보장**: I/O 작업은 별도 스레드에서 처리 후 콜백 등록
 
 ### 블로킹 원인 분석
 
@@ -509,9 +509,9 @@ CPU 집약적 작업은 Worker Thread로, 대량 데이터 처리는 비동기 �
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 40](https://leetcode.com/problems/combination-sum-ii/) • **Easy**
+[LeetCode 40](https://leetcode.com/problems/combination-sum-ii/) •**Easy**
 
 일단 이 문제는 보자 마자 NP 문제라는 것을 알 수가 있습니다.
 

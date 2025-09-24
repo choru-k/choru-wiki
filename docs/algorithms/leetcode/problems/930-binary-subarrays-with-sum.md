@@ -8,7 +8,7 @@ tags:
 
 ## 문제
 
-[LeetCode 930](https://leetcode.com/problems/binary-subarrays-with-sum/) • **Hard**
+[LeetCode 930](https://leetcode.com/problems/binary-subarrays-with-sum/) •**Hard**
 
 ## 핵심 아이디어
 

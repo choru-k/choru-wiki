@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1048](https://leetcode.com/problems/longest-string-chain/) • **Hard**
+[LeetCode 1048](https://leetcode.com/problems/longest-string-chain/) •**Hard**
 
 일단 몇 가지를 생각해보자.
 

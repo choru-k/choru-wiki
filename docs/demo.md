@@ -162,7 +162,7 @@ def allocate_memory(size: int) -> bytes:
 ??? question "Collapsible Question"
     Why does Linux use virtual memory?
 
-    **Answer**: Virtual memory provides process isolation, enables memory sharing, 
+  **Answer**: Virtual memory provides process isolation, enables memory sharing,
     and allows the system to use more memory than physically available through paging.
 <!-- markdownlint-enable MD046 -->
 

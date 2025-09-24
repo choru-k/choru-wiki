@@ -1,11 +1,13 @@
 ---
 tags:
+  - Security
+  - Cryptography
+  - Authentication
+  - NetworkSecurity
   - SystemProgramming
-  - Linux
-  - Performance
-difficulty: INTERMEDIATE
+difficulty: ADVANCED
 learning_time: "15-25시간"
-main_topic: "시스템 프로그래밍"
+main_topic: "보안 엔지니어링"
 priority_score: 4
 ---
 
@@ -21,37 +23,51 @@ priority_score: 4
 
 현대 소프트웨어 개발에서 이러한 지식은 필수입니다:
 
-- 🚀 **성능 최적화**: 병목 구간을 정확히 파악하고 해결
-- 🐛 **디버깅**: 복잡한 시스템 문제의 근본 원인 파악  
-- 🔧 **아키텍처 설계**: 확장 가능하고 안정적인 시스템 구축
-- 📊 **모니터링**: 시스템 상태를 정확히 파악하고 예방적 조치
+- 🚀**성능 최적화**: 병목 구간을 정확히 파악하고 해결
+- 🐛**디버깅**: 복잡한 시스템 문제의 근본 원인 파악  
+- 🔧**아키텍처 설계**: 확장 가능하고 안정적인 시스템 구축
+- 📊**모니터링**: 시스템 상태를 정확히 파악하고 예방적 조치
 
 ## 학습 로드맵
 
 이 장은 다음과 같은 순서로 학습하는 것을 권장합니다:
 
-1. **기초 개념** 파악
-2. **핵심 메커니즘** 이해  
-3. **실무 적용** 연습
-4. **고급 최적화** 기법 습득
+1.**기초 개념**파악
+2.**핵심 메커니즘**이해  
+3.**실무 적용**연습
+4.**고급 최적화**기법 습득
 
-## 📂 이 챕터의 문서들
+## 📚 이 챕터의 구성
 
-- [05c-key: Management E2e](./05c-key-management-e2e.md)
-- [15-01: Network Fundamentals](./15-01-network-fundamentals.md)
-- [15-02: Authentication Basics](./15-02-authentication-basics.md)
-- [15-03: Cryptography Fundamentals](./15-03-cryptography-fundamentals.md)
-- [15-10: Memory Security](./15-10-memory-security.md)
-- [15-11: Network Security](./15-11-network-security.md)
-- [15-12: Tls Protocols](./15-12-tls-protocols.md)
-- [15-13: Ddos Defense](./15-13-ddos-defense.md)
-- [15-14: Authentication Authorization](./15-14-authentication-authorization.md)
-- [15-15: Oauth2 Implementation](./15-15-oauth2-implementation.md)
-- [15-16: Jwt Security](./15-16-jwt-security.md)
-- [15-17: Mfa Implementation](./15-17-mfa-implementation.md)
-- [15-18: Container Security](./15-18-container-security.md)
-- [15-19: Cryptography Key Management](./15-19-cryptography-key-management.md)
-- [15-30: Performance Security](./15-30-performance-security.md)
-- [15-40: Zero Trust Monitoring](./15-40-zero-trust-monitoring.md)
-- [15-41: Monitoring Best Practices](./15-41-monitoring-best-practices.md)
-- [15-50: Practical Encryption](./15-50-practical-encryption.md)
+### 17.1 보안 기초 개념
+
+- [17-01-01: 네트워크 보안 기초와 위협 환경](./17-01-01-network-fundamentals.md)
+- [17-01-02: 인증 기초 개념](./17-01-02-authentication-basics.md)
+- [17-01-03: 암호화 기초 이론](./17-01-03-cryptography-fundamentals.md)
+
+### 17.2 핵심 보안 구현
+
+- [17-02-01: 메모리 보안과 공격 방어](./17-02-01-memory-security.md)
+- [17-02-02: 네트워크 보안 개요](./17-02-02-network-security.md)
+- [17-02-03: TLS 프로토콜과 암호화 통신](./17-02-03-tls-protocols.md)
+- [17-02-04: DDoS 공격 탐지와 방어](./17-02-04-ddos-defense.md)
+
+### 17.3 인증 및 권한관리
+
+- [17-03-01: 인증과 인가 시스템](./17-03-01-authentication-authorization.md)
+- [17-03-02: OAuth2 구현](./17-03-02-oauth2-implementation.md)
+- [17-03-03: JWT 보안](./17-03-03-jwt-security.md)
+- [17-03-04: MFA 구현](./17-03-04-mfa-implementation.md)
+
+### 17.4 고급 보안 기술
+
+- [17-04-01: 컨테이너 보안](./17-04-01-container-security.md)
+- [17-04-02: 암호화 키 관리](./17-04-02-cryptography-key-management.md)
+- [17-04-03: 키 관리 E2E 암호화](./17-04-03-key-management-e2e.md)
+- [17-04-04: 성능 보안과 최적화](./17-04-04-performance-security.md)
+- [17-04-05: 실용적 암호화 구현](./17-04-05-practical-encryption.md)
+
+### 17.5 모니터링 및 운영 보안
+
+- [17-05-01: Zero Trust 모니터링](./17-05-01-zero-trust-monitoring.md)
+- [17-05-02: 모니터링 모범 사례](./17-05-02-monitoring-best-practices.md)

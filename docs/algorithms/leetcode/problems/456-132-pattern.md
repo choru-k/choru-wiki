@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 456](https://leetcode.com/problems/132-pattern/) • **Medium**
+[LeetCode 456](https://leetcode.com/problems/132-pattern/) •**Medium**
 
 천천히 풀어보자
 

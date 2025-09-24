@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 99](https://leetcode.com/problems/recover-binary-search-tree/) • **Easy**
+[LeetCode 99](https://leetcode.com/problems/recover-binary-search-tree/) •**Easy**
 
 일단 `Inorder` 을 탐색하는 방법을 생각해보자.
 

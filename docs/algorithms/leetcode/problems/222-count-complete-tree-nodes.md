@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 222](https://leetcode.com/problems/count-complete-tree-nodes/) • **Medium**
+[LeetCode 222](https://leetcode.com/problems/count-complete-tree-nodes/) •**Medium**
 
 이 문제는 푸는 법이 2개가 있다.
 
@@ -103,8 +103,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

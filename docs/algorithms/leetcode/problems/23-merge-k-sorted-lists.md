@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 23](https://leetcode.com/problems/merge-k-sorted-lists/) • **Easy**
+[LeetCode 23](https://leetcode.com/problems/merge-k-sorted-lists/) •**Easy**
 
 ## 핵심 아이디어
 

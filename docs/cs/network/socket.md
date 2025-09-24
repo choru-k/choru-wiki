@@ -22,7 +22,7 @@ tags:
 
 ### 네트워크 통신의 추상화
 
-Socket은 **네트워크 통신을 위한 endpoint**입니다. 파일과 같은 인터페이스를 제공하여 네트워크 I/O를 file descriptor를 통해 처리할 수 있게 합니다.
+Socket은**네트워크 통신을 위한 endpoint**입니다. 파일과 같은 인터페이스를 제공하여 네트워크 I/O를 file descriptor를 통해 처리할 수 있게 합니다.
 
 ```text
 Application Layer
@@ -1374,7 +1374,7 @@ $ netstat -an | grep TIME_WAIT | wc -l
 # 3. 애플리케이션 코드에서 소켓 누수 발견
 ```
 
-**원인:** 에러 처리 경로에서 close() 누락
+**원인:**에러 처리 경로에서 close() 누락
 
 **해결책:**
 
@@ -1405,7 +1405,7 @@ int handle_request(const char *server_ip, int port) {
 
 ### Case 2: 높은 지연시간 문제
 
-**상황:** TCP 소켓에서 예상보다 높은 응답 시간
+**상황:**TCP 소켓에서 예상보다 높은 응답 시간
 
 **분석 및 해결:**
 
@@ -1433,21 +1433,21 @@ int fix_latency_issue(int sockfd) {
 
 **소켓 문제 발생 시:**
 
-- [ ] **리소스 누수 확인**
+- [ ]**리소스 누수 확인**
 
   ```bash
   lsof -p <pid> | grep socket | wc -l
   netstat -an | grep -E "(ESTABLISHED|TIME_WAIT)" | wc -l
   ```
 
-- [ ] **소켓 옵션 점검**
+- [ ]**소켓 옵션 점검**
 
   ```bash
   ss -i  # TCP 상세 정보 확인
   cat /proc/sys/net/core/somaxconn  # 백로그 제한 확인
   ```
 
-- [ ] **네트워크 레벨 문제 확인**
+- [ ]**네트워크 레벨 문제 확인**
 
   ```bash
   ping target_host  # 기본 연결성
@@ -1455,7 +1455,7 @@ int fix_latency_issue(int sockfd) {
   tcpdump -i any host target_host  # 패킷 캡처
   ```
 
-- [ ] **시스템 레벨 제한 확인**
+- [ ]**시스템 레벨 제한 확인**
 
   ```bash
   ulimit -n  # 파일 디스크립터 제한
@@ -1478,9 +1478,9 @@ Socket programming은 네트워크 애플리케이션의 기초이며, 고성능
 
 **프로토콜 선택:**
 
-- **TCP (SOCK_STREAM)**: 신뢰성, 순서 보장, 연결 지향
-- **UDP (SOCK_DGRAM)**: 빠름, 비연결형, 브로드캐스트 가능
-- **Unix Domain Socket**: 로컬 IPC, 고성능
+-**TCP (SOCK_STREAM)**: 신뢰성, 순서 보장, 연결 지향
+-**UDP (SOCK_DGRAM)**: 빠름, 비연결형, 브로드캐스트 가능
+-**Unix Domain Socket**: 로컬 IPC, 고성능
 
 **성능 최적화:**
 

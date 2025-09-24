@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 903](https://leetcode.com/problems/valid-permutations-for-di-sequence/) • **Hard**
+[LeetCode 903](https://leetcode.com/problems/valid-permutations-for-di-sequence/) •**Hard**
 
 ## 풀이법 1
 

@@ -65,11 +65,11 @@ Virtual Memory Architecture:
 
 ### Virtual Memory의 핵심 이점
 
-1. **Memory Protection**: 프로세스간 메모리 격리
-2. **Address Space Layout Randomization (ASLR)**: 보안 강화
-3. **Demand Paging**: 필요한 페이지만 로드
-4. **Copy-on-Write**: fork() 성능 최적화
-5. **Memory Overcommit**: 물리 메모리보다 많은 가상 메모리 할당
+1.**Memory Protection**: 프로세스간 메모리 격리
+2.**Address Space Layout Randomization (ASLR)**: 보안 강화
+3.**Demand Paging**: 필요한 페이지만 로드
+4.**Copy-on-Write**: fork() 성능 최적화
+5.**Memory Overcommit**: 물리 메모리보다 많은 가상 메모리 할당
 
 ## Virtual Address Space vs Physical Address Space
 
@@ -309,7 +309,7 @@ CPU Core            MMU                     Physical Memory
 
 ### Page Table Walk 상세 과정
 
-1. **Virtual Address Parsing**:
+1.**Virtual Address Parsing**:
 
 ```c
 // 64-bit 가상 주소 0x7ffff7bd5123 분석
@@ -323,7 +323,7 @@ int pt_index   = (vaddr >> 12) & 0x1ff;  // bits 20-12: 0x1d5
 int offset     = vaddr & 0xfff;          // bits 11-0:  0x123
 ```
 
-1. **Page Table Walking Algorithm**:
+1.**Page Table Walking Algorithm**:
 
 ```c
 // 커널의 페이지 테이블 워킹 (단순화된 버전)
@@ -364,7 +364,7 @@ pte_t *page_table_walk(struct mm_struct *mm, unsigned long vaddr) {
 }
 ```
 
-1. **Physical Address 계산**:
+1.**Physical Address 계산**:
 
 ```c
 // 최종 물리 주소 계산
@@ -907,11 +907,11 @@ struct mm_struct {
 
 ### TLB 최적화 전략
 
-1. **메모리 지역성 개선**:
+1.**메모리 지역성 개선**:
 
 ```c
 // 나쁜 예: TLB Miss 많이 발생
-void bad_memory_access(int **matrix, int size) {
+void bad_memory_access(int**matrix, int size) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             matrix[j][i] += 1;  // 열 우선 접근 (캐시/TLB 미스)
@@ -920,7 +920,7 @@ void bad_memory_access(int **matrix, int size) {
 }
 
 // 좋은 예: TLB Hit 최대화
-void good_memory_access(int **matrix, int size) {
+void good_memory_access(int**matrix, int size) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             matrix[i][j] += 1;  // 행 우선 접근 (캐시/TLB 친화적)
@@ -929,7 +929,7 @@ void good_memory_access(int **matrix, int size) {
 }
 ```
 
-1. **메모리 풀 사용**:
+1.**메모리 풀 사용**:
 
 ```c
 // 메모리 풀로 TLB 효율성 향상
@@ -1319,20 +1319,20 @@ Virtual Memory와 Page Table은 현대 운영체제의 핵심 메모리 관리 �
 
 ### 핵심 개념 요약
 
-1. **Address Translation**: MMU가 4-level page table을 통해 가상 주소를 물리 주소로 변환
-2. **TLB 최적화**: 메모리 지역성과 Huge Pages로 TLB 히트율 향상
-3. **Demand Paging**: 필요한 페이지만 로드하여 메모리 효율성 극대화
-4. **Memory Protection**: NX bit, SMEP/SMAP, KPTI로 보안 강화
-5. **Performance Tuning**: NUMA 인식, 메모리 풀, Container 최적화
+1.**Address Translation**: MMU가 4-level page table을 통해 가상 주소를 물리 주소로 변환
+2.**TLB 최적화**: 메모리 지역성과 Huge Pages로 TLB 히트율 향상
+3.**Demand Paging**: 필요한 페이지만 로드하여 메모리 효율성 극대화
+4.**Memory Protection**: NX bit, SMEP/SMAP, KPTI로 보안 강화
+5.**Performance Tuning**: NUMA 인식, 메모리 풀, Container 최적화
 
 ### Production 환경 체크리스트
 
-- [ ] **TLB 효율성**: perf로 TLB miss rate 확인 (< 1% 권장)
-- [ ] **Page Fault 패턴**: major fault 최소화, warm-up 고려
-- [ ] **Huge Pages**: 대용량 메모리 사용 애플리케이션에 적용
-- [ ] **NUMA 최적화**: CPU 친화성과 메모리 로컬리티 고려
-- [ ] **Container 메모리**: Page cache 영향과 cgroup 제한 이해
-- [ ] **모니터링**: RSS vs Virtual, Page fault, TLB miss 지속 관찰
+- [ ]**TLB 효율성**: perf로 TLB miss rate 확인 (< 1% 권장)
+- [ ]**Page Fault 패턴**: major fault 최소화, warm-up 고려
+- [ ]**Huge Pages**: 대용량 메모리 사용 애플리케이션에 적용
+- [ ]**NUMA 최적화**: CPU 친화성과 메모리 로컬리티 고려
+- [ ]**Container 메모리**: Page cache 영향과 cgroup 제한 이해
+- [ ]**모니터링**: RSS vs Virtual, Page fault, TLB miss 지속 관찰
 
 ## 관련 문서
 

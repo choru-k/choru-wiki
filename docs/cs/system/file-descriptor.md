@@ -10,7 +10,7 @@ tags:
 
 # File Descriptor: Unix/Linux I/O의 핵심 개념
 
-**Tags:** `#linux` `#system` `#io` `#process` `#unix`
+**Tags:**`#linux` `#system` `#io` `#process` `#unix`
 
 ## 들어가며
 
@@ -20,7 +20,7 @@ tags:
 
 ## File Descriptor란?
 
-File descriptor(FD)는 **열린 파일이나 I/O 리소스를 식별하는 음이 아닌 정수**입니다. Unix의 "everything is a file" 철학에 따라, 일반 파일부터 소켓, 파이프, 디바이스까지 모든 것이 file descriptor를 통해 접근됩니다.
+File descriptor(FD)는**열린 파일이나 I/O 리소스를 식별하는 음이 아닌 정수**입니다. Unix의 "everything is a file" 철학에 따라, 일반 파일부터 소켓, 파이프, 디바이스까지 모든 것이 file descriptor를 통해 접근됩니다.
 
 ### 커널 내부 구조
 
@@ -618,10 +618,10 @@ void pipe_communication_example() {
 
 2024년 2월, 웹 서버에서 다음과 같은 현상이 발생했습니다:
 
-1. **증상**: "accept: too many open files" 에러 발생
-2. **초기 분석**: 동시 연결 수 증가로 의심
-3. **실제 원인**: 연결 종료 시 file descriptor를 제대로 닫지 않는 버그
-4. **해결책**:
+1.**증상**: "accept: too many open files" 에러 발생
+2.**초기 분석**: 동시 연결 수 증가로 의심
+3.**실제 원인**: 연결 종료 시 file descriptor를 제대로 닫지 않는 버그
+4.**해결책**:
 
    ```c
    // 기존 코드 (버그 있음)

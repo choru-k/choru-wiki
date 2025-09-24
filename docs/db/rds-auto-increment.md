@@ -15,7 +15,7 @@ tags:
 
 "Scale-out을 준비하려면 UUID를 써야 하지 않을까?" Production에서 테이블당 수천만 행이 넘어가면서 마주치는 가장 흔한 고민입니다.
 
-하지만 **대부분의 경우 Auto-Increment가 더 나은 선택**이며, UUID의 성능 함정을 이해하지 못하고 도입했다가 심각한 성능 문제를 겪는 사례를 많이 봤습니다. 실제 Production 벤치마크와 B-tree 내부 동작 분석을 통해 언제 무엇을 선택해야 하는지 명확히 알아보겠습니다.
+하지만**대부분의 경우 Auto-Increment가 더 나은 선택**이며, UUID의 성능 함정을 이해하지 못하고 도입했다가 심각한 성능 문제를 겪는 사례를 많이 봤습니다. 실제 Production 벤치마크와 B-tree 내부 동작 분석을 통해 언제 무엇을 선택해야 하는지 명확히 알아보겠습니다.
 
 ## 문제 상황: UUID 도입 후 성능 급락
 
@@ -23,10 +23,10 @@ tags:
 
 2023년 11월, 사용자 테이블의 샤딩 준비를 위해 INT에서 UUID로 Primary Key를 변경한 후 발생한 문제:
 
-1. **증상**: 동일한 INSERT TPS인데 응답 시간 300% 증가
-2. **초기 분석**: UUID 자체의 성능 문제로 추정
-3. **실제 원인**: B-tree Index fragmentation과 Buffer Pool 효율성 급락
-4. **해결책**: UUID 버전 선택과 저장 방식 최적화로 40% 성능 회복
+1.**증상**: 동일한 INSERT TPS인데 응답 시간 300% 증가
+2.**초기 분석**: UUID 자체의 성능 문제로 추정
+3.**실제 원인**: B-tree Index fragmentation과 Buffer Pool 효율성 급락
+4.**해결책**: UUID 버전 선택과 저장 방식 최적화로 40% 성능 회복
 
 ```sql
 -- 문제가 된 기존 설계
@@ -86,9 +86,9 @@ graph TB
 
 **핵심 문제:**
 
-- **INT (4 bytes)**: 페이지당 약 3900개 키 저장
-- **UUID BINARY(16)**: 페이지당 약 900개 키 저장 (4.3배 적음)
-- **UUID VARCHAR(36)**: 페이지당 약 400개 키 저장 (9.75배 적음)
+-**INT (4 bytes)**: 페이지당 약 3900개 키 저장
+-**UUID BINARY(16)**: 페이지당 약 900개 키 저장 (4.3배 적음)
+-**UUID VARCHAR(36)**: 페이지당 약 400개 키 저장 (9.75배 적음)
 
 ### 2. B-tree Depth와 Disk I/O 영향
 
@@ -156,7 +156,7 @@ ORDER BY COUNT_STAR DESC;
 
 #### Page 재사용과 캐시 효율성
 
-Auto-Increment는 **단조증가하는 값**으로 다음과 같은 최적화가 가능합니다:
+Auto-Increment는**단조증가하는 값**으로 다음과 같은 최적화가 가능합니다:
 
 ```mermaid
 sequenceDiagram
@@ -793,11 +793,11 @@ CREATE TABLE users_optimized (
 
 | 기준 | Auto-Increment | UUID v4 VARCHAR | UUID v4 BINARY | UUID v7 BINARY |
 |------|---------------|-----------------|-----------------|-----------------|
-| Insert TPS | **8,500** | 2,100 | 3,200 | 6,800 |
-| Storage 효율 | **100%** | 25% | 50% | 50% |
-| B-tree 깊이 | **3 levels** | 4+ levels | 4 levels | 3 levels |
-| Buffer Hit Rate | **99%** | 66% | 72% | 94% |
-| 운영 복잡성 | **낮음** | 높음 | 중간 | 중간 |
+| Insert TPS |**8,500**| 2,100 | 3,200 | 6,800 |
+| Storage 효율 |**100%**| 25% | 50% | 50% |
+| B-tree 깊이 |**3 levels**| 4+ levels | 4 levels | 3 levels |
+| Buffer Hit Rate |**99%**| 66% | 72% | 94% |
+| 운영 복잡성 |**낮음**| 높음 | 중간 | 중간 |
 
 ### 4. Migration 전략
 
@@ -844,7 +844,7 @@ PageSplitRateHigh:
     ComparisonOperator: GreaterThanThreshold
 ```
 
-Primary Key 선택은 한 번 정하면 바꾸기 어려운 설계 결정입니다. **대부분의 경우 Auto-Increment가 정답**이며, UUID가 꼭 필요한 경우에도 올바른 버전 선택과 저장 방식 최적화를 통해 성능 손실을 최소화할 수 있습니다.
+Primary Key 선택은 한 번 정하면 바꾸기 어려운 설계 결정입니다.**대부분의 경우 Auto-Increment가 정답**이며, UUID가 꼭 필요한 경우에도 올바른 버전 선택과 저장 방식 최적화를 통해 성능 손실을 최소화할 수 있습니다.
 
 ## 관련 문서
 

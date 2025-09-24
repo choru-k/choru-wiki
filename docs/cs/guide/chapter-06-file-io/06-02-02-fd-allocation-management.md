@@ -49,7 +49,7 @@ int main() {
 }
 ```
 
-커널은 항상 **가장 작은 사용 가능한 번호**를 할당합니다. 이를 위해 비트맵을 사용하죠.
+커널은 항상**가장 작은 사용 가능한 번호**를 할당합니다. 이를 위해 비트맵을 사용하죠.
 
 ### FD 할당 알고리즘
 
@@ -218,7 +218,7 @@ int main() {
 }
 ```
 
-이건 버그가 아니라 **feature**입니다! 파이프 구현의 핵심이죠.
+이건 버그가 아니라**feature**입니다! 파이프 구현의 핵심이죠.
 
 ### 파일 디스크립터 복사와 공유
 
@@ -257,7 +257,7 @@ out:
 // 평균 실행 시간: 2-15μs (열린 파일 개수에 따라)
 static struct files_struct *dup_fd(struct files_struct *oldf, int *errorp) {
     struct files_struct *newf;   // 새 프로세스의 "파일 관리 사무실"
-    struct file **old_fds, **new_fds;  // 부모/자식 파일 포인터 배열들
+    struct file**old_fds,**new_fds;  // 부모/자식 파일 포인터 배열들
     unsigned int open_files, i;  // 실제 열린 파일 개수와 반복자
     struct fdtable *old_fdt, *new_fdt;  // 부모/자식 FD 테이블
     
@@ -394,9 +394,9 @@ fork()에서 파일 내용과 오프셋은 공유하지만, fd 테이블은 독�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 3-5시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 3-5시간
 
 ### 🎯 학습 경로
 

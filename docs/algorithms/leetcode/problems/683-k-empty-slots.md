@@ -8,7 +8,7 @@ tags:
 
 ## 문제
 
-[LeetCode 683](https://leetcode.com/problems/k-empty-slots/) • **Hard**
+[LeetCode 683](https://leetcode.com/problems/k-empty-slots/) •**Hard**
 
 ## BST 을 사용하는 방법
 
@@ -96,8 +96,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

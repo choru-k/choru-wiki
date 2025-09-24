@@ -2,15 +2,16 @@
 
 ## 📊 학습 개요
 
-- **문서 수**: 1개
-- **예상 학습 시간**: 10시간
-- **평균 문서당 시간**: 10.0시간
+-**문서 수**: 1개
+-**예상 학습 시간**: 10시간
+-**평균 문서당 시간**: 10.0시간
 
 ## 📚 문서 목록
 
-1. **[Event Sourcing과 CQRS 패턴](../../docs/cs/guide/chapter-10-async-programming-04b-event-sourcing-cqrs.md)** (8-12시간)
-   - 키워드: event_sourcing, cqrs, eventual_consistency
-   - 대상: 시니어 소프트웨어 아키텍트, 플랫폼 엔지니어
+1.**[Event Sourcing과 CQRS 패턴](../../docs/cs/guide/chapter-10-async-programming-04b-event-sourcing-cqrs.md)**(8-12시간)
+
+- 키워드: event_sourcing, cqrs, eventual_consistency
+- 대상: 시니어 소프트웨어 아키텍트, 플랫폼 엔지니어
 
 ## 🎯 학습 가이드
 
@@ -20,9 +21,9 @@
 
 ### 시간 투자 전략
 
-- **집중 학습**: 주당 8-10시간 → 약 1주 소요
-- **병행 학습**: 주당 4-5시간 → 약 2주 소요
-- **여유 학습**: 주당 2-3시간 → 약 3주 소요
+-**집중 학습**: 주당 8-10시간 → 약 1주 소요
+-**병행 학습**: 주당 4-5시간 → 약 2주 소요
+-**여유 학습**: 주당 2-3시간 → 약 3주 소요
 
 ### 학습 팁
 

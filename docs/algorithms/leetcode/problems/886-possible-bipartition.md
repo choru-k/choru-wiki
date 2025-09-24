@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 886](https://leetcode.com/problems/possible-bipartition/) • **Hard**
+[LeetCode 886](https://leetcode.com/problems/possible-bipartition/) •**Hard**
 
 N 명의 사람이 주어집니다. 각각의 아이디는 1,2,34, ... n 으로 표시합니다.
 

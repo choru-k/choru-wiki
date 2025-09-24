@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1000](https://leetcode.com/problems/minimum-cost-to-merge-stones/) • **Hard**
+[LeetCode 1000](https://leetcode.com/problems/minimum-cost-to-merge-stones/) •**Hard**
 
 일단 DP 적인 방법으로 생각해보자.
 

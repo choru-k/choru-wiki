@@ -21,10 +21,10 @@ priority_score: 4
 
 이 섹션에서는:
 
-1. **캐시 계층 구조의 이해** - L1/L2/L3 캐시와 메모리 접근 비용
-2. **Array of Structs vs Struct of Arrays** - 캐시 효율적인 데이터 배치
-3. **False Sharing 방지** - 멀티스레드 환경에서의 캐시 라인 경합 해결
-4. **NUMA-aware 프로그래밍** - 다중 소켓 시스템에서의 메모리 최적화
+1.**캐시 계층 구조의 이해**- L1/L2/L3 캐시와 메모리 접근 비용
+2.**Array of Structs vs Struct of Arrays**- 캐시 효율적인 데이터 배치
+3.**False Sharing 방지**- 멀티스레드 환경에서의 캐시 라인 경합 해결
+4.**NUMA-aware 프로그래밍**- 다중 소켓 시스템에서의 메모리 최적화
 
 ## 1. 캐시 계층 이해하기
 
@@ -264,7 +264,7 @@ public:
         void* addr = numa_alloc_local(pages * 4096);
 
         int* status = new int[pages];
-        void** addrs = new void*[pages];
+        void**addrs = new void*[pages];
 
         for (int i = 0; i < pages; i++) {
             addrs[i] = (char*)addr + i * 4096;
@@ -513,27 +513,27 @@ public:
 
 ### 1. 캐시 최적화 전략
 
-- **Spatial Locality**: 연속된 메모리 접근 패턴 설계
-- **Temporal Locality**: 자주 사용하는 데이터를 캐시에 유지
-- **Data Layout**: SoA 패턴으로 캐시 효율성 극대화
+-**Spatial Locality**: 연속된 메모리 접근 패턴 설계
+-**Temporal Locality**: 자주 사용하는 데이터를 캐시에 유지
+-**Data Layout**: SoA 패턴으로 캐시 효율성 극대화
 
 ### 2. False Sharing 방지
 
-- **Cache Line Alignment**: 독립적인 데이터를 별도 캐시 라인에 배치
-- **Padding 활용**: alignas 지시어로 메모리 정렬
-- **스레드별 데이터 분리**: 각 스레드가 독립적인 메모리 영역 사용
+-**Cache Line Alignment**: 독립적인 데이터를 별도 캐시 라인에 배치
+-**Padding 활용**: alignas 지시어로 메모리 정렬
+-**스레드별 데이터 분리**: 각 스레드가 독립적인 메모리 영역 사용
 
 ### 3. NUMA 최적화
 
-- **메모리 Locality**: 스레드와 데이터를 같은 NUMA 노드에 배치
-- **Load Balancing**: 노드별 워크로드 균등 분배
-- **Migration 최소화**: 데이터 이동 비용 최소화
+-**메모리 Locality**: 스레드와 데이터를 같은 NUMA 노드에 배치
+-**Load Balancing**: 노드별 워크로드 균등 분배
+-**Migration 최소화**: 데이터 이동 비용 최소화
 
 ### 4. 고급 기법
 
-- **Prefetching**: 미래 데이터를 미리 캐시에 로드
-- **Loop Tiling**: 캐시 크기에 맞는 블록 단위 처리
-- **SIMD 활용**: 벡터화로 처리량 극대화
+-**Prefetching**: 미래 데이터를 미리 캐시에 로드
+-**Loop Tiling**: 캐시 크기에 맞는 블록 단위 처리
+-**SIMD 활용**: 벡터화로 처리량 극대화
 
 ---
 
@@ -544,9 +544,9 @@ public:
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 20-30시간
+-**난이도**: ADVANCED
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 20-30시간
 
 ### 🎯 학습 경로
 

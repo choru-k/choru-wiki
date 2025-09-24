@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 316](https://leetcode.com/problems/remove-duplicate-letters/) • **Medium**
+[LeetCode 316](https://leetcode.com/problems/remove-duplicate-letters/) •**Medium**
 
 이 문제에서 핵심을 생각해보면 `b,c,d,a,b` 에서 a 로 시작하는 단어는 정답이 될 수 없다.
 
@@ -77,8 +77,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

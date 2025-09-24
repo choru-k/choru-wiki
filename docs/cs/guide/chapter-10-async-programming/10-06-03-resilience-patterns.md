@@ -21,9 +21,9 @@ priority_score: 4
 
 시스템 장애에 대응하고 복원력을 높이는 핵심 패턴들을 마스터합니다:
 
-1. **Circuit Breaker 패턴** - 장애 전파 방지와 빠른 실패
-2. **Bulkhead 패턴** - 자원 격리로 장애 범위 제한
-3. **Retry 전략** - 지능적인 재시도 메커니즘
+1.**Circuit Breaker 패턴**- 장애 전파 방지와 빠른 실패
+2.**Bulkhead 패턴**- 자원 격리로 장애 범위 제한
+3.**Retry 전략**- 지능적인 재시도 메커니즘
 
 ## 1. Circuit Breaker 패턴
 
@@ -63,7 +63,7 @@ class CircuitBreaker:
         self.successful_calls = 0
         self.failed_calls = 0
         
-    async def call(self, func: Callable, *args, **kwargs) -> Any:
+    async def call(self, func: Callable, *args,**kwargs) -> Any:
         self.total_calls += 1
         
         # Circuit이 열려있는지 확인
@@ -79,7 +79,7 @@ class CircuitBreaker:
         
         try:
             # 실제 함수 호출
-            result = await func(*args, **kwargs)
+            result = await func(*args,**kwargs)
             self._on_success()
             return result
             
@@ -171,26 +171,26 @@ class PaymentService:
 
 **Circuit Breaker의 3상태:**
 
-1. **CLOSED**: 정상 작동, 모든 호출 통과
-2. **OPEN**: 장애 상태, 즉시 예외 발생
-3. **HALF_OPEN**: 복구 테스트, 제한된 호출 허용
+1.**CLOSED**: 정상 작동, 모든 호출 통과
+2.**OPEN**: 장애 상태, 즉시 예외 발생
+3.**HALF_OPEN**: 복구 테스트, 제한된 호출 허용
 
 ### 1.2 고급 Circuit Breaker 기능
 
 ```python
 # 다단계 Circuit Breaker
 class AdvancedCircuitBreaker(CircuitBreaker):
-    def __init__(self, **kwargs):
+    def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.response_time_threshold = kwargs.get('response_time_threshold', 1000)
         self.slow_call_threshold = kwargs.get('slow_call_threshold', 10)
         self.slow_call_count = 0
         
-    async def call(self, func: Callable, *args, **kwargs) -> Any:
+    async def call(self, func: Callable, *args,**kwargs) -> Any:
         start_time = time.time()
         
         try:
-            result = await super().call(func, *args, **kwargs)
+            result = await super().call(func, *args,**kwargs)
             
             # 응답 시간 모니터링
             response_time = (time.time() - start_time) * 1000
@@ -217,7 +217,7 @@ class AdvancedCircuitBreaker(CircuitBreaker):
         base_metrics = self.get_state()
         
         return {
-            **base_metrics,
+          **base_metrics,
             "slow_call_count": self.slow_call_count,
             "avg_response_time": self.get_avg_response_time(),
             "health_score": self.calculate_health_score()
@@ -698,21 +698,21 @@ class AdaptiveRetryPolicy {
 
 ### 1. Circuit Breaker로 장애 전파 방지
 
-- **3상태 관리**: CLOSED, OPEN, HALF_OPEN
-- **빠른 실패**: 장애 상태에서 즉시 예외 반환
-- **자동 복구**: 일정 시간 후 복구 시도
+-**3상태 관리**: CLOSED, OPEN, HALF_OPEN
+-**빠른 실패**: 장애 상태에서 즉시 예외 반환
+-**자동 복구**: 일정 시간 후 복구 시도
 
 ### 2. Bulkhead로 자원 격리
 
-- **Thread Pool 격리**: 서비스별 독립적인 스레드 풀
-- **Semaphore 격리**: 더 가벼운 동시 접근 제한
-- **장애 범위 제한**: 한 서비스 장애가 전체로 파급 방지
+-**Thread Pool 격리**: 서비스별 독립적인 스레드 풀
+-**Semaphore 격리**: 더 가벼운 동시 접근 제한
+-**장애 범위 제한**: 한 서비스 장애가 전체로 파급 방지
 
 ### 3. 지능적인 Retry 전략
 
-- **Exponential Backoff + Jitter**: 서버 과부하 방지
-- **Hedged Requests**: 여러 서버에 동시 요청
-- **ML 기반 적응**: 성공 확률 기반 재시도 결정
+-**Exponential Backoff + Jitter**: 서버 과부하 방지
+-**Hedged Requests**: 여러 서버에 동시 요청
+-**ML 기반 적응**: 성공 확률 기반 재시도 결정
 
 ---
 
@@ -723,9 +723,9 @@ class AdaptiveRetryPolicy {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

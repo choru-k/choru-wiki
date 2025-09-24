@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 123](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/) • **Medium**
+[LeetCode 123](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/) •**Medium**
 
 ## 핵심 아이디어
 

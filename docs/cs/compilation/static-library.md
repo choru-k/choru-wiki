@@ -184,9 +184,9 @@ $ ar rcs libutils.a *.o
 
 **ar 명령어 옵션 설명:**
 
-- **r**: 파일을 아카이브에 추가 (replace)
-- **c**: 아카이브가 존재하지 않으면 생성 (create)
-- **s**: 심볼 테이블 생성 (equivalent to ranlib)
+-**r**: 파일을 아카이브에 추가 (replace)
+-**c**: 아카이브가 존재하지 않으면 생성 (create)
+-**s**: 심볼 테이블 생성 (equivalent to ranlib)
 
 ### ranlib을 사용한 심볼 테이블 최적화
 
@@ -427,9 +427,9 @@ $ ls -la minimal_program whole_archive_program
 
 **Whole Archive가 필요한 경우:**
 
-1. **Constructor/Destructor 함수**: `__attribute__((constructor))`
-2. **Plugin Registration**: 자동 등록 메커니즘
-3. **Static Initialization**: 전역 객체 초기화
+1.**Constructor/Destructor 함수**: `__attribute__((constructor))`
+2.**Plugin Registration**: 자동 등록 메커니즘
+3.**Static Initialization**: 전역 객체 초기화
 
 ```c
 // constructor_example.c
@@ -624,14 +624,14 @@ debug_utils.o
 
 **Thin Archives 장점:**
 
-- **디스크 공간 절약**: 중복 저장 제거
-- **빠른 생성**: 파일 복사 없음
-- **실시간 업데이트**: 오브젝트 파일 변경 시 자동 반영
+-**디스크 공간 절약**: 중복 저장 제거
+-**빠른 생성**: 파일 복사 없음
+-**실시간 업데이트**: 오브젝트 파일 변경 시 자동 반영
 
 **Thin Archives 단점:**
 
-- **배포 복잡성**: 오브젝트 파일들이 함께 있어야 함
-- **경로 의존성**: 상대 경로 변경 시 문제 발생
+-**배포 복잡성**: 오브젝트 파일들이 함께 있어야 함
+-**경로 의존성**: 상대 경로 변경 시 문제 발생
 
 ```bash
 # Thin 아카이브로 링킹 테스트
@@ -1588,7 +1588,7 @@ void benchmark_memory_operations() {
     printf("=== Memory Operations Benchmark ===, ");
     
     const int alloc_count = 100000;
-    void** ptrs = malloc(alloc_count * sizeof(void*));
+    void**ptrs = malloc(alloc_count * sizeof(void*));
     
     struct timespec start, end;
     

@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 53](https://leetcode.com/problems/maximum-subarray/) • **Easy**
+[LeetCode 53](https://leetcode.com/problems/maximum-subarray/) •**Easy**
 
 [https://leetcode.com/problems/maximum-subarray/](https://leetcode.com/problems/maximum-subarray/)
 

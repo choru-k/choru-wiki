@@ -534,11 +534,11 @@ done
 
 Linux의 시간 관리는 다양한 요구사항을 만족시키기 위해 진화했습니다:
 
-1. **Jiffies → hrtimer**: 밀리초에서 나노초 정확도로
-2. **주기적 틱 → Tickless**: 전력 효율과 성능 개선
-3. **NO_HZ_FULL + isolcpus**: 실시간 성능 달성
-4. **모니터링 도구**: timer_list, cyclictest, perf
-5. **튜닝 포인트**: HZ, NO_HZ, CPU isolation, IRQ affinity
+1.**Jiffies → hrtimer**: 밀리초에서 나노초 정확도로
+2.**주기적 틱 → Tickless**: 전력 효율과 성능 개선
+3.**NO_HZ_FULL + isolcpus**: 실시간 성능 달성
+4.**모니터링 도구**: timer_list, cyclictest, perf
+5.**튜닝 포인트**: HZ, NO_HZ, CPU isolation, IRQ affinity
 
 다음 편에서는 네트워킹 스택의 핵심인 sk_buff와 패킷의 여정을 따라가보겠습니다!
 

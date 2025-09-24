@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 137](https://leetcode.com/problems/single-number-ii/) • **Easy**
+[LeetCode 137](https://leetcode.com/problems/single-number-ii/) •**Easy**
 
 ### 1개인 숫자가 비트가 0일때. 총 비트는 3n 개가 나온다
 
@@ -75,8 +75,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

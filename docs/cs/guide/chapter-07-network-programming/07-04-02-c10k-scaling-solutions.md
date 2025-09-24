@@ -366,9 +366,9 @@ void worker_main(struct server_config *config, int worker_id) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 20-40시간
+-**난이도**: ADVANCED
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 20-40시간
 
 ### 🎯 학습 경로
 

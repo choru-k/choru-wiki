@@ -14,7 +14,7 @@ tags:
 
 **"분명 같은 서비스인데 왜 비용이 계속 늘어나지?"**
 
-답은 간단합니다. AWS 서비스들이 **어떻게 동작하는지 모르기 때문**입니다.
+답은 간단합니다. AWS 서비스들이**어떻게 동작하는지 모르기 때문**입니다.
 
 ## 💡 2017년 S3 대장애가 보여준 진실
 
@@ -27,11 +27,11 @@ tags:
 💰 손실: 1억 5천만 달러
 ```
 
-하지만 여기서 **놀라운 사실** 하나:
+하지만 여기서**놀라운 사실**하나:
 
 **🎉 단 한 바이트의 데이터도 손실되지 않았습니다!**
 
-어떻게 이게 가능했을까요? 바로 **AWS의 내부 아키텍처** 때문입니다.
+어떻게 이게 가능했을까요? 바로**AWS의 내부 아키텍처**때문입니다.
 
 ## 🔍 이 가이드가 특별한 이유
 
@@ -43,37 +43,52 @@ tags:
 
 ### 읽고 나면 이런 변화가 생깁니다
 
-- ⚡ **"왜 갑자기 느려졌지?"** → 병목지점을 10초 만에 찾아냅니다
-- 💸 **"비용이 너무 많이 나와"** → 똑같은 성능으로 50% 비용 절감
-- 🚨 **"장애가 났어!"** → 장애 발생 전에 미리 예측하고 방지
-- 🤝 **"팀원들과 소통이 어려워"** → AWS 내부 동작을 설명하며 기술 리더십 발휘
+- ⚡**"왜 갑자기 느려졌지?"**→ 병목지점을 10초 만에 찾아냅니다
+- 💸**"비용이 너무 많이 나와"**→ 똑같은 성능으로 50% 비용 절감
+- 🚨**"장애가 났어!"**→ 장애 발생 전에 미리 예측하고 방지
+- 🤝**"팀원들과 소통이 어려워"**→ AWS 내부 동작을 설명하며 기술 리더십 발휘
 
 ## 🌍 AWS: 인터넷의 보이지 않는 기반
 
 ```mermaid
 graph TB
     subgraph "🏪 인터넷 상점가"
-        USER["😊 당신<br/>(웹사이트/앱 사용자)"]
+        USER["😊 당신
+(웹사이트/앱 사용자)"]
     end
 
     subgraph "🌐 AWS 글로벌 네트워크"
         subgraph "💨 콘텐츠 배송 (CDN)"
-            CF["📡 CloudFront<br/>450개 엣지 로케이션<br/>전 세계 10ms 이내"]
+            CF["📡 CloudFront
+450개 엣지 로케이션
+전 세계 10ms 이내"]
         end
 
         subgraph "⚖️ 트래픽 분산"
-            ELB["🎯 Load Balancer<br/>초당 1억 요청 처리<br/>Instagram이 믿는 기술"]
+            ELB["🎯 Load Balancer
+초당 1억 요청 처리
+Instagram이 믿는 기술"]
         end
 
         subgraph "💻 실제 컴퓨팅"
-            EC2["⚡ EC2 Nitro<br/>400Gbps 네트워킹<br/>Netflix 4K 스트리밍"]
-            LAMBDA["🚀 Lambda<br/>0ms 서버리스<br/>Duolingo 1억 사용자"]
+            EC2["⚡ EC2 Nitro
+400Gbps 네트워킹
+Netflix 4K 스트리밍"]
+            LAMBDA["🚀 Lambda
+0ms 서버리스
+Duolingo 1억 사용자"]
         end
 
         subgraph "🗄️ 데이터 저장소"
-            S3["📦 S3 Storage<br/>99.999999999% 내구성<br/>핵폭탄보다 안전한 데이터"]
-            RDS["🏦 RDS Database<br/>Shopify 80만 TPS<br/>Black Friday도 끄떡없어"]
-            DDB["⚡ DynamoDB<br/>Lyft 실시간 위치추적<br/>마이크로초 응답"]
+            S3["📦 S3 Storage
+99.999999999% 내구성
+핵폭탄보다 안전한 데이터"]
+            RDS["🏦 RDS Database
+Shopify 80만 TPS
+Black Friday도 끄떡없어"]
+            DDB["⚡ DynamoDB
+Lyft 실시간 위치추적
+마이크로초 응답"]
         end
     end
 
@@ -98,11 +113,11 @@ graph TB
 
 ## 🎬 실제 기업들의 생생한 이야기로 배우는 AWS
 
-각 챕터는 실제 기업이 겪은 **위기와 해결** 스토리를 중심으로 구성되었습니다.
+각 챕터는 실제 기업이 겪은**위기와 해결**스토리를 중심으로 구성되었습니다.
 
 ### 🗄️ [S3: 데이터가 사라지지 않는 마법](s3/index.md)
 
-**"우리 고양이 사진이 핵폭탄보다 안전하다고?"** 🐱💣
+**"우리 고양이 사진이 핵폭탄보다 안전하다고?"**🐱💣
 
 ```text
 🎯 이런 궁금증이 있다면 필독:
@@ -118,7 +133,7 @@ graph TB
 
 ### ⚖️ [Load Balancing: 10억 사용자를 공평하게 대접하는 법](load-balancing/index.md)
 
-**"Instagram은 어떻게 10억 명이 동시에 사진을 올려도 서버가 안 죽을까?"** 📸⚖️
+**"Instagram은 어떻게 10억 명이 동시에 사진을 올려도 서버가 안 죽을까?"**📸⚖️
 
 ```text
 🔥 이런 경험이 있다면 꼭 읽어보세요:
@@ -134,7 +149,7 @@ graph TB
 
 ### 🌐 [Networking: 전 세계를 10ms로 연결하는 기술](networking/index.md)
 
-**"Netflix는 어떻게 전 세계 어디서든 4K 영상이 끊기지 않을까?"** 🎬🌍
+**"Netflix는 어떻게 전 세계 어디서든 4K 영상이 끊기지 않을까?"**🎬🌍
 
 ```text
 💫 이런 의문이 든 적 있다면:
@@ -150,7 +165,7 @@ graph TB
 
 ### 💻 [Compute: 0ms 서버리스부터 400Gbps 하드웨어까지](compute/index.md)
 
-**"Duolingo는 어떻게 1억 사용자에게 0ms 응답을 제공할까?"** 🦉⚡
+**"Duolingo는 어떻게 1억 사용자에게 0ms 응답을 제공할까?"**🦉⚡
 
 ```text
 🚀 이런 도전에 직면했다면:
@@ -166,7 +181,7 @@ graph TB
 
 ### 🗄️ [Database: 초당 100만 쿼리도 끄떡없는 비밀](database/index.md)
 
-**"Shopify는 어떻게 Black Friday에 80만 TPS를 처리할까?"** 🛒💳
+**"Shopify는 어떻게 Black Friday에 80만 TPS를 처리할까?"**🛒💳
 
 ```text
 📊 이런 데이터베이스 고민이 있다면:
@@ -182,7 +197,7 @@ graph TB
 
 ### 📡 [CloudFront: 전 세계를 10ms로 연결하는 CDN 마법](cloudfront/index.md)
 
-**"Disney+는 어떻게 전 세계 동시 출시에 성공했을까?"** 🏰📺
+**"Disney+는 어떻게 전 세계 동시 출시에 성공했을까?"**🏰📺
 
 ```text
 🌍 글로벌 서비스 고민이 있다면:
@@ -212,16 +227,23 @@ flowchart TD
     START --> DOWN
     START --> GLOBAL
 
-    COST --> S3["📦 S3: Storage Classes<br/>비용 90% 절감법"]
-    COST --> RDS["🗄️ Database: 캐싱 전략<br/>DB 비용 절반 줄이기"]
+    COST --> S3["📦 S3: Storage Classes
+비용 90% 절감법"]
+    COST --> RDS["🗄️ Database: 캐싱 전략
+DB 비용 절반 줄이기"]
 
-    SLOW --> LB["⚖️ Load Balancing<br/>트래픽 분산으로 속도 향상"]
-    SLOW --> COMPUTE["💻 Compute: Nitro/Lambda<br/>성능 최적화"]
+    SLOW --> LB["⚖️ Load Balancing
+트래픽 분산으로 속도 향상"]
+    SLOW --> COMPUTE["💻 Compute: Nitro/Lambda
+성능 최적화"]
 
-    DOWN --> NET["🌐 Networking: Multi-AZ<br/>무중단 서비스 구축"]
-    DOWN --> DB["🗄️ Database: 장애 대응<br/>RDS/Aurora 고가용성"]
+    DOWN --> NET["🌐 Networking: Multi-AZ
+무중단 서비스 구축"]
+    DOWN --> DB["🗄️ Database: 장애 대응
+RDS/Aurora 고가용성"]
 
-    GLOBAL --> CDN["📡 CloudFront<br/>전 세계 10ms 응답"]
+    GLOBAL --> CDN["📡 CloudFront
+전 세계 10ms 응답"]
 
     style COST fill:#FFE6E6
     style SLOW fill:#E6F3FF
@@ -244,7 +266,8 @@ flowchart TD
 
 ```mermaid
 mindmap
-  root(("🧠 AWS Internals<br/>완주 후 당신"))
+  root(("🧠 AWS Internals
+완주 후 당신"))
     비용 최적화 마스터
       S3 Storage Classes로 90% 절약
       RDS Reserved로 60% 절약
@@ -276,7 +299,7 @@ mindmap
 **- 시리즈 A 개발팀장, 이○○님**
 
 **📊 이 가이드의 규모:**
-✨ **28개 실전 문서** | 🎬 **6개 기업 스토리 섹션** | 🐍 **300+ Python 코드 예제** | 📊 **80+ 인터랙티브 다이어그램**
+✨**28개 실전 문서**| 🎬**6개 기업 스토리 섹션**| 🐍**300+ Python 코드 예제**| 📊**80+ 인터랙티브 다이어그램**
 
 **🎯 첫 번째 챕터부터 바로 비용 절약 팁을 경험하세요:**
-👉 **[🗄️ S3: 데이터가 사라지지 않는 마법 시작하기 →](s3/index.md)**
+👉**[🗄️ S3: 데이터가 사라지지 않는 마법 시작하기 →](s3/index.md)**

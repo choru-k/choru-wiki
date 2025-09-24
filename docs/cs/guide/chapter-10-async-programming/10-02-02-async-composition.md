@@ -420,9 +420,9 @@ void async_pipeline_example() {
 
 ### 1. 조합 패턴을 활용하라
 
-- **Promise.all**: 모든 작업이 성공해야 할 때
-- **Promise.allSettled**: 부분 실패를 허용할 때
-- **Promise.race**: 가장 빠른 응답만 필요할 때
+-**Promise.all**: 모든 작업이 성공해야 할 때
+-**Promise.allSettled**: 부분 실패를 허용할 때
+-**Promise.race**: 가장 빠른 응답만 필요할 때
 
 ### 2. 병렬성과 동시성을 제한하라
 
@@ -441,9 +441,9 @@ void async_pipeline_example() {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 5-7시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 5-7시간
 
 ### 🎯 학습 경로
 

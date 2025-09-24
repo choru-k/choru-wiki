@@ -465,11 +465,11 @@ $ chrt -f -p 50 $(pgrep ksoftirqd/0)
 
 Linux의 인터럽트 처리는 효율성을 위해 두 단계로 나뉩니다:
 
-1. **Top-half**: 긴급한 것만 빠르게 (마이크로초)
-2. **Bottom-half**: 무거운 작업은 나중에 (Softirq/Tasklet/Workqueue)
-3. **ksoftirqd**: Softirq 전담 처리로 시스템 균형 유지
-4. **모니터링 포인트**: /proc/interrupts, /proc/softirqs, mpstat
-5. **튜닝 포인트**: IRQ affinity, RSS/RPS, Coalescing
+1.**Top-half**: 긴급한 것만 빠르게 (마이크로초)
+2.**Bottom-half**: 무거운 작업은 나중에 (Softirq/Tasklet/Workqueue)
+3.**ksoftirqd**: Softirq 전담 처리로 시스템 균형 유지
+4.**모니터링 포인트**: /proc/interrupts, /proc/softirqs, mpstat
+5.**튜닝 포인트**: IRQ affinity, RSS/RPS, Coalescing
 
 다음 편에서는 고해상도 타이머와 틱리스 커널, 그리고 실시간 성능을 위한 CPU isolation에 대해 알아보겠습니다!
 

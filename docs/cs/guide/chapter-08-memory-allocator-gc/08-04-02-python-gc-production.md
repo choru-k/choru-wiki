@@ -21,10 +21,10 @@ priority_score: 4
 
 이 문서에서는 Instagram, Dropbox 등 실제 대규모 서비스에서 적용된 Python GC 최적화 사례를 심도 있게 분석하고 재현해봅니다:
 
-1. **Instagram Django 서비스 최적화** - P99 latency 25% 개선, GC CPU overhead 42% 감소
-2. **Dropbox 대용량 파일 처리 최적화** - 메모리 압박 상황에서의 적응형 GC 관리
-3. **실제 측정 가능한 최적화 결과** - 구체적인 성능 지표와 모니터링 방법
-4. **프로덕션 환경 적용 가이드** - 실제 서비스에 안전하게 적용하는 방법
+1.**Instagram Django 서비스 최적화**- P99 latency 25% 개선, GC CPU overhead 42% 감소
+2.**Dropbox 대용량 파일 처리 최적화**- 메모리 압박 상황에서의 적응형 GC 관리
+3.**실제 측정 가능한 최적화 결과**- 구체적인 성능 지표와 모니터링 방법
+4.**프로덕션 환경 적용 가이드**- 실제 서비스에 안전하게 적용하는 방법
 
 ## 1. Instagram Django 서비스 GC 최적화 사례
 
@@ -392,13 +392,13 @@ class ProductionGCManager:
         
         print(f"GC Configuration: {self.config}")
     
-    def process_request_safely(self, request_handler, *args, **kwargs):
+    def process_request_safely(self, request_handler, *args,**kwargs):
         """안전한 요청 처리 래퍼"""
         start_time = time.time()
         
         try:
             # 요청 처리
-            result = request_handler(*args, **kwargs)
+            result = request_handler(*args,**kwargs)
             
             # 요청 후 GC 관리
             self._handle_post_request_gc()
@@ -696,29 +696,32 @@ monitoring.generate_report()
 
 **Python GC 15년 사용 경험에서 얻은 현실적 지혜:**
 
-1. **"Reference Counting은 친구, Cycle Detection은 필요악"**
-   - 대부분 객체는 Reference Counting으로 즉시 해제
-   - 순환 참조만 주의하면 90% 문제 해결
-   - `weakref` 모듈을 적극 활용하자
+1.**"Reference Counting은 친구, Cycle Detection은 필요악"**
 
-2. **"GC 최적화보다 코드 최적화가 더 중요"**
-   - Object pooling, `__slots__` 사용이 더 효과적
-   - 불필요한 객체 생성을 줄이는 것이 핵심
-   - 프로파일링으로 hotspot을 찾아 집중 개선
+- 대부분 객체는 Reference Counting으로 즉시 해제
+- 순환 참조만 주의하면 90% 문제 해결
+- `weakref` 모듈을 적극 활용하자
 
-3. **"배치 작업에서는 GC 제어가 게임 체인저"**
-   - 대량 데이터 처리 시 일시적 GC 비활성화 고려
-   - 작업 완료 후 명시적 `gc.collect()` 실행
-   - 메모리 사용량 모니터링은 필수
+2.**"GC 최적화보다 코드 최적화가 더 중요"**
+
+- Object pooling, `__slots__` 사용이 더 효과적
+- 불필요한 객체 생성을 줄이는 것이 핵심
+- 프로파일링으로 hotspot을 찾아 집중 개선
+
+3.**"배치 작업에서는 GC 제어가 게임 체인저"**
+
+- 대량 데이터 처리 시 일시적 GC 비활성화 고려
+- 작업 완료 후 명시적 `gc.collect()` 실행
+- 메모리 사용량 모니터링은 필수
 
 ### 🚀 Python 메모리 관리의 미래
 
 **발전 방향과 대안들:**
 
-- **PyPy**: JIT 컴파일과 개선된 GC
-- **Cython**: C 확장으로 GC 부담 감소  
-- **Python 3.11+**: 새로운 메모리 최적화
-- **대안 언어**: Go, Rust 등으로의 마이그레이션 고려
+-**PyPy**: JIT 컴파일과 개선된 GC
+-**Cython**: C 확장으로 GC 부담 감소  
+-**Python 3.11+**: 새로운 메모리 최적화
+-**대안 언어**: Go, Rust 등으로의 마이그레이션 고려
 
 Python GC는 완벽하지 않지만, 특성을 이해하고 적절히 대응하면 충분히 실용적입니다. 무엇보다 개발 생산성과 코드 가독성이라는 Python의 핵심 가치를 포기하지 않으면서도 성능을 개선할 수 있는 방법들이 많이 있습니다.
 
@@ -726,21 +729,21 @@ Python GC는 완벽하지 않지만, 특성을 이해하고 적절히 대응하�
 
 ### 1. Instagram 최적화의 핵심
 
-- **예측 가능한 GC 실행**: 요청별 수동 GC로 응답 시간 일관성 확보
-- **세대별 점진적 수집**: 긴 일시정지 시간 방지
-- **25% 지연시간 개선, 42% CPU 절약** 달성
+-**예측 가능한 GC 실행**: 요청별 수동 GC로 응답 시간 일관성 확보
+-**세대별 점진적 수집**: 긴 일시정지 시간 방지
+-**25% 지연시간 개선, 42% CPU 절약**달성
 
 ### 2. Dropbox 적응형 관리
 
-- **메모리 압박 상황 감지**: 임계값 기반 자동 대응
-- **적극적 GC 전환**: 고메모리 모드에서 빈번한 정리
-- **대용량 데이터 안전 처리** 보장
+-**메모리 압박 상황 감지**: 임계값 기반 자동 대응
+-**적극적 GC 전환**: 고메모리 모드에서 빈번한 정리
+-**대용량 데이터 안전 처리**보장
 
 ### 3. 프로덕션 적용 가이드
 
-- **안전한 rollback 지원**: 원래 설정 복구 기능
-- **종합적 모니터링**: GC 성능과 메모리 사용량 추적
-- **알람 시스템 통합**: 임계값 기반 자동 경고
+-**안전한 rollback 지원**: 원래 설정 복구 기능
+-**종합적 모니터링**: GC 성능과 메모리 사용량 추적
+-**알람 시스템 통합**: 임계값 기반 자동 경고
 
 ---
 
@@ -751,9 +754,9 @@ Python GC는 완벽하지 않지만, 특성을 이해하고 적절히 대응하�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

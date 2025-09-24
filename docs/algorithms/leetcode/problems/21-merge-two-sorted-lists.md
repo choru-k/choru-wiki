@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 21](https://leetcode.com/problems/merge-two-sorted-lists/) • **Easy**
+[LeetCode 21](https://leetcode.com/problems/merge-two-sorted-lists/) •**Easy**
 
 ## 핵심 아이디어
 

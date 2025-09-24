@@ -24,9 +24,9 @@ Java의 ExecutorService를 보고 배운 교훈:
 
 **실행자 패턴의 실전 활용:**
 
-- **ThreadPoolExecutor**: CPU 집약적 작업 (ML 학습)
-- **InlineExecutor**: 디버깅과 테스트
-- **DelayedExecutor**: 스케줄링된 작업 (알림, 정기 체크)
+-**ThreadPoolExecutor**: CPU 집약적 작업 (ML 학습)
+-**InlineExecutor**: 디버깅과 테스트
+-**DelayedExecutor**: 스케줄링된 작업 (알림, 정기 체크)
 
 ## C++ 실행자 시스템
 
@@ -231,15 +231,17 @@ console.log('3');
 
 **비밀은 두 개의 큐:**
 
-1. **마이크로태스크 큐** (우선순위 높음)
-   - Promise 콜백
-   - queueMicrotask()
-   - MutationObserver
+1.**마이크로태스크 큐**(우선순위 높음)
 
-2. **매크로태스크 큐** (우선순위 낮음)
-   - setTimeout/setInterval
-   - setImmediate (Node.js)
-   - I/O 작업
+- Promise 콜백
+- queueMicrotask()
+- MutationObserver
+
+2.**매크로태스크 큐**(우선순위 낮음)
+
+- setTimeout/setInterval
+- setImmediate (Node.js)
+- I/O 작업
 
 ### 이벤트 루프 시뮬레이션
 
@@ -542,9 +544,9 @@ Generator를 사용해 긴 작업을 작은 단위로 나누어 UI 반응성을 
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

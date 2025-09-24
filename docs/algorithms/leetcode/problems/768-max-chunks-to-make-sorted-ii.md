@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 768](https://leetcode.com/problems/max-chunks-to-make-sorted-ii/) • **Hard**
+[LeetCode 768](https://leetcode.com/problems/max-chunks-to-make-sorted-ii/) •**Hard**
 
 ## 핵심 아이디어
 

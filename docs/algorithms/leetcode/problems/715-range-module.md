@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 715](https://leetcode.com/problems/range-module/) • **Medium**
+[LeetCode 715](https://leetcode.com/problems/range-module/) •**Medium**
 
 ## 핵심 아이디어
 

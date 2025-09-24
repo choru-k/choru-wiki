@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1130](https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/) • **Medium**
+[LeetCode 1130](https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/) •**Medium**
 
 ## DP 풀이법
 
@@ -72,8 +72,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

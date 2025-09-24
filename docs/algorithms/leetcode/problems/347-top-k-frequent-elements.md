@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 347](https://leetcode.com/problems/top-k-frequent-elements/) • **Medium**
+[LeetCode 347](https://leetcode.com/problems/top-k-frequent-elements/) •**Medium**
 
 [https://leetcode.com/problems/k-closest-points-to-origin/](https://leetcode.com/problems/k-closest-points-to-origin/) 와 매우 유사한 문제이다.
 

@@ -18,7 +18,7 @@ tags:
 
 ## 들어가며
 
-"API 호출 후 응답을 어떻게 처리할까?" 이 질문에 대한 답이 바로 **콜백 함수(Callback Function)**입니다.
+"API 호출 후 응답을 어떻게 처리할까?" 이 질문에 대한 답이 바로**콜백 함수(Callback Function)**입니다.
 
 2024년 현재 프로덕션에서 발생하는 실제 시나리오를 생각해보세요:
 
@@ -32,7 +32,7 @@ tags:
 
 ### 핵심 개념
 
-콜백 함수는 **다른 함수에 인자로 전달되어, 특정 이벤트나 조건이 충족될 때 호출되는 함수**입니다.
+콜백 함수는**다른 함수에 인자로 전달되어, 특정 이벤트나 조건이 충족될 때 호출되는 함수**입니다.
 
 ```text
 ┌─────────────────────────────────────────────┐
@@ -294,7 +294,7 @@ class AsyncTaskRunner:
 def heavy_computation():
     """CPU 집약적 작업 시뮬레이션"""
     time.sleep(2)
-    return sum(i ** 2 for i in range(1000000))
+    return sum(i**2 for i in range(1000000))
 
 def on_completion(result, error):
     """콜백 함수"""
@@ -310,9 +310,9 @@ runner.run_async(heavy_computation, on_completion)
 # 데코레이터를 사용한 콜백 패턴
 def with_callback(callback_func):
     def decorator(func):
-        def wrapper(*args, **kwargs):
+        def wrapper(*args,**kwargs):
             try:
-                result = func(*args, **kwargs)
+                result = func(*args,**kwargs)
                 callback_func(result, None)
                 return result
             except Exception as e:
@@ -457,10 +457,10 @@ function fetchUserProfile(userId, callback) {
 
 **문제점:**
 
-- **가독성**: 코드가 오른쪽으로 계속 밀려남
-- **에러 처리**: 각 레벨에서 에러를 처리해야 함
-- **유지보수**: 로직 변경이 어려움
-- **디버깅**: 스택 트레이스 추적이 복잡함
+-**가독성**: 코드가 오른쪽으로 계속 밀려남
+-**에러 처리**: 각 레벨에서 에러를 처리해야 함
+-**유지보수**: 로직 변경이 어려움
+-**디버깅**: 스택 트레이스 추적이 복잡함
 
 ### 해결책 1: Promises
 
@@ -952,7 +952,7 @@ class NotificationService {
 
 ### 콜백 함수 디버깅
 
-- [ ] **메모리 누수 확인**
+- [ ]**메모리 누수 확인**
 
   ```bash
   # Node.js 메모리 사용량 모니터링
@@ -960,7 +960,7 @@ class NotificationService {
   # Chrome DevTools에서 Heap Snapshot 분석
   ```
 
-- [ ] **콜백 실행 추적**
+- [ ]**콜백 실행 추적**
 
   ```javascript
   // 콜백 실행 추적
@@ -972,7 +972,7 @@ class NotificationService {
   }
   ```
 
-- [ ] **성능 프로파일링**
+- [ ]**성능 프로파일링**
 
   ```bash
   # Node.js 성능 프로파일링
@@ -980,7 +980,7 @@ class NotificationService {
   node --prof-process isolate-0x...log > processed.txt
   ```
 
-- [ ] **이벤트 루프 블로킹 확인**
+- [ ]**이벤트 루프 블로킹 확인**
 
   ```javascript
   // 이벤트 루프 지연 측정
@@ -1003,13 +1003,13 @@ class NotificationService {
 
 **핵심 takeaways:**
 
-1. **메모리 관리**: 콜백 참조를 적절히 해제해야 함
-2. **에러 처리**: 모든 콜백에서 에러 케이스를 고려해야 함
-3. **성능 최적화**: 디바운싱/쓰로틀링으로 과도한 콜백 호출 방지
-4. **모던 대안**: Promise, async/await, RxJS 등을 적절히 활용
-5. **모니터링**: 프로덕션에서 콜백 성능을 지속적으로 모니터링
+1.**메모리 관리**: 콜백 참조를 적절히 해제해야 함
+2.**에러 처리**: 모든 콜백에서 에러 케이스를 고려해야 함
+3.**성능 최적화**: 디바운싱/쓰로틀링으로 과도한 콜백 호출 방지
+4.**모던 대안**: Promise, async/await, RxJS 등을 적절히 활용
+5.**모니터링**: 프로덕션에서 콜백 성능을 지속적으로 모니터링
 
-프로덕션 환경에서는 단순히 "동작하는 코드"가 아닌, **확장 가능하고 유지보수 가능한 콜백 패턴**을 구현하는 것이 중요합니다.
+프로덕션 환경에서는 단순히 "동작하는 코드"가 아닌,**확장 가능하고 유지보수 가능한 콜백 패턴**을 구현하는 것이 중요합니다.
 
 ## 관련 문서
 

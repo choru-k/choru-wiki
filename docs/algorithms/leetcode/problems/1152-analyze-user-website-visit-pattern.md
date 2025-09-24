@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1152](https://leetcode.com/problems/analyze-user-website-visit-pattern/description/) • **Medium**
+[LeetCode 1152](https://leetcode.com/problems/analyze-user-website-visit-pattern/description/) •**Medium**
 
 ## 문제 설명
 
@@ -23,8 +23,8 @@ tags:
 
 ## 복잡도 분석
 
-- **Time Complexity:** TBD
-- **Space Complexity:** TBD
+-**Time Complexity:**TBD
+-**Space Complexity:**TBD
 
 ## 핵심 포인트
 

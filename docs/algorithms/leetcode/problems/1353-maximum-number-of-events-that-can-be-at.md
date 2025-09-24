@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1353](https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/) • **Medium**
+[LeetCode 1353](https://leetcode.com/problems/maximum-number-of-events-that-can-be-attended/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -71,8 +71,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

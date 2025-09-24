@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 913](https://leetcode.com/problems/cat-and-mouse/solution/) • **Hard**
+[LeetCode 913](https://leetcode.com/problems/cat-and-mouse/solution/) •**Hard**
 
 이 문제는 `Minimax` 의 전형적인? 문제이다.
 

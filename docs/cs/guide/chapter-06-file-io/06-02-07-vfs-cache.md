@@ -23,9 +23,9 @@ priority_score: 4
 
 VFS 캐시는 세 가지 레벨로 작동합니다:
 
-1. **Dentry Cache**: "이 경로 아까 본 거 같은데?"
-2. **Inode Cache**: "이 파일 정보 방금 조회했어!"
-3. **Page Cache**: "이 데이터 메모리에 있어!"
+1.**Dentry Cache**: "이 경로 아까 본 거 같은데?"
+2.**Inode Cache**: "이 파일 정보 방금 조회했어!"
+3.**Page Cache**: "이 데이터 메모리에 있어!"
 
 실제 효과를 측정해보면:
 
@@ -566,21 +566,21 @@ echo 1 > /proc/sys/vm/dirty_background_ratio
 
 ### 1. 3단계 캐시 계층의 시너지
 
-- **Dentry Cache**: 경로 탐색 52배 가속
-- **Inode Cache**: 메타데이터 접근 최적화  
-- **Page Cache**: 데이터 읽기 172배 가속
+-**Dentry Cache**: 경로 탐색 52배 가속
+-**Inode Cache**: 메타데이터 접근 최적화  
+-**Page Cache**: 데이터 읽기 172배 가속
 
 ### 2. 적응적 최적화 메커니즘
 
-- **Read-ahead**: 순차 읽기 패턴 자동 감지
-- **LRU 관리**: 메모리 압박 시 지능적 회수
-- **Writeback**: 비동기 쓰기로 성능 향상
+-**Read-ahead**: 순차 읽기 패턴 자동 감지
+-**LRU 관리**: 메모리 압박 시 지능적 회수
+-**Writeback**: 비동기 쓰기로 성능 향상
 
 ### 3. 실전 튜닝 포인트
 
-- **vfs_cache_pressure**: 캐시 보존 적극성 제어
-- **dirty_ratio**: 더티 페이지 비율로 응답성 조절
-- **read-ahead**: 워크로드별 크기 최적화
+-**vfs_cache_pressure**: 캐시 보존 적극성 제어
+-**dirty_ratio**: 더티 페이지 비율로 응답성 조절
+-**read-ahead**: 워크로드별 크기 최적화
 
 ---
 
@@ -591,9 +591,9 @@ echo 1 > /proc/sys/vm/dirty_background_ratio
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 887](https://leetcode.com/problems/super-egg-drop/) • **Hard**
+[LeetCode 887](https://leetcode.com/problems/super-egg-drop/) •**Hard**
 
 문제는 심플하다.
 

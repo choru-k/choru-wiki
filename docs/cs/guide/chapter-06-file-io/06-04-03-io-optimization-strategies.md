@@ -514,30 +514,30 @@ sudo ./io_optimizer.sh monitor
 
 | 설정 항목 | SSD 최적화 | HDD 최적화 | 이유 |
 |-----------|------------|------------|------|
-| **I/O 스케줄러** | mq-deadline, noop | CFQ, deadline | SSD는 탐색 시간이 없어 단순한 스케줄러가 효율적 |
-| **ReadAhead** | 8KB (낮음) | 256KB (높음) | HDD는 순차 읽기에 유리 |
-| **큐 깊이** | 256 (높음) | 128 (중간) | SSD는 높은 병렬 I/O 처리 가능 |
-| **TRIM/Discard** | 필수 활성화 | 불필요 | SSD 성능 유지를 위한 가비지 컬렉션 |
+|**I/O 스케줄러**| mq-deadline, noop | CFQ, deadline | SSD는 탐색 시간이 없어 단순한 스케줄러가 효율적 |
+|**ReadAhead**| 8KB (낮음) | 256KB (높음) | HDD는 순차 읽기에 유리 |
+|**큐 깊이**| 256 (높음) | 128 (중간) | SSD는 높은 병렬 I/O 처리 가능 |
+|**TRIM/Discard**| 필수 활성화 | 불필요 | SSD 성능 유지를 위한 가비지 컬렉션 |
 
 ## 데이터베이스별 최적화 전략
 
 ### MySQL/MariaDB
 
-- **innodb_flush_method=O_DIRECT**: 이중 버퍼링 방지
-- **innodb_io_capacity**: SSD 2000, HDD 200
-- **innodb_buffer_pool_size**: 메모리의 70-80%
+-**innodb_flush_method=O_DIRECT**: 이중 버퍼링 방지
+-**innodb_io_capacity**: SSD 2000, HDD 200
+-**innodb_buffer_pool_size**: 메모리의 70-80%
 
 ### PostgreSQL
 
-- **shared_buffers**: 메모리의 25%
-- **effective_cache_size**: 메모리의 75%
-- **random_page_cost**: SSD 1.1, HDD 4.0
+-**shared_buffers**: 메모리의 25%
+-**effective_cache_size**: 메모리의 75%
+-**random_page_cost**: SSD 1.1, HDD 4.0
 
 ### MongoDB
 
-- **storage.wiredTiger.engineConfig.cacheSizeGB**: 적절한 캐시 크기 설정
-- **storage.journal.enabled=true**: 저널링 활성화
-- **net.compression.compressors=snappy**: 압축 활성화
+-**storage.wiredTiger.engineConfig.cacheSizeGB**: 적절한 캐시 크기 설정
+-**storage.journal.enabled=true**: 저널링 활성화
+-**net.compression.compressors=snappy**: 압축 활성화
 
 ## 핵심 요점
 
@@ -562,9 +562,9 @@ SSD와 HDD의 물리적 특성을 이해하고 각각에 최적화된 설정 적
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 인프라스트럭처
-- **예상 시간**: 8-12시간
+-**난이도**: ADVANCED
+-**주제**: 인프라스트럭처
+-**예상 시간**: 8-12시간
 
 ### 🎯 학습 경로
 

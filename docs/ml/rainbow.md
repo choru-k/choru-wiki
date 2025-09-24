@@ -17,12 +17,12 @@ tags:
 
 **Rainbow 구성 요소:**
 
-1. **DQN** (기본)
-2. **Double DQN** ( Q-value 을 계산하는 Net 과 액션 선택 Net 을 분리 )
-3. **Duel DQN** ( Q = V + A, A 는 Advantage )
-4. **Multi Step** ( Q-value 계산에서 여러 좀 더 뒤의 reward 도 사용 )
-5. **PER** ( Replay Memory 에서 좀 더 의미 있는 sample 을 더 자주 사용 )
-6. **Nosiy Net** ( Net 전체에 Noisy 을 주어서 explore 을 하도록 )
+1.**DQN**(기본)
+2.**Double DQN**( Q-value 을 계산하는 Net 과 액션 선택 Net 을 분리 )
+3.**Duel DQN**( Q = V + A, A 는 Advantage )
+4.**Multi Step**( Q-value 계산에서 여러 좀 더 뒤의 reward 도 사용 )
+5.**PER**( Replay Memory 에서 좀 더 의미 있는 sample 을 더 자주 사용 )
+6.**Nosiy Net**( Net 전체에 Noisy 을 주어서 explore 을 하도록 )
 
 입니다.
 
@@ -75,7 +75,7 @@ def sample(self, batch_size, net, target_net, beta):
             reward = 0
             for step in range(0, n_step + 1):
                 idx = transition_start_idx + step
-                reward += (gamma ** step) * self.memory[idx].reward
+                reward += (gamma**step) * self.memory[idx].reward
             transitions.append(Transition(state, next_state, action, reward, mask))
 
         transitions_p = [p[idx] for idx in indexes]

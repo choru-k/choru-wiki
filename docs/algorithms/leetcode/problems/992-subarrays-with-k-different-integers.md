@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 992](https://leetcode.com/problems/subarrays-with-k-different-integers/) • **Medium**
+[LeetCode 992](https://leetcode.com/problems/subarrays-with-k-different-integers/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -100,8 +100,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

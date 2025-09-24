@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1044](https://leetcode.com/problems/longest-duplicate-substring/) • **Hard**
+[LeetCode 1044](https://leetcode.com/problems/longest-duplicate-substring/) •**Hard**
 
 ## 핵심 아이디어
 

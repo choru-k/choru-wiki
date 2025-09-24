@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 850](https://leetcode.com/problems/rectangle-area-ii/) • **Hard**
+[LeetCode 850](https://leetcode.com/problems/rectangle-area-ii/) •**Hard**
 
 ## 핵심 아이디어
 

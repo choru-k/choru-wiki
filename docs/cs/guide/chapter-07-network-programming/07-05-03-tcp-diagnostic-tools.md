@@ -472,15 +472,15 @@ gcc -O3 -o tcp_analyzer tcp_connection_analyzer.c -lpthread
 
 ### 1. 소켓 옵션 최적화
 
-- **SO_REUSEADDR**: TIME_WAIT 상태 소켓 재사용 허용
-- **TCP_NODELAY**: Nagle 알고리즘 비활성화로 지연시간 최소화
-- **SO_KEEPALIVE**: 비활성 연결 자동 감지 및 정리
+-**SO_REUSEADDR**: TIME_WAIT 상태 소켓 재사용 허용
+-**TCP_NODELAY**: Nagle 알고리즘 비활성화로 지연시간 최소화
+-**SO_KEEPALIVE**: 비활성 연결 자동 감지 및 정리
 
 ### 2. Keep-alive 파라미터 세부 조정
 
-- **TCP_KEEPIDLE**: 30초 대기 후 keep-alive 프로브 시작
-- **TCP_KEEPINTVL**: 5초 간격으로 프로브 전송
-- **TCP_KEEPCNT**: 3회 실패 시 연결 종료
+-**TCP_KEEPIDLE**: 30초 대기 후 keep-alive 프로브 시작
+-**TCP_KEEPINTVL**: 5초 간격으로 프로브 전송
+-**TCP_KEEPCNT**: 3회 실패 시 연결 종료
 
 ### 3. 연결 상태 실시간 추적
 
@@ -547,9 +547,9 @@ TCP 연결의 안정성과 성능은 적절한 소켓 옵션 설정에 크게 �
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 6-8시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 6-8시간
 
 ### 🎯 학습 경로
 

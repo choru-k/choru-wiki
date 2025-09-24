@@ -29,7 +29,7 @@ priority_score: 4
 
 "분명히 메모리는 충분한데 왜 stack overflow가 발생하지?"
 
-스택은 프로그램에서 가장 빠르고 간단한 메모리 영역이지만, **크기 제한**이라는 치명적인 약점이 있습니다.
+스택은 프로그램에서 가장 빠르고 간단한 메모리 영역이지만,**크기 제한**이라는 치명적인 약점이 있습니다.
 
 ```mermaid
 graph TD
@@ -48,7 +48,7 @@ graph TD
     style OVERFLOW fill:#ffcccb
 ```
 
-스택 문제는 **예측하기 어렵고**, **디버깅하기 까다로우며**, **보안 취약점**으로 이어질 수 있습니다.
+스택 문제는**예측하기 어렵고**,**디버깅하기 까다로우며**,**보안 취약점**으로 이어질 수 있습니다.
 
 ### 스택 오버플로우가 발생하는 주요 원인
 
@@ -228,7 +228,7 @@ graph TD
 
 ### 2.1 Guard Page 동작 원리
 
-Linux는 스택 오버플로우를 감지하기 위해 **guard page**를 사용합니다:
+Linux는 스택 오버플로우를 감지하기 위해**guard page**를 사용합니다:
 
 ```mermaid
 graph TD
@@ -651,7 +651,7 @@ void stack_based_tree_traversal(TreeNode *root) {
     if (!root) return;
 
     // 명시적 스택 생성
-    TreeNode **stack = malloc(sizeof(TreeNode*) * 10000);  // 충분히 큰 스택
+    TreeNode**stack = malloc(sizeof(TreeNode*) * 10000);  // 충분히 큰 스택
     int top = 0;
 
     stack[top++] = root;
@@ -945,9 +945,9 @@ graph TD
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 5-7시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 5-7시간
 
 ### 🎯 학습 경로
 

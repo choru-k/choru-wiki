@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 975](https://leetcode.com/problems/odd-even-jump/) • **Medium**
+[LeetCode 975](https://leetcode.com/problems/odd-even-jump/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -94,8 +94,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

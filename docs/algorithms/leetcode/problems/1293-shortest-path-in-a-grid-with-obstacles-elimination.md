@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1293](https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/) • **Medium**
+[LeetCode 1293](https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/) •**Medium**
 
 ## 핵심 아이디어
 

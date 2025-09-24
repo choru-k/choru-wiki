@@ -352,7 +352,7 @@ struct io_ring_ctx {
         struct io_file_table    file_table;
         unsigned            nr_user_files;
         unsigned            nr_user_bufs;
-        struct io_mapped_ubuf   **user_bufs;
+        struct io_mapped_ubuf **user_bufs;
         
         struct io_submit_state  submit_state;
         struct list_head    timeout_list;
@@ -630,27 +630,27 @@ void zns_optimized_write(int fd, void *data, size_t size, off_t zone_start) {
 
 ### 1. NVMe의 혁신적 장점
 
-- **큐 확장성**: 65536개 큐로 극한 병렬성
-- **지연시간**: 폴링으로 마이크로초 단위 응답
-- **처리량**: PCIe 4.0으로 7GB/s 이상
+-**큐 확장성**: 65536개 큐로 극한 병렬성
+-**지연시간**: 폴링으로 마이크로초 단위 응답
+-**처리량**: PCIe 4.0으로 7GB/s 이상
 
 ### 2. io_uring의 게임 체인저
 
-- **시스템 콜 오버헤드 제거**: 배치 처리로 극적 개선
-- **진정한 비동기**: 커널 스레드 없이 완전 비동기
-- **범용성**: 파일, 네트워크, 소켓 모두 지원
+-**시스템 콜 오버헤드 제거**: 배치 처리로 극적 개선
+-**진정한 비동기**: 커널 스레드 없이 완전 비동기
+-**범용성**: 파일, 네트워크, 소켓 모두 지원
 
 ### 3. 조합의 시너지 효과
 
-- **CPU 효율성**: sys time 60% → 15% 감소
-- **확장성**: 코어 수에 선형 비례 성능 향상
-- **응답성**: 마이크로서비스에서 중요한 tail latency 개선
+-**CPU 효율성**: sys time 60% → 15% 감소
+-**확장성**: 코어 수에 선형 비례 성능 향상
+-**응답성**: 마이크로서비스에서 중요한 tail latency 개선
 
 ### 4. 실무 적용 가이드
 
-- **단계적 도입**: 기존 시스템에서 점진적 적용
-- **워크로드 분석**: I/O 패턴에 맞는 최적화 필요
-- **지속적 모니터링**: 성능 회귀 방지를 위한 측정
+-**단계적 도입**: 기존 시스템에서 점진적 적용
+-**워크로드 분석**: I/O 패턴에 맞는 최적화 필요
+-**지속적 모니터링**: 성능 회귀 방지를 위한 측정
 
 ---
 
@@ -661,9 +661,9 @@ void zns_optimized_write(int fd, void *data, size_t size, off_t zone_start) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 20-30시간
+-**난이도**: ADVANCED
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 20-30시간
 
 ### 🎯 학습 경로
 

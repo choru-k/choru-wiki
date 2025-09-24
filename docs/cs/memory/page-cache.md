@@ -78,7 +78,7 @@ ByteBuffer buffer = ByteBuffer.allocateDirect(size);  // Direct memory
 
 ## Kubernetes의 Shared Page Cache
 
-Kubernetes 노드에서 Page Cache는 **모든 Pod가 공유**합니다. 이는 성능상 이점이 있지만, 예상치 못한 문제를 일으킬 수 있습니다.
+Kubernetes 노드에서 Page Cache는**모든 Pod가 공유**합니다. 이는 성능상 이점이 있지만, 예상치 못한 문제를 일으킬 수 있습니다.
 
 ### 공유 메커니즘
 
@@ -150,7 +150,7 @@ print(f"Load time: {time.time() - start}s")  # 2초
 
 ### OOM Cascade 시나리오
 
-Page Cache의 가장 큰 함정은 **cache ownership 전환**입니다:
+Page Cache의 가장 큰 함정은**cache ownership 전환**입니다:
 
 ```text
 시나리오: 3개의 동일한 Pod가 같은 2GB 파일을 읽음
@@ -404,11 +404,11 @@ echo 10 > /proc/sys/vm/dirty_ratio
 
 Page Cache는 성능에 중요하지만 Kubernetes 환경에서는 주의가 필요합니다:
 
-1. **Page Cache는 노드 전체에서 공유**되므로 Pod 간 영향 존재
-2. **Cache ownership 전환**은 OOM cascade를 일으킬 수 있음
-3. **Pre-warming이나 DaemonSet**으로 ownership 문제 해결 가능
-4. **모니터링 시 cache와 RSS를 구분**하여 확인 필요
-5. **Drop caches는 최후의 수단**, 다른 방법 우선 고려
+1.**Page Cache는 노드 전체에서 공유**되므로 Pod 간 영향 존재
+2.**Cache ownership 전환**은 OOM cascade를 일으킬 수 있음
+3.**Pre-warming이나 DaemonSet**으로 ownership 문제 해결 가능
+4.**모니터링 시 cache와 RSS를 구분**하여 확인 필요
+5.**Drop caches는 최후의 수단**, 다른 방법 우선 고려
 
 다음 글에서는 이러한 Page Cache 문제가 실제 OOM Kill로 이어지는 과정을 자세히 살펴보겠습니다.
 

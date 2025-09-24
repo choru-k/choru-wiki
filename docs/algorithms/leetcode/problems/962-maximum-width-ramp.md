@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 962](https://leetcode.com/problems/maximum-width-ramp/) • **Medium**
+[LeetCode 962](https://leetcode.com/problems/maximum-width-ramp/) •**Medium**
 
 핵심은 앞에 나왔던 숫자보다 큰 숫자는 무시 할 수 있다는 것이다
 
@@ -82,8 +82,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

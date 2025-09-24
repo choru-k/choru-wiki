@@ -59,11 +59,11 @@ priority_score: 4
 
 | 기술 | 연결 수 | 메모리/연결 | CPU 효율성 | 설명 |
 |------|---------|-------------|------------|------|
-| **전통적 스레드** | 1,000 | 8KB | 낮음 | 스레드당 스택 오버헤드 |
-| **이벤트 기반** | 10,000 | 2KB | 보통 | epoll/kqueue 활용 |
-| **제로카피** | 100,000 | 512B | 높음 | CPU 복사 오버헤드 제거 |
-| **NUMA 최적화** | 1,000,000 | 256B | 매우 높음 | 메모리 지역성 극대화 |
-| **커널 바이패스** | 10,000,000 | 128B | 극한 | DPDK/io_uring 활용 |
+|**전통적 스레드**| 1,000 | 8KB | 낮음 | 스레드당 스택 오버헤드 |
+|**이벤트 기반**| 10,000 | 2KB | 보통 | epoll/kqueue 활용 |
+|**제로카피**| 100,000 | 512B | 높음 | CPU 복사 오버헤드 제거 |
+|**NUMA 최적화**| 1,000,000 | 256B | 매우 높음 | 메모리 지역성 극대화 |
+|**커널 바이패스**| 10,000,000 | 128B | 극한 | DPDK/io_uring 활용 |
 
 ## 🚀 실전 활용 시나리오
 
@@ -657,10 +657,10 @@ struct numa_server {
     int *cpus_per_node;
 
     // 노드별 메모리 풀
-    struct memory_pool **node_pools;
+    struct memory_pool**node_pools;
 
     // 노드별 워커 스레드
-    pthread_t **node_workers;
+    pthread_t**node_workers;
 };
 
 // NUMA 토폴로지 초기화
@@ -1028,7 +1028,7 @@ void release_connection(struct backend *backend, struct connection *conn) {
     pthread_mutex_lock(&backend->lock);
 
     // busy 리스트에서 제거
-    struct connection **pp = &backend->busy_conns;
+    struct connection**pp = &backend->busy_conns;
     while (*pp && *pp != conn) {
         pp = &(*pp)->next;
     }
@@ -1480,12 +1480,12 @@ void websocket_broadcast(struct websocket_server *server,
 
 이번 절에서 배운 고성능 서버의 비밀들:
 
-1. **C10K → C10M**: 연결당 256바이트로 최적화하면 천만 연결도 가능
-2. **제로카피**: sendfile()로 CPU 사용량 90% 감소
-3. **NUMA 최적화**: 메모리 지역성으로 2배 성능 향상
-4. **커넥션 풀**: 연결 재사용으로 5배 빠른 응답
-5. **HTTP/2**: 멀티플렉싱으로 4배 빠른 페이지 로딩
-6. **WebSocket**: 실시간 통신의 게임 체인저
+1.**C10K → C10M**: 연결당 256바이트로 최적화하면 천만 연결도 가능
+2.**제로카피**: sendfile()로 CPU 사용량 90% 감소
+3.**NUMA 최적화**: 메모리 지역성으로 2배 성능 향상
+4.**커넥션 풀**: 연결 재사용으로 5배 빠른 응답
+5.**HTTP/2**: 멀티플렉싱으로 4배 빠른 페이지 로딩
+6.**WebSocket**: 실시간 통신의 게임 체인저
 
 ### 💪 실전 체크리스트
 
@@ -1532,9 +1532,9 @@ $ numastat           # NUMA 통계 확인
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 6-12시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 6-12시간
 
 ### 🎯 학습 경로
 

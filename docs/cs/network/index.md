@@ -29,9 +29,9 @@ tags:
 
 ## 학습 순서 권장
 
-1. **기초**: Socket Programming → File Descriptor
-2. **멀티플렉싱**: select/poll → epoll → kqueue
-3. **고급**: 비동기 I/O → Event Loop → 성능 최적화
-4. **실전**: 웹서버 구현 → 로드밸런서 → 마이크로서비스
+1.**기초**: Socket Programming → File Descriptor
+2.**멀티플렉싱**: select/poll → epoll → kqueue
+3.**고급**: 비동기 I/O → Event Loop → 성능 최적화
+4.**실전**: 웹서버 구현 → 로드밸런서 → 마이크로서비스
 
 네트워크 프로그래밍은 시스템 프로그래밍의 핵심이며, 특히 서버 개발에서 필수적인 지식입니다.

@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 966](https://leetcode.com/problems/vowel-spellchecker/) • **Medium**
+[LeetCode 966](https://leetcode.com/problems/vowel-spellchecker/) •**Medium**
 
 이 문제는 2가지 방법으로 풀 수가 있다.
 

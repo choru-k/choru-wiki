@@ -370,12 +370,17 @@ sequenceDiagram
     ALB->>ALB: "HTTP/2 → HTTP/1.1 변환 (필요시)"
     
     ALB->>R: Rule Matching (1ms)
-    Note over R: "1. Host Header 체크<br/>2. Path Pattern 매칭<br/>3. HTTP Header 검사<br/>4. Query String 파싱"
+    Note over R: "1. Host Header 체크
+2. Path Pattern 매칭
+3. HTTP Header 검사
+4. Query String 파싱"
     
     R->>TG: "Target Group 선택"
     
     TG->>TG: "Target 선택 알고리즘 (2ms)"
-    Note over TG: "Health Status 확인<br/>Stickiness 체크<br/>Load Balancing 알고리즘"
+    Note over TG: "Health Status 확인
+Stickiness 체크
+Load Balancing 알고리즘"
     
     TG->>T: Request Forward (5ms)
     T->>TG: Response (30ms)

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 309](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/) • **Medium**
+[LeetCode 309](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/) •**Medium**
 
 이 문제를 풀기 위해서 경우의 수를 나누어 보자.
 
@@ -84,8 +84,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

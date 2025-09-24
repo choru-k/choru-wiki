@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 642](https://leetcode.com/problems/design-search-autocomplete-system/) • **Hard**
+[LeetCode 642](https://leetcode.com/problems/design-search-autocomplete-system/) •**Hard**
 
 일단 문제를 쉽게 푸는 법을 생각하고 점차 최적화를 해보자.
 

@@ -12,7 +12,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1157](https://leetcode.com/problems/online-majority-element-in-subarray/) • **Medium**
+[LeetCode 1157](https://leetcode.com/problems/online-majority-element-in-subarray/) •**Medium**
 
 일단 이 문제는 나누어서 생각해야 한다.
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 656](https://leetcode.com/problems/coin-path/) • **Hard**
+[LeetCode 656](https://leetcode.com/problems/coin-path/) •**Hard**
 
 일단 문제을 좀 더 간단한 문제로 생각해보자.
 

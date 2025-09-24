@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 449](https://leetcode.com/problems/serialize-and-deserialize-bst/) • **Medium**
+[LeetCode 449](https://leetcode.com/problems/serialize-and-deserialize-bst/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -72,8 +72,8 @@ class Codec:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

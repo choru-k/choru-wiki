@@ -147,7 +147,7 @@ public:
     }
 
     // Write Barrier: Old->Young 참조 추적
-    void write_barrier(Object** field, Object* new_value) {
+    void write_barrier(Object**field, Object* new_value) {
         *field = new_value;
 
         // Old 객체가 Young 객체를 참조하게 됨?
@@ -260,7 +260,7 @@ public:
     }
 
     // Write Barrier (SATB - Snapshot At The Beginning)
-    void write_barrier_satb(Object** field, Object* new_value) {
+    void write_barrier_satb(Object**field, Object* new_value) {
         Object* old_value = *field;
 
         // 이전 값이 WHITE면 GRAY로 (놓치지 않기 위해)
@@ -276,7 +276,7 @@ public:
     }
 
     // Incremental Update Barrier (다른 방식)
-    void write_barrier_incremental(Object** field, Object* new_value) {
+    void write_barrier_incremental(Object**field, Object* new_value) {
         *field = new_value;
 
         // Black이 White를 참조하게 되면 Gray로
@@ -391,7 +391,7 @@ public class CMSCollector {
 class WriteBarrierTypes {
 public:
     // 1. Generational Write Barrier (Card Marking)
-    void generational_write_barrier(Object** field, Object* new_value) {
+    void generational_write_barrier(Object**field, Object* new_value) {
         *field = new_value;
 
         // Old -> Young 참조가 생성됨?
@@ -403,7 +403,7 @@ public:
     }
 
     // 2. SATB Write Barrier (Snapshot At The Beginning)
-    void satb_write_barrier(Object** field, Object* new_value) {
+    void satb_write_barrier(Object**field, Object* new_value) {
         Object* old_value = *field;
         
         // 이전 값을 SATB 큐에 저장 (잃어버리지 않기 위해)
@@ -415,7 +415,7 @@ public:
     }
 
     // 3. Incremental Update Write Barrier
-    void incremental_write_barrier(Object** field, Object* new_value) {
+    void incremental_write_barrier(Object**field, Object* new_value) {
         *field = new_value;
         
         // Black -> White 참조가 생성됨?
@@ -429,7 +429,7 @@ public:
     }
 
     // 4. Colored Pointer Write Barrier (ZGC style)
-    void colored_pointer_write_barrier(Object** field, Object* new_value) {
+    void colored_pointer_write_barrier(Object**field, Object* new_value) {
         // Load barrier에서 처리하므로 write barrier는 간단
         *field = add_color_bits(new_value, current_gc_phase);
     }
@@ -486,9 +486,9 @@ GC의 정확성과 성능을 보장하기 위해 객체 참조 변경을 추적�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 8-12시간
+-**난이도**: ADVANCED
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 8-12시간
 
 ### 🎯 학습 경로
 

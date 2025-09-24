@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1267](https://leetcode.com/problems/count-servers-that-communicate/) • **Medium**
+[LeetCode 1267](https://leetcode.com/problems/count-servers-that-communicate/) •**Medium**
 
 여기서 알고 싶은 건 다른 서버와 통신하지 않는 서버의 갯수이다.
 

@@ -23,7 +23,7 @@ priority_score: 4
 
 **왜 파이프가 단방향일까?**
 
-제가 커널 소스를 보고 깨달은 사실: **파이프는 사실상 링 버퍼입니다!**
+제가 커널 소스를 보고 깨달은 사실:**파이프는 사실상 링 버퍼입니다!**
 
 ```c
 // 커널 내부 구조 (간략화)
@@ -44,18 +44,26 @@ struct pipe_inode_info {
 graph TD
     subgraph KERNEL_SPACE["커널 공간"]
         subgraph PIPE_STRUCT["struct pipe_inode_info"]
-            HEAD["head = 5<br/>(다음 쓰기 위치)"]
-            TAIL["tail = 2<br/>(다음 읽기 위치)"]
-            BUFS["bufs[16]<br/>(4KB 페이지 × 16)"]
+            HEAD["head = 5
+(다음 쓰기 위치)"]
+            TAIL["tail = 2
+(다음 읽기 위치)"]
+            BUFS["bufs[16]
+(4KB 페이지 × 16)"]
         end
         
         subgraph RING_BUFFER["링 버퍼 구조 (64KB)"]
-            PAGE0["Page 0<br/>4KB"]
-            PAGE1["Page 1<br/>4KB"]
-            PAGE2["Page 2<br/>4KB"]
-            PAGE3["Page 3<br/>4KB"]
+            PAGE0["Page 0
+4KB"]
+            PAGE1["Page 1
+4KB"]
+            PAGE2["Page 2
+4KB"]
+            PAGE3["Page 3
+4KB"]
             DOTS1["..."]
-            PAGE15["Page 15<br/>4KB"]
+            PAGE15["Page 15
+4KB"]
             
             PAGE0 --> PAGE1
             PAGE1 --> PAGE2
@@ -67,15 +75,21 @@ graph TD
     end
     
     subgraph USER_SPACE["사용자 공간"]
-        WRITER["Writer Process<br/>write() 시스템 콜"]
-        READER["Reader Process<br/>read() 시스템 콜"]
+        WRITER["Writer Process
+write() 시스템 콜"]
+        READER["Reader Process
+read() 시스템 콜"]
     end
     
     subgraph DATA_FLOW["데이터 흐름"]
-        WRITE_OP["1. write() 호출<br/>데이터를 head 위치에 저장"]
-        UPDATE_HEAD["2. head 포인터 증가<br/>다음 쓰기 위치 업데이트"]
-        READ_OP["3. read() 호출<br/>tail 위치에서 데이터 읽기"]
-        UPDATE_TAIL["4. tail 포인터 증가<br/>다음 읽기 위치 업데이트"]
+        WRITE_OP["1. write() 호출
+데이터를 head 위치에 저장"]
+        UPDATE_HEAD["2. head 포인터 증가
+다음 쓰기 위치 업데이트"]
+        READ_OP["3. read() 호출
+tail 위치에서 데이터 읽기"]
+        UPDATE_TAIL["4. tail 포인터 증가
+다음 읽기 위치 업데이트"]
     end
     
     WRITER --> WRITE_OP
@@ -97,9 +111,9 @@ graph TD
 
 **핵심 통찰**:
 
-- **단방향인 이유**: head와 tail 포인터가 각각 하나씩만 있어서 한 방향으로만 데이터 흐름 가능
-- **64KB 크기**: 4KB 페이지 × 16개 = 효율적인 메모리 관리와 적당한 버퍼링
-- **링 버퍼**: 메모리 재사용으로 효율성 극대화, 연속적인 데이터 스트림 처리에 최적
+-**단방향인 이유**: head와 tail 포인터가 각각 하나씩만 있어서 한 방향으로만 데이터 흐름 가능
+-**64KB 크기**: 4KB 페이지 × 16개 = 효율적인 메모리 관리와 적당한 버퍼링
+-**링 버퍼**: 메모리 재사용으로 효율성 극대화, 연속적인 데이터 스트림 처리에 최적
 
 **실제 사용 예: `ls | grep | wc`**
 
@@ -201,9 +215,9 @@ sequenceDiagram
 
 **중요한 포인트**:
 
-1. **파이프 끝 닫기**: 사용하지 않는 끝을 반드시 닫아야 EOF 감지 가능
-2. **단방향성**: 한 프로세스는 읽기만, 다른 프로세스는 쓰기만 담당
-3. **블로킹**: 읽기는 데이터가 있을 때까지, 쓰기는 버퍼에 공간이 있을 때까지 대기
+1.**파이프 끝 닫기**: 사용하지 않는 끝을 반드시 닫아야 EOF 감지 가능
+2.**단방향성**: 한 프로세스는 읽기만, 다른 프로세스는 쓰기만 담당
+3.**블로킹**: 읽기는 데이터가 있을 때까지, 쓰기는 버퍼에 공간이 있을 때까지 대기
 
 ```c
 // 양방향 통신: 두 개의 파이프로 풀 듀플렉스 통신 구현
@@ -353,33 +367,45 @@ void bidirectional_pipe() {
 graph TD
     subgraph PROCESS_SPACE["프로세스 공간"]
         subgraph PARENT["Parent Process (PID: 1234)"]
-            P_WRITE1["write(pipe1[1])<br/>Request 전송"]
-            P_READ2["read(pipe2[0])<br/>Response 수신"]
+            P_WRITE1["write(pipe1[1])
+Request 전송"]
+            P_READ2["read(pipe2[0])
+Response 수신"]
         end
         
         subgraph CHILD["Child Process (PID: 5678)"]
-            C_READ1["read(pipe1[0])<br/>Request 수신"]
-            C_WRITE2["write(pipe2[1])<br/>Response 전송"]
+            C_READ1["read(pipe1[0])
+Request 수신"]
+            C_WRITE2["write(pipe2[1])
+Response 전송"]
         end
     end
     
     subgraph KERNEL_SPACE["커널 공간"]
         subgraph PIPE1["Pipe 1 (Parent → Child)"]
-            P1_WRITE["Write End<br/>pipe1[1]"]
-            P1_READ["Read End<br/>pipe1[0]"]
-            P1_BUFFER["Buffer<br/>Request 데이터"]
+            P1_WRITE["Write End
+pipe1[1]"]
+            P1_READ["Read End
+pipe1[0]"]
+            P1_BUFFER["Buffer
+Request 데이터"]
         end
         
         subgraph PIPE2["Pipe 2 (Child → Parent)"]
-            P2_WRITE["Write End<br/>pipe2[1]"]
-            P2_READ["Read End<br/>pipe2[0]"]
-            P2_BUFFER["Buffer<br/>Response 데이터"]
+            P2_WRITE["Write End
+pipe2[1]"]
+            P2_READ["Read End
+pipe2[0]"]
+            P2_BUFFER["Buffer
+Response 데이터"]
         end
     end
     
     subgraph CLOSED_FDS["닫힌 파일 디스크립터"]
-        CLOSED1["❌ pipe1[0] (Parent)<br/>❌ pipe2[1] (Parent)"]
-        CLOSED2["❌ pipe1[1] (Child)<br/>❌ pipe2[0] (Child)"]
+        CLOSED1["❌ pipe1[0] (Parent)
+❌ pipe2[1] (Parent)"]
+        CLOSED2["❌ pipe1[1] (Child)
+❌ pipe2[0] (Child)"]
     end
     
     P_WRITE1 --> P1_WRITE
@@ -393,9 +419,12 @@ graph TD
     P2_READ --> P_READ2
     
     subgraph COMMUNICATION_FLOW["통신 흐름"]
-        REQ["1. Request<br/>'Database Query'"]
-        PROCESS["2. Processing<br/>비즈니스 로직 실행"]
-        RESP["3. Response<br/>'Processed: ...'"]
+        REQ["1. Request
+'Database Query'"]
+        PROCESS["2. Processing
+비즈니스 로직 실행"]
+        RESP["3. Response
+'Processed: ...'"]
         
         REQ --> PROCESS
         PROCESS --> RESP
@@ -414,10 +443,10 @@ graph TD
 
 **양방향 통신의 핵심**:
 
-1. **두 개의 파이프**: 각 방향마다 하나씩 필요
-2. **파이프 끝 관리**: 사용하지 않는 끝은 반드시 닫기
-3. **데드락 방지**: 동시에 읽기/쓰기 시도 시 주의 필요
-4. **실무 활용**: 데이터베이스 클라이언트-서버, 웹서버-CGI 스크립트 통신
+1.**두 개의 파이프**: 각 방향마다 하나씩 필요
+2.**파이프 끝 관리**: 사용하지 않는 끝은 반드시 닫기
+3.**데드락 방지**: 동시에 읽기/쓰기 시도 시 주의 필요
+4.**실무 활용**: 데이터베이스 클라이언트-서버, 웹서버-CGI 스크립트 통신
 
 ```c
 // 파이프라인 구현
@@ -507,30 +536,56 @@ void video_player() {
 ```mermaid
 graph TD
     subgraph ANONYMOUS_PIPE["익명 파이프 (Anonymous Pipe)"]
-        AP_CREATION["생성: pipe() 시스템 콜<br/>• 커널 메모리에만 존재<br/>• 파일 시스템에 이름 없음"]
-        AP_SCOPE["사용 범위:<br/>• 부모-자식 프로세스만<br/>• fork() 후 fd 상속"]
-        AP_LIFETIME["생명주기:<br/>• 프로세스 종료 시 자동 삭제<br/>• 임시적 성격"]
-        AP_EXAMPLE["사용 예:<br/>• 셸 파이프라인 (ls | grep)<br/>• 프로그램 내부 모듈 간 통신"]
+        AP_CREATION["생성: pipe() 시스템 콜
+• 커널 메모리에만 존재
+• 파일 시스템에 이름 없음"]
+        AP_SCOPE["사용 범위:
+• 부모-자식 프로세스만
+• fork() 후 fd 상속"]
+        AP_LIFETIME["생명주기:
+• 프로세스 종료 시 자동 삭제
+• 임시적 성격"]
+        AP_EXAMPLE["사용 예:
+• 셸 파이프라인 (ls | grep)
+• 프로그램 내부 모듈 간 통신"]
     end
     
     subgraph NAMED_PIPE["명명된 파이프 (FIFO)"]
-        NP_CREATION["생성: mkfifo() 시스템 콜<br/>• 파일 시스템에 생성<br/>• 특수 파일 타입 (p)"]
-        NP_SCOPE["사용 범위:<br/>• 모든 프로세스<br/>• 파일 경로로 접근"]
-        NP_LIFETIME["생명주기:<br/>• 명시적 삭제 필요 (unlink)<br/>• 영구적 성격"]
-        NP_EXAMPLE["사용 예:<br/>• 독립 프로세스 간 통신<br/>• 클라이언트-서버 아키텍처"]
+        NP_CREATION["생성: mkfifo() 시스템 콜
+• 파일 시스템에 생성
+• 특수 파일 타입 (p)"]
+        NP_SCOPE["사용 범위:
+• 모든 프로세스
+• 파일 경로로 접근"]
+        NP_LIFETIME["생명주기:
+• 명시적 삭제 필요 (unlink)
+• 영구적 성격"]
+        NP_EXAMPLE["사용 예:
+• 독립 프로세스 간 통신
+• 클라이언트-서버 아키텍처"]
     end
     
     subgraph COMPARISON["선택 기준"]
-        RELATED_PROC["관련 프로세스인가?<br/>• 예 → 익명 파이프<br/>• 아니오 → FIFO"]
-        PERSISTENCE["지속성 필요한가?<br/>• 임시 → 익명 파이프<br/>• 영구 → FIFO"]
-        COMPLEXITY["복잡성 vs 유연성<br/>• 간단함 → 익명 파이프<br/>• 유연성 → FIFO"]
+        RELATED_PROC["관련 프로세스인가?
+• 예 → 익명 파이프
+• 아니오 → FIFO"]
+        PERSISTENCE["지속성 필요한가?
+• 임시 → 익명 파이프
+• 영구 → FIFO"]
+        COMPLEXITY["복잡성 vs 유연성
+• 간단함 → 익명 파이프
+• 유연성 → FIFO"]
     end
     
     subgraph REAL_WORLD["실제 사용 사례"]
-        SHELL["셸 파이프라인:<br/>ls | grep '.txt' | wc -l"]
-        VIDEO["비디오 스트리밍:<br/>downloader → FIFO → player"]
-        LOG["로그 시스템:<br/>logger → FIFO → monitor"]
-        BUILD["빌드 시스템:<br/>compiler | linker | packager"]
+        SHELL["셸 파이프라인:
+ls | grep '.txt' | wc -l"]
+        VIDEO["비디오 스트리밍:
+downloader → FIFO → player"]
+        LOG["로그 시스템:
+logger → FIFO → monitor"]
+        BUILD["빌드 시스템:
+compiler | linker | packager"]
     end
     
     AP_CREATION --> RELATED_PROC
@@ -551,9 +606,12 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant Downloader as "Video Downloader<br/>(독립 프로세스)"
-    participant FIFO as "FIFO<br/>/tmp/video_stream"
-    participant Player as "Video Player<br/>(독립 프로세스)"
+    participant Downloader as "Video Downloader
+(독립 프로세스)"
+    participant FIFO as "FIFO
+/tmp/video_stream"
+    participant Player as "Video Player
+(독립 프로세스)"
     participant FS as "File System"
     
     Note over Downloader,FS: 초기 설정 단계
@@ -595,9 +653,9 @@ sequenceDiagram
 
 **실무 인사이트**:
 
-- **실시간 처리**: 다운로드와 재생이 동시에 진행되어 사용자 경험 향상
-- **메모리 효율성**: 전체 파일을 메모리에 로드하지 않고 스트리밍
-- **프로세스 독립성**: 다운로더와 플레이어가 독립적으로 실행 가능
+-**실시간 처리**: 다운로드와 재생이 동시에 진행되어 사용자 경험 향상
+-**메모리 효율성**: 전체 파일을 메모리에 로드하지 않고 스트리밍
+-**프로세스 독립성**: 다운로더와 플레이어가 독립적으로 실행 가능
 
 **FIFO의 함정: Blocking**
 
@@ -671,7 +729,8 @@ sequenceDiagram
     Note over W,K: ⏳ Writer 블로킹 대기 시작
     
     rect rgb(255, 235, 238)
-        Note over W: Writer 프로세스 완전 정지<br/>Reader가 나타날 때까지 무한 대기
+        Note over W: Writer 프로세스 완전 정지
+Reader가 나타날 때까지 무한 대기
     end
     
     R->>K: open("/tmp/myfifo", O_RDONLY)
@@ -701,10 +760,10 @@ sequenceDiagram
 
 **실무 교훈**:
 
-1. **기본은 블로킹**: FIFO는 기본적으로 상대방이 올 때까지 대기
-2. **논블로킹 활용**: 응답성이 중요한 애플리케이션에서는 O_NONBLOCK 사용
-3. **타임아웃 고려**: select()나 poll()과 함께 사용하여 타임아웃 구현
-4. **에러 처리**: EAGAIN, EPIPE 등 FIFO 특유의 에러 상황 대비
+1.**기본은 블로킹**: FIFO는 기본적으로 상대방이 올 때까지 대기
+2.**논블로킹 활용**: 응답성이 중요한 애플리케이션에서는 O_NONBLOCK 사용
+3.**타임아웃 고려**: select()나 poll()과 함께 사용하여 타임아웃 구현
+4.**에러 처리**: EAGAIN, EPIPE 등 FIFO 특유의 에러 상황 대비
 
 ```c
 // FIFO 생성과 사용
@@ -910,9 +969,9 @@ FIFO를 열 때나 읽기/쓰기 시 블로킹이 발생할 수 있으므로 논
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

@@ -262,10 +262,10 @@ struct numa_server {
     int *cpus_per_node;
 
     // 노드별 메모리 풀
-    struct memory_pool **node_pools;
+    struct memory_pool**node_pools;
 
     // 노드별 워커 스레드
-    pthread_t **node_workers;
+    pthread_t**node_workers;
 };
 
 // NUMA 토폴로지 초기화
@@ -416,9 +416,9 @@ void *numa_worker_thread(void *arg) {
 
 | 기술 | 적용 영역 | 성능 향상 | 제한사항 | 실제 사용 예 |
 |------|----------|-----------|----------|-------------|
-| **sendfile** | 파일→소켓 | 5-10배 | 파일에서 소켓으로만 | nginx, Apache |
-| **splice** | 소켓↔파이프↔소켓 | 3-5배 | 파이프 버퍼 크기 제한 | HAProxy, Squid |
-| **MSG_ZEROCOPY** | 소켓 송신 | 20-50% | 10KB 이상에서만 효과적 | Google gRPC |
+|**sendfile**| 파일→소켓 | 5-10배 | 파일에서 소켓으로만 | nginx, Apache |
+|**splice**| 소켓↔파이프↔소켓 | 3-5배 | 파이프 버퍼 크기 제한 | HAProxy, Squid |
+|**MSG_ZEROCOPY**| 소켓 송신 | 20-50% | 10KB 이상에서만 효과적 | Google gRPC |
 
 ### 제로카피 선택 가이드
 
@@ -500,9 +500,9 @@ $ perf stat -e node-loads,node-load-misses ./server
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 인프라스트럭처
-- **예상 시간**: 12-20시간
+-**난이도**: ADVANCED
+-**주제**: 인프라스트럭처
+-**예상 시간**: 12-20시간
 
 ### 🎯 학습 경로
 

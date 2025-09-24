@@ -21,7 +21,7 @@ priority_score: 4
 
 1997년, NASA의 Mars Pathfinder가 화성에서 계속 재부팅되는 문제가 발생했습니다.
 
-원인? **우선순위 역전(Priority Inversion)**
+원인?**우선순위 역전(Priority Inversion)**
 
 - 낮은 우선순위: 기상 데이터 수집
 - 중간 우선순위: 통신
@@ -37,9 +37,12 @@ priority_score: 4
 
 ```mermaid
 sequenceDiagram
-    participant High as "🔴 High Priority<br/>버스 관리 (Priority 3)"
-    participant Med as "🟡 Medium Priority<br/>통신 (Priority 2)"
-    participant Low as "🟢 Low Priority<br/>기상 데이터 (Priority 1)"
+    participant High as "🔴 High Priority
+버스 관리 (Priority 3)"
+    participant Med as "🟡 Medium Priority
+통신 (Priority 2)"
+    participant Low as "🟢 Low Priority
+기상 데이터 (Priority 1)"
     participant Mutex as "🔒 Shared Mutex"
     participant WDT as "⏰ Watchdog Timer"
     
@@ -66,7 +69,8 @@ sequenceDiagram
     Note over Low: 기상 데이터 처리 중...
     
     High->>Mutex: mutex_lock() - 블록됨
-    Note over Low: 🔄 우선순위 상속 발생!<br/>Low가 Priority 3으로 승격
+    Note over Low: 🔄 우선순위 상속 발생!
+Low가 Priority 3으로 승격
     
     Med->>Low: 선점 시도 실패
     Note over Med,Low: 승격된 Low가 Med보다 우선순위 높음
@@ -82,10 +86,10 @@ sequenceDiagram
 
 **Mars Pathfinder 해결 과정**:
 
-1. **문제 발견**: 화성에서 주기적 리부팅 현상
-2. **원인 분석**: 우선순위 역전으로 인한 고우선순위 태스크 기아
-3. **해결책**: 지구에서 원격으로 VxWorks 우선순위 상속 활성화
-4. **결과**: 시스템 안정화, 미션 성공 계속
+1.**문제 발견**: 화성에서 주기적 리부팅 현상
+2.**원인 분석**: 우선순위 역전으로 인한 고우선순위 태스크 기아
+3.**해결책**: 지구에서 원격으로 VxWorks 우선순위 상속 활성화
+4.**결과**: 시스템 안정화, 미션 성공 계속
 
 **교훈**: 실시간 시스템에서는 우선순위 상속이나 우선순위 실링과 같은 메커니즘이 필수입니다!
 
@@ -98,41 +102,86 @@ sequenceDiagram
 ```mermaid
 graph TD
     subgraph RT_DECISION["실시간 스케줄러 선택 의사결정"]
-        START["실시간 요구사항 분석"] --> Q1{"절대적 우선순위<br/>보장 필요?"}
+        START["실시간 요구사항 분석"] --> Q1{"절대적 우선순위
+보장 필요?"}
         
-        Q1 -->|"예<br/>(생명/안전 중요)"| Q2{"여러 태스크가<br/>같은 우선순위?"}
-        Q1 -->|"아니오<br/>(일반 애플리케이션)"| Q3{"정확한 주기와<br/>데드라인 필요?"}
+        Q1 -->|"예
+(생명/안전 중요)"| Q2{"여러 태스크가
+같은 우선순위?"}
+        Q1 -->|"아니오
+(일반 애플리케이션)"| Q3{"정확한 주기와
+데드라인 필요?"}
         
-        Q2 -->|"아니오<br/>(단일 중요 태스크)"| SCHED_FIFO["🔴 SCHED_FIFO<br/>• 절대 우선순위<br/>• 무제한 실행<br/>• 시스템 크리티컬"]
-        Q2 -->|"예<br/>(공정한 분배)"| SCHED_RR["🟡 SCHED_RR<br/>• 타임슬라이스 기반<br/>• 공정한 RT 분배<br/>• 안전한 선택"]
+        Q2 -->|"아니오
+(단일 중요 태스크)"| SCHED_FIFO["🔴 SCHED_FIFO
+• 절대 우선순위
+• 무제한 실행
+• 시스템 크리티컬"]
+        Q2 -->|"예
+(공정한 분배)"| SCHED_RR["🟡 SCHED_RR
+• 타임슬라이스 기반
+• 공정한 RT 분배
+• 안전한 선택"]
         
-        Q3 -->|"예<br/>(엄격한 타이밍)"| SCHED_DL["🟢 SCHED_DEADLINE<br/>• EDF 알고리즘<br/>• 수학적 최적성<br/>• 주기적 태스크"]
-        Q3 -->|"아니오<br/>(유연한 실행)"| CFS_RT["🔵 CFS + Nice<br/>• 상대적 우선순위<br/>• 적응적 스케줄링<br/>• 일반적 용도"]
+        Q3 -->|"예
+(엄격한 타이밍)"| SCHED_DL["🟢 SCHED_DEADLINE
+• EDF 알고리즘
+• 수학적 최적성
+• 주기적 태스크"]
+        Q3 -->|"아니오
+(유연한 실행)"| CFS_RT["🔵 CFS + Nice
+• 상대적 우선순위
+• 적응적 스케줄링
+• 일반적 용도"]
     end
     
     subgraph USE_CASES["실제 사용 사례"]
         subgraph CRITICAL["미션 크리티컬"]
-            AUDIO["오디오 처리<br/>📱 스마트폰 통화<br/>🎵 실시간 믹싱"]
-            NETWORK["네트워크 스택<br/>📡 패킷 처리<br/>🌐 실시간 스트리밍"]
-            CONTROL["제어 시스템<br/>🤖 로봇 제어<br/>🚗 ABS 브레이크"]
+            AUDIO["오디오 처리
+📱 스마트폰 통화
+🎵 실시간 믹싱"]
+            NETWORK["네트워크 스택
+📡 패킷 처리
+🌐 실시간 스트리밍"]
+            CONTROL["제어 시스템
+🤖 로봇 제어
+🚗 ABS 브레이크"]
         end
         
         subgraph MULTIMEDIA["멀티미디어"]
-            GAME["게임 엔진<br/>🎮 프레임 렌더링<br/>🎯 입력 처리"]
-            VIDEO["비디오 처리<br/>📹 실시간 인코딩<br/>📺 방송 시스템"]
-            VR["VR/AR 시스템<br/>🥽 저지연 렌더링<br/>👁️ 헤드 트래킹"]
+            GAME["게임 엔진
+🎮 프레임 렌더링
+🎯 입력 처리"]
+            VIDEO["비디오 처리
+📹 실시간 인코딩
+📺 방송 시스템"]
+            VR["VR/AR 시스템
+🥽 저지연 렌더링
+👁️ 헤드 트래킹"]
         end
         
         subgraph AUTONOMOUS["자율 시스템"]
-            SENSOR["센서 융합<br/>📷 카메라 처리<br/>📡 라이다 분석"]
-            DECISION["의사결정<br/>🧠 AI 추론<br/>⚡ 긴급 제동"]
-            ACTUATOR["액추에이터<br/>🔧 모터 제어<br/>⚙️ 서보 구동"]
+            SENSOR["센서 융합
+📷 카메라 처리
+📡 라이다 분석"]
+            DECISION["의사결정
+🧠 AI 추론
+⚡ 긴급 제동"]
+            ACTUATOR["액추에이터
+🔧 모터 제어
+⚙️ 서보 구동"]
         end
         
         subgraph GENERAL["일반 애플리케이션"]
-            WEB["웹 서버<br/>🌐 HTTP 처리<br/>💾 데이터베이스"]
-            DESKTOP["데스크톱 앱<br/>🖥️ GUI 응답성<br/>📝 편집기"]
-            BATCH["배치 작업<br/>📊 데이터 분석<br/>🔄 백그라운드 처리"]
+            WEB["웹 서버
+🌐 HTTP 처리
+💾 데이터베이스"]
+            DESKTOP["데스크톱 앱
+🖥️ GUI 응답성
+📝 편집기"]
+            BATCH["배치 작업
+📊 데이터 분석
+🔄 백그라운드 처리"]
         end
     end
     
@@ -166,10 +215,10 @@ graph TD
 
 | 스케줄러 | 보장 수준 | 공정성 | 예측성 | 위험도 | 주요 용도 |
 |---------|-----------|--------|--------|--------|-----------|
-| **SCHED_FIFO** | 절대적 | 없음 | 최고 | 높음 | 오디오, 제어 |
-| **SCHED_RR** | 높음 | 있음 | 높음 | 중간 | 멀티미디어 |
-| **SCHED_DEADLINE** | 수학적 | EDF | 최고 | 낮음 | 자율주행, IoT |
-| **CFS + Nice** | 상대적 | 높음 | 중간 | 낮음 | 일반 애플리케이션 |
+|**SCHED_FIFO**| 절대적 | 없음 | 최고 | 높음 | 오디오, 제어 |
+|**SCHED_RR**| 높음 | 있음 | 높음 | 중간 | 멀티미디어 |
+|**SCHED_DEADLINE**| 수학적 | EDF | 최고 | 낮음 | 자율주행, IoT |
+|**CFS + Nice**| 상대적 | 높음 | 중간 | 낮음 | 일반 애플리케이션 |
 
 **언제 뭘 쓸까?**
 
@@ -234,9 +283,9 @@ graph LR
 
 **핵심 차이점**:
 
-1. **SCHED_FIFO**: 먼저 시작한 태스크가 자발적으로 양보하거나 블록될 때까지 계속 실행
-2. **SCHED_RR**: 정해진 타임슬라이스(기본 100ms)마다 강제로 다음 태스크로 전환
-3. **SCHED_DEADLINE**: EDF 알고리즘으로 데드라인이 가까운 태스크부터 우선 실행
+1.**SCHED_FIFO**: 먼저 시작한 태스크가 자발적으로 양보하거나 블록될 때까지 계속 실행
+2.**SCHED_RR**: 정해진 타임슬라이스(기본 100ms)마다 강제로 다음 태스크로 전환
+3.**SCHED_DEADLINE**: EDF 알고리즘으로 데드라인이 가까운 태스크부터 우선 실행
 
 ### 실시간 스케줄링 정책 완전 정리
 
@@ -336,7 +385,6 @@ int get_rr_interval(pid_t pid) {
     
     return ts.tv_nsec / 1000000;  // ms로 변환
 }
-```text
 
 ## 3.2 데드라인 스케줄링: 자율주행차의 필수품
 
@@ -344,34 +392,70 @@ int get_rr_interval(pid_t pid) {
 
 Tesla나 Waymo 같은 자율주행차는 `SCHED_DEADLINE`을 사용합니다.
 
-왜? **"100ms 안에 브레이크 결정을 못하면 사고"**
+왜?**"100ms 안에 브레이크 결정을 못하면 사고"**
 
 자율주행 시스템의 복잡한 실시간 스케줄링 요구사항을 시각화해보겠습니다:
 
 ```mermaid
 graph TD
     subgraph SENSORS["센서 데이터 수집"]
-        LIDAR["LiDAR 스캔<br/>Period: 10ms<br/>Deadline: 8ms<br/>Runtime: 3ms"]
-        CAMERA["카메라 처리<br/>Period: 33ms<br/>Deadline: 30ms<br/>Runtime: 15ms"]
-        RADAR["레이더 분석<br/>Period: 50ms<br/>Deadline: 40ms<br/>Runtime: 20ms"]
-        GPS["GPS/IMU<br/>Period: 100ms<br/>Deadline: 90ms<br/>Runtime: 5ms"]
+        LIDAR["LiDAR 스캔
+Period: 10ms
+Deadline: 8ms
+Runtime: 3ms"]
+        CAMERA["카메라 처리
+Period: 33ms
+Deadline: 30ms
+Runtime: 15ms"]
+        RADAR["레이더 분석
+Period: 50ms
+Deadline: 40ms
+Runtime: 20ms"]
+        GPS["GPS/IMU
+Period: 100ms
+Deadline: 90ms
+Runtime: 5ms"]
     end
     
     subgraph PROCESSING["데이터 처리"]
-        FUSION["센서 융합<br/>Period: 20ms<br/>Deadline: 18ms<br/>Runtime: 10ms"]
-        DETECTION["객체 인식<br/>Period: 50ms<br/>Deadline: 45ms<br/>Runtime: 25ms"]
-        PREDICTION["경로 예측<br/>Period: 100ms<br/>Deadline: 80ms<br/>Runtime: 40ms"]
+        FUSION["센서 융합
+Period: 20ms
+Deadline: 18ms
+Runtime: 10ms"]
+        DETECTION["객체 인식
+Period: 50ms
+Deadline: 45ms
+Runtime: 25ms"]
+        PREDICTION["경로 예측
+Period: 100ms
+Deadline: 80ms
+Runtime: 40ms"]
     end
     
     subgraph CONTROL["제어 결정"]
-        PLANNING["경로 계획<br/>Period: 100ms<br/>Deadline: 90ms<br/>Runtime: 50ms"]
-        DECISION["제동 결정<br/>Period: 20ms<br/>Deadline: 15ms<br/>Runtime: 8ms"]
-        ACTUATOR["액추에이터<br/>Period: 10ms<br/>Deadline: 8ms<br/>Runtime: 2ms"]
+        PLANNING["경로 계획
+Period: 100ms
+Deadline: 90ms
+Runtime: 50ms"]
+        DECISION["제동 결정
+Period: 20ms
+Deadline: 15ms
+Runtime: 8ms"]
+        ACTUATOR["액추에이터
+Period: 10ms
+Deadline: 8ms
+Runtime: 2ms"]
     end
     
     subgraph SAFETY["안전 시스템"]
-        EMERGENCY["긴급 제동<br/>Period: 5ms<br/>Deadline: 4ms<br/>Runtime: 1ms"]
-        WATCHDOG["워치독<br/>Period: 1ms<br/>Deadline: 1ms<br/>Runtime: 0.1ms"]
+        EMERGENCY["긴급 제동
+Period: 5ms
+Deadline: 4ms
+Runtime: 1ms"]
+        WATCHDOG["워치독
+Period: 1ms
+Deadline: 1ms
+Runtime: 0.1ms"]
     end
     
     LIDAR --> FUSION
@@ -424,10 +508,10 @@ gantt
 
 **데드라인 보장의 중요성**:
 
-- **긴급 제동**: 4ms 내 결정 - 생명과 직결
-- **액추에이터**: 8ms 내 실행 - 물리적 반응 시간
-- **센서 융합**: 18ms 내 완료 - 정확한 환경 인식
-- **경로 계획**: 90ms 내 완료 - 승차감과 안전성
+-**긴급 제동**: 4ms 내 결정 - 생명과 직결
+-**액추에이터**: 8ms 내 실행 - 물리적 반응 시간
+-**센서 융합**: 18ms 내 완료 - 정확한 환경 인식
+-**경로 계획**: 90ms 내 완료 - 승차감과 안전성
 
 ```c
 // 자율주행 시스템 예제
@@ -554,9 +638,18 @@ EDF 알고리즘이 어떻게 동작하여 최적의 스케줄링을 달성하�
 graph TD
     subgraph EDF_ALGO["EDF 알고리즘 동작 과정"]
         subgraph TASKS["예제 태스크들"]
-            TASK_A["Task A<br/>Deadline: 10ms<br/>Runtime: 3ms<br/>Priority: 계산됨"]
-            TASK_B["Task B<br/>Deadline: 15ms<br/>Runtime: 4ms<br/>Priority: 계산됨"]
-            TASK_C["Task C<br/>Deadline: 8ms<br/>Runtime: 2ms<br/>Priority: 계산됨"]
+            TASK_A["Task A
+Deadline: 10ms
+Runtime: 3ms
+Priority: 계산됨"]
+            TASK_B["Task B
+Deadline: 15ms
+Runtime: 4ms
+Priority: 계산됨"]
+            TASK_C["Task C
+Deadline: 8ms
+Runtime: 2ms
+Priority: 계산됨"]
         end
         
         subgraph EDF_STEPS["EDF 스케줄링 단계"]
@@ -568,17 +661,31 @@ graph TD
         end
         
         subgraph TIMELINE["실행 타임라인 (0-20ms)"]
-            T0_8["0-2ms: Task C<br/>(Deadline: 8ms)"]
-            T2_5["2-5ms: Task A<br/>(Deadline: 10ms)"]
-            T5_9["5-9ms: Task B<br/>(Deadline: 15ms)"]
-            T9_12["9-12ms: Task A<br/>(남은 작업)"]
-            T12_14["12-14ms: Task C<br/>(새로운 주기)"]
+            T0_8["0-2ms: Task C
+(Deadline: 8ms)"]
+            T2_5["2-5ms: Task A
+(Deadline: 10ms)"]
+            T5_9["5-9ms: Task B
+(Deadline: 15ms)"]
+            T9_12["9-12ms: Task A
+(남은 작업)"]
+            T12_14["12-14ms: Task C
+(새로운 주기)"]
         end
         
         subgraph OPTIMALITY["EDF 최적성 증명"]
-            THEOREM["📊 EDF 정리<br/>단일 프로세서에서<br/>선점형 스케줄링의<br/>최적 알고리즘"]
-            PROOF["🔍 증명 개요<br/>다른 알고리즘이<br/>스케줄 가능하면<br/>EDF도 가능"]
-            CONDITION["⚠️ 조건<br/>모든 태스크의<br/>utilization 합이<br/>100% 이하"]
+            THEOREM["📊 EDF 정리
+단일 프로세서에서
+선점형 스케줄링의
+최적 알고리즘"]
+            PROOF["🔍 증명 개요
+다른 알고리즘이
+스케줄 가능하면
+EDF도 가능"]
+            CONDITION["⚠️ 조건
+모든 태스크의
+utilization 합이
+100% 이하"]
         end
     end
     
@@ -627,7 +734,8 @@ graph LR
         F1 --> F2 --> F3
         F1_OK["✅ 완료"]
         F2_OK["✅ 완료"]
-        F3_FAIL["❌ 데드라인 미스<br/>(목표: 8ms, 실제: 70ms)"]
+        F3_FAIL["❌ 데드라인 미스
+(목표: 8ms, 실제: 70ms)"]
         F1 -.-> F1_OK
         F2 -.-> F2_OK  
         F3 -.-> F3_FAIL
@@ -643,8 +751,8 @@ graph LR
 
 **결과 분석**:
 
-- **EDF**: 모든 태스크가 데드라인 내 완료 ✅
-- **고정 우선순위**: Task C가 데드라인 미스 (8ms 목표, 70ms에 시작) ❌
+-**EDF**: 모든 태스크가 데드라인 내 완료 ✅
+-**고정 우선순위**: Task C가 데드라인 미스 (8ms 목표, 70ms에 시작) ❌
 
 ### EDF(Earliest Deadline First) 알고리즘
 
@@ -749,36 +857,75 @@ void print_task_status(deadline_task_t *tasks, int n) {
 graph TD
     subgraph MONITORING["실시간 성능 모니터링 시스템"]
         subgraph METRICS["핵심 메트릭"]
-            LATENCY["⏱️ 응답 지연<br/>• 평균: 2.3ms<br/>• 최대: 8.7ms<br/>• 99%ile: 5.1ms"]
-            DEADLINE["🎯 데드라인 준수<br/>• 성공률: 99.97%<br/>• 미스: 3/10000<br/>• 연속 미스: 0"]
-            JITTER["📊 지터 측정<br/>• 표준편차: 0.8ms<br/>• 변동계수: 0.35<br/>• 안정성: 양호"]
-            CPU["💻 CPU 사용률<br/>• RT 태스크: 23%<br/>• 일반: 45%<br/>• 여유: 32%"]
+            LATENCY["⏱️ 응답 지연
+• 평균: 2.3ms
+• 최대: 8.7ms
+• 99%ile: 5.1ms"]
+            DEADLINE["🎯 데드라인 준수
+• 성공률: 99.97%
+• 미스: 3/10000
+• 연속 미스: 0"]
+            JITTER["📊 지터 측정
+• 표준편차: 0.8ms
+• 변동계수: 0.35
+• 안정성: 양호"]
+            CPU["💻 CPU 사용률
+• RT 태스크: 23%
+• 일반: 45%
+• 여유: 32%"]
         end
         
         subgraph ALERTS["알림 시스템"]
-            WARN["⚠️ 경고 조건<br/>• 지연 > 5ms<br/>• 미스율 > 0.1%<br/>• 지터 > 1ms"]
-            CRIT["🚨 치명적 조건<br/>• 지연 > 10ms<br/>• 연속 미스 > 2<br/>• CPU > 90%"]
-            ACTION["🔧 자동 대응<br/>• 우선순위 조정<br/>• 부하 분산<br/>• 비상 모드"]
+            WARN["⚠️ 경고 조건
+• 지연 > 5ms
+• 미스율 > 0.1%
+• 지터 > 1ms"]
+            CRIT["🚨 치명적 조건
+• 지연 > 10ms
+• 연속 미스 > 2
+• CPU > 90%"]
+            ACTION["🔧 자동 대응
+• 우선순위 조정
+• 부하 분산
+• 비상 모드"]
         end
         
         subgraph TRENDS["트렌드 분석"]
-            DAILY["📈 일간 패턴<br/>• 피크: 14:00-16:00<br/>• 최저: 02:00-04:00<br/>• 변동폭: 3.2ms"]
-            WEEKLY["📅 주간 패턴<br/>• 워크데이 증가<br/>• 주말 안정<br/>• 월요일 스파이크"]
-            PREDICT["🔮 예측 모델<br/>• 부하 예측 정확도: 94%<br/>• 이상 탐지: 5분 전<br/>• 용량 계획: 3개월"]
+            DAILY["📈 일간 패턴
+• 피크: 14:00-16:00
+• 최저: 02:00-04:00
+• 변동폭: 3.2ms"]
+            WEEKLY["📅 주간 패턴
+• 워크데이 증가
+• 주말 안정
+• 월요일 스파이크"]
+            PREDICT["🔮 예측 모델
+• 부하 예측 정확도: 94%
+• 이상 탐지: 5분 전
+• 용량 계획: 3개월"]
         end
     end
     
     subgraph DASHBOARD["실시간 대시보드"]
         subgraph VISUAL["시각화"]
-            GAUGE["🌡️ 게이지 차트<br/>현재 지연시간<br/>목표 대비 %"]
-            TIMELINE["📊 타임라인<br/>실시간 메트릭<br/>5초 업데이트"]
-            HEATMAP["🗺️ 히트맵<br/>태스크별 성능<br/>시간대별 분석"]
+            GAUGE["🌡️ 게이지 차트
+현재 지연시간
+목표 대비 %"]
+            TIMELINE["📊 타임라인
+실시간 메트릭
+5초 업데이트"]
+            HEATMAP["🗺️ 히트맵
+태스크별 성능
+시간대별 분석"]
         end
         
         subgraph CONTROLS["제어 패널"]
-            PRIORITY["🎚️ 우선순위 조정<br/>실시간 튜닝"]
-            THROTTLE["🚦 부하 제어<br/>동적 제한"]
-            PROFILE["📋 프로파일 선택<br/>모드 전환"]
+            PRIORITY["🎚️ 우선순위 조정
+실시간 튜닝"]
+            THROTTLE["🚦 부하 제어
+동적 제한"]
+            PROFILE["📋 프로파일 선택
+모드 전환"]
         end
     end
     
@@ -803,10 +950,10 @@ graph TD
 
 **모니터링 전략**:
 
-1. **실시간 메트릭**: 지연, 데드라인 미스, 지터 추적
-2. **예측적 분석**: 패턴 학습으로 문제 사전 감지
-3. **자동 대응**: 임계치 초과 시 즉시 조치
-4. **히스토리 분석**: 장기 트렌드로 시스템 최적화
+1.**실시간 메트릭**: 지연, 데드라인 미스, 지터 추적
+2.**예측적 분석**: 패턴 학습으로 문제 사전 감지
+3.**자동 대응**: 임계치 초과 시 즉시 조치
+4.**히스토리 분석**: 장기 트렌드로 시스템 최적화
 
 ## 실시간 시스템 설계 가이드
 
@@ -972,35 +1119,83 @@ timeline
 graph TD
     subgraph FAILURE_PATTERNS["실시간 시스템 실패 패턴"]
         subgraph TIMING["타이밍 관련"]
-            DEADLINE["데드라인 미스<br/>• 부족한 처리 시간<br/>• 과도한 부하<br/>• 잘못된 추정"]
-            JITTER["지터/변동성<br/>• 예측 불가능한 지연<br/>• 비결정적 동작<br/>• 캐시 미스"]
-            DRIFT["시간 드리프트<br/>• 클록 동기화 실패<br/>• 누적 오차<br/>• 부동소수점 오차"]
+            DEADLINE["데드라인 미스
+• 부족한 처리 시간
+• 과도한 부하
+• 잘못된 추정"]
+            JITTER["지터/변동성
+• 예측 불가능한 지연
+• 비결정적 동작
+• 캐시 미스"]
+            DRIFT["시간 드리프트
+• 클록 동기화 실패
+• 누적 오차
+• 부동소수점 오차"]
         end
         
         subgraph PRIORITY["우선순위 관련"]
-            INVERSION["우선순위 역전<br/>• 뮤텍스 대기<br/>• 중간 우선순위 간섭<br/>• 상속 메커니즘 부재"]
-            STARVATION["기아 상태<br/>• 낮은 우선순위 무시<br/>• 불공정한 스케줄링<br/>• 리소스 독점"]
-            ESCALATION["우선순위 상승<br/>• 동적 우선순위 변경<br/>• 예상치 못한 선점<br/>• 시스템 불안정"]
+            INVERSION["우선순위 역전
+• 뮤텍스 대기
+• 중간 우선순위 간섭
+• 상속 메커니즘 부재"]
+            STARVATION["기아 상태
+• 낮은 우선순위 무시
+• 불공정한 스케줄링
+• 리소스 독점"]
+            ESCALATION["우선순위 상승
+• 동적 우선순위 변경
+• 예상치 못한 선점
+• 시스템 불안정"]
         end
         
         subgraph RESOURCE["리소스 관련"]
-            CONTENTION["리소스 경합<br/>• 동시 접근 충돌<br/>• 데드락 발생<br/>• 성능 저하"]
-            EXHAUSTION["리소스 고갈<br/>• 메모리 부족<br/>• CPU 과부하<br/>• 네트워크 포화"]
-            FRAGMENTATION["단편화<br/>• 메모리 단편화<br/>• 예측 불가능한 할당<br/>• 성능 변동"]
+            CONTENTION["리소스 경합
+• 동시 접근 충돌
+• 데드락 발생
+• 성능 저하"]
+            EXHAUSTION["리소스 고갈
+• 메모리 부족
+• CPU 과부하
+• 네트워크 포화"]
+            FRAGMENTATION["단편화
+• 메모리 단편화
+• 예측 불가능한 할당
+• 성능 변동"]
         end
         
         subgraph SYSTEM["시스템 관련"]
-            CASCADE["연쇄 실패<br/>• 하나의 실패가 전파<br/>• 복구 불가능<br/>• 시스템 전체 다운"]
-            INTEGRATION["통합 실패<br/>• 컴포넌트 간 불일치<br/>• 인터페이스 오류<br/>• 타이밍 불일치"]
-            HUMAN["인적 요인<br/>• 설정 오류<br/>• 모니터링 부재<br/>• 대응 지연"]
+            CASCADE["연쇄 실패
+• 하나의 실패가 전파
+• 복구 불가능
+• 시스템 전체 다운"]
+            INTEGRATION["통합 실패
+• 컴포넌트 간 불일치
+• 인터페이스 오류
+• 타이밍 불일치"]
+            HUMAN["인적 요인
+• 설정 오류
+• 모니터링 부재
+• 대응 지연"]
         end
     end
     
     subgraph PREVENTION["예방 전략"]
-        DESIGN["🏗️ 설계 단계<br/>• 여유도 확보 (30%+)<br/>• 단순성 우선<br/>• 실패 모드 분석"]
-        TESTING["🧪 테스트 단계<br/>• 최악 시나리오 테스트<br/>• 부하 테스트<br/>• 장기 안정성 테스트"]
-        MONITORING["📊 운영 단계<br/>• 실시간 모니터링<br/>• 예측적 경고<br/>• 자동 복구"]
-        TRAINING["👥 인적 요소<br/>• 팀 교육<br/>• 문서화<br/>• 비상 대응 훈련"]
+        DESIGN["🏗️ 설계 단계
+• 여유도 확보 (30%+)
+• 단순성 우선
+• 실패 모드 분석"]
+        TESTING["🧪 테스트 단계
+• 최악 시나리오 테스트
+• 부하 테스트
+• 장기 안정성 테스트"]
+        MONITORING["📊 운영 단계
+• 실시간 모니터링
+• 예측적 경고
+• 자동 복구"]
+        TRAINING["👥 인적 요소
+• 팀 교육
+• 문서화
+• 비상 대응 훈련"]
     end
     
     DEADLINE --> CASCADE
@@ -1024,16 +1219,16 @@ graph TD
 
 **핵심 교훈**:
 
-1. **여유도 확보**: 처리 시간의 30% 이상 여유 필수
-2. **단순성**: 복잡한 시스템일수록 실패 확률 증가
-3. **모니터링**: 실시간 감시와 예측적 대응
-4. **검증**: 최악의 시나리오까지 철저한 테스트
+1.**여유도 확보**: 처리 시간의 30% 이상 여유 필수
+2.**단순성**: 복잡한 시스템일수록 실패 확률 증가
+3.**모니터링**: 실시간 감시와 예측적 대응
+4.**검증**: 최악의 시나리오까지 철저한 테스트
 
 ## 핵심 요점
 
 ### 1. 실시간 != 빠른 실행
 
-실시간은 **예측 가능한 응답 시간**을 의미한다. 평균은 느려도 최악의 경우가 보장되어야 한다.
+실시간은**예측 가능한 응답 시간**을 의미한다. 평균은 느려도 최악의 경우가 보장되어야 한다.
 
 ### 2. SCHED_FIFO는 강력하지만 위험하다
 
@@ -1060,9 +1255,9 @@ EDF 알고리즘으로 수학적으로 최적의 스케줄링을 제공하지만
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

@@ -431,7 +431,7 @@ Facebook은 자체 개발한 oomd로 OOM 문제를 해결했습니다:
 
 ### 메모리 문제 발생 시
 
-1. **현재 상태 확인**
+1.**현재 상태 확인**
 
 ```bash
 # cgroup 메모리 상태
@@ -443,7 +443,7 @@ free -h
 vmstat 1
 ```
 
-1. **압력 확인**
+1.**압력 확인**
 
 ```bash
 # PSI 확인
@@ -451,7 +451,7 @@ cat /proc/pressure/memory
 cat /sys/fs/cgroup/*/memory.pressure
 ```
 
-1. **OOM 위험도 확인**
+1.**OOM 위험도 확인**
 
 ```bash
 # OOM Score 높은 프로세스 찾기
@@ -462,7 +462,7 @@ for pid in $(ls /proc | grep '^[0-9]'); do
 done | sort -nrk2 | head -10
 ```
 
-1. **임시 조치**
+1.**임시 조치**
 
 ```bash
 # 중요 프로세스 보호
@@ -476,11 +476,11 @@ echo 500 > /proc/[unimportant-pid]/oom_score_adj
 
 OOM과 메모리 제한을 제대로 이해하면 안정적인 시스템 운영이 가능합니다:
 
-1. **memory.high는 스로틀링**, memory.max는 즉시 OOM
-2. **메모리 회수는 우선순위**가 있음 (clean → dirty → anonymous)
-3. **OOM Score는 QoS와 연동**되어 자동 계산
-4. **PSI로 사전에 압력 감지** 가능
-5. **계층적 보호로 중요 워크로드 보호**
+1.**memory.high는 스로틀링**, memory.max는 즉시 OOM
+2.**메모리 회수는 우선순위**가 있음 (clean → dirty → anonymous)
+3.**OOM Score는 QoS와 연동**되어 자동 계산
+4.**PSI로 사전에 압력 감지**가능
+5.**계층적 보호로 중요 워크로드 보호**
 
 다음 글에서는 이러한 메모리 압력을 측정하는 PSI에 대해 자세히 알아보겠습니다.
 

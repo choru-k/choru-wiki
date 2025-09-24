@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 936](https://leetcode.com/problems/stamping-the-sequence/) • **Hard**
+[LeetCode 936](https://leetcode.com/problems/stamping-the-sequence/) •**Hard**
 
 ## 핵심 아이디어
 

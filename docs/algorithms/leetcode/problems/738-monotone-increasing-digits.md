@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 738](https://leetcode.com/problems/monotone-increasing-digits/) • **Medium**
+[LeetCode 738](https://leetcode.com/problems/monotone-increasing-digits/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -28,8 +28,8 @@ def solve(self, num):
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

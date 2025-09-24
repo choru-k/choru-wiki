@@ -21,10 +21,10 @@ priority_score: 0
 
 블록 I/O 계층은 마치 물류 센터와 같습니다:
 
-1. **주문 접수** (Application): "1GB 파일 쓰기 요청"
-2. **포장** (BIO Layer): 작은 조각으로 나누기
-3. **분류** (I/O Scheduler): 효율적으로 정렬
-4. **배송** (Device Driver): 실제 디스크로 전달
+1.**주문 접수**(Application): "1GB 파일 쓰기 요청"
+2.**포장**(BIO Layer): 작은 조각으로 나누기
+3.**분류**(I/O Scheduler): 효율적으로 정렬
+4.**배송**(Device Driver): 실제 디스크로 전달
 
 ### 블록 계층 구조
 
@@ -346,7 +346,7 @@ struct request_queue {
     struct blk_mq_ctx __percpu *queue_ctx;
     unsigned int nr_queues;
     
-    struct blk_mq_hw_ctx **queue_hw_ctx;
+    struct blk_mq_hw_ctx**queue_hw_ctx;
     unsigned int nr_hw_queues;
     
     // 큐 제한
@@ -445,9 +445,9 @@ struct queue_limits {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

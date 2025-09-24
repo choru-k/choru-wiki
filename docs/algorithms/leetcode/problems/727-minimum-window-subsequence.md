@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 727](https://leetcode.com/problems/minimum-window-subsequence/) • **Medium**
+[LeetCode 727](https://leetcode.com/problems/minimum-window-subsequence/) •**Medium**
 
 일반적인 문자열 비교 dp 문제 중 1개이다.
 

@@ -561,17 +561,17 @@ void auto_optimize_workload(const char *filename, workload_type_t type) {
 
 ### madvise 패턴별 효과
 
-- **MADV_SEQUENTIAL**: 순차 접근에서 20-40% 성능 향상
-- **MADV_RANDOM**: 랜덤 접근에서 메모리 효율성 15-25% 개선  
-- **MADV_WILLNEED**: 지연시간 50-80% 단축 (prefetch 효과)
-- **MADV_DONTNEED**: 메모리 압박 상황에서 즉각적인 메모리 확보
+-**MADV_SEQUENTIAL**: 순차 접근에서 20-40% 성능 향상
+-**MADV_RANDOM**: 랜덤 접근에서 메모리 효율성 15-25% 개선  
+-**MADV_WILLNEED**: 지연시간 50-80% 단축 (prefetch 효과)
+-**MADV_DONTNEED**: 메모리 압박 상황에서 즉각적인 메모리 확보
 
 ### 실무 적용 가이드라인
 
-- **접근 패턴 분석 후 적절한 힌트 선택**
-- **동적 패턴 변화에 대응하는 적응형 전략**
-- **메모리 압박 상황에서의 적극적인 DONTNEED 활용**
-- **워크로드별 맞춤형 최적화 패턴 적용**
+-**접근 패턴 분석 후 적절한 힌트 선택**
+-**동적 패턴 변화에 대응하는 적응형 전략**
+-**메모리 압박 상황에서의 적극적인 DONTNEED 활용**
+-**워크로드별 맞춤형 최적화 패턴 적용**
 
 ---
 
@@ -582,9 +582,9 @@ void auto_optimize_workload(const char *filename, workload_type_t type) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 5-7시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 5-7시간
 
 ### 🎯 학습 경로
 

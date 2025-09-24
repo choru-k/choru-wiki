@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 902](https://leetcode.com/problems/numbers-at-most-n-given-digit-set/) • **Hard**
+[LeetCode 902](https://leetcode.com/problems/numbers-at-most-n-given-digit-set/) •**Hard**
 
 ## 핵심 아이디어
 
@@ -17,7 +17,7 @@ tags:
 
 만약 n 이 10자리 숫자라면, 9자리 숫자까지는 고민할 필요 없이 쉽게 구할 수 있다.
 
-`sum(len(digits) ** i for i in range(1, len(n)))`
+`sum(len(digits)**i for i in range(1, len(n)))`
 
 문제는 10자리 숫자 들은 대소비교가 들어가야 한다.
 
@@ -35,10 +35,10 @@ class Solution:
             for d in digits:
                 d = int(d)
                 if d < int(n[~i]):
-                    dp[i+1] += len(digits) ** i
+                    dp[i+1] += len(digits)**i
                 elif d == int(n[~i]):
                     dp[i+1] += dp[i]
-        return dp[-1] + sum(len(digits) ** i for i in range(1, len(n)))
+        return dp[-1] + sum(len(digits)**i for i in range(1, len(n)))
 ```
 
 ```python
@@ -47,7 +47,7 @@ class Solution:
         n:list[int] = list(map(int, str(n)))
         digits:list[int] = list(map(int, digits))
 
-        ret = sum(len(digits) ** i for i in range(1, len(n)))
+        ret = sum(len(digits)**i for i in range(1, len(n)))
 
         for i,c in enumerate(n):
             for d in digits:
@@ -62,8 +62,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

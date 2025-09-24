@@ -1,10 +1,10 @@
 ---
 tags:
-  - FileDescriptor
-  - FileSystem
-  - IO
+  - DistributedSystems
+  - Consensus
+  - CAP
   - SystemProgramming
-  - VFS
+  - Architecture
   - deep-study
   - hands-on
   - intermediate
@@ -230,16 +230,18 @@ graph TD
     style PT fill:#c8e6c9
 ```
 
-## 이 장의 구성
+## 📚 이 챕터의 구성
 
-### [14.1 분산 시스템 기초 이론](14-14-01-distributed-fundamentals.md)
+### 14.1 분산 시스템 기초 이론
+
+- [14-01-01: 분산 시스템 기초 개념](./14-01-01-distributed-fundamentals.md)
 
 **"분산 시스템의 본질을 이해하기"**
 
-- 🎯 **CAP 정리**: Consistency, Availability, Partition tolerance의 트레이드오프
-- ⏰ **시간과 순서**: Logical Clock, Vector Clock, Hybrid Logical Clock
-- 🔄 **일관성 모델**: Strong, Weak, Eventual Consistency의 차이점
-- 📊 **PACELC 정리**: CAP를 확장한 현실적 분석 프레임워크
+- 🎯**CAP 정리**: Consistency, Availability, Partition tolerance의 트레이드오프
+- ⏰**시간과 순서**: Logical Clock, Vector Clock, Hybrid Logical Clock
+- 🔄**일관성 모델**: Strong, Weak, Eventual Consistency의 차이점
+- 📊**PACELC 정리**: CAP를 확장한 현실적 분석 프레임워크
 
 ```text
 CAP 정리의 실제 적용:
@@ -252,14 +254,16 @@ CAP 정리의 실제 적용:
 └─────────────────┴─────────────────┴─────────────────┘
 ```
 
-### [14.2 합의 알고리즘 (Consensus)](14-10-consensus-algorithms.md)
+### 14.2 합의 알고리즘 및 데이터 관리
+
+- [14-02-01: 합의 알고리즘 (Consensus)](./14-02-01-consensus-algorithms.md)
 
 **"분산된 노드들이 어떻게 합의에 도달하는가?"**
 
-- 🗳️ **Raft Algorithm**: 이해하기 쉬운 합의 알고리즘
-- 👑 **Leader Election**: 리더 선출 과정과 장애 처리
-- 📝 **Log Replication**: 명령어 순서 보장과 상태 동기화
-- 🏛️ **Byzantine Fault Tolerance**: 악의적 노드까지 고려한 합의
+- 🗳️**Raft Algorithm**: 이해하기 쉬운 합의 알고리즘
+- 👑**Leader Election**: 리더 선출 과정과 장애 처리
+- 📝**Log Replication**: 명령어 순서 보장과 상태 동기화
+- 🏛️**Byzantine Fault Tolerance**: 악의적 노드까지 고려한 합의
 
 **실제 Raft 구현 시뮬레이션**:
 
@@ -295,14 +299,18 @@ func (n *RaftNode) StartElection() {
 }
 ```
 
-### [14.3 분산 데이터 관리](14-11-distributed-data.md)
+- [14-02-02: 분산 데이터 관리](./14-02-02-distributed-data.md)
+- [14-02-03: 샤딩 전략](./14-02-03-sharding-strategies.md)
+- [14-02-04: 벡터 클락](./14-02-04-vector-clocks.md)
+
+### 14.3 분산 시스템 패턴
 
 **"데이터를 어떻게 분산 저장하고 관리하나?"**
 
-- 🔄 **Sharding 전략**: Range, Hash, Directory-based 샤딩
-- 📋 **Replication 패턴**: Master-Slave, Master-Master, Multi-Master
-- 🔧 **Consistent Hashing**: 동적 확장이 가능한 분산 해싱
-- 🔄 **Vector Clocks**: 분산 환경에서의 인과관계 추적
+- 🔄**Sharding 전략**: Range, Hash, Directory-based 샤딩
+- 📋**Replication 패턴**: Master-Slave, Master-Master, Multi-Master
+- 🔧**Consistent Hashing**: 동적 확장이 가능한 분산 해싱
+- 🔄**Vector Clocks**: 분산 환경에서의 인과관계 추적
 
 **Consistent Hashing 실제 구현**:
 
@@ -360,14 +368,19 @@ print(ch.get_node('user456'))  # server1
 ch.add_node('server4')
 ```
 
-### [14.4 분산 시스템 패턴](14-52-distributed-patterns.md)
+- [14-03-01: Circuit Breaker 패턴](./14-03-01-circuit-breaker.md)
+- [14-03-02: Bulkhead 패턴](./14-03-02-bulkhead-pattern.md)
+- [14-03-03: Saga 패턴](./14-03-03-saga-pattern.md)
+- [14-03-04: CQRS 패턴](./14-03-04-cqrs-pattern.md)
+
+### 14.4 이벤트 기반 아키텍처
 
 **"실전에서 사용하는 분산 아키텍처 패턴들"**
 
-- ⚡ **Circuit Breaker**: 연쇄 장애 방지 패턴
-- 🔄 **Saga Pattern**: 분산 트랜잭션을 위한 보상 패턴
-- 🏗️ **CQRS**: Command와 Query 분리 아키텍처
-- 📨 **Event Sourcing**: 이벤트 기반 상태 관리
+- ⚡**Circuit Breaker**: 연쇄 장애 방지 패턴
+- 🔄**Saga Pattern**: 분산 트랜잭션을 위한 보상 패턴
+- 🏗️**CQRS**: Command와 Query 분리 아키텍처
+- 📨**Event Sourcing**: 이벤트 기반 상태 관리
 
 **Circuit Breaker 실제 구현**:
 
@@ -428,14 +441,24 @@ try {
 }
 ```
 
-### [14.5 Event-Driven Architecture](14-16-03-event-driven-architecture.md)
+- [14-04-01: 이벤트 기반 아키텍처](./14-04-01-event-driven-architecture.md)
+- [14-04-02: 이벤트 기반 기초](./14-04-02-event-driven-fundamentals.md)
+- [14-04-03: 실용적 구현 가이드](./14-04-03-practical-implementation-guide.md)
+- [14-04-04: 메시지 큐 구현](./14-04-04-message-queue-implementation.md)
+- [14-04-05: 이벤트 스트리밍과 소싱](./14-04-05-event-streaming-sourcing.md)
+
+### 14.5 고급 분산 시스템
+
+- [14-05-01: 복제 패턴](./14-05-01-replication-patterns.md)
+- [14-05-02: 분산 데이터 프로덕션](./14-05-02-distributed-data-production.md)
+- [14-05-03: 분산 시스템 패턴 통합](./14-05-03-distributed-patterns.md)
 
 **"이벤트로 연결되는 느슨한 결합 시스템"**
 
-- 📮 **Message Queue vs Event Stream**: RabbitMQ vs Kafka 선택 가이드
-- 🔄 **Event Sourcing**: 모든 변경을 이벤트로 저장하는 패턴
-- 📊 **CQRS with Event Store**: 읽기/쓰기 분리와 이벤트 저장소
-- 🌊 **Event Streaming**: 실시간 이벤트 처리 아키텍처
+- 📮**Message Queue vs Event Stream**: RabbitMQ vs Kafka 선택 가이드
+- 🔄**Event Sourcing**: 모든 변경을 이벤트로 저장하는 패턴
+- 📊**CQRS with Event Store**: 읽기/쓰기 분리와 이벤트 저장소
+- 🌊**Event Streaming**: 실시간 이벤트 처리 아키텍처
 
 ## 🚀 실습 프로젝트: 분산 시스템 구축
 
@@ -679,14 +702,14 @@ PUT /api/orders/550e8400-e29b-41d4-a716-446655440000
 
 ## 🎯 이 장을 마스터하면
 
-✅ **CAP 정리 이해**: 분산 시스템의 근본적 제약을 이해하고 적절한 트레이드오프를 선택할 수 있습니다
-✅ **합의 알고리즘 활용**: Raft, PBFT 등을 이해하고 실제 시스템에 적용할 수 있습니다
-✅ **분산 데이터 관리**: 샤딩, 복제, 일관성 모델을 적절히 설계할 수 있습니다
-✅ **장애 허용 설계**: Circuit Breaker, Bulkhead 등 패턴으로 안정적 시스템을 구축할 수 있습니다
+✅**CAP 정리 이해**: 분산 시스템의 근본적 제약을 이해하고 적절한 트레이드오프를 선택할 수 있습니다
+✅**합의 알고리즘 활용**: Raft, PBFT 등을 이해하고 실제 시스템에 적용할 수 있습니다
+✅**분산 데이터 관리**: 샤딩, 복제, 일관성 모델을 적절히 설계할 수 있습니다
+✅**장애 허용 설계**: Circuit Breaker, Bulkhead 등 패턴으로 안정적 시스템을 구축할 수 있습니다
 
 ## 다음 단계
 
-준비되셨나요? [14.1 분산 시스템 기초 이론](14-14-01-distributed-fundamentals.md)에서 CAP 정리부터 시작해 분산 시스템의 이론적 기반을 탄탄히 다져보겠습니다.
+준비되셨나요? [14.1 분산 시스템 기초 이론](./14-01-01-distributed-fundamentals.md)에서 CAP 정리부터 시작해 분산 시스템의 이론적 기반을 탄탄히 다져보겠습니다.
 
 "분산 시스템은 어렵지만 피할 수 없는 현실입니다." 복잡성을 받아들이고 우아하게 다루는 방법을 함께 배워봅시다! 🌐⚡
 
@@ -694,9 +717,9 @@ PUT /api/orders/550e8400-e29b-41d4-a716-446655440000
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 12-20시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 12-20시간
 
 ### 🎯 학습 경로
 
@@ -706,27 +729,41 @@ PUT /api/orders/550e8400-e29b-41d4-a716-446655440000
 
 ### 📂 같은 챕터 (chapter-14-distributed-systems)
 
-- [Chapter 14-01: Distributed Fundamentals](./14-14-01-distributed-fundamentals.md)
-- [Chapter 14-02: Event Driven Architecture](./14-16-03-event-driven-architecture.md)
-- [Chapter 14-03: Event Driven Fundamentals](./14-03-event-driven-fundamentals.md)
-- [Chapter 14-04: Practical Implementation Guide](./14-04-practical-implementation-guide.md)
-- [Chapter 14-10: Consensus Algorithms](./14-10-consensus-algorithms.md)
-- [Chapter 14-11: Distributed Data](./14-11-distributed-data.md)
-- [Chapter 14-12: Sharding Strategies](./14-12-sharding-strategies.md)
-- [Chapter 14-13: Vector Clocks](./14-13-vector-clocks.md)
-- [Chapter 14-14: Circuit Breaker](./14-14-circuit-breaker.md)
-- [Chapter 14-15: Bulkhead Pattern](./14-15-bulkhead-pattern.md)
-- [Chapter 14-16: Saga Pattern](./14-16-saga-pattern.md)
-- [Chapter 14-17: Cqrs Pattern](./14-17-cqrs-pattern.md)
-- [Chapter 14-18: Message Queue Implementation](./14-18-message-queue-implementation.md)
-- [Chapter 14-19: Event Streaming Sourcing](./14-19-event-streaming-sourcing.md)
-- [Chapter 14-50: Replication Patterns](./14-50-replication-patterns.md)
-- [Chapter 14-51: Distributed Data Production](./14-51-distributed-data-production.md)
-- [Chapter 14-52: Distributed Patterns](./14-52-distributed-patterns.md)
+**14.1 기초 이론:**
+
+- [14-01-01: 분산 시스템 기초 개념](./14-01-01-distributed-fundamentals.md)
+
+**14.2 합의 알고리즘 및 데이터 관리:**
+
+- [14-02-01: 합의 알고리즘](./14-02-01-consensus-algorithms.md)
+- [14-02-02: 분산 데이터 관리](./14-02-02-distributed-data.md)
+- [14-02-03: 샤딩 전략](./14-02-03-sharding-strategies.md)
+- [14-02-04: 벡터 클락](./14-02-04-vector-clocks.md)
+
+**14.3 분산 시스템 패턴:**
+
+- [14-03-01: Circuit Breaker 패턴](./14-03-01-circuit-breaker.md)
+- [14-03-02: Bulkhead 패턴](./14-03-02-bulkhead-pattern.md)
+- [14-03-03: Saga 패턴](./14-03-03-saga-pattern.md)
+- [14-03-04: CQRS 패턴](./14-03-04-cqrs-pattern.md)
+
+**14.4 이벤트 기반 아키텍처:**
+
+- [14-04-01: 이벤트 기반 아키텍처](./14-04-01-event-driven-architecture.md)
+- [14-04-02: 이벤트 기반 기초](./14-04-02-event-driven-fundamentals.md)
+- [14-04-03: 실용적 구현 가이드](./14-04-03-practical-implementation-guide.md)
+- [14-04-04: 메시지 큐 구현](./14-04-04-message-queue-implementation.md)
+- [14-04-05: 이벤트 스트리밍과 소싱](./14-04-05-event-streaming-sourcing.md)
+
+**14.5 고급 분산 시스템:**
+
+- [14-05-01: 복제 패턴](./14-05-01-replication-patterns.md)
+- [14-05-02: 분산 데이터 프로덕션](./14-05-02-distributed-data-production.md)
+- [14-05-03: 분산 시스템 패턴 통합](./14-05-03-distributed-patterns.md)
 
 ### 🏷️ 관련 키워드
 
-`FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+`DistributedSystems`, `Consensus`, `CAP`, `Microservices`, `EventDriven`
 
 ### ⏭️ 다음 단계 가이드
 

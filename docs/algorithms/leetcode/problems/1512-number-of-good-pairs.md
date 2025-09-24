@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1512](https://leetcode.com/problems/number-of-good-pairs/) • **Medium**
+[LeetCode 1512](https://leetcode.com/problems/number-of-good-pairs/) •**Medium**
 
 ## 핵심 아이디어
 

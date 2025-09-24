@@ -30,7 +30,7 @@ clone(...)  # fork()의 실제 시스템 콜
 execve("/bin/ls", ["ls"], ...)  # 변신!
 ```
 
-**쉘은 자기 자신을 ls로 바꾸지 않습니다!** fork()로 자식을 만들고, 그 자식이 exec()로 ls가 되는 거죠. 그래서 ls가 끝나도 쉘은 살아있는 겁니다.
+**쉘은 자기 자신을 ls로 바꾸지 않습니다!**fork()로 자식을 만들고, 그 자식이 exec()로 ls가 되는 거죠. 그래서 ls가 끝나도 쉘은 살아있는 겁니다.
 
 ### 프로그램 교체 메커니즘: 나비로 변하는 애벌레
 
@@ -143,10 +143,14 @@ exec() 시스템 콜이 어떻게 프로세스의 메모리를 완전히 교체�
 ```mermaid
 graph TD
     subgraph BEFORE["exec() 호출 전"]
-        OLD_CODE["코드 섹션<br/>(기존 프로그램)"]
-        OLD_DATA["데이터 섹션<br/>(전역 변수)"]
-        OLD_HEAP["힙 영역<br/>(동적 할당)"]
-        OLD_STACK["스택 영역<br/>(지역 변수, 함수 호출)"]
+        OLD_CODE["코드 섹션
+(기존 프로그램)"]
+        OLD_DATA["데이터 섹션
+(전역 변수)"]
+        OLD_HEAP["힙 영역
+(동적 할당)"]
+        OLD_STACK["스택 영역
+(지역 변수, 함수 호출)"]
         
         OLD_CODE --> OLD_DATA
         OLD_DATA --> OLD_HEAP
@@ -154,13 +158,20 @@ graph TD
     end
     
     subgraph EXEC_PROCESS["exec() 처리 과정"]
-        STEP1["1. 실행 파일 열기<br/>open_exec()"]
-        STEP2["2. ELF 헤더 파싱<br/>바이너리 형식 확인"]
-        STEP3["3. 기존 메모리 해제<br/>flush_old_exec()"]
-        STEP4["4. 새 메모리 매핑<br/>setup_new_exec()"]
-        STEP5["5. 프로그램 로딩<br/>코드/데이터 섹션"]
-        STEP6["6. 스택 초기화<br/>argc, argv, envp 설정"]
-        STEP7["7. 엔트리 포인트 점프<br/>start_thread()"]
+        STEP1["1. 실행 파일 열기
+open_exec()"]
+        STEP2["2. ELF 헤더 파싱
+바이너리 형식 확인"]
+        STEP3["3. 기존 메모리 해제
+flush_old_exec()"]
+        STEP4["4. 새 메모리 매핑
+setup_new_exec()"]
+        STEP5["5. 프로그램 로딩
+코드/데이터 섹션"]
+        STEP6["6. 스택 초기화
+argc, argv, envp 설정"]
+        STEP7["7. 엔트리 포인트 점프
+start_thread()"]
         
         STEP1 --> STEP2
         STEP2 --> STEP3
@@ -171,10 +182,14 @@ graph TD
     end
     
     subgraph AFTER["exec() 완료 후"]
-        NEW_CODE["새 코드 섹션<br/>(새 프로그램)"]
-        NEW_DATA["새 데이터 섹션<br/>(초기화된 변수)"]
-        NEW_HEAP["새 힙 영역<br/>(비어있음)"]
-        NEW_STACK["새 스택 영역<br/>(main 함수 준비)"]
+        NEW_CODE["새 코드 섹션
+(새 프로그램)"]
+        NEW_DATA["새 데이터 섹션
+(초기화된 변수)"]
+        NEW_HEAP["새 힙 영역
+(비어있음)"]
+        NEW_STACK["새 스택 영역
+(main 함수 준비)"]
         
         NEW_CODE --> NEW_DATA
         NEW_DATA --> NEW_HEAP
@@ -182,10 +197,14 @@ graph TD
     end
     
     subgraph PRESERVED["유지되는 정보"]
-        PID["프로세스 ID<br/>(변경 없음)"]
-        PARENT["부모-자식 관계<br/>(변경 없음)"]
-        FILES["파일 디스크립터<br/>(close-on-exec 제외)"]
-        SIGNALS["일부 시그널 설정<br/>(default로 초기화)"]
+        PID["프로세스 ID
+(변경 없음)"]
+        PARENT["부모-자식 관계
+(변경 없음)"]
+        FILES["파일 디스크립터
+(close-on-exec 제외)"]
+        SIGNALS["일부 시그널 설정
+(default로 초기화)"]
     end
     
     BEFORE --> EXEC_PROCESS
@@ -215,7 +234,8 @@ sequenceDiagram
     Kernel->>Kernel: 권한 검사
     Kernel->>Kernel: 파일 존재 확인
     
-    Note over Kernel: Point of No Return!<br/>이 시점부터 되돌릴 수 없음
+    Note over Kernel: "Point of No Return!
+이 시점부터 되돌릴 수 없음"
     
     Kernel->>Loader: 기존 메모리 해제 시작
     Loader->>Loader: 코드/데이터/힙/스택 정리
@@ -227,7 +247,8 @@ sequenceDiagram
     
     NewApp->>NewApp: main() 함수 시작
     
-    Note over NewApp: 완전히 다른 프로그램이 됨<br/>PID는 동일하지만 내용은 완전 변경
+    Note over NewApp: "완전히 다른 프로그램이 됨
+PID는 동일하지만 내용은 완전 변경"
 ```
 
 **중요한 통찰**: exec() 호출 후의 `printf("You will never see this!");`가 실행되지 않는 이유는 이미 다른 프로그램이 되어버렸기 때문입니다!
@@ -278,31 +299,54 @@ void demonstrate_exec_family() {
 
 ```mermaid
 flowchart TD
-    START["exec() 함수 선택하기"] --> Q1{"인자를 어떻게<br/>전달할 것인가?"}
+    START["exec() 함수 선택하기"] --> Q1{"인자를 어떻게
+전달할 것인가?"}
     
-    Q1 -->|"직접 나열<br/>(고정된 인자)"| LIST_TYPE["List 타입<br/>(l로 끝남)"]
-    Q1 -->|"배열로 전달<br/>(동적 인자)"| VECTOR_TYPE["Vector 타입<br/>(v로 시작)"]
+    Q1 -->|"직접 나열
+(고정된 인자)"| LIST_TYPE["List 타입
+(l로 끝남)"]
+    Q1 -->|"배열로 전달
+(동적 인자)"| VECTOR_TYPE["Vector 타입
+(v로 시작)"]
     
-    LIST_TYPE --> Q2L{"PATH에서<br/>프로그램을 찾을까?"}
-    VECTOR_TYPE --> Q2V{"PATH에서<br/>프로그램을 찾을까?"}
+    LIST_TYPE --> Q2L{"PATH에서
+프로그램을 찾을까?"}
+    VECTOR_TYPE --> Q2V{"PATH에서
+프로그램을 찾을까?"}
     
-    Q2L -->|"예<br/>(편리함)"| Q3LP{"환경변수를<br/>어떻게 할까?"}
-    Q2L -->|"아니오<br/>(정확한 경로)"| Q3L{"환경변수를<br/>어떻게 할까?"}
+    Q2L -->|"예
+(편리함)"| Q3LP{"환경변수를
+어떻게 할까?"}
+    Q2L -->|"아니오
+(정확한 경로)"| Q3L{"환경변수를
+어떻게 할까?"}
     
-    Q2V -->|"예<br/>(편리함)"| Q3VP{"환경변수를<br/>어떻게 할까?"}
-    Q2V -->|"아니오<br/>(정확한 경로)"| Q3V{"환경변수를<br/>어떻게 할까?"}
+    Q2V -->|"예
+(편리함)"| Q3VP{"환경변수를
+어떻게 할까?"}
+    Q2V -->|"아니오
+(정확한 경로)"| Q3V{"환경변수를
+어떻게 할까?"}
     
-    Q3LP -->|"부모 상속"| EXECLP["execlp()<br/>가장 편리"]
-    Q3LP -->|"명시적 전달"| IMPOSSIBLE1["❌ 불가능<br/>execelp() 없음"]
+    Q3LP -->|"부모 상속"| EXECLP["execlp()
+가장 편리"]
+    Q3LP -->|"명시적 전달"| IMPOSSIBLE1["❌ 불가능
+execelp() 없음"]
     
-    Q3L -->|"부모 상속"| EXECL["execl()<br/>간단한 경우"]
-    Q3L -->|"명시적 전달"| EXECLE["execle()<br/>보안 중요"]
+    Q3L -->|"부모 상속"| EXECL["execl()
+간단한 경우"]
+    Q3L -->|"명시적 전달"| EXECLE["execle()
+보안 중요"]
     
-    Q3VP -->|"부모 상속"| EXECVP["execvp()<br/>최고 유연성"]
-    Q3VP -->|"명시적 전달"| IMPOSSIBLE2["❌ 불가능<br/>execvpe() 비표준"]
+    Q3VP -->|"부모 상속"| EXECVP["execvp()
+최고 유연성"]
+    Q3VP -->|"명시적 전달"| IMPOSSIBLE2["❌ 불가능
+execvpe() 비표준"]
     
-    Q3V -->|"부모 상속"| EXECV["execv()<br/>배열 사용"]
-    Q3V -->|"명시적 전달"| EXECVE["execve()<br/>시스템 콜"]
+    Q3V -->|"부모 상속"| EXECV["execv()
+배열 사용"]
+    Q3V -->|"명시적 전달"| EXECVE["execve()
+시스템 콜"]
     
     style START fill:#4CAF50
     style EXECLP fill:#2196F3
@@ -317,25 +361,43 @@ flowchart TD
 ```mermaid
 graph LR
     subgraph SIMPLE["간단한 경우"]
-        EXECL_USE["execl()<br/>• 인자 개수 고정<br/>• 절대 경로 사용<br/>• 빠른 프로토타입"]
+        EXECL_USE["execl()
+• 인자 개수 고정
+• 절대 경로 사용
+• 빠른 프로토타입"]
     end
     
     subgraph CONVENIENT["편리한 경우"]
-        EXECLP_USE["execlp()<br/>• PATH 검색 필요<br/>• 쉘 명령어 실행<br/>• 일반적 사용"]
+        EXECLP_USE["execlp()
+• PATH 검색 필요
+• 쉘 명령어 실행
+• 일반적 사용"]
     end
     
     subgraph SECURE["보안 중요"]
-        EXECLE_USE["execle()<br/>• 깨끗한 환경<br/>• CGI 스크립트<br/>• 권한 분리"]
+        EXECLE_USE["execle()
+• 깨끗한 환경
+• CGI 스크립트
+• 권한 분리"]
     end
     
     subgraph DYNAMIC["동적 인자"]
-        EXECV_USE["execv()<br/>• 런타임 인자 생성<br/>• 설정 파일 기반<br/>• 절대 경로"]
+        EXECV_USE["execv()
+• 런타임 인자 생성
+• 설정 파일 기반
+• 절대 경로"]
         
-        EXECVP_USE["execvp()<br/>• 최대 유연성<br/>• 쉘 구현<br/>• 명령어 파서"]
+        EXECVP_USE["execvp()
+• 최대 유연성
+• 쉘 구현
+• 명령어 파서"]
     end
     
     subgraph SYSTEM["시스템 레벨"]
-        EXECVE_USE["execve()<br/>• 시스템 콜<br/>• 완전 제어<br/>• 모든 exec 기반"]
+        EXECVE_USE["execve()
+• 시스템 콜
+• 완전 제어
+• 모든 exec 기반"]
     end
     
     style SIMPLE fill:#E8F5E8
@@ -384,22 +446,29 @@ void spawn_program(const char *program, char *const argv[]) {
 ```mermaid
 graph TD
     subgraph SHELL["Shell Process"]
-        SHELL_MAIN["bash<br/>파이프라인 파싱"]
+        SHELL_MAIN["bash
+파이프라인 파싱"]
     end
     
     subgraph PIPES["파이프 생성"]
-        PIPE1["pipe1[2]<br/>ls → grep"]
-        PIPE2["pipe2[2]<br/>grep → wc"]
+        PIPE1["pipe1[2]
+ls → grep"]
+        PIPE2["pipe2[2]
+grep → wc"]
     end
     
     subgraph PROCESSES["프로세스 생성과 연결"]
-        PROC1["Process 1<br/>ls"]
-        PROC2["Process 2<br/>grep '.txt'"]
-        PROC3["Process 3<br/>wc -l"]
+        PROC1["Process 1
+ls"]
+        PROC2["Process 2
+grep '.txt'"]
+        PROC3["Process 3
+wc -l"]
     end
     
     subgraph DATA_FLOW["데이터 흐름"]
-        FILES["파일 목록"] --> FILTER["필터링된<br/>.txt 파일"] --> COUNT["파일 개수"]
+        FILES["파일 목록"] --> FILTER["필터링된
+.txt 파일"] --> COUNT["파일 개수"]
     end
     
     SHELL_MAIN --> PIPE1
@@ -476,7 +545,7 @@ sequenceDiagram
     Note over Shell: 파이프라인 완료
 ```
 
-이 패턴이 바로 **유닉스 철학**의 핵심입니다: "작은 도구들이 파이프로 연결되어 큰 일을 해낸다!"
+이 패턴이 바로**유닉스 철학**의 핵심입니다: "작은 도구들이 파이프로 연결되어 큰 일을 해낸다!"
 
 ```c
 // 파이프라인 구현: 유닉스 철학의 정수
@@ -535,12 +604,12 @@ void create_pipeline() {
 
 | 함수 | 인자 형태 | PATH 검색 | 환경변수 | 특징 |
 |------|-----------|-----------|----------|---------|
-| **execl** | List (가변인자) | ❌ | 부모 상속 | 간단한 경우 |
-| **execlp** | List + PATH | ✅ | 부모 상속 | 가장 편리 |
-| **execle** | List + Env | ❌ | 명시적 전달 | 보안 중시 |
-| **execv** | Vector (배열) | ❌ | 부모 상속 | 동적 인자 |
-| **execvp** | Vector + PATH | ✅ | 부모 상속 | 유연성 최대 |
-| **execve** | Vector + Env | ❌ | 명시적 전달 | **시스템 콜** |
+|**execl**| List (가변인자) | ❌ | 부모 상속 | 간단한 경우 |
+|**execlp**| List + PATH | ✅ | 부모 상속 | 가장 편리 |
+|**execle**| List + Env | ❌ | 명시적 전달 | 보안 중시 |
+|**execv**| Vector (배열) | ❌ | 부모 상속 | 동적 인자 |
+|**execvp**| Vector + PATH | ✅ | 부모 상속 | 유연성 최대 |
+|**execve**| Vector + Env | ❌ | 명시적 전달 |**시스템 콜**|
 
 ## 실전 활용 시나리오
 
@@ -611,7 +680,7 @@ void become_daemon(const char *daemon_program) {
 
 - 기존 코드, 데이터, 힙, 스택 모두 삭제
 - 새 프로그램의 메모리 레이아웃으로 완전 교체
-- **되돌릴 수 없는 변화**
+-**되돌릴 수 없는 변화**
 
 ### 2. PID는 유지, 내용은 완전 변경
 
@@ -658,9 +727,9 @@ exec()는 프로세스의 기억을 완전히 지우고 새로운 프로그램�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 3-5시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 3-5시간
 
 ### 🎯 학습 경로
 

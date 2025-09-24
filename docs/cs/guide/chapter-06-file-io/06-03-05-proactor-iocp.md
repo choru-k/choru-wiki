@@ -830,7 +830,7 @@ void optimize_iocp_performance() {
     
     // 3. 버퍼 풀링으로 메모리 할당 최적화
     typedef struct buffer_pool {
-        void **buffers;
+        void**buffers;
         int count;
         int capacity;
         CRITICAL_SECTION cs;
@@ -867,21 +867,21 @@ void optimize_iocp_performance() {
 
 ### 1. 프로액터 패턴의 특징
 
-- **완료 기반**: I/O 작업이 완료된 후 통지받음
-- **진정한 비동기**: 커널이 I/O 작업을 대행 수행
-- **높은 처리량**: 시스템 콜 오버헤드 최소화
+-**완료 기반**: I/O 작업이 완료된 후 통지받음
+-**진정한 비동기**: 커널이 I/O 작업을 대행 수행
+-**높은 처리량**: 시스템 콜 오버헤드 최소화
 
 ### 2. Windows IOCP의 강력함
 
-- **Completion Port**: 효율적인 스레드 관리
-- **AcceptEx**: 고성능 연결 수락
-- **WSASend/WSARecv**: 스캐터-개더 I/O 지원
+-**Completion Port**: 효율적인 스레드 관리
+-**AcceptEx**: 고성능 연결 수락
+-**WSASend/WSARecv**: 스캐터-개더 I/O 지원
 
 ### 3. 리액터와의 차이점
 
-- **리액터**: "준비됨" 통지 → 직접 I/O 수행
-- **프로액터**: I/O 시작 → "완료됨" 통지
-- **메모리 관리**: 프로액터에서 더 주의 필요
+-**리액터**: "준비됨" 통지 → 직접 I/O 수행
+-**프로액터**: I/O 시작 → "완료됨" 통지
+-**메모리 관리**: 프로액터에서 더 주의 필요
 
 ---
 
@@ -892,9 +892,9 @@ void optimize_iocp_performance() {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 15-25시간
+-**난이도**: ADVANCED
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 15-25시간
 
 ### 🎯 학습 경로
 

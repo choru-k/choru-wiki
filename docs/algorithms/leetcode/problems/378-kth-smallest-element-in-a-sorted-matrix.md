@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 378](https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/description/) • **Medium**
+[LeetCode 378](https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/description/) •**Medium**
 
 [https://leetcode.com/problems/find-k-th-smallest-pair-distance/discuss/109082/Approach-the-problem-using-the-"trial-and-error"-algorithm](https://leetcode.com/problems/find-k-th-smallest-pair-distance/discuss/109082/Approach-the-problem-using-the-%22trial-and-error%22-algorithm)
 

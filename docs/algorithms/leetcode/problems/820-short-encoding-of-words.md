@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 820](https://leetcode.com/problems/short-encoding-of-words/) • **Hard**
+[LeetCode 820](https://leetcode.com/problems/short-encoding-of-words/) •**Hard**
 
 ## 핵심 아이디어
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1520](https://leetcode.com/problems/maximum-number-of-non-overlapping-substrings/) • **Medium**
+[LeetCode 1520](https://leetcode.com/problems/maximum-number-of-non-overlapping-substrings/) •**Medium**
 
 ## 핵심 아이디어
 

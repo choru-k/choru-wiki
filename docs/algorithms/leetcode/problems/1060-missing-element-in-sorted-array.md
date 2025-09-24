@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1060](https://leetcode.com/problems/missing-element-in-sorted-array/) • **Hard**
+[LeetCode 1060](https://leetcode.com/problems/missing-element-in-sorted-array/) •**Hard**
 
 ## Brute Force
 
@@ -68,8 +68,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

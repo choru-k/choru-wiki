@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1242](https://leetcode.com/problems/web-crawler-multithreaded/) • **Medium**
+[LeetCode 1242](https://leetcode.com/problems/web-crawler-multithreaded/) •**Medium**
 
 일단 기본적인 Python 비동기에 대해서 알아야 한다.
 
@@ -94,8 +94,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

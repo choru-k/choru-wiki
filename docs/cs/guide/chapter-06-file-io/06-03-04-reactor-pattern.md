@@ -39,7 +39,7 @@ typedef struct reactor {
     
     // 핸들러 관리
     struct {
-        event_handler_t **handlers;
+        event_handler_t**handlers;
         int capacity;
         int count;
     } handler_pool;
@@ -750,7 +750,7 @@ void process_http_request_async(void *data) {
 ```c
 // 연결 풀링
 typedef struct connection_pool {
-    event_handler_t **free_handlers;
+    event_handler_t**free_handlers;
     int capacity;
     int count;
     pthread_mutex_t mutex;
@@ -851,21 +851,21 @@ void update_reactor_stats(reactor_t *reactor) {
 
 ### 1. 리액터 패턴의 핵심 구조
 
-- **Event Demultiplexer**: 여러 I/O 이벤트를 동시에 모니터링
-- **Event Handler**: 각 이벤트 타입에 대한 처리 로직 캡슐화
-- **Reactor**: 이벤트 루프와 핸들러 디스패칭 관리
+-**Event Demultiplexer**: 여러 I/O 이벤트를 동시에 모니터링
+-**Event Handler**: 각 이벤트 타입에 대한 처리 로직 캡슐화
+-**Reactor**: 이벤트 루프와 핸들러 디스패칭 관리
 
 ### 2. 확장성과 성능 최적화
 
-- **스레드 풀**: CPU 집약적 작업을 별도 스레드에서 처리
-- **타이머 관리**: 효율적인 타임아웃 처리
-- **연결 풀링**: 객체 재사용으로 GC 압박 감소
+-**스레드 풀**: CPU 집약적 작업을 별도 스레드에서 처리
+-**타이머 관리**: 효율적인 타임아웃 처리
+-**연결 풀링**: 객체 재사용으로 GC 압박 감소
 
 ### 3. 실전 적용 시 고려사항
 
-- **에러 처리**: 네트워크 연결의 예외 상황 대응
-- **메모리 관리**: 비동기 환경에서의 생명주기 관리
-- **성능 모니터링**: 실시간 성능 지표 추적
+-**에러 처리**: 네트워크 연결의 예외 상황 대응
+-**메모리 관리**: 비동기 환경에서의 생명주기 관리
+-**성능 모니터링**: 실시간 성능 지표 추적
 
 ---
 
@@ -876,9 +876,9 @@ void update_reactor_stats(reactor_t *reactor) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 8-12시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 8-12시간
 
 ### 🎯 학습 경로
 

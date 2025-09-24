@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 0](https://leetcode.com/problems/leetcode-을-하는-이유와-내가-공부하는-법/) • **Medium**
+[LeetCode 0](https://leetcode.com/problems/leetcode-을-하는-이유와-내가-공부하는-법/) •**Medium**
 
 필요한 기본적인 알고리즘, 자료구조
 

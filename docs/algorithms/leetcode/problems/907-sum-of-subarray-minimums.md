@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 907](https://leetcode.com/problems/sum-of-subarray-minimums/) • **Hard**
+[LeetCode 907](https://leetcode.com/problems/sum-of-subarray-minimums/) •**Hard**
 
 ## 핵심 아이디어
 

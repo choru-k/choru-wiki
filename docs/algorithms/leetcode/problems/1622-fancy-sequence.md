@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1622](https://leetcode.com/problems/fancy-sequence/) • **Medium**
+[LeetCode 1622](https://leetcode.com/problems/fancy-sequence/) •**Medium**
 
 ## 핵심 아이디어
 

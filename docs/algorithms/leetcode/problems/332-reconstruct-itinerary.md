@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 332](https://leetcode.com/problems/reconstruct-itinerary/) • **Medium**
+[LeetCode 332](https://leetcode.com/problems/reconstruct-itinerary/) •**Medium**
 
 ## 핵심 아이디어
 

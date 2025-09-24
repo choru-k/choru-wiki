@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 719](https://leetcode.com/problems/find-k-th-smallest-pair-distance/) • **Medium**
+[LeetCode 719](https://leetcode.com/problems/find-k-th-smallest-pair-distance/) •**Medium**
 
 ## 방법 1
 

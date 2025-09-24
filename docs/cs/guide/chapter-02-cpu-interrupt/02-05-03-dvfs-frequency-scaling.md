@@ -31,7 +31,7 @@ priority_score: 4
 # 전력 = 전압² × 주파수 × 상수
 def calculate_power(voltage, frequency):
     C = 1e-9  # 캐패시턴스 (상수)
-    power = C * (voltage ** 2) * frequency
+    power = C * (voltage**2) * frequency
     return power
 
 # 예시: 전압을 반으로 줄이면?
@@ -477,26 +477,26 @@ void adjust_epp_for_workload(enum workload_type workload) {
 
 Dynamic Voltage and Frequency Scaling은 현대 CPU 전력 관리의 기반입니다:
 
-- **전압 스케일링**: 전력 ∝ V² (가장 효과적)
-- **주파수 스케일링**: 전력 ∝ f (선형적 효과)
-- **결합 효과**: 전압과 주파수를 함께 조절하면 극적인 절전
+-**전압 스케일링**: 전력 ∝ V² (가장 효과적)
+-**주파수 스케일링**: 전력 ∝ f (선형적 효과)
+-**결합 효과**: 전압과 주파수를 함께 조절하면 극적인 절전
 
 ### 2. PLL은 주파수 변경의 핵심 기술
 
 Phase-Locked Loop는 안정적인 주파수 전환을 보장합니다:
 
-- **위상 동기**: 글리치 없는 클록 전환
-- **안정화 시간**: 물리적 한계 (10-50μs)
-- **전자공학 원리**: RC 시정수가 응답 속도 결정
+-**위상 동기**: 글리치 없는 클록 전환
+-**안정화 시간**: 물리적 한계 (10-50μs)
+-**전자공학 원리**: RC 시정수가 응답 속도 결정
 
 ### 3. 거버너는 정책 결정자
 
 각 거버너는 서로 다른 최적화 목표를 가집니다:
 
-- **Performance**: 최대 성능 우선
-- **Schedutil**: AI 기반 예측형 (최신 권장)
-- **Ondemand**: 부하 기반 반응형
-- **Powersave**: 최대 절전 우선
+-**Performance**: 최대 성능 우선
+-**Schedutil**: AI 기반 예측형 (최신 권장)
+-**Ondemand**: 부하 기반 반응형
+-**Powersave**: 최대 절전 우선
 
 ---
 
@@ -507,9 +507,9 @@ Phase-Locked Loop는 안정적인 주파수 전환을 보장합니다:
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

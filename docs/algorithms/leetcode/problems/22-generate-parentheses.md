@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 22](https://leetcode.com/problems/generate-parentheses/) • **Easy**
+[LeetCode 22](https://leetcode.com/problems/generate-parentheses/) •**Easy**
 
 ## 핵심 아이디어
 
@@ -83,8 +83,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

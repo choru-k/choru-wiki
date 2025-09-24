@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 75](https://leetcode.com/problems/sort-colors/) • **Easy**
+[LeetCode 75](https://leetcode.com/problems/sort-colors/) •**Easy**
 
 ## Brute Force
 

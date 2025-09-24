@@ -539,7 +539,7 @@ class ConcurrencyManager:
         base_delay = 100  # ms
         max_delay = 20000  # 20초
 
-        delay = min(base_delay * (2 ** attempt), max_delay)
+        delay = min(base_delay * (2**attempt), max_delay)
         jitter = random.uniform(0, delay * 0.1)
 
         time.sleep((delay + jitter) / 1000)
@@ -635,10 +635,10 @@ avoid_lambda_when = {
 
 2024년 현재, Duolingo는 Lambda를 통해:
 
-- **비용**: 73% 절감 ($50M → $13.5M/년)
-- **성능**: 평균 응답 시간 50ms
-- **확장성**: 피크 시간 자동 스케일링
-- **개발 속도**: 배포 시간 30분 → 30초
+-**비용**: 73% 절감 ($50M → $13.5M/년)
+-**성능**: 평균 응답 시간 50ms
+-**확장성**: 피크 시간 자동 스케일링
+-**개발 속도**: 배포 시간 30분 → 30초
 
 **"서버리스는 단순히 서버가 없는 것이 아니라, 서버를 생각하지 않아도 되는 자유다."**
 

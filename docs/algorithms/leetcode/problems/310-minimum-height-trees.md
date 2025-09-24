@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 310](https://leetcode.com/problems/minimum-height-trees/) • **Medium**
+[LeetCode 310](https://leetcode.com/problems/minimum-height-trees/) •**Medium**
 
 [https://leetcode.com/problems/minimum-height-trees/discuss/76052/Two-O(n)-solutions](https://leetcode.com/problems/minimum-height-trees/discuss/76052/Two-O(n)-solutions)
 

@@ -21,7 +21,7 @@ tags:
 
 ### 충격적인 사실: 모든 Pod가 서로 통신할 수 있다
 
-Kubernetes의 가장 놀라운 특징 중 하나는 **"모든 Pod가 NAT 없이 서로 직접 통신할 수 있다"**는 것입니다.
+Kubernetes의 가장 놀라운 특징 중 하나는**"모든 Pod가 NAT 없이 서로 직접 통신할 수 있다"**는 것입니다.
 
 ```python
 # Netflix의 마이크로서비스 통신 현실
@@ -53,22 +53,32 @@ print("🤯 깨달음: Kubernetes는 전체 클러스터를 하나의 거대한 
 ```mermaid
 graph TB
     subgraph "전통적인 네트워킹 (2010년)"
-        TRAD_LB["🔀 Hardware Load Balancer<br/>$100K+ 장비"]
-        TRAD_FW["🔥 Firewall Rules<br/>복잡한 NAT/PAT"]
-        TRAD_VIP["📍 Virtual IP<br/>수동 관리"]
+        TRAD_LB["🔀 Hardware Load Balancer
+$100K+ 장비"]
+        TRAD_FW["🔥 Firewall Rules
+복잡한 NAT/PAT"]
+        TRAD_VIP["📍 Virtual IP
+수동 관리"]
     end
     
     subgraph "Docker 네트워킹 (2015년)"
-        DOCKER_BRIDGE["🌉 Docker Bridge<br/>host-container 매핑"]
-        PORT_MAP["🔗 Port Mapping<br/>-p 80:8080"]
-        LINK["🔗 Container Links<br/>--link 의존성"]
+        DOCKER_BRIDGE["🌉 Docker Bridge
+host-container 매핑"]
+        PORT_MAP["🔗 Port Mapping
+-p 80:8080"]
+        LINK["🔗 Container Links
+--link 의존성"]
     end
     
     subgraph "Kubernetes 네트워킹 (2018년+)"
-        POD_NET["🌐 Pod Network<br/>Flat IP Space"]
-        SVC["🎯 Services<br/>Automatic Load Balancing"]
-        INGRESS["🚪 Ingress<br/>L7 Routing"]
-        CNI["🔌 CNI Plugins<br/>네트워크 추상화"]
+        POD_NET["🌐 Pod Network
+Flat IP Space"]
+        SVC["🎯 Services
+Automatic Load Balancing"]
+        INGRESS["🚪 Ingress
+L7 Routing"]
+        CNI["🔌 CNI Plugins
+네트워크 추상화"]
     end
     
     TRAD_LB --> DOCKER_BRIDGE --> POD_NET
@@ -82,7 +92,7 @@ graph TB
     style CNI fill:#FF6B6B
 ```
 
-**핵심 통찰**: Kubernetes는 **네트워킹 복잡성을 추상화**하여 개발자가 비즈니스 로직에 집중할 수 있게 합니다.
+**핵심 통찰**: Kubernetes는**네트워킹 복잡성을 추상화**하여 개발자가 비즈니스 로직에 집중할 수 있게 합니다.
 
 ## Kubernetes Networking 완벽 마스터 📚
 
@@ -92,7 +102,7 @@ graph TB
 
 Shopify가 어떻게 Black Friday 트래픽 급증 시에도 수십만 개의 Pod 간 통신을 안정적으로 유지하는지, Kubernetes 네트워킹 모델의 핵심 원리를 탐험합니다.
 
-🌐 **핵심 내용**:
+🌐**핵심 내용**:
 
 - Pod-to-Pod 통신의 실제 패킷 경로 추적
 - CNI 플러그인의 동작 원리와 성능 비교
@@ -107,7 +117,7 @@ Shopify가 어떻게 Black Friday 트래픽 급증 시에도 수십만 개의 Po
 
 Netflix가 어떻게 마이크로초 단위의 지연시간으로 수백만 요청을 적절한 Pod로 라우팅하는지, kube-proxy의 iptables/IPVS 모드와 성능 최적화 비법을 알아봅니다.
 
-🎯 **핵심 내용**:
+🎯**핵심 내용**:
 
 - ClusterIP, NodePort, LoadBalancer 타입별 동작 원리
 - kube-proxy의 iptables vs IPVS 성능 비교
@@ -122,7 +132,7 @@ Netflix가 어떻게 마이크로초 단위의 지연시간으로 수백만 요�
 
 GitHub Pages가 어떻게 수십만 개의 사용자 도메인을 단일 Kubernetes 클러스터에서 효율적으로 라우팅하는지, Ingress Controller의 고급 기능과 성능 최적화를 탐구합니다.
 
-🚪 **핵심 내용**:
+🚪**핵심 내용**:
 
 - Ingress Controller vs API Gateway 비교
 - SSL/TLS Termination과 인증서 관리
@@ -137,7 +147,7 @@ GitHub Pages가 어떻게 수십만 개의 사용자 도메인을 단일 Kuberne
 
 Discord가 어떻게 CNI 플러그인 선택과 튜닝을 통해 실시간 채팅의 네트워크 지연시간을 최소화했는지, 각 CNI의 특성과 성능 트레이드오프를 분석합니다.
 
-🔌 **핵심 내용**:
+🔌**핵심 내용**:
 
 - Flannel vs Calico vs Cilium 성능 벤치마크
 - eBPF 기반 네트워킹의 혁신
@@ -541,14 +551,14 @@ cni_benchmarks = {
 
 ## 마치며: 네트워킹은 Kubernetes의 혈관계
 
-Kubernetes Networking을 깊이 이해하면, 분산 시스템에서 **복잡한 네트워킹을 투명하게 추상화하는 아름다운 설계**를 경험하게 됩니다.
+Kubernetes Networking을 깊이 이해하면, 분산 시스템에서**복잡한 네트워킹을 투명하게 추상화하는 아름다운 설계**를 경험하게 됩니다.
 
 **Networking이 가르쳐주는 교훈들**:
 
-1. 🌐 **투명한 추상화**: 복잡한 네트워킹을 개발자에게 숨기고 단순한 인터페이스 제공
-2. 🎯 **자동화된 발견**: Service Discovery가 내장되어 동적 환경에서도 안정적 통신
-3. 📈 **탄력적 확장**: Pod 수가 늘어나도 네트워킹 복잡도는 증가하지 않음
-4. 🛡️ **보안 내장**: Network Policy로 Zero Trust 네트워크 구현 가능
+1. 🌐**투명한 추상화**: 복잡한 네트워킹을 개발자에게 숨기고 단순한 인터페이스 제공
+2. 🎯**자동화된 발견**: Service Discovery가 내장되어 동적 환경에서도 안정적 통신
+3. 📈**탄력적 확장**: Pod 수가 늘어나도 네트워킹 복잡도는 증가하지 않음
+4. 🛡️**보안 내장**: Network Policy로 Zero Trust 네트워크 구현 가능
 
 이제 클러스터 네트워킹부터 시작해서 고급 Ingress까지 완전히 마스터해보세요! 🚀
 

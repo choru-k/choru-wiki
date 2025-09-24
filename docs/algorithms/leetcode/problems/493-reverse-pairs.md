@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 493](https://leetcode.com/problems/reverse-pairs/) • **Medium**
+[LeetCode 493](https://leetcode.com/problems/reverse-pairs/) •**Medium**
 
 ## 핵심 아이디어
 

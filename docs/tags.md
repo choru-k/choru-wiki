@@ -7,33 +7,33 @@ Click on any tag to see all documents containing that tag.
 
 ### System & Kernel
 
-- **Linux** - Linux kernel and system programming
-- **Process** - Process management and creation
-- **Thread** - Threads and concurrent programming
-- **Scheduling** - CPU scheduling and algorithms
-- **Interrupt** - Interrupt handling and handlers
+-**Linux**- Linux kernel and system programming
+-**Process**- Process management and creation
+-**Thread**- Threads and concurrent programming
+-**Scheduling**- CPU scheduling and algorithms
+-**Interrupt**- Interrupt handling and handlers
 
 ### Memory Management
 
-- **Memory** - Memory structure and management
-- **Stack** - Stack memory and function calls
-- **Heap** - Heap memory and dynamic allocation
-- **GC** - Garbage collection
-- **JVM** - Java Virtual Machine
+-**Memory**- Memory structure and management
+-**Stack**- Stack memory and function calls
+-**Heap**- Heap memory and dynamic allocation
+-**GC**- Garbage collection
+-**JVM**- Java Virtual Machine
 
 ### Container & Cloud
 
-- **Kubernetes** - Container orchestration
-- **Container** - Container technology
-- **Cgroup** - Control Groups and resource isolation
-- **Docker** - Docker containers
+-**Kubernetes**- Container orchestration
+-**Container**- Container technology
+-**Cgroup**- Control Groups and resource isolation
+-**Docker**- Docker containers
 
 ### Performance & Monitoring
 
-- **Performance** - Performance optimization
-- **Monitoring** - System monitoring
-- **PSI** - Pressure Stall Information
-- **OOM** - Out of Memory management
+-**Performance**- Performance optimization
+-**Monitoring**- System monitoring
+-**PSI**- Pressure Stall Information
+-**OOM**- Out of Memory management
 
 ---
 

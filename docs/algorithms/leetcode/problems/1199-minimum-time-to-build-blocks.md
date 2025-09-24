@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1199](https://leetcode.com/problems/minimum-time-to-build-blocks/) • **Medium**
+[LeetCode 1199](https://leetcode.com/problems/minimum-time-to-build-blocks/) •**Medium**
 
 ## 핵심 아이디어
 

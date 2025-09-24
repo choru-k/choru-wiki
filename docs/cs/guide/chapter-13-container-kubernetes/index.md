@@ -1,10 +1,10 @@
 ---
 tags:
-  - FileDescriptor
-  - FileSystem
-  - IO
-  - SystemProgramming
-  - VFS
+  - Container
+  - Docker
+  - Kubernetes
+  - DevOps
+  - Infrastructure
   - deep-study
   - hands-on
   - intermediate
@@ -67,7 +67,7 @@ DBA: "MySQL 5.0에서 5.5로 업그레이드? 안 됩니다"
 보안팀: "새로운 패키지 설치는 보안 검토 필요해요"
 ```
 
-**결국 주말 내내 삽질** 😭
+**결국 주말 내내 삽질**😭
 
 ### 🚀 Docker 혁명: "Build once, Run anywhere"
 
@@ -106,12 +106,12 @@ $ docker run myapp:latest
 
 ### 🎭 컨테이너의 마법: 격리의 과학
 
-하지만 컨테이너는 단순한 패키징 도구가 아닙니다. 그 뒤에는 **Linux 커널의 고급 기능들**이 숨어 있습니다:
+하지만 컨테이너는 단순한 패키징 도구가 아닙니다. 그 뒤에는**Linux 커널의 고급 기능들**이 숨어 있습니다:
 
-- **Namespace**: 각 컨테이너가 독립된 세계를 보도록
-- **Cgroup**: 리소스 사용량을 통제
-- **Union FS**: 레이어 기반 효율적 저장
-- **네트워크 격리**: 가상 네트워크 스택
+-**Namespace**: 각 컨테이너가 독립된 세계를 보도록
+-**Cgroup**: 리소스 사용량을 통제
+-**Union FS**: 레이어 기반 효율적 저장
+-**네트워크 격리**: 가상 네트워크 스택
 
 ### 🎪 Kubernetes: 컨테이너 오케스트레이션의 왕
 
@@ -210,64 +210,62 @@ graph TD
     style AP fill:#e8f5e8
 ```
 
-## 이 장의 구성
+## 📚 이 챕터의 구성
 
-### [12.1 Container 핵심 기술](12-10-container-internals.md)
+### 13.1 Container 기초 이론과 구현
+
+- [13-01-01: Container 핵심 기술](./13-01-01-container-internals.md)
 
 **"Docker는 어떻게 격리를 만드는가?"**
 
-- 🏠 **Linux Namespace**: 각 컨테이너가 독립된 세계를 보는 방법
-- 🎛️ **Control Groups**: CPU, 메모리, I/O 리소스 제한의 원리
-- 📁 **Union Filesystem**: 레이어 기반 이미지 시스템의 마법
-- 🔧 **Container Runtime**: Docker vs containerd vs Podman의 차이점
+- 🏠**Linux Namespace**: 각 컨테이너가 독립된 세계를 보는 방법
+- 🎛️**Control Groups**: CPU, 메모리, I/O 리소스 제한의 원리
+- 📁**Union Filesystem**: 레이어 기반 이미지 시스템의 마법
+- 🔧**Container Runtime**: Docker vs containerd vs Podman의 차이점
 
-**실습**: 컨테이너를 밑바닥부터 만들어보기
+### 13.2 Docker 실제 구현과 오케스트레이션
 
-```bash
-# namespace와 cgroup만으로 간단한 컨테이너 구현
-$ sudo unshare -p -f --mount-proc chroot rootfs /bin/bash
-# 내가 만든 미니 컨테이너에서 실행 중!
-```
-
-### [12.2 Docker 오케스트레이션](12-11-docker-orchestration.md)
+- [13-02-01: Docker 오케스트레이션](./13-02-01-docker-orchestration.md)
 
 **"Dockerfile 최적화부터 Production 배포까지"**
 
-- 🐋 **Docker 아키텍처**: Client-Daemon-Registry 구조 이해
-- 📋 **Dockerfile 최적화**: 멀티스테이지 빌드, 레이어 캐싱 활용
-- 🌐 **Docker 네트워킹**: bridge, host, overlay 네트워크 심화
-- 💾 **Volume과 Storage**: 데이터 영속성과 성능 최적화
+- 🐋**Docker 아키텍처**: Client-Daemon-Registry 구조 이해
+- 📋**Dockerfile 최적화**: 멀티스테이지 빌드, 레이어 캐싱 활용
+- 🌐**Docker 네트워킹**: bridge, host, overlay 네트워크 심화
+- 💾**Volume과 Storage**: 데이터 영속성과 성능 최적화
 
-**실제 사례**: 이미지 크기 1GB → 50MB 최적화하기
+### 13.3 Kubernetes 기본 개념과 아키텍처
 
-### [12.3 Kubernetes 기본 원리](12-01-kubernetes-fundamentals.md)
+- [13-03-01: Kubernetes 기본 원리](./13-03-01-kubernetes-fundamentals.md)
 
 **"k8s 클러스터는 어떻게 동작하는가?"**
 
-- 🎯 **Control Plane**: API Server, etcd, Scheduler, Controller Manager
-- 💪 **Node Components**: kubelet, kube-proxy, Container Runtime
-- 📦 **Workload Resources**: Pod, Deployment, Service, ConfigMap
-- 🌐 **네트워킹**: CNI, Service Mesh, Ingress Controller
+- 🎯**Control Plane**: API Server, etcd, Scheduler, Controller Manager
+- 💪**Node Components**: kubelet, kube-proxy, Container Runtime
+- 📦**Workload Resources**: Pod, Deployment, Service, ConfigMap
+- 🌐**네트워킹**: CNI, Service Mesh, Ingress Controller
 
-**실습**: 클러스터 설치부터 첫 애플리케이션 배포까지
+### 13.4 Kubernetes 고급 기능과 패턴
 
-### [12.4 Kubernetes 고급 기능](12-20-kubernetes-advanced.md)
+- [13-04-01: Kubernetes 고급 기능](./13-04-01-kubernetes-advanced.md)
 
 **"Production에서 안정적으로 운영하기"**
 
-- 🚀 **배포 전략**: Rolling Update, Blue-Green, Canary 배포
-- 📊 **모니터링**: Prometheus + Grafana + AlertManager 구축
-- 🛡️ **보안**: RBAC, Network Policy, Pod Security Standards
-- 🔧 **트러블슈팅**: Pod 디버깅, 네트워크 문제 해결
+- 🚀**배포 전략**: Rolling Update, Blue-Green, Canary 배포
+- 📊**모니터링**: Prometheus + Grafana + AlertManager 구축
+- 🛡️**보안**: RBAC, Network Policy, Pod Security Standards
+- 🔧**트러블슈팅**: Pod 디버깅, 네트워크 문제 해결
 
-### [12.5 Kubernetes 운영](12-12-kubernetes-operations.md)
+### 13.5 Production 운영과 최적화
+
+- [13-05-01: Kubernetes 운영](./13-05-01-kubernetes-operations.md)
 
 **"대규모 클러스터 운영 노하우"**
 
-- ⚖️ **Auto Scaling**: HPA, VPA, Cluster Autoscaler 완전 정복
-- 📈 **Service Mesh**: Istio를 활용한 마이크로서비스 관리
-- 🗃️ **Stateful Applications**: 데이터베이스, 메시지큐 운영
-- 🔄 **GitOps**: ArgoCD를 활용한 선언적 배포
+- ⚖️**Auto Scaling**: HPA, VPA, Cluster Autoscaler 완전 정복
+- 📈**Service Mesh**: Istio를 활용한 마이크로서비스 관리
+- 🗃️**Stateful Applications**: 데이터베이스, 메시지큐 운영
+- 🔄**GitOps**: ArgoCD를 활용한 선언적 배포
 
 ## 🚀 실습 프로젝트: Container & Kubernetes Lab
 
@@ -419,10 +417,10 @@ spec:
 
 ## 🎯 이 장을 마스터하면
 
-✅ **컨테이너 원리 이해**: Linux namespace, cgroup의 동작 원리를 깊이 있게 알 수 있습니다
-✅ **Docker 최적화**: 이미지 크기 최적화, 보안 강화, 성능 튜닝을 할 수 있습니다
-✅ **Kubernetes 운영**: Production 클러스터를 안정적으로 운영할 수 있습니다
-✅ **현대 DevOps**: CI/CD 파이프라인과 GitOps 워크플로우를 구축할 수 있습니다
+✅**컨테이너 원리 이해**: Linux namespace, cgroup의 동작 원리를 깊이 있게 알 수 있습니다
+✅**Docker 최적화**: 이미지 크기 최적화, 보안 강화, 성능 튜닝을 할 수 있습니다
+✅**Kubernetes 운영**: Production 클러스터를 안정적으로 운영할 수 있습니다
+✅**현대 DevOps**: CI/CD 파이프라인과 GitOps 워크플로우를 구축할 수 있습니다
 
 ## 실습 환경 준비
 
@@ -452,19 +450,19 @@ $ kubectl cluster-info
 
 ### Solomon Hykes - Docker 창시자
 >
-> **"Docker is about making it easier to get great software from the developer's laptop to the server"**
+>**"Docker is about making it easier to get great software from the developer's laptop to the server"**
 
 2010년, 프랑스의 작은 PaaS 회사 dotCloud에서 내부 도구로 시작된 Docker가 세상을 바꿨습니다.
 
 ### Brendan Burns - Kubernetes 공동 창시자
 >
-> **"Kubernetes is the Linux of the cloud"**
+>**"Kubernetes is the Linux of the cloud"**
 
 Google에서 Borg 시스템을 운영하던 경험을 바탕으로 오픈소스 컨테이너 오케스트레이터를 만들었습니다.
 
 ### Joe Beda - Kubernetes 공동 창시자
 >
-> **"We wanted to democratize the same infrastructure tooling that Google uses internally"**
+>**"We wanted to democratize the same infrastructure tooling that Google uses internally"**
 
 Google의 10년간 컨테이너 운영 노하우를 모든 개발자가 쓸 수 있게 만들었습니다.
 
@@ -505,19 +503,19 @@ Kubernetes = 그리스어로 "키잡이, 조타수"
 ### 고급 주제
 
 - [Chapter 14: Distributed Systems](../chapter-14-distributed-systems/index.md) - 마이크로서비스와 분산 시스템 설계
-- [Chapter 16: System Design Patterns](../chapter-16-system-design-patterns/index.md) - 클라우드 네이티브 아키텍처 패턴
+- [Chapter 16: System Design Patterns](../chapter-16-distributed-system-patterns/index.md) - 클라우드 네이티브 아키텍처 패턴
 
-준비되셨나요? [12.1 Container 핵심 기술](12-10-container-internals.md)에서 Linux 커널 레벨부터 컨테이너의 동작 원리를 파헤쳐보겠습니다.
+준비되셨나요? [13.1 Container 핵심 기술](./13-01-01-container-internals.md)에서 Linux 커널 레벨부터 컨테이너의 동작 원리를 파헤쳐보겠습니다.
 
-"개발 환경과 운영 환경이 다르다"는 변명은 이제 그만! 컨테이너로 **"Build once, Run anywhere"**를 실현해봅시다!
+"개발 환경과 운영 환경이 다르다"는 변명은 이제 그만! 컨테이너로**"Build once, Run anywhere"**를 실현해봅시다!
 
 ## 📚 관련 문서
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 12-20시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 12-20시간
 
 ### 🎯 학습 경로
 
@@ -525,17 +523,17 @@ Kubernetes = 그리스어로 "키잡이, 조타수"
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-12-container-kubernetes)
+### 📂 같은 챕터 (chapter-13-container-kubernetes)
 
-- [Chapter 12-01: Kubernetes Fundamentals](./12-01-kubernetes-fundamentals.md)
-- [Chapter 12-10: Container Internals](./12-10-container-internals.md)
-- [Chapter 12-11: Docker Orchestration](./12-11-docker-orchestration.md)
-- [Chapter 12-12: Kubernetes Operations](./12-12-kubernetes-operations.md)
-- [Chapter 12-20: Kubernetes Advanced](./12-20-kubernetes-advanced.md)
+- [13-01-01: Container 핵심 기술](./13-01-01-container-internals.md)
+- [13-02-01: Docker 오케스트레이션](./13-02-01-docker-orchestration.md)
+- [13-03-01: Kubernetes 기본 원리](./13-03-01-kubernetes-fundamentals.md)
+- [13-04-01: Kubernetes 고급 기능](./13-04-01-kubernetes-advanced.md)
+- [13-05-01: Kubernetes 운영](./13-05-01-kubernetes-operations.md)
 
 ### 🏷️ 관련 키워드
 
-`FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+`Container`, `Docker`, `Kubernetes`, `Orchestration`, `Microservices`, `DevOps`
 
 ### ⏭️ 다음 단계 가이드
 

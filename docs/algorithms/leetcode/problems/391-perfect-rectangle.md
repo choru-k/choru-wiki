@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 391](https://leetcode.com/problems/perfect-rectangle/) • **Medium**
+[LeetCode 391](https://leetcode.com/problems/perfect-rectangle/) •**Medium**
 
 이 문제을 봤을 때 가장 먼저 생각 나는 방법은
 

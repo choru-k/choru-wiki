@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 361](https://leetcode.com/problems/bomb-enemy/) • **Medium**
+[LeetCode 361](https://leetcode.com/problems/bomb-enemy/) •**Medium**
 
 일단 가장 간단하게 푸는 법은 각 격자에서 실제로 해보는 것이다.
 

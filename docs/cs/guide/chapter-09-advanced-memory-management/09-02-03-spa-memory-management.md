@@ -57,10 +57,10 @@ priority_score: 4
 
 | 접근법 | React 패턴 | Vue 패턴 | 공통 원칙 |
 |--------|------------|----------|-----------|
-| **컴포넌트 정리** | useEffect cleanup | beforeUnmount | AbortController 활용 |
-| **라우트 관리** | useMemoryManagement Hook | Router Guards | 체계적인 cleanup 등록 |
-| **상태 관리** | useRef + cleanup | reactive + cleanup | WeakMap/WeakSet 활용 |
-| **이벤트 처리** | signal 기반 정리 | removeEventListener | 자동 정리 시스템 |
+|**컴포넌트 정리**| useEffect cleanup | beforeUnmount | AbortController 활용 |
+|**라우트 관리**| useMemoryManagement Hook | Router Guards | 체계적인 cleanup 등록 |
+|**상태 관리**| useRef + cleanup | reactive + cleanup | WeakMap/WeakSet 활용 |
+|**이벤트 처리**| signal 기반 정리 | removeEventListener | 자동 정리 시스템 |
 
 ## 🚀 실전 활용 시나리오
 
@@ -98,11 +98,11 @@ priority_score: 4
 
 ### 대규모 SPA 메모리 관리의 5대 원칙
 
-1. **라이프사이클 기반 정리**: 컴포넌트와 라우트 변경 시 체계적인 cleanup
-2. **자동화된 모니터링**: 실시간 메모리 사용량 추적과 알림 시스템  
-3. **Progressive Loading**: 초기 로딩 부담 분산으로 메모리 사용량 최적화
-4. **Virtual Scrolling**: 대용량 데이터 표시 시 DOM 노드 수 제한
-5. **WeakMap/WeakSet 활용**: 자동 참조 정리로 메모리 누수 방지
+1.**라이프사이클 기반 정리**: 컴포넌트와 라우트 변경 시 체계적인 cleanup
+2.**자동화된 모니터링**: 실시간 메모리 사용량 추적과 알림 시스템  
+3.**Progressive Loading**: 초기 로딩 부담 분산으로 메모리 사용량 최적화
+4.**Virtual Scrolling**: 대용량 데이터 표시 시 DOM 노드 수 제한
+5.**WeakMap/WeakSet 활용**: 자동 참조 정리로 메모리 누수 방지
 
 ### 실무 체크리스트
 
@@ -120,9 +120,9 @@ priority_score: 4
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

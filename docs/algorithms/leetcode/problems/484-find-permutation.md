@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 484](https://leetcode.com/problems/find-permutation/) • **Medium**
+[LeetCode 484](https://leetcode.com/problems/find-permutation/) •**Medium**
 
 일단 가장 극단적인 경우를 생각하자.
 
@@ -45,8 +45,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

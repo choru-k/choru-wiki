@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 336](https://leetcode.com/problems/palindrome-pairs/) • **Medium**
+[LeetCode 336](https://leetcode.com/problems/palindrome-pairs/) •**Medium**
 
 ## 핵심 아이디어
 

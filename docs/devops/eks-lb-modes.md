@@ -15,7 +15,7 @@ tags:
 
 "EKS에서 Service를 LoadBalancer로 노출했더니 Target 수가 500개를 넘어서 AWS 한도에 걸렸어" - 이런 경험 있나요?
 
-AWS Load Balancer Controller의 **IP Mode**와 **Instance Mode**는 근본적으로 다른 트래픽 라우팅 방식을 사용합니다. 각각의 동작 원리와 장단점, 그리고 Production에서 마주하는 실제 문제와 해결책을 깊이 있게 살펴보겠습니다.
+AWS Load Balancer Controller의**IP Mode**와**Instance Mode**는 근본적으로 다른 트래픽 라우팅 방식을 사용합니다. 각각의 동작 원리와 장단점, 그리고 Production에서 마주하는 실제 문제와 해결책을 깊이 있게 살펴보겠습니다.
 
 ## AWS Load Balancer Controller 아키텍처
 
@@ -157,9 +157,9 @@ aws elbv2 describe-targets --target-group-arn arn:aws:elasticloadbalancing:...
 
 **성능 이점:**
 
-- **낮은 레이턴시**: 추가 hop 없이 직접 Pod 통신
-- **정확한 로드 밸런싱**: NLB가 실제 Pod 수만큼 균등 분산
-- **Connection Stickiness**: Client IP가 특정 Pod에 고정 가능
+-**낮은 레이턴시**: 추가 hop 없이 직접 Pod 통신
+-**정확한 로드 밸런싱**: NLB가 실제 Pod 수만큼 균등 분산
+-**Connection Stickiness**: Client IP가 특정 Pod에 고정 가능
 
 ### 단점: Target 수 제한과 운영 복잡성
 
@@ -256,9 +256,9 @@ spec:
 
 **확장성 이점:**
 
-- **Target 수 제한 없음**: Node 수만큼만 Target 등록 (보통 10-50개)
-- **Port 무관**: 여러 Port를 사용해도 Target 수 변화 없음
-- **Dynamic Pod Scaling**: Pod 수가 변해도 Target Group 변경 불필요
+-**Target 수 제한 없음**: Node 수만큼만 Target 등록 (보통 10-50개)
+-**Port 무관**: 여러 Port를 사용해도 Target 수 변화 없음
+-**Dynamic Pod Scaling**: Pod 수가 변해도 Target Group 변경 불필요
 
 ### 단점: 추가 홉과 불균등 분산
 
@@ -530,17 +530,17 @@ EKS LoadBalancer 모드 선택 가이드
 
 ### IP Mode 사용 시기
 
-- **High-performance 요구**: 낮은 레이턴시가 중요한 서비스
-- **정확한 로드밸런싱**: Pod별 균등 분산이 필요
-- **소규모 서비스**: Target 수가 500개 미만
-- **Connection Stickiness**: 클라이언트-Pod 간 고정 연결 필요
+-**High-performance 요구**: 낮은 레이턴시가 중요한 서비스
+-**정확한 로드밸런싱**: Pod별 균등 분산이 필요
+-**소규모 서비스**: Target 수가 500개 미만
+-**Connection Stickiness**: 클라이언트-Pod 간 고정 연결 필요
 
 ### Instance Mode 사용 시기
 
-- **대규모 서비스**: Pod 수가 많고 Port가 다양한 경우
-- **Dynamic Scaling**: Pod 수가 자주 변하는 환경
-- **비용 최적화**: Target Group 관리 비용 절감
-- **Legacy 호환**: 기존 NodePort 기반 서비스
+-**대규모 서비스**: Pod 수가 많고 Port가 다양한 경우
+-**Dynamic Scaling**: Pod 수가 자주 변하는 환경
+-**비용 최적화**: Target Group 관리 비용 절감
+-**Legacy 호환**: 기존 NodePort 기반 서비스
 
 ### Production 체크리스트
 

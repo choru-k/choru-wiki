@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1202](https://leetcode.com/problems/smallest-string-with-swaps/) • **Medium**
+[LeetCode 1202](https://leetcode.com/problems/smallest-string-with-swaps/) •**Medium**
 
 ## 핵심 아이디어
 

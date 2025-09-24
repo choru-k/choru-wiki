@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 471](https://leetcode.com/problems/encode-string-with-shortest-length/) • **Medium**
+[LeetCode 471](https://leetcode.com/problems/encode-string-with-shortest-length/) •**Medium**
 
 일단 이 문제를 어떻게 풀어야 할지 생각해보자.
 

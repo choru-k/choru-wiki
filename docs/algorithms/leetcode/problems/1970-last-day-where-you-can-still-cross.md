@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1970](https://leetcode.com/problems/last-day-where-you-can-still-cross/description/) • **Medium**
+[LeetCode 1970](https://leetcode.com/problems/last-day-where-you-can-still-cross/description/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -113,8 +113,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

@@ -615,12 +615,12 @@ $ docker update --cpu-shares 1024 db
 
 CFS는 "완전한 공정성"을 추구하는 정교한 스케줄러입니다:
 
-1. **vruntime**: Nice 값으로 가중치를 준 가상 실행 시간
-2. **Red-Black Tree**: O(log n) 효율적 태스크 선택
-3. **슬리퍼 페어니스**: I/O 집약 태스크 보호
-4. **그룹 스케줄링**: 계층적 공정성 보장
-5. **튜닝 포인트**: latency, granularity, migration cost
-6. **모니터링**: /proc/sched_debug, perf sched
+1.**vruntime**: Nice 값으로 가중치를 준 가상 실행 시간
+2.**Red-Black Tree**: O(log n) 효율적 태스크 선택
+3.**슬리퍼 페어니스**: I/O 집약 태스크 보호
+4.**그룹 스케줄링**: 계층적 공정성 보장
+5.**튜닝 포인트**: latency, granularity, migration cost
+6.**모니터링**: /proc/sched_debug, perf sched
 
 다음 편에서는 실시간 스케줄링 클래스와 우선순위 역전 문제를 다루겠습니다!
 

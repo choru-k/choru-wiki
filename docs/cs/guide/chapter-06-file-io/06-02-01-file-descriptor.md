@@ -121,9 +121,9 @@ openat(AT_FDCWD, "/etc/passwd", O_RDONLY) = 3
 
 이 숫자 3이 가리키는 것을 따라가보면:
 
-1. **프로세스의 fd 테이블**: "3번 칸을 보세요"
-2. **시스템 파일 테이블**: "아, 이건 읽기 전용으로 열린 파일이네요"
-3. **inode 테이블**: "실제 파일은 디스크의 이 위치에 있습니다"
+1.**프로세스의 fd 테이블**: "3번 칸을 보세요"
+2.**시스템 파일 테이블**: "아, 이건 읽기 전용으로 열린 파일이네요"
+3.**inode 테이블**: "실제 파일은 디스크의 이 위치에 있습니다"
 
 ### 커널 내부 자료구조 계층
 
@@ -222,7 +222,7 @@ struct fdtable {
                                  // 리눅스 기본 제한: 1,048,576개 (2^20)
 
     // === 포인터 배열의 메모리 레이아웃 ===
-    struct file __rcu **fd;      // 실제 파일 포인터 배열 (동적 할당됨)
+    struct file __rcu**fd;      // 실제 파일 포인터 배열 (동적 할당됨)
                                  // __rcu = 무잠금 읽기 최적화
                                  // fd[3] = stdin의 struct file* 주소
                                  // NULL이면 해당 fd는 미사용
@@ -426,7 +426,7 @@ int main() {
 }
 ```
 
-커널은 항상 **가장 작은 사용 가능한 번호**를 할당합니다. 이를 위해 비트맵을 사용하죠.
+커널은 항상**가장 작은 사용 가능한 번호**를 할당합니다. 이를 위해 비트맵을 사용하죠.
 
 ### 빠른 할당을 위한 비트맵 기반 관리
 
@@ -557,7 +557,7 @@ int main() {
 }
 ```
 
-이건 버그가 아니라 **feature**입니다! 파이프 구현의 핵심이죠.
+이건 버그가 아니라**feature**입니다! 파이프 구현의 핵심이죠.
 
 ### 파일 디스크립터 복사와 공유
 
@@ -596,7 +596,7 @@ out:
 // 평균 실행 시간: 2-15μs (열린 파일 개수에 따라)
 static struct files_struct *dup_fd(struct files_struct *oldf, int *errorp) {
     struct files_struct *newf;   // 새 프로세스의 "파일 관리 사무실"
-    struct file **old_fds, **new_fds;  // 부모/자식 파일 포인터 배열들
+    struct file**old_fds,**new_fds;  // 부모/자식 파일 포인터 배열들
     unsigned int open_files, i;  // 실제 열린 파일 개수와 반복자
     struct fdtable *old_fdt, *new_fdt;  // 부모/자식 FD 테이블
 
@@ -714,7 +714,7 @@ out:
 
 ### 🎭 다형성의 교과서적 구현
 
-C언어에는 클래스가 없는데 어떻게 다형성을 구현할까요? 답은 **함수 포인터 테이블**입니다!
+C언어에는 클래스가 없는데 어떻게 다형성을 구현할까요? 답은**함수 포인터 테이블**입니다!
 
 제가 처음 이 코드를 봤을 때 감탄했습니다:
 
@@ -788,7 +788,7 @@ struct file_operations {
     int (*flock) (struct file *, int, struct file_lock *);
     ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
     ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int);
-    int (*setlease)(struct file *, long, struct file_lock **, void **);
+    int (*setlease)(struct file *, long, struct file_lock**, void**);
     long (*fallocate)(struct file *file, int mode, loff_t offset, loff_t len);
     void (*show_fdinfo)(struct seq_file *m, struct file *f);
     ssize_t (*copy_file_range)(struct file *, loff_t, struct file *, loff_t, size_t, unsigned int);
@@ -924,7 +924,7 @@ SYSCALL_DEFINE2(pipe2, int __user *, fildes, int, flags) {
     return error;
 }
 
-static int __do_pipe_flags(int *fd, struct file **files, int flags) {
+static int __do_pipe_flags(int *fd, struct file**files, int flags) {
     int error;
     int fdw, fdr;
 
@@ -1202,7 +1202,7 @@ SYSCALL_DEFINE4(signalfd4, int, ufd, sigset_t __user *, user_mask,
 
 ### 🚀 성능의 비밀: RCU
 
-파일 디스크립터는 **엄청나게 자주** 접근됩니다. 매번 락을 잡으면 성능이 끔찍하겠죠.
+파일 디스크립터는**엄청나게 자주**접근됩니다. 매번 락을 잡으면 성능이 끔찍하겠죠.
 
 제가 성능 프로파일링을 했을 때:
 
@@ -1227,7 +1227,7 @@ static inline struct file *__fget_files_rcu(struct files_struct *files,
     for (;;) {
         struct file *file;
         struct fdtable *fdt = rcu_dereference_raw(files->fdt);
-        struct file __rcu **fdentry;
+        struct file __rcu**fdentry;
 
         if (unlikely(fd >= fdt->max_fds))
             return NULL;
@@ -1345,7 +1345,7 @@ if (fork() == 0) {
 }
 ```
 
-해결책: **O_CLOEXEC** 플래그!
+해결책:**O_CLOEXEC**플래그!
 
 ```c
 // 안전한 코드
@@ -1515,19 +1515,19 @@ void show_fd_statistics(void) {
 
 파일 디스크립터는 유닉스의 천재적 발명품입니다:
 
-1. **단순한 인터페이스**: 모든 I/O를 정수 하나로 추상화
-2. **강력한 구현**: 3단계 테이블 구조로 유연성과 성능 확보
-3. **놀라운 확장성**: 파일부터 네트워크, 이벤트까지 모든 것을 통합
+1.**단순한 인터페이스**: 모든 I/O를 정수 하나로 추상화
+2.**강력한 구현**: 3단계 테이블 구조로 유연성과 성능 확보
+3.**놀라운 확장성**: 파일부터 네트워크, 이벤트까지 모든 것을 통합
 
 ### 💪 실전 팁
 
 제가 10년간 시스템 프로그래밍하며 배운 교훈:
 
-1. **항상 close()하세요**: fd 누수는 시한폭탄입니다
-2. **O_CLOEXEC를 기본으로**: 보안 구멍을 막아줍니다
-3. **ulimit 확인**: 프로덕션 배포 전 필수
-4. **lsof는 친구**: 디버깅의 필수 도구
-5. **select < poll < epoll**: 많은 fd를 다룰 때 성능 차이는 하늘과 땅
+1.**항상 close()하세요**: fd 누수는 시한폭탄입니다
+2.**O_CLOEXEC를 기본으로**: 보안 구멍을 막아줍니다
+3.**ulimit 확인**: 프로덕션 배포 전 필수
+4.**lsof는 친구**: 디버깅의 필수 도구
+5.**select < poll < epoll**: 많은 fd를 다룰 때 성능 차이는 하늘과 땅
 
 ### 🔍 디버깅 치트시트
 
@@ -1562,9 +1562,9 @@ lsof -i :8080
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 3-5시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 3-5시간
 
 ### 🎯 학습 경로
 

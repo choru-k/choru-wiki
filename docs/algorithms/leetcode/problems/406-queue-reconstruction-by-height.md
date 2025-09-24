@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 406](https://leetcode.com/problems/queue-reconstruction-by-height/) • **Medium**
+[LeetCode 406](https://leetcode.com/problems/queue-reconstruction-by-height/) •**Medium**
 
 이 문제는 2가지의 풀이법이 있다
 

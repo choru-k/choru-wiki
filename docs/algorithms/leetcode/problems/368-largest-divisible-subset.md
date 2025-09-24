@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 368](https://leetcode.com/problems/largest-divisible-subset/description/?envType=list&envId=xfgt7zgc) • **Medium**
+[LeetCode 368](https://leetcode.com/problems/largest-divisible-subset/description/?envType=list&envId=xfgt7zgc) •**Medium**
 
 ## 핵심 아이디어
 

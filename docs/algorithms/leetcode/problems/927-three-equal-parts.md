@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 927](https://leetcode.com/problems/three-equal-parts/) • **Hard**
+[LeetCode 927](https://leetcode.com/problems/three-equal-parts/) •**Hard**
 
 ## 핵심 아이디어
 

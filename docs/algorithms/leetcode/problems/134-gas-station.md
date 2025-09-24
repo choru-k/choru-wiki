@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 134](https://leetcode.com/problems/gas-station/) • **Medium**
+[LeetCode 134](https://leetcode.com/problems/gas-station/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -59,8 +59,8 @@ $\sum_{i=ans}^{start'} gas[i]-cost[i] >0$
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

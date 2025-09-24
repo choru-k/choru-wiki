@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 457](https://leetcode.com/problems/circular-array-loop/) • **Medium**
+[LeetCode 457](https://leetcode.com/problems/circular-array-loop/) •**Medium**
 
 ## 핵심 아이디어
 

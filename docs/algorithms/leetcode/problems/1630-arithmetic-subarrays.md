@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1630](https://leetcode.com/problems/arithmetic-subarrays/?envType=list&envId=xfgt7zgc) • **Medium**
+[LeetCode 1630](https://leetcode.com/problems/arithmetic-subarrays/?envType=list&envId=xfgt7zgc) •**Medium**
 
 ## 핵심 아이디어
 

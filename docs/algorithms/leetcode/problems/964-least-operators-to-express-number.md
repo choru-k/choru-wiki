@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 964](https://leetcode.com/problems/least-operators-to-express-number/) • **Medium**
+[LeetCode 964](https://leetcode.com/problems/least-operators-to-express-number/) •**Medium**
 
 ## Top Down DP
 
@@ -72,8 +72,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

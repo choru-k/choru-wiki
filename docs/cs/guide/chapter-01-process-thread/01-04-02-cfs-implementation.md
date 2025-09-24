@@ -38,19 +38,34 @@ nice 차이 20 = 1.25^20 ≈ 100배
 ```mermaid
 graph TD
     subgraph NICE_SCALE["Nice 값 스케일"]
-        N20["-20<br/>최고 우선순위<br/>Weight: 88761"]
-        N10["-10<br/>높은 우선순위<br/>Weight: 9548"]
-        N0["0<br/>기본값<br/>Weight: 1024"]
-        N10P["10<br/>낮은 우선순위<br/>Weight: 110"]
-        N19["19<br/>최저 우선순위<br/>Weight: 15"]
+        N20["-20
+최고 우선순위
+Weight: 88761"]
+        N10["-10
+높은 우선순위
+Weight: 9548"]
+        N0["0
+기본값
+Weight: 1024"]
+        N10P["10
+낮은 우선순위
+Weight: 110"]
+        N19["19
+최저 우선순위
+Weight: 15"]
     end
     
     subgraph CPU_TIME["실제 CPU 시간 (10초 중)"]
-        T95["9.5초<br/>(95%)"]
-        T72["7.2초<br/>(72%)"]
-        T50["5.0초<br/>(50%)"]
-        T18["1.8초<br/>(18%)"]
-        T05["0.5초<br/>(5%)"]
+        T95["9.5초
+(95%)"]
+        T72["7.2초
+(72%)"]
+        T50["5.0초
+(50%)"]
+        T18["1.8초
+(18%)"]
+        T05["0.5초
+(5%)"]
     end
     
     N20 --> T95
@@ -60,10 +75,14 @@ graph TD
     N19 --> T05
     
     subgraph FORMULA["1.25 공식"]
-        RULE["Nice 차이 = n<br/>CPU 시간 비율 = 1.25^n"]
-        EXAMPLE1["Nice 0 vs Nice 5<br/>1.25^5 ≈ 3배 차이"]
-        EXAMPLE2["Nice 0 vs Nice 10<br/>1.25^10 ≈ 10배 차이"]
-        EXAMPLE3["Nice 0 vs Nice 20<br/>1.25^20 ≈ 100배 차이"]
+        RULE["Nice 차이 = n
+CPU 시간 비율 = 1.25^n"]
+        EXAMPLE1["Nice 0 vs Nice 5
+1.25^5 ≈ 3배 차이"]
+        EXAMPLE2["Nice 0 vs Nice 10
+1.25^10 ≈ 10배 차이"]
+        EXAMPLE3["Nice 0 vs Nice 20
+1.25^20 ≈ 100배 차이"]
     end
     
     style N20 fill:#F44336
@@ -81,17 +100,28 @@ graph TD
 ```mermaid
 graph LR
     subgraph WEIGHTS["Weight 값 분포"]
-        W1["Nice -20<br/>Weight: 88761<br/>🔴 독점적"]
-        W2["Nice -10<br/>Weight: 9548<br/>🟠 높음"]  
-        W3["Nice 0<br/>Weight: 1024<br/>🟢 기준"]
-        W4["Nice 10<br/>Weight: 110<br/>🔵 낮음"]
-        W5["Nice 19<br/>Weight: 15<br/>🟣 최소"]
+        W1["Nice -20
+Weight: 88761
+🔴 독점적"]
+        W2["Nice -10
+Weight: 9548
+🟠 높음"]  
+        W3["Nice 0
+Weight: 1024
+🟢 기준"]
+        W4["Nice 10
+Weight: 110
+🔵 낮음"]
+        W5["Nice 19
+Weight: 15
+🟣 최소"]
     end
     
     subgraph RATIO["상대적 비율"]
         R1["5914배"]
         R2["9.3배"]
-        R3["1배<br/>(기준)"]
+        R3["1배
+(기준)"]
         R4["0.11배"]
         R5["0.015배"]
     end
@@ -103,11 +133,16 @@ graph LR
     W5 --> R5
     
     subgraph USAGE["실제 용도"]
-        U1["시스템 중요<br/>프로세스만"]
-        U2["실시간<br/>애플리케이션"]
-        U3["일반<br/>프로세스"]
-        U4["배치<br/>작업"]
-        U5["백그라운드<br/>작업만"]
+        U1["시스템 중요
+프로세스만"]
+        U2["실시간
+애플리케이션"]
+        U3["일반
+프로세스"]
+        U4["배치
+작업"]
+        U5["백그라운드
+작업만"]
     end
     
     R1 --> U1
@@ -220,7 +255,7 @@ nice  10: 1.8초 (18%) - 낮은 우선순위
 nice  19: 0.5초 (5%)  - 거의 실행 안됨
 ```
 
-이런 차이가 나는 이유는 **가중치(weight) 시스템** 때문입니다!
+이런 차이가 나는 이유는**가중치(weight) 시스템**때문입니다!
 
 ## CFS Weight 계산: 공정성의 핵심
 
@@ -298,22 +333,34 @@ CFS가 어떻게 각 프로세스에 CPU 시간을 배분하는지 시각화해�
 
 ```mermaid
 flowchart TD
-    START["CFS Timeslice 계산 시작"] --> COUNT_TASKS["런큐의 태스크 개수<br/>nr_running 확인"]
+    START["CFS Timeslice 계산 시작"] --> COUNT_TASKS["런큐의 태스크 개수
+nr_running 확인"]
     
-    COUNT_TASKS --> CALC_PERIOD{"태스크가 많은가?<br/>(nr_running > sched_nr_latency)"}
+    COUNT_TASKS --> CALC_PERIOD{"태스크가 많은가?
+(nr_running > sched_nr_latency)"}
     
-    CALC_PERIOD -->|"많음 (8개 이상)"| DYNAMIC_PERIOD["동적 Period 계산<br/>nr_running × min_granularity<br/>예: 10개 × 0.75ms = 7.5ms"]
+    CALC_PERIOD -->|"많음 (8개 이상)"| DYNAMIC_PERIOD["동적 Period 계산
+nr_running × min_granularity
+예: 10개 × 0.75ms = 7.5ms"]
     
-    CALC_PERIOD -->|"적음 (8개 미만)"| FIXED_PERIOD["고정 Period 사용<br/>sched_latency (기본 6ms)"]
+    CALC_PERIOD -->|"적음 (8개 미만)"| FIXED_PERIOD["고정 Period 사용
+sched_latency (기본 6ms)"]
     
-    DYNAMIC_PERIOD --> CALC_TOTAL_WEIGHT["런큐 총 Weight 계산<br/>모든 태스크 weight 합계"]
+    DYNAMIC_PERIOD --> CALC_TOTAL_WEIGHT["런큐 총 Weight 계산
+모든 태스크 weight 합계"]
     FIXED_PERIOD --> CALC_TOTAL_WEIGHT
     
-    CALC_TOTAL_WEIGHT --> CALC_SLICE["개별 Timeslice 계산<br/>slice = period × (task_weight / total_weight)"]
+    CALC_TOTAL_WEIGHT --> CALC_SLICE["개별 Timeslice 계산
+slice = period × (task_weight / total_weight)"]
     
-    CALC_SLICE --> EXAMPLE["💡 실제 예시<br/>Period: 6ms, Total Weight: 2048<br/>• Nice 0 (weight 1024): 3ms<br/>• Nice 5 (weight 335): 1ms<br/>• Nice -5 (weight 3121): 9ms"]
+    CALC_SLICE --> EXAMPLE["💡 실제 예시
+Period: 6ms, Total Weight: 2048
+• Nice 0 (weight 1024): 3ms
+• Nice 5 (weight 335): 1ms
+• Nice -5 (weight 3121): 9ms"]
     
-    EXAMPLE --> APPLY["프로세스에 적용<br/>해당 시간만큼 CPU 할당"]
+    EXAMPLE --> APPLY["프로세스에 적용
+해당 시간만큼 CPU 할당"]
     
     style START fill:#4CAF50
     style CALC_SLICE fill:#2196F3
@@ -328,15 +375,27 @@ CFS가 사용하는 Red-Black Tree 구조와 vruntime 기반 정렬:
 ```mermaid
 graph TD
     subgraph RB_TREE["CFS Red-Black Tree (vruntime 기준 정렬)"]
-        ROOT["Root<br/>vruntime: 1000ms<br/>Nice: 0"]
+        ROOT["Root
+vruntime: 1000ms
+Nice: 0"]
         
-        LEFT1["Left Child<br/>vruntime: 500ms<br/>Nice: -5<br/>(높은 우선순위)"]
-        RIGHT1["Right Child<br/>vruntime: 1500ms<br/>Nice: 5<br/>(낮은 우선순위)"]
+        LEFT1["Left Child
+vruntime: 500ms
+Nice: -5
+(높은 우선순위)"]
+        RIGHT1["Right Child
+vruntime: 1500ms
+Nice: 5
+(낮은 우선순위)"]
         
-        LEFT2["vruntime: 200ms<br/>Nice: -10"]
-        LEFT3["vruntime: 800ms<br/>Nice: 0"]
-        RIGHT2["vruntime: 1200ms<br/>Nice: 0"]
-        RIGHT3["vruntime: 2000ms<br/>Nice: 10"]
+        LEFT2["vruntime: 200ms
+Nice: -10"]
+        LEFT3["vruntime: 800ms
+Nice: 0"]
+        RIGHT2["vruntime: 1200ms
+Nice: 0"]
+        RIGHT3["vruntime: 2000ms
+Nice: 10"]
     end
     
     ROOT --> LEFT1
@@ -347,16 +406,22 @@ graph TD
     RIGHT1 --> RIGHT3
     
     subgraph LEFTMOST["다음 실행 프로세스"]
-        NEXT["Leftmost Node<br/>vruntime: 200ms<br/>가장 적게 실행된 프로세스"]
+        NEXT["Leftmost Node
+vruntime: 200ms
+가장 적게 실행된 프로세스"]
     end
     
     LEFT2 -.->|"O(log n) 검색"| NEXT
     
     subgraph OPERATIONS["주요 연산"]
-        INSERT["새 프로세스 삽입<br/>O(log n)"]
-        REMOVE["프로세스 제거<br/>O(log n)"]
-        FIND_MIN["최소 vruntime 검색<br/>O(1) - leftmost 캐시"]
-        UPDATE["vruntime 업데이트 후<br/>재정렬 O(log n)"]
+        INSERT["새 프로세스 삽입
+O(log n)"]
+        REMOVE["프로세스 제거
+O(log n)"]
+        FIND_MIN["최소 vruntime 검색
+O(1) - leftmost 캐시"]
+        UPDATE["vruntime 업데이트 후
+재정렬 O(log n)"]
     end
     
     style ROOT fill:#4CAF50
@@ -476,20 +541,24 @@ sequenceDiagram
         Task->>PELT: 프로세스 상태 변경
         
         alt 프로세스가 실행 중
-            PELT->>PELT: load_avg += weight<br/>util_avg += scale_load(weight)
+            PELT->>PELT: load_avg += weight
+util_avg += scale_load(weight)
             Note over PELT: 현재 기여도 추가
         else 프로세스가 sleep
-            PELT->>PELT: load_avg = decay(load_avg)<br/>util_avg = decay(util_avg)
+            PELT->>PELT: load_avg = decay(load_avg)
+util_avg = decay(util_avg)
             Note over PELT: 지수적 감소만 적용
         end
         
-        PELT->>PELT: 지수적 가중 이동 평균 계산<br/>new_avg = old_avg × 0.9785 + current × 0.0215
+        PELT->>PELT: 지수적 가중 이동 평균 계산
+new_avg = old_avg × 0.9785 + current × 0.0215
         
         PELT->>Scheduler: 업데이트된 로드 정보 전달
         Scheduler->>Scheduler: 공정한 스케줄링 결정
     end
     
-    Note over PELT: 최근 1초 활동에 더 큰 가중치<br/>과거 활동은 기하급수적으로 감소
+    Note over PELT: "최근 1초 활동에 더 큰 가중치
+과거 활동은 기하급수적으로 감소"
 ```
 
 ### PELT 가중치 감소 패턴: 최근성이 핵심
@@ -497,27 +566,49 @@ sequenceDiagram
 ```mermaid
 graph TD
     subgraph TIMELINE["시간에 따른 가중치 변화"]
-        T0["현재<br/>가중치: 100%<br/>📈"]
-        T1["1초 전<br/>가중치: 97.85%<br/>📊"]
-        T2["2초 전<br/>가중치: 95.73%<br/>📉"]
-        T3["5초 전<br/>가중치: 89.44%<br/>📉"]
-        T4["10초 전<br/>가중치: 79.98%<br/>📉"]
-        T5["30초 전<br/>가중치: 51.18%<br/>📉"]
-        T6["60초 전<br/>가중치: 26.21%<br/>📉"]
+        T0["현재
+가중치: 100%
+📈"]
+        T1["1초 전
+가중치: 97.85%
+📊"]
+        T2["2초 전
+가중치: 95.73%
+📉"]
+        T3["5초 전
+가중치: 89.44%
+📉"]
+        T4["10초 전
+가중치: 79.98%
+📉"]
+        T5["30초 전
+가중치: 51.18%
+📉"]
+        T6["60초 전
+가중치: 26.21%
+📉"]
     end
     
     T0 --> T1 --> T2 --> T3 --> T4 --> T5 --> T6
     
     subgraph DECAY_FORMULA["감쇠 공식"]
         FORMULA["weight(t) = weight(0) × (0.9785)^t"]
-        HALF_LIFE["반감기: 약 32초<br/>32초 후 영향력 50%로 감소"]
-        PRACTICAL["실용성: 최근 활동 우선<br/>오래된 패턴 자동 무시"]
+        HALF_LIFE["반감기: 약 32초
+32초 후 영향력 50%로 감소"]
+        PRACTICAL["실용성: 최근 활동 우선
+오래된 패턴 자동 무시"]
     end
     
     subgraph APPLICATIONS["실제 적용"]
-        INTERACTIVE["대화형 프로세스<br/>갑작스런 활성화에<br/>빠르게 반응"]
-        BATCH["배치 프로세스<br/>지속적 부하 패턴<br/>안정적 추적"]
-        BURSTY["버스트 워크로드<br/>짧은 활동 후<br/>빠른 가중치 감소"]
+        INTERACTIVE["대화형 프로세스
+갑작스런 활성화에
+빠르게 반응"]
+        BATCH["배치 프로세스
+지속적 부하 패턴
+안정적 추적"]
+        BURSTY["버스트 워크로드
+짧은 활동 후
+빠른 가중치 감소"]
     end
     
     T0 --> INTERACTIVE
@@ -639,21 +730,44 @@ int tune_cfs_for_workload(const char* workload) {
 ```mermaid
 graph TD
     subgraph WORKLOAD_TYPES["워크로드 타입"]
-        INTERACTIVE["🖥️ 대화형<br/>• 데스크톱 앱<br/>• 웹 브라우저<br/>• 편집기"]
-        THROUGHPUT["⚡ 처리량 우선<br/>• 웹 서버<br/>• 데이터베이스<br/>• 계산 작업"]
-        BALANCED["⚖️ 균형<br/>• 범용 서버<br/>• 개발 환경<br/>• 기본 설정"]
+        INTERACTIVE["🖥️ 대화형
+• 데스크톱 앱
+• 웹 브라우저
+• 편집기"]
+        THROUGHPUT["⚡ 처리량 우선
+• 웹 서버
+• 데이터베이스
+• 계산 작업"]
+        BALANCED["⚖️ 균형
+• 범용 서버
+• 개발 환경
+• 기본 설정"]
     end
     
     subgraph PARAM_SETTINGS["파라미터 설정"]
-        INT_PARAMS["sched_latency: 3ms<br/>min_granularity: 0.5ms<br/>wakeup_granularity: 0.5ms"]
-        THR_PARAMS["sched_latency: 12ms<br/>min_granularity: 1.5ms<br/>wakeup_granularity: 2ms"]
-        BAL_PARAMS["sched_latency: 6ms<br/>min_granularity: 0.75ms<br/>wakeup_granularity: 1ms"]
+        INT_PARAMS["sched_latency: 3ms
+min_granularity: 0.5ms
+wakeup_granularity: 0.5ms"]
+        THR_PARAMS["sched_latency: 12ms
+min_granularity: 1.5ms
+wakeup_granularity: 2ms"]
+        BAL_PARAMS["sched_latency: 6ms
+min_granularity: 0.75ms
+wakeup_granularity: 1ms"]
     end
     
     subgraph EFFECTS["성능 효과"]
-        INT_EFFECT["✅ 높은 응답성<br/>✅ 낮은 지연시간<br/>❌ 높은 컨텍스트 스위치<br/>❌ 낮은 처리량"]
-        THR_EFFECT["✅ 높은 처리량<br/>✅ 낮은 오버헤드<br/>❌ 높은 지연시간<br/>❌ 낮은 응답성"]
-        BAL_EFFECT["✅ 균형잡힌 성능<br/>✅ 범용 적합<br/>⚖️ 중간 수준 모든 지표"]
+        INT_EFFECT["✅ 높은 응답성
+✅ 낮은 지연시간
+❌ 높은 컨텍스트 스위치
+❌ 낮은 처리량"]
+        THR_EFFECT["✅ 높은 처리량
+✅ 낮은 오버헤드
+❌ 높은 지연시간
+❌ 낮은 응답성"]
+        BAL_EFFECT["✅ 균형잡힌 성능
+✅ 범용 적합
+⚖️ 중간 수준 모든 지표"]
     end
     
     INTERACTIVE --> INT_PARAMS --> INT_EFFECT
@@ -661,11 +775,20 @@ graph TD
     BALANCED --> BAL_PARAMS --> BAL_EFFECT
     
     subgraph METRICS["성능 지표 비교"]
-        LATENCY_CHART["지연시간<br/>Interactive: 🟢 3ms<br/>Balanced: 🟡 6ms<br/>Throughput: 🔴 12ms"]
+        LATENCY_CHART["지연시간
+Interactive: 🟢 3ms
+Balanced: 🟡 6ms
+Throughput: 🔴 12ms"]
         
-        CONTEXT_SWITCH["컨텍스트 스위치/초<br/>Interactive: 🔴 높음<br/>Balanced: 🟡 중간<br/>Throughput: 🟢 낮음"]
+        CONTEXT_SWITCH["컨텍스트 스위치/초
+Interactive: 🔴 높음
+Balanced: 🟡 중간
+Throughput: 🟢 낮음"]
         
-        OVERALL_PERF["전체 처리량<br/>Interactive: 🔴 85%<br/>Balanced: 🟡 100%<br/>Throughput: 🟢 115%"]
+        OVERALL_PERF["전체 처리량
+Interactive: 🔴 85%
+Balanced: 🟡 100%
+Throughput: 🟢 115%"]
     end
     
     style INTERACTIVE fill:#2196F3
@@ -688,10 +811,13 @@ sequenceDiagram
     
     Note over Admin,Workload: CFS 파라미터 실시간 튜닝 과정
     
-    Admin->>Tuner: 워크로드 타입 지정<br/>"interactive"/"throughput"/"balanced"
+    Admin->>Tuner: 워크로드 타입 지정
+"interactive"/"throughput"/"balanced"
     
     Tuner->>CFS: /proc/sys/kernel/sched_* 파라미터 변경
-    Note over CFS: sched_latency_ns<br/>sched_min_granularity_ns<br/>sched_wakeup_granularity_ns
+    Note over CFS: "sched_latency_ns
+sched_min_granularity_ns
+sched_wakeup_granularity_ns"
     
     CFS->>Workload: 새 스케줄링 정책 적용
     
@@ -700,7 +826,9 @@ sequenceDiagram
         Monitor->>Monitor: 지연시간, 처리량, CPU 사용률 측정
         
         Monitor->>Admin: 실시간 성능 리포트
-        Note over Admin: • 평균 응답시간<br/>• 컨텍스트 스위치 빈도<br/>• 전체 처리량 변화
+        Note over Admin: "• 평균 응답시간
+• 컨텍스트 스위치 빈도
+• 전체 처리량 변화"
         
         alt 성능 개선됨
             Admin->>Admin: 설정 유지
@@ -710,7 +838,8 @@ sequenceDiagram
         end
     end
     
-    Admin->>Admin: 최적 설정 문서화<br/>프로덕션 적용
+    Admin->>Admin: 최적 설정 문서화
+프로덕션 적용
 ```
 
 ## 핵심 요점
@@ -740,9 +869,9 @@ Per-Entity Load Tracking으로 각 태스크의 최근 활동 패턴을 추적�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

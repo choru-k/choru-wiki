@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 757](https://leetcode.com/problems/set-intersection-size-at-least-two/) • **Hard**
+[LeetCode 757](https://leetcode.com/problems/set-intersection-size-at-least-two/) •**Hard**
 
 ## 핵심 아이디어
 
@@ -51,8 +51,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

@@ -13,7 +13,7 @@ tags:
 
 ## 들어가며
 
-"Grafana 대시보드에서 CPU 사용량이 실제보다 2배로 나오는데 뭐가 잘못된 거야?" Kubernetes 환경에서 Prometheus로 CPU 모니터링을 하다 보면 이런 의문을 가져본 적이 있을 것입니다. **container_cpu_usage_seconds_total** 메트릭의 함정과 정확한 CPU 모니터링 방법을 kernel 수준에서 완전히 분석해보겠습니다.
+"Grafana 대시보드에서 CPU 사용량이 실제보다 2배로 나오는데 뭐가 잘못된 거야?" Kubernetes 환경에서 Prometheus로 CPU 모니터링을 하다 보면 이런 의문을 가져본 적이 있을 것입니다.**container_cpu_usage_seconds_total**메트릭의 함정과 정확한 CPU 모니터링 방법을 kernel 수준에서 완전히 분석해보겠습니다.
 
 ## Container CPU 메트릭의 이해
 
@@ -477,10 +477,10 @@ scrape_configs:
 
 Kubernetes CPU 모니터링의 핵심 원칙:
 
-1. **container!=""**: 빈 컨테이너 레이블 제외로 중복 계산 방지
-2. **container!="POD"**: pause 컨테이너 제외로 정확한 애플리케이션 메트릭
-3. **rate() 함수**: Counter 메트릭의 초당 변화율 계산
-4. **CPU throttling**: 리소스 제한으로 인한 성능 저하 모니터링
+1.**container!=""**: 빈 컨테이너 레이블 제외로 중복 계산 방지
+2.**container!="POD"**: pause 컨테이너 제외로 정확한 애플리케이션 메트릭
+3.**rate() 함수**: Counter 메트릭의 초당 변화율 계산
+4.**CPU throttling**: 리소스 제한으로 인한 성능 저하 모니터링
 
 **주의사항:**
 

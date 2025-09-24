@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 833](https://leetcode.com/problems/find-and-replace-in-string/) • **Hard**
+[LeetCode 833](https://leetcode.com/problems/find-and-replace-in-string/) •**Hard**
 
 한번씩 비교하면서 index 을 더하는 방식. 이해하기가 힘들다.
 
@@ -66,8 +66,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1395](https://leetcode.com/problems/count-number-of-teams/) • **Medium**
+[LeetCode 1395](https://leetcode.com/problems/count-number-of-teams/) •**Medium**
 
 ## 핵심 아이디어
 

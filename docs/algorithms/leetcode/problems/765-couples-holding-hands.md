@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 765](https://leetcode.com/problems/couples-holding-hands/) • **Hard**
+[LeetCode 765](https://leetcode.com/problems/couples-holding-hands/) •**Hard**
 
 이 문제를 풀기 전에 조금 더 쉬운 문제를 풀어보자.
 

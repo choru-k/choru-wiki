@@ -21,7 +21,7 @@ priority_score: 5
 
 스포티파이 엔지니어의 비밀:
 
-> "초당 100만 명이 음악을 듣는데 어떻게 끊김이 없을까요? 핵심은 **컨텍스트 스위칭 최소화**입니다. CPU 친화도, lock-free 알고리즘, 그리고 코루틴을 활용하죠."
+> "초당 100만 명이 음악을 듣는데 어떻게 끊김이 없을까요? 핵심은**컨텍스트 스위칭 최소화**입니다. CPU 친화도, lock-free 알고리즘, 그리고 코루틴을 활용하죠."
 
 최적화 전후 비교:
 
@@ -92,7 +92,7 @@ typedef struct {
 
     // 작업 큐
     void (**task_queue)(void*);
-    void **arg_queue;
+    void**arg_queue;
     int queue_size;
     int queue_head;
     int queue_tail;
@@ -451,7 +451,7 @@ context_switching_wisdom = {
 - 넷플릭스가 4K 영상을 스트리밍하는 것도
 - 게임이 60 FPS를 유지하는 것도
 
-모두 **효율적인 컨텍스트 스위칭** 덕분입니다.
+모두**효율적인 컨텍스트 스위칭**덕분입니다.
 
 ## 핵심 요점
 
@@ -476,9 +476,9 @@ context_switching_wisdom = {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 6-8시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 6-8시간
 
 ### 🎯 학습 경로
 

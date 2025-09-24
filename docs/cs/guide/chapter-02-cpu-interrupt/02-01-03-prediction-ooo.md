@@ -63,16 +63,20 @@ graph TD
     B --> C["분기 예측기 조회"]
     C --> D{"예측 결과"}
     
-    D --> |"taken"| E["점프할 주소로<br/>파이프라인 채움"]
-    D --> |"not taken"| F["순차 실행으로<br/>파이프라인 채움"]
+    D --> |"taken"| E["점프할 주소로
+파이프라인 채움"]
+    D --> |"not taken"| F["순차 실행으로
+파이프라인 채움"]
     
     E --> G["실제 분기 결과 확인"]
     F --> G
     
     G --> H{"예측이 맞았나?"}
     
-    H --> |"맞음 ✅"| I["계속 실행<br/>예측기 강화 학습"]
-    H --> |"틀림 ❌"| J["파이프라인 플러시<br/>20 사이클 손실"]
+    H --> |"맞음 ✅"| I["계속 실행
+예측기 강화 학습"]
+    H --> |"틀림 ❌"| J["파이프라인 플러시
+20 사이클 손실"]
     
     J --> K["올바른 주소로 점프"]
     K --> L["예측기 패턴 업데이트"]
@@ -227,7 +231,7 @@ Meltdown 패치 후 성능 변화:
 - 웹 서버: -15%
 - 게임: -5%
 
-교훈: **최적화는 때로는 취약점이 됩니다.**
+교훈:**최적화는 때로는 취약점이 됩니다.**
 
 ```c
 // 분기 예측 성능 측정
@@ -335,9 +339,12 @@ a = memory[1000];  // 기다리는 동안 위 두 개 완료
 ```mermaid
 graph TD
     subgraph "Instruction Queue"
-        I1["1. a = mem[1000]<br/>(100 cycles)"]
-        I2["2. b = x + y<br/>(1 cycle)"]
-        I3["3. c = z * 2<br/>(1 cycle)"]
+        I1["1. a = mem[1000]
+(100 cycles)"]
+        I2["2. b = x + y
+(1 cycle)"]
+        I3["3. c = z * 2
+(1 cycle)"]
     end
     
     subgraph "Reservation Stations"
@@ -347,9 +354,12 @@ graph TD
     end
     
     subgraph "Execution (Out-of-Order)"
-        E1["mem[1000] 로딩...<br/>⏳ 100 cycles"]
-        E2["x + y 계산<br/>✅ 1 cycle"]
-        E3["z * 2 계산<br/>✅ 1 cycle"]
+        E1["mem[1000] 로딩...
+⏳ 100 cycles"]
+        E2["x + y 계산
+✅ 1 cycle"]
+        E3["z * 2 계산
+✅ 1 cycle"]
     end
     
     subgraph "Reorder Buffer"
@@ -385,25 +395,35 @@ graph TD
 ```mermaid
 graph LR
     subgraph "주문 (Program Order)"
-        O1["주문 1: 스테이크<br/>(15분)"]
-        O2["주문 2: 샐러드<br/>(3분)"]
-        O3["주문 3: 스프<br/>(5분)"]
+        O1["주문 1: 스테이크
+(15분)"]
+        O2["주문 2: 샐러드
+(3분)"]
+        O3["주문 3: 스프
+(5분)"]
     end
     
     subgraph "주방 (Execution Units)"
-        K1["🥩 그릴<br/>스테이크 조리중..."]
-        K2["🥗 샐러드 스테이션<br/>완료! ✅"]
-        K3["🍲 스프 스테이션<br/>완료! ✅"]
+        K1["🥩 그릴
+스테이크 조리중..."]
+        K2["🥗 샐러드 스테이션
+완료! ✅"]
+        K3["🍲 스프 스테이션
+완료! ✅"]
     end
     
     subgraph "완성 대기 (Reorder Buffer)"
-        W1["1번 테이블<br/>스테이크 대기중 ⏳"]
-        W2["2번 테이블<br/>샐러드 준비됨 ✅"]
-        W3["3번 테이블<br/>스프 준비됨 ✅"]
+        W1["1번 테이블
+스테이크 대기중 ⏳"]
+        W2["2번 테이블
+샐러드 준비됨 ✅"]
+        W3["3번 테이블
+스프 준비됨 ✅"]
     end
     
     subgraph "서빙 (Commit In-Order)"
-        S1["1번부터 순서대로<br/>서빙 대기"]
+        S1["1번부터 순서대로
+서빙 대기"]
     end
     
     O1 --> K1 --> W1
@@ -586,9 +606,9 @@ void check_memory_dependencies(reservation_station_t* load_rs,
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 327](https://leetcode.com/problems/count-of-range-sum/) • **Medium**
+[LeetCode 327](https://leetcode.com/problems/count-of-range-sum/) •**Medium**
 
 ## 핵심 아이디어
 

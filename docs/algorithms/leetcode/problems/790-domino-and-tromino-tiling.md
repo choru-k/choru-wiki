@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 790](https://leetcode.com/problems/domino-and-tromino-tiling/) • **Hard**
+[LeetCode 790](https://leetcode.com/problems/domino-and-tromino-tiling/) •**Hard**
 
 ![[__9.svg]]
 
@@ -30,8 +30,8 @@ $dp[n] = dp[n-1]+dp[n-2]+dp[n-3]+dp[n-3]+2\sum_{i=0}^{n-4}dp[i] \\=dp[n-1]+dp[n-
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

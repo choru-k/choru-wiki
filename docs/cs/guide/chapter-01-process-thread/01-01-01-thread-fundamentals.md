@@ -44,12 +44,12 @@ def withdraw(account, amount):
 
 제가 게임 엔진을 개발할 때의 일입니다. 물리 엔진, 렌더링, AI, 네트워킹을 모두 하나의 스레드에서 처리하니 FPS가 15를 넘지 못했습니다. 하지만 멀티스레딩을 도입하자:
 
-- **물리 엔진**: 별도 스레드에서 60Hz로 시뮬레이션
-- **렌더링**: 메인 스레드에서 GPU와 통신
-- **AI**: 워커 스레드 풀에서 병렬 처리
-- **네트워킹**: I/O 스레드에서 비동기 처리
+-**물리 엔진**: 별도 스레드에서 60Hz로 시뮬레이션
+-**렌더링**: 메인 스레드에서 GPU와 통신
+-**AI**: 워커 스레드 풀에서 병렬 처리
+-**네트워킹**: I/O 스레드에서 비동기 처리
 
-결과? **FPS가 15에서 120으로 증가!** 🚀
+결과?**FPS가 15에서 120으로 증가!**🚀
 
 하지만 대가가 있었습니다. 디버깅 지옥이 시작된 거죠. 물리 객체가 간헐적으로 벽을 통과하고, 캐릭터가 가끔 하늘로 날아가고, 세이브 파일이 깨지고...
 
@@ -138,7 +138,7 @@ void benchmark_thread_creation() {
 }
 ```
 
-**스레드가 프로세스보다 20배 빠릅니다!** 💨
+**스레드가 프로세스보다 20배 빠릅니다!**💨
 
 ### 프로세스 vs 스레드 메모리 구조 비교
 
@@ -164,28 +164,41 @@ graph TB
     
     subgraph THREAD_MODEL["스레드 모델: 선택적 공유"]
         subgraph SHARED_RES["공유 자원"]
-            SCODE["코드 영역<br/>📖 실행 코드"]
-            SDATA["데이터 영역<br/>🌐 전역 변수"]
-            SHEAP["힙 영역<br/>💾 동적 메모리"]
-            SFD["파일 디스크립터<br/>📁 열린 파일들"]
+            SCODE["코드 영역
+📖 실행 코드"]
+            SDATA["데이터 영역
+🌐 전역 변수"]
+            SHEAP["힙 영역
+💾 동적 메모리"]
+            SFD["파일 디스크립터
+📁 열린 파일들"]
         end
         
         subgraph THREAD1["Thread 1"]
-            T1STACK["스택<br/>📚 지역변수"]
-            T1REG["레지스터<br/>⚙️ CPU 상태"]
-            T1PC["PC<br/>📍 실행 위치"]
+            T1STACK["스택
+📚 지역변수"]
+            T1REG["레지스터
+⚙️ CPU 상태"]
+            T1PC["PC
+📍 실행 위치"]
         end
         
         subgraph THREAD2["Thread 2"]
-            T2STACK["스택<br/>📚 지역변수"]
-            T2REG["레지스터<br/>⚙️ CPU 상태"]
-            T2PC["PC<br/>📍 실행 위치"]
+            T2STACK["스택
+📚 지역변수"]
+            T2REG["레지스터
+⚙️ CPU 상태"]
+            T2PC["PC
+📍 실행 위치"]
         end
         
         subgraph THREAD3["Thread 3"]
-            T3STACK["스택<br/>📚 지역변수"]
-            T3REG["레지스터<br/>⚙️ CPU 상태"]
-            T3PC["PC<br/>📍 실행 위치"]
+            T3STACK["스택
+📚 지역변수"]
+            T3REG["레지스터
+⚙️ CPU 상태"]
+            T3PC["PC
+📍 실행 위치"]
         end
     end
     
@@ -217,21 +230,30 @@ graph TB
 graph TD
     subgraph COMPARISON["생성 비용 비교 (1000개 기준)"]
         subgraph PROCESS_COST["프로세스 생성"]
-            PROC_TIME["⏱️ 평균 500ms<br/>메모리 복사 + 커널 구조체"]
-            PROC_MEM["💾 메모리: 높음<br/>페이지 테이블 복사"]
-            PROC_CPU["🔥 CPU: 높음<br/>fork() 시스템 콜"]
+            PROC_TIME["⏱️ 평균 500ms
+메모리 복사 + 커널 구조체"]
+            PROC_MEM["💾 메모리: 높음
+페이지 테이블 복사"]
+            PROC_CPU["🔥 CPU: 높음
+fork() 시스템 콜"]
         end
         
         subgraph THREAD_COST["스레드 생성"]
-            THR_TIME["⚡ 평균 25ms<br/>스택만 할당"]
-            THR_MEM["💡 메모리: 낮음<br/>스택만 추가"]
-            THR_CPU["✨ CPU: 낮음<br/>clone() + 공유"]
+            THR_TIME["⚡ 평균 25ms
+스택만 할당"]
+            THR_MEM["💡 메모리: 낮음
+스택만 추가"]
+            THR_CPU["✨ CPU: 낮음
+clone() + 공유"]
         end
         
         subgraph RATIO["성능 비율"]
-            SPEED["🚀 20배 빠름<br/>스레드 승리"]
-            MEMORY["📊 10배 효율적<br/>메모리 공유"]
-            CONTEXT["⚙️ 5배 빠른<br/>컨텍스트 스위치"]
+            SPEED["🚀 20배 빠름
+스레드 승리"]
+            MEMORY["📊 10배 효율적
+메모리 공유"]
+            CONTEXT["⚙️ 5배 빠른
+컨텍스트 스위치"]
         end
     end
     
@@ -253,7 +275,7 @@ graph TD
 
 ## 스레드 구현 (Linux): 커널의 비밀
 
-리눅스 커널 개발자들의 천재적인 발상: **"스레드? 그냥 메모리 공유하는 프로세스 아니야?"**
+리눅스 커널 개발자들의 천재적인 발상:**"스레드? 그냥 메모리 공유하는 프로세스 아니야?"**
 
 실제로 리눅스에서는 프로세스와 스레드를 구분하지 않습니다. 모두 `task_struct`로 표현되죠. 차이는 단지 무엇을 공유하느냐뿐!
 
@@ -263,21 +285,24 @@ graph TD
 graph TD
     subgraph KERNEL_VIEW["커널 관점: 모든 것이 task_struct"]
         subgraph TASK1["Task 1 (Main Thread)"]
-            T1_PID["PID: 1234<br/>TGID: 1234"]
+            T1_PID["PID: 1234
+TGID: 1234"]
             T1_MM["mm_struct: 0x1000"]
             T1_FILES["files_struct: 0x2000"]
             T1_STACK["stack: 0x3000"]
         end
         
         subgraph TASK2["Task 2 (Worker Thread)"]
-            T2_PID["PID: 1235<br/>TGID: 1234"]
+            T2_PID["PID: 1235
+TGID: 1234"]
             T2_MM["mm_struct: 0x1000"]
             T2_FILES["files_struct: 0x2000"]
             T2_STACK["stack: 0x4000"]
         end
         
         subgraph TASK3["Task 3 (Another Process)"]
-            T3_PID["PID: 1236<br/>TGID: 1236"]
+            T3_PID["PID: 1236
+TGID: 1236"]
             T3_MM["mm_struct: 0x5000"]
             T3_FILES["files_struct: 0x6000"]
             T3_STACK["stack: 0x7000"]
@@ -285,13 +310,21 @@ graph TD
     end
     
     subgraph SHARED_MEMORY["공유 메모리 영역"]
-        MM_SHARED["mm_struct 0x1000<br/>📋 같은 가상 주소 공간<br/>🔗 힙, 코드, 데이터 공유"]
-        FILES_SHARED["files_struct 0x2000<br/>📁 파일 디스크립터 테이블<br/>🔗 열린 파일 공유"]
+        MM_SHARED["mm_struct 0x1000
+📋 같은 가상 주소 공간
+🔗 힙, 코드, 데이터 공유"]
+        FILES_SHARED["files_struct 0x2000
+📁 파일 디스크립터 테이블
+🔗 열린 파일 공유"]
     end
     
     subgraph SEPARATE_MEMORY["독립 메모리 영역"]
-        MM_SEPARATE["mm_struct 0x5000<br/>🏠 완전히 다른 주소 공간<br/>🚫 메모리 격리"]
-        FILES_SEPARATE["files_struct 0x6000<br/>📂 독립된 파일 테이블<br/>🚫 파일 격리"]
+        MM_SEPARATE["mm_struct 0x5000
+🏠 완전히 다른 주소 공간
+🚫 메모리 격리"]
+        FILES_SEPARATE["files_struct 0x6000
+📂 독립된 파일 테이블
+🚫 파일 격리"]
     end
     
     %% 공유 관계 표시
@@ -317,19 +350,36 @@ graph TD
 
 ```mermaid
 flowchart TD
-    START["clone() 시스템 콜"] --> FLAGS{"어떤 플래그를<br/>사용할까?"}
+    START["clone() 시스템 콜"] --> FLAGS{"어떤 플래그를
+사용할까?"}
     
-    FLAGS -->|"CLONE_VM"| SHARE_VM["✅ 메모리 공간 공유<br/>🔗 힙, 전역변수 공유<br/>⚠️ 경쟁 상태 주의"]
-    FLAGS -->|"CLONE_FILES"| SHARE_FILES["✅ 파일 디스크립터 공유<br/>📁 열린 파일 공유<br/>🔄 하나가 닫으면 모두 영향"]
-    FLAGS -->|"CLONE_SIGHAND"| SHARE_SIG["✅ 시그널 핸들러 공유<br/>📢 CTRL+C 등 공유<br/>🎯 전체 그룹에 전달"]
-    FLAGS -->|"CLONE_THREAD"| THREAD_GROUP["✅ 스레드 그룹 가입<br/>👥 같은 TGID 사용<br/>📊 ps에서 하나로 표시"]
+    FLAGS -->|"CLONE_VM"| SHARE_VM["✅ 메모리 공간 공유
+🔗 힙, 전역변수 공유
+⚠️ 경쟁 상태 주의"]
+    FLAGS -->|"CLONE_FILES"| SHARE_FILES["✅ 파일 디스크립터 공유
+📁 열린 파일 공유
+🔄 하나가 닫으면 모두 영향"]
+    FLAGS -->|"CLONE_SIGHAND"| SHARE_SIG["✅ 시그널 핸들러 공유
+📢 CTRL+C 등 공유
+🎯 전체 그룹에 전달"]
+    FLAGS -->|"CLONE_THREAD"| THREAD_GROUP["✅ 스레드 그룹 가입
+👥 같은 TGID 사용
+📊 ps에서 하나로 표시"]
     
-    FLAGS -->|"플래그 없음"| NO_SHARE["❌ 모든 자원 독립<br/>🏠 완전한 프로세스<br/>🔒 완전 격리"]
+    FLAGS -->|"플래그 없음"| NO_SHARE["❌ 모든 자원 독립
+🏠 완전한 프로세스
+🔒 완전 격리"]
     
     subgraph RESULT["결과"]
-        PTHREAD["🧵 pthread_create()<br/>모든 플래그 사용<br/>완전한 POSIX 스레드"]
-        FORK["🍴 fork()<br/>플래그 사용 안함<br/>전통적인 프로세스"]
-        CUSTOM["⚙️ 커스텀 태스크<br/>선택적 플래그 조합<br/>컨테이너, 네임스페이스"]
+        PTHREAD["🧵 pthread_create()
+모든 플래그 사용
+완전한 POSIX 스레드"]
+        FORK["🍴 fork()
+플래그 사용 안함
+전통적인 프로세스"]
+        CUSTOM["⚙️ 커스텀 태스크
+선택적 플래그 조합
+컨테이너, 네임스페이스"]
     end
     
     SHARE_VM --> PTHREAD
@@ -446,7 +496,7 @@ int create_thread(void (*fn)(void*), void *arg) {
 
 pthread는 "POSIX Thread"의 약자입니다. 유닉스 계열 시스템에서 스레드를 다루는 표준이죠.
 
-제가 처음 pthread를 배울 때 가장 헷갈렸던 것: **"왜 void* 포인터를 쓰는 거지?"**
+제가 처음 pthread를 배울 때 가장 헷갈렸던 것:**"왜 void* 포인터를 쓰는 거지?"**
 
 답은 간단합니다. C언어에는 제네릭이 없으니까요! void*는 "뭐든 될 수 있는" 포인터입니다.
 
@@ -454,7 +504,8 @@ pthread는 "POSIX Thread"의 약자입니다. 유닉스 계열 시스템에서 �
 
 ```mermaid
 sequenceDiagram
-    participant Main as "메인 스레드<br/>(서버 리스너)"
+    participant Main as "메인 스레드
+(서버 리스너)"
     participant Pool as "스레드 풀"
     participant Worker1 as "워커 스레드 1"
     participant Worker2 as "워커 스레드 2"
@@ -501,34 +552,48 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    START["스레드 프로그래밍 시작"] --> ATTR_INIT{"스레드 속성<br/>설정이 필요한가?"}
+    START["스레드 프로그래밍 시작"] --> ATTR_INIT{"스레드 속성
+설정이 필요한가?"}
     
-    ATTR_INIT -->|"예"| SET_ATTR["pthread_attr_init()<br/>스택 크기, 스케줄링 정책 등"]
+    ATTR_INIT -->|"예"| SET_ATTR["pthread_attr_init()
+스택 크기, 스케줄링 정책 등"]
     ATTR_INIT -->|"아니오"| CREATE_THREAD
     
-    SET_ATTR --> STACK_SIZE["pthread_attr_setstacksize()<br/>기본 8MB → 2MB로 조정"]
-    STACK_SIZE --> DETACH_STATE["pthread_attr_setdetachstate()<br/>JOINABLE vs DETACHED"]
+    SET_ATTR --> STACK_SIZE["pthread_attr_setstacksize()
+기본 8MB → 2MB로 조정"]
+    STACK_SIZE --> DETACH_STATE["pthread_attr_setdetachstate()
+JOINABLE vs DETACHED"]
     DETACH_STATE --> CREATE_THREAD
     
-    CREATE_THREAD["pthread_create()<br/>스레드 생성 및 함수 실행"] --> THREAD_RUNNING["스레드 실행 중<br/>작업 수행"]
+    CREATE_THREAD["pthread_create()
+스레드 생성 및 함수 실행"] --> THREAD_RUNNING["스레드 실행 중
+작업 수행"]
     
-    THREAD_RUNNING --> DETACHED{"Detached<br/>스레드인가?"}
+    THREAD_RUNNING --> DETACHED{"Detached
+스레드인가?"}
     
-    DETACHED -->|"예"| AUTO_CLEANUP["자동 리소스 정리<br/>pthread_join() 불필요"]
-    DETACHED -->|"아니오"| NEED_JOIN["pthread_join() 필수<br/>좀비 스레드 방지"]
+    DETACHED -->|"예"| AUTO_CLEANUP["자동 리소스 정리
+pthread_join() 불필요"]
+    DETACHED -->|"아니오"| NEED_JOIN["pthread_join() 필수
+좀비 스레드 방지"]
     
-    NEED_JOIN --> JOIN_WAIT["메인 스레드 대기<br/>결과 수집"]
+    NEED_JOIN --> JOIN_WAIT["메인 스레드 대기
+결과 수집"]
     JOIN_WAIT --> CLEANUP["리소스 정리 완료"]
     AUTO_CLEANUP --> CLEANUP
     
-    CLEANUP --> ATTR_DESTROY{"속성 객체<br/>사용했나?"}
-    ATTR_DESTROY -->|"예"| DESTROY_ATTR["pthread_attr_destroy()<br/>메모리 누수 방지"]
+    CLEANUP --> ATTR_DESTROY{"속성 객체
+사용했나?"}
+    ATTR_DESTROY -->|"예"| DESTROY_ATTR["pthread_attr_destroy()
+메모리 누수 방지"]
     ATTR_DESTROY -->|"아니오"| END["스레드 프로그래밍 완료"]
     DESTROY_ATTR --> END
     
     %% 에러 처리
-    CREATE_THREAD -.->|"실패"| ERROR_HANDLE["errno 확인<br/>EAGAIN, ENOMEM 등"]
-    JOIN_WAIT -.->|"타임아웃"| CANCEL_THREAD["pthread_cancel()<br/>강제 종료"]
+    CREATE_THREAD -.->|"실패"| ERROR_HANDLE["errno 확인
+EAGAIN, ENOMEM 등"]
+    JOIN_WAIT -.->|"타임아웃"| CANCEL_THREAD["pthread_cancel()
+강제 종료"]
     
     style START fill:#E1F5FE
     style CREATE_THREAD fill:#4CAF50
@@ -665,34 +730,53 @@ void configure_thread_attributes() {
 ```mermaid
 graph TD
     subgraph DECISION["선택 기준"]
-        QUESTION["어떤 실행 모델을<br/>선택해야 할까?"] --> ISOLATION{"격리가<br/>중요한가?"}
+        QUESTION["어떤 실행 모델을
+선택해야 할까?"] --> ISOLATION{"격리가
+중요한가?"}
         
-        ISOLATION -->|"예<br/>(보안, 안정성)"| PROCESS_MODEL["🏠 멀티프로세스 모델"]
-        ISOLATION -->|"아니오<br/>(성능, 공유)"| PERFORMANCE{"성능이<br/>중요한가?"}
+        ISOLATION -->|"예
+(보안, 안정성)"| PROCESS_MODEL["🏠 멀티프로세스 모델"]
+        ISOLATION -->|"아니오
+(성능, 공유)"| PERFORMANCE{"성능이
+중요한가?"}
         
-        PERFORMANCE -->|"예<br/>(속도, 메모리)"| THREAD_MODEL["🧵 멀티스레드 모델"]
-        PERFORMANCE -->|"아니오<br/>(단순함)"| SINGLE_MODEL["📱 단일 스레드 모델"]
+        PERFORMANCE -->|"예
+(속도, 메모리)"| THREAD_MODEL["🧵 멀티스레드 모델"]
+        PERFORMANCE -->|"아니오
+(단순함)"| SINGLE_MODEL["📱 단일 스레드 모델"]
     end
     
     subgraph PROCESS_ADVANTAGES["프로세스 장점"]
-        PROC_A1["🔒 완전한 격리<br/>크래시 시 다른 프로세스 보호"]
-        PROC_A2["🛡️ 보안 강화<br/>메모리 접근 불가"]
-        PROC_A3["🐛 디버깅 용이<br/>독립적 상태"]
-        PROC_A4["⚖️ 안정성<br/>하나 죽어도 계속 동작"]
+        PROC_A1["🔒 완전한 격리
+크래시 시 다른 프로세스 보호"]
+        PROC_A2["🛡️ 보안 강화
+메모리 접근 불가"]
+        PROC_A3["🐛 디버깅 용이
+독립적 상태"]
+        PROC_A4["⚖️ 안정성
+하나 죽어도 계속 동작"]
     end
     
     subgraph THREAD_ADVANTAGES["스레드 장점"]
-        THR_A1["⚡ 빠른 생성<br/>20배 속도 향상"]
-        THR_A2["💾 메모리 효율<br/>힙 영역 공유"]
-        THR_A3["🔄 빠른 컨텍스트 스위치<br/>5배 속도 향상"]
-        THR_A4["📡 쉬운 통신<br/>메모리 공유로 즉시 전달"]
+        THR_A1["⚡ 빠른 생성
+20배 속도 향상"]
+        THR_A2["💾 메모리 효율
+힙 영역 공유"]
+        THR_A3["🔄 빠른 컨텍스트 스위치
+5배 속도 향상"]
+        THR_A4["📡 쉬운 통신
+메모리 공유로 즉시 전달"]
     end
     
     subgraph SINGLE_ADVANTAGES["단일 스레드 장점"]
-        SIN_A1["🎯 단순함<br/>동기화 문제 없음"]
-        SIN_A2["🐞 쉬운 디버깅<br/>순차 실행"]
-        SIN_A3["🔮 예측 가능<br/>결정적 동작"]
-        SIN_A4["📚 이해 용이<br/>초보자 친화적"]
+        SIN_A1["🎯 단순함
+동기화 문제 없음"]
+        SIN_A2["🐞 쉬운 디버깅
+순차 실행"]
+        SIN_A3["🔮 예측 가능
+결정적 동작"]
+        SIN_A4["📚 이해 용이
+초보자 친화적"]
     end
     
     PROCESS_MODEL --> PROC_A1
@@ -724,21 +808,39 @@ graph TD
 graph LR
     subgraph EXAMPLES["실제 시스템 사례"]
         subgraph PROCESS_APPS["멀티프로세스 선택"]
-            CHROME["🌐 Chrome 브라우저<br/>탭별 프로세스 분리<br/>보안과 안정성 우선"]
-            APACHE["🖥️ Apache (Prefork)<br/>요청별 프로세스<br/>안정성 중시"]
-            DOCKER["📦 Docker 컨테이너<br/>완전한 격리<br/>보안 우선"]
+            CHROME["🌐 Chrome 브라우저
+탭별 프로세스 분리
+보안과 안정성 우선"]
+            APACHE["🖥️ Apache (Prefork)
+요청별 프로세스
+안정성 중시"]
+            DOCKER["📦 Docker 컨테이너
+완전한 격리
+보안 우선"]
         end
         
         subgraph THREAD_APPS["멀티스레드 선택"]
-            MYSQL["🗄️ MySQL 서버<br/>연결별 스레드<br/>메모리 효율성"]
-            JAVA["☕ Java 애플리케이션<br/>스레드 풀 활용<br/>성능 최적화"]
-            GAME["🎮 게임 엔진<br/>렌더링, 물리, AI 분할<br/>실시간 성능"]
+            MYSQL["🗄️ MySQL 서버
+연결별 스레드
+메모리 효율성"]
+            JAVA["☕ Java 애플리케이션
+스레드 풀 활용
+성능 최적화"]
+            GAME["🎮 게임 엔진
+렌더링, 물리, AI 분할
+실시간 성능"]
         end
         
         subgraph SINGLE_APPS["단일 스레드 선택"]
-            NODEJS["🟢 Node.js<br/>이벤트 루프<br/>단순함과 성능"]
-            REDIS["🔴 Redis<br/>인메모리 DB<br/>예측 가능성"]
-            EMBEDDED["🔧 임베디드 시스템<br/>마이크로컨트롤러<br/>자원 제약"]
+            NODEJS["🟢 Node.js
+이벤트 루프
+단순함과 성능"]
+            REDIS["🔴 Redis
+인메모리 DB
+예측 가능성"]
+            EMBEDDED["🔧 임베디드 시스템
+마이크로컨트롤러
+자원 제약"]
         end
     end
     
@@ -773,9 +875,9 @@ graph LR
 
 ### 📖 현재 문서 정보
 
-- **난이도**: FUNDAMENTALS
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: FUNDAMENTALS
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

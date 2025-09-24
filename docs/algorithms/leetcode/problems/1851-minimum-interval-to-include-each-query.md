@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1851](https://leetcode.com/problems/minimum-interval-to-include-each-query/description/) • **Medium**
+[LeetCode 1851](https://leetcode.com/problems/minimum-interval-to-include-each-query/description/) •**Medium**
 
 ## 핵심 아이디어
 

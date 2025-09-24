@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 465](https://leetcode.com/problems/optimal-account-balancing/) • **Medium**
+[LeetCode 465](https://leetcode.com/problems/optimal-account-balancing/) •**Medium**
 
 일단 잘은 모르겠지만 3-parition 문제로 귀결된다고 하고 3-partition 문제가 NP 문제이니 모든 경우를 해보는 것이 최적의 방법이다.
 

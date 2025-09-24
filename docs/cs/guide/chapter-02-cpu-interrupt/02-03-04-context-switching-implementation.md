@@ -27,7 +27,7 @@ priority_score: 5
 
 EA 게임 엔지니어의 설명:
 
-> "배틀필드는 어떻게 64명이 동시에 플레이해도 60 FPS를 유지할까요? 비밀은 **정확한 타이밍의 컨텍스트 스위칭**입니다. 16.67ms마다 정확히 프레임을 그려야 하죠."
+> "배틀필드는 어떻게 64명이 동시에 플레이해도 60 FPS를 유지할까요? 비밀은**정확한 타이밍의 컨텍스트 스위칭**입니다. 16.67ms마다 정확히 프레임을 그려야 하죠."
 
 ```python
 # 게임 엔진의 컨텍스트 스위칭 전략
@@ -56,12 +56,18 @@ class GameEngine:
 graph LR
     subgraph "60 FPS 게임 엔진의 16.67ms 프레임 스케줄링"
         subgraph "Frame Processing"
-            F1["0-2ms:<br/>Physics Engine"]
-            F2["2-5ms:<br/>AI Processing"]
-            F3["5-7ms:<br/>Network Sync"]
-            F4["7-15ms:<br/>Rendering"]
-            F5["15-16ms:<br/>Audio Mix"]
-            F6["16-16.67ms:<br/>VSync Wait"]
+            F1["0-2ms:
+Physics Engine"]
+            F2["2-5ms:
+AI Processing"]
+            F3["5-7ms:
+Network Sync"]
+            F4["7-15ms:
+Rendering"]
+            F5["15-16ms:
+Audio Mix"]
+            F6["16-16.67ms:
+VSync Wait"]
         end
         
         subgraph "Context Switches"
@@ -87,27 +93,36 @@ graph LR
 
 ```mermaid
 flowchart TD
-    A["프로세스 실행 중"] --> B["스케줄링 포인트<br/>도달"]
+    A["프로세스 실행 중"] --> B["스케줄링 포인트
+도달"]
     
-    B --> C{"컨텍스트 스위칭<br/>필요한가?"}
+    B --> C{"컨텍스트 스위칭
+필요한가?"}
     
     C -->|"타이머 만료"| D["시간 할당량 소진"]
-    C -->|"높은 우선순위"| E["우선순위 태스크<br/>깨어남"]
-    C -->|"자발적 양보"| F["yield/sleep/wait<br/>호출"]
+    C -->|"높은 우선순위"| E["우선순위 태스크
+깨어남"]
+    C -->|"자발적 양보"| F["yield/sleep/wait
+호출"]
     C -->|"시스템콜 완료"| G["커널에서 복귀"]
     
-    D --> H["need_resched 플래그<br/>설정"]
+    D --> H["need_resched 플래그
+설정"]
     E --> H
     F --> H
     G --> H
     
     H --> I["schedule() 호출"]
-    I --> J["다음 태스크 선택<br/>pick_next_task()"]
-    J --> K["context_switch()<br/>실행"]
+    I --> J["다음 태스크 선택
+pick_next_task()"]
+    J --> K["context_switch()
+실행"]
     
-    K --> L["새로운 프로세스<br/>실행 시작"]
+    K --> L["새로운 프로세스
+실행 시작"]
     
-    C -->|"변경 불필요"| M["기존 프로세스<br/>계속 실행"]
+    C -->|"변경 불필요"| M["기존 프로세스
+계속 실행"]
     M --> A
     L --> A
     
@@ -229,30 +244,51 @@ sequenceDiagram
 ```mermaid
 graph TD
     subgraph "현재 프로세스 (Process A)"
-        A1["RAX = 0x12345678<br/>RBX = 0xABCDEF00<br/>RCX = 0x11111111<br/>..."]
-        A2["XMM0 = [1.5, 2.7, 3.9, 4.1]<br/>YMM1 = [벡터 데이터]<br/>..."]
-        A3["CR3 = 0x200000<br/>(페이지 테이블)"]
+        A1["RAX = 0x12345678
+RBX = 0xABCDEF00
+RCX = 0x11111111
+..."]
+        A2["XMM0 = [1.5, 2.7, 3.9, 4.1]
+YMM1 = [벡터 데이터]
+..."]
+        A3["CR3 = 0x200000
+(페이지 테이블)"]
     end
     
     subgraph "컨텍스트 저장 영역"
-        S1["task_struct->thread.regs<br/>레지스터 덤프"]
-        S2["task_struct->thread.fpu<br/>FPU 상태"]
-        S3["task_struct->mm->pgd<br/>메모리 맵"]
+        S1["task_struct->thread.regs
+레지스터 덤프"]
+        S2["task_struct->thread.fpu
+FPU 상태"]
+        S3["task_struct->mm->pgd
+메모리 맵"]
     end
     
     subgraph "새 프로세스 (Process B)"
-        B1["RAX = 0x87654321<br/>RBX = 0x00FEDCBA<br/>RCX = 0x22222222<br/>..."]
-        B2["XMM0 = [5.1, 6.3, 7.5, 8.7]<br/>YMM1 = [다른 벡터]<br/>..."]
-        B3["CR3 = 0x300000<br/>(다른 페이지 테이블)"]
+        B1["RAX = 0x87654321
+RBX = 0x00FEDCBA
+RCX = 0x22222222
+..."]
+        B2["XMM0 = [5.1, 6.3, 7.5, 8.7]
+YMM1 = [다른 벡터]
+..."]
+        B3["CR3 = 0x300000
+(다른 페이지 테이블)"]
     end
     
-    A1 -->|"120ns<br/>푸시 명령어"| S1
-    A2 -->|"340ns<br/>FXSAVE"| S2
-    A3 -->|"450ns<br/>MOV 명령어"| S3
+    A1 -->|"120ns
+푸시 명령어"| S1
+    A2 -->|"340ns
+FXSAVE"| S2
+    A3 -->|"450ns
+MOV 명령어"| S3
     
-    S1 -->|"230ns<br/>팝 명령어"| B1
-    S2 -->|"포함됨<br/>FXRSTOR"| B2
-    S3 -->|"포함됨<br/>MOV CR3"| B3
+    S1 -->|"230ns
+팝 명령어"| B1
+    S2 -->|"포함됨
+FXRSTOR"| B2
+    S3 -->|"포함됨
+MOV CR3"| B3
     
     style A1 fill:#ff9800,color:#fff
     style S1 fill:#607d8b,color:#fff
@@ -443,9 +479,9 @@ void switch_fpu_finish(struct task_struct *new, int cpu) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 8-12시간
+-**난이도**: ADVANCED
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 8-12시간
 
 ### 🎯 학습 경로
 

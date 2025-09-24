@@ -538,7 +538,7 @@ void* debug_malloc(size_t size, const char* file, int line) {
 }
 
 void debug_free(void* ptr, const char* file, int line) {
-    MemNode** current = &allocations;
+    MemNode**current = &allocations;
     while (*current) {
         if ((*current)->ptr == ptr) {
             MemNode* node = *current;
@@ -603,9 +603,9 @@ Valgrind와 AddressSanitizer는 메모리 버그 탐지의 필수 도구입니�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

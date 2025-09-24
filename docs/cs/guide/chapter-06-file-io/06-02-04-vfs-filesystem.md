@@ -71,10 +71,10 @@ VFS는 리눅스의 "만능 번역기"입니다. 78개의 서로 다른 파일�
 
 | 개념 | 역할 | 캐시 효과 | 성능 영향 |
 |------|------|----------|----------|
-| **Dentry Cache** | 경로명 → inode 매핑 | 52배 속도 향상 | 경로 탐색 최적화 |
-| **Inode Cache** | 파일 메타데이터 캐싱 | 디스크 I/O 감소 | 메타데이터 접근 가속 |
-| **Page Cache** | 파일 데이터 캐싱 | 172배 속도 향상 | 데이터 읽기 최적화 |
-| **Mount System** | 파일시스템 통합 | - | 유연한 구조 제공 |
+|**Dentry Cache**| 경로명 → inode 매핑 | 52배 속도 향상 | 경로 탐색 최적화 |
+|**Inode Cache**| 파일 메타데이터 캐싱 | 디스크 I/O 감소 | 메타데이터 접근 가속 |
+|**Page Cache**| 파일 데이터 캐싱 | 172배 속도 향상 | 데이터 읽기 최적화 |
+|**Mount System**| 파일시스템 통합 | - | 유연한 구조 제공 |
 
 ## 🚀 실전 활용 시나리오
 
@@ -112,15 +112,15 @@ VFS는 단순한 추상화 계층이 아닙니다. 현대 시스템의 성능과
 
 ### 📊 성능 영향
 
-- **덴트리 캐시**: 경로명 조회를 52배 가속
-- **페이지 캐시**: 파일 읽기를 172배 가속  
-- **아이노드 캐시**: 메타데이터 접근 최적화
+-**덴트리 캐시**: 경로명 조회를 52배 가속
+-**페이지 캐시**: 파일 읽기를 172배 가속  
+-**아이노드 캐시**: 메타데이터 접근 최적화
 
 ### 🏗️ 현실적 중요성
 
-- **컨테이너 환경**: Docker/Kubernetes의 볼륨과 오버레이 FS 이해
-- **데이터베이스 튜닝**: 파일시스템 선택과 마운트 옵션 최적화
-- **클라우드 네이티브**: NFS, FUSE 기반 스토리지 시스템 활용
+-**컨테이너 환경**: Docker/Kubernetes의 볼륨과 오버레이 FS 이해
+-**데이터베이스 튜닝**: 파일시스템 선택과 마운트 옵션 최적화
+-**클라우드 네이티브**: NFS, FUSE 기반 스토리지 시스템 활용
 
 ---
 
@@ -183,17 +183,17 @@ flowchart TD
 
 VFS에는 네 가지 핵심 객체가 있습니다. 제가 이들을 "사천왕"이라고 부르는 이유는...
 
-1. **슈퍼블록 (Super Block)**: 파일시스템의 CEO
-2. **아이노드 (Inode)**: 파일의 주민등록증
-3. **덴트리 (Dentry)**: 경로의 GPS
-4. **파일 (File)**: 열린 파일의 현재 상태
+1.**슈퍼블록 (Super Block)**: 파일시스템의 CEO
+2.**아이노드 (Inode)**: 파일의 주민등록증
+3.**덴트리 (Dentry)**: 경로의 GPS
+4.**파일 (File)**: 열린 파일의 현재 상태
 
 예를 들어 `/home/user/document.txt`를 열 때:
 
-- **dentry**가 경로를 찾고
-- **inode**가 실제 파일 정보를 제공하고
-- **file**이 현재 열린 상태를 관리하고
-- **super_block**이 파일시스템 전체를 통제
+-**dentry**가 경로를 찾고
+-**inode**가 실제 파일 정보를 제공하고
+-**file**이 현재 열린 상태를 관리하고
+-**super_block**이 파일시스템 전체를 통제
 
 ```c
 // 1. 슈퍼블록: 마운트된 파일 시스템 인스턴스
@@ -221,7 +221,7 @@ struct super_block {
     atomic_t            s_active;      // 활성 참조
 
     void               *s_security;    // LSM 보안 정보
-    const struct xattr_handler **s_xattr;  // 확장 속성 핸들러
+    const struct xattr_handler**s_xattr;  // 확장 속성 핸들러
 
     struct hlist_bl_head s_roots;      // 익명 dentry들
     struct list_head    s_mounts;      // 마운트 포인트 리스트
@@ -913,9 +913,9 @@ static int do_new_mount(struct path *path, const char *fstype,
 
 VFS 캐시는 세 가지 레벨로 작동합니다:
 
-1. **Dentry Cache**: "이 경로 아까 본 거 같은데?"
-2. **Inode Cache**: "이 파일 정보 방금 조회했어!"
-3. **Page Cache**: "이 데이터 메모리에 있어!"
+1.**Dentry Cache**: "이 경로 아까 본 거 같은데?"
+2.**Inode Cache**: "이 파일 정보 방금 조회했어!"
+3.**Page Cache**: "이 데이터 메모리에 있어!"
 
 실제 효과를 측정해보면:
 
@@ -1603,9 +1603,9 @@ real    1m45.2s  # 30% 빨라짐!
 
 #### tmpfs의 비밀
 
-1. **동적 크기**: 사용한 만큼만 메모리 차지
-2. **스왑 가능**: 메모리 부족시 스왑으로
-3. **휘발성**: 재부팅하면 사라짐
+1.**동적 크기**: 사용한 만큼만 메모리 차지
+2.**스왑 가능**: 메모리 부족시 스왑으로
+3.**휘발성**: 재부팅하면 사라짐
 
 ```bash
 # Docker가 tmpfs를 사용하는 이유
@@ -1626,7 +1626,7 @@ static const struct inode_operations shmem_inode_operations = {
 
 // tmpfs 페이지 할당
 static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
-                             struct page **pagep, enum sgp_type sgp,
+                             struct page**pagep, enum sgp_type sgp,
                              gfp_t gfp, struct vm_area_struct *vma,
                              struct vm_fault *vmf, vm_fault_t *fault_type) {
     struct address_space *mapping = inode->i_mapping;
@@ -1727,9 +1727,9 @@ echo 2 > /proc/sys/vm/drop_caches  # 덴트리/아이노드 캐시만
 
 #### 캐시 최적화 전략
 
-1. **메모리가 충분한 경우**: 캐시를 최대한 활용
-2. **메모리가 부족한 경우**: vm.swappiness 조정
-3. **특정 워크로드**: vfs_cache_pressure 튜닝
+1.**메모리가 충분한 경우**: 캐시를 최대한 활용
+2.**메모리가 부족한 경우**: vm.swappiness 조정
+3.**특정 워크로드**: vfs_cache_pressure 튜닝
 
 ```bash
 # 데이터베이스 서버용 설정
@@ -1811,18 +1811,18 @@ out:
 
 VFS는 리눅스의 "만능 번역기"입니다:
 
-1. **통합된 인터페이스**: 78개의 다른 파일시스템, 하나의 API
-2. **계층적 캐싱**: dcache + icache + page cache = 빛의 속도
-3. **유연한 마운트**: 레고 블록처럼 파일시스템 조립
+1.**통합된 인터페이스**: 78개의 다른 파일시스템, 하나의 API
+2.**계층적 캐싱**: dcache + icache + page cache = 빛의 속도
+3.**유연한 마운트**: 레고 블록처럼 파일시스템 조립
 
 ### 💪 실전 팁
 
 10년간 시스템 관리하며 배운 교훈:
 
-1. **캐시가 왕**: 메모리가 비어보여도 캐시로 사용 중
-2. **파일시스템 선택**: 안정성(ext4) vs 기능(Btrfs) vs 속도(tmpfs)
-3. **마운트 옵션이 중요**: noatime 하나로 30% 성능 향상 가능
-4. **proc와 친해지기**: /proc는 디버깅의 보물창고
+1.**캐시가 왕**: 메모리가 비어보여도 캐시로 사용 중
+2.**파일시스템 선택**: 안정성(ext4) vs 기능(Btrfs) vs 속도(tmpfs)
+3.**마운트 옵션이 중요**: noatime 하나로 30% 성능 향상 가능
+4.**proc와 친해지기**: /proc는 디버깅의 보물창고
 
 ### 🔍 디버깅 치트시트
 
@@ -1856,9 +1856,9 @@ VFS는 "보이지 않는 곳에서 일하는 영웅"입니다. 우리가 파일�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

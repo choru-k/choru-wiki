@@ -525,7 +525,7 @@ class GoogleMaglevAlgorithm:
         # Jain's Fairness Index 계산
         values = list(distribution.values())
         n = len(values)
-        fairness = (sum(values) ** 2) / (n * sum(v ** 2 for v in values))
+        fairness = (sum(values)**2) / (n * sum(v**2 for v in values))
         print(f", 🎯 Jain's Fairness Index: {fairness:.4f} (1에 가까울수록 균등)")
         print(f"Google 기준: > 0.99 ✅" if fairness > 0.99 else "개선 필요 ❌")
 ```

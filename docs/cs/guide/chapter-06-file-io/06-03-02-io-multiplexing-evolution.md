@@ -687,9 +687,9 @@ struct epitem {
 
 | 기법 | 최대 FD | 시간 복잡도 | 메모리 사용 | 커널 지원 |
 |------|---------|-------------|-------------|-----------|
-| **select** | 1024 (FD_SETSIZE) | O(n) | 고정 비트맵 | 모든 UNIX |
-| **poll** | 제한 없음 | O(n) | 동적 배열 | System V, Linux |
-| **epoll** | 제한 없음 | O(1) | Red-Black Tree + List | Linux 전용 |
+|**select**| 1024 (FD_SETSIZE) | O(n) | 고정 비트맵 | 모든 UNIX |
+|**poll**| 제한 없음 | O(n) | 동적 배열 | System V, Linux |
+|**epoll**| 제한 없음 | O(1) | Red-Black Tree + List | Linux 전용 |
 
 ### 실제 벤치마크 결과
 
@@ -776,9 +776,9 @@ void benchmark_io_multiplexing() {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

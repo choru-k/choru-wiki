@@ -19,9 +19,9 @@ priority_score: 4
 
 ## 🚫 "사용자가 취소 버튼을 눌렀어요!"
 
-2020년, 저희 서비스에서 큰 문제가 있었습니다. 사용자가 파일 업로드를 취소해도 서버는 계속 처리하고 있었죠. **메모리 사용량 3GB**까지 치솟았습니다!
+2020년, 저희 서비스에서 큰 문제가 있었습니다. 사용자가 파일 업로드를 취소해도 서버는 계속 처리하고 있었죠.**메모리 사용량 3GB**까지 치솟았습니다!
 
-해결책: **AbortController**
+해결책:**AbortController**
 
 ```javascript
 // Before: 취소 불가능 😱
@@ -182,9 +182,9 @@ void cancellable_operation_example() {
 
 Google Chrome 팀이 AbortController를 도입한 이유:
 
-- **메모리 누수**: 취소되지 않은 fetch가 메모리를 계속 점유
-- **네트워크 대역폭**: 불필요한 요청이 계속 진행
-- **UX 개선**: 사용자가 페이지 이동 시 즉시 취소
+-**메모리 누수**: 취소되지 않은 fetch가 메모리를 계속 점유
+-**네트워크 대역폭**: 불필요한 요청이 계속 진행
+-**UX 개선**: 사용자가 페이지 이동 시 즉시 취소
 
 ### 커스텀 AbortController 구현
 
@@ -415,12 +415,12 @@ async function fetchWithTimeoutAndCancel() {
 
 ### 1. 사용자 경험을 최우선으로 하라
 
-사용자가 취소 버튼을 누르면 **즉시** 반응해야 한다. 메모리와 CPU를 낭비하지 마라.
+사용자가 취소 버튼을 누르면**즉시**반응해야 한다. 메모리와 CPU를 낭비하지 마라.
 
 ### 2. 취소 토큰 패턴을 사용하라
 
-- **C++**: CancellationToken으로 협조적 취소
-- **JavaScript**: AbortController/AbortSignal 활용
+-**C++**: CancellationToken으로 협조적 취소
+-**JavaScript**: AbortController/AbortSignal 활용
 
 ### 3. 타임아웃은 필수다
 
@@ -439,9 +439,9 @@ exponential backoff로 서버 부하를 줄이고 성공률을 높여라.
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

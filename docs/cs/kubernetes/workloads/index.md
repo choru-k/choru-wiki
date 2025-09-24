@@ -21,7 +21,7 @@ tags:
 
 ### 충격적인 사실: Pod는 왜 필요했을까?
 
-Docker만 있으면 되는데 왜 Pod라는 개념을 만들었을까요? 그 답은 **현실 세계의 복잡함**에 있습니다.
+Docker만 있으면 되는데 왜 Pod라는 개념을 만들었을까요? 그 답은**현실 세계의 복잡함**에 있습니다.
 
 ```python
 # Netflix 마이크로서비스의 현실
@@ -55,20 +55,28 @@ print("💡 깨달음: Pod는 '함께 배포되어야 하는 컨테이너들의 
 ```mermaid
 graph TB
     subgraph "Traditional 배포 (2010년)"
-        VM["🖥️ Virtual Machine<br/>전체 OS + 앱"]
-        MANUAL["👨‍💻 수동 배포<br/>SSH + rsync"]
+        VM["🖥️ Virtual Machine
+전체 OS + 앱"]
+        MANUAL["👨‍💻 수동 배포
+SSH + rsync"]
     end
     
     subgraph "Container 혁명 (2015년)"
-        DOCKER["🐳 Docker Container<br/>앱만 패키징"]
-        COMPOSE["🔧 Docker Compose<br/>여러 컨테이너 관리"]
+        DOCKER["🐳 Docker Container
+앱만 패키징"]
+        COMPOSE["🔧 Docker Compose
+여러 컨테이너 관리"]
     end
     
     subgraph "Kubernetes Workloads (2018년+)"
-        POD["📦 Pod<br/>컨테이너 그룹"]
-        DEPLOY["🚀 Deployment<br/>선언적 배포"]
-        STS["💾 StatefulSet<br/>상태 관리"]
-        DS["🔄 DaemonSet<br/>모든 노드 배포"]
+        POD["📦 Pod
+컨테이너 그룹"]
+        DEPLOY["🚀 Deployment
+선언적 배포"]
+        STS["💾 StatefulSet
+상태 관리"]
+        DS["🔄 DaemonSet
+모든 노드 배포"]
     end
     
     VM --> DOCKER --> POD
@@ -82,7 +90,7 @@ graph TB
     style DS fill:#F4B400
 ```
 
-**핵심 통찰**: 각 Workload 타입은 **특정한 운영 패턴**을 해결하기 위해 만들어졌습니다.
+**핵심 통찰**: 각 Workload 타입은**특정한 운영 패턴**을 해결하기 위해 만들어졌습니다.
 
 ## Kubernetes Workloads 완벽 마스터 📚
 
@@ -92,7 +100,7 @@ graph TB
 
 Airbnb가 어떻게 Pod 설계를 통해 초당 1만 건의 예약 요청을 안정적으로 처리하는지, Pod 생명주기의 모든 단계와 실제 운영에서 만날 수 있는 함정들을 탐험합니다.
 
-📦 **핵심 내용**:
+📦**핵심 내용**:
 
 - Pod 내 컨테이너 간 네트워크/스토리지 공유 원리
 - Init Container vs Sidecar Container 패턴
@@ -107,7 +115,7 @@ Airbnb가 어떻게 Pod 설계를 통해 초당 1만 건의 예약 요청을 안
 
 Spotify가 어떻게 하루에 50번 배포를 하면서도 서비스 중단 없이 운영하는지, Controller 패턴이 어떻게 선언적 관리와 자동 복구를 가능하게 하는지 알아봅니다.
 
-🔄 **핵심 내용**:
+🔄**핵심 내용**:
 
 - Controller Loop와 Reconciliation 패턴
 - ReplicaSet의 Pod 관리 알고리즘
@@ -122,7 +130,7 @@ Spotify가 어떻게 하루에 50번 배포를 하면서도 서비스 중단 없
 
 MongoDB, Kafka, Elasticsearch 같은 상태가 있는 애플리케이션을 Kubernetes에서 어떻게 안정적으로 운영하는지, StatefulSet이 순서와 정체성을 보장하는 마법을 이해합니다.
 
-💾 **핵심 내용**:
+💾**핵심 내용**:
 
 - Stable Network Identity와 Ordered Deployment
 - Persistent Volume과의 완벽한 통합
@@ -137,7 +145,7 @@ MongoDB, Kafka, Elasticsearch 같은 상태가 있는 애플리케이션을 Kube
 
 로그 수집, 메트릭 수집, 네트워킹 등 모든 노드에서 실행되어야 하는 시스템 컴포넌트를 DaemonSet으로 어떻게 완벽하게 관리하는지 탐구합니다.
 
-🔄 **핵심 내용**:
+🔄**핵심 내용**:
 
 - Node Selector와 Tolerations 활용
 - Rolling Update Strategy for DaemonSets
@@ -501,14 +509,14 @@ resource_optimization = {
 
 ## 마치며: Workloads는 애플리케이션의 생명
 
-Kubernetes Workloads를 마스터하면, 단순한 컨테이너 실행을 넘어서 **애플리케이션의 전체 생명주기를 선언적으로 관리**할 수 있게 됩니다.
+Kubernetes Workloads를 마스터하면, 단순한 컨테이너 실행을 넘어서**애플리케이션의 전체 생명주기를 선언적으로 관리**할 수 있게 됩니다.
 
 **Workloads가 가르쳐주는 교훈들**:
 
-1. 📦 **적절한 추상화**: 복잡한 배포 패턴을 간단한 YAML로 표현
-2. 🔄 **자동화된 관리**: 장애, 스케일링, 업데이트를 자동으로 처리
-3. 💡 **패턴 기반 설계**: 일반적인 운영 패턴을 재사용 가능한 형태로 제공
-4. 🎯 **선언적 운영**: 원하는 상태를 선언하면 시스템이 알아서 달성
+1. 📦**적절한 추상화**: 복잡한 배포 패턴을 간단한 YAML로 표현
+2. 🔄**자동화된 관리**: 장애, 스케일링, 업데이트를 자동으로 처리
+3. 💡**패턴 기반 설계**: 일반적인 운영 패턴을 재사용 가능한 형태로 제공
+4. 🎯**선언적 운영**: 원하는 상태를 선언하면 시스템이 알아서 달성
 
 이제 Pod부터 시작해서 복잡한 StatefulSet까지 완전히 마스터해보세요! 🚀
 

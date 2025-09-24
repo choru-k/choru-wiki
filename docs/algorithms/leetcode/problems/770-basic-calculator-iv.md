@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 770](https://leetcode.com/problems/basic-calculator-iv/) • **Hard**
+[LeetCode 770](https://leetcode.com/problems/basic-calculator-iv/) •**Hard**
 
 ## 핵심 아이디어
 
@@ -80,8 +80,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

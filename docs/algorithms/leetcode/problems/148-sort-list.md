@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 148](https://leetcode.com/problems/sort-list/) • **Medium**
+[LeetCode 148](https://leetcode.com/problems/sort-list/) •**Medium**
 
 일반적인 소팅알고리즘 중에서 효율적인 소팅 알고리즘은
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 31](https://leetcode.com/problems/next-permutation/) • **Easy**
+[LeetCode 31](https://leetcode.com/problems/next-permutation/) •**Easy**
 
 ![[Attachments/Untitled 6.png|Untitled 6.png]]
 
@@ -19,8 +19,8 @@ tags:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

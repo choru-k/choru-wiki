@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 360](https://leetcode.com/problems/sort-transformed-array/) • **Medium**
+[LeetCode 360](https://leetcode.com/problems/sort-transformed-array/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -86,8 +86,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

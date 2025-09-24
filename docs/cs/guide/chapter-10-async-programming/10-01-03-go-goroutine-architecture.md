@@ -21,10 +21,10 @@ priority_score: 4
 
 Go의 스케줄러는 엔지니어링의 걸작으로 평가받는 시스템입니다:
 
-1. **GPM 모델**: G(Goroutine), P(Processor), M(Machine) 세 요소의 조화
-2. **콘티기어스 스택**: 동적 스택 확장과 Hot Split 문제 해결
-3. **Channel 내부 구현**: CSP(Communicating Sequential Processes) 모델의 실제 구현
-4. **실전 패턴**: Worker Pool, Fan-out/Fan-in, Context 기반 대반 효율적 사용법
+1.**GPM 모델**: G(Goroutine), P(Processor), M(Machine) 세 요소의 조화
+2.**콘티기어스 스택**: 동적 스택 확장과 Hot Split 문제 해결
+3.**Channel 내부 구현**: CSP(Communicating Sequential Processes) 모델의 실제 구현
+4.**실전 패턴**: Worker Pool, Fan-out/Fan-in, Context 기반 대반 효율적 사용법
 
 ## 3. Go의 Goroutine: 엔지니어링의 정수
 
@@ -361,9 +361,9 @@ G(Goroutine), P(Processor), M(Machine) 세 요소의 조화로 효율적인 스�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

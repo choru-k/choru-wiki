@@ -64,11 +64,11 @@ Promise와 Future는 현대 비동기 프로그래밍의 핵심 패턴입니다.
 
 | 개념 | Promise (JavaScript) | Future (C++) | 설명 |
 |------|---------------------|--------------|------|
-| **생성** | `new Promise()` | `std::async()` | 비동기 작업 시작 |
-| **체이닝** | `.then()` | `.then()` (커스텀) | 결과 변환과 연결 |
-| **에러 처리** | `.catch()` | `try-catch` | 예외 전파와 처리 |
-| **조합** | `Promise.all()` | `when_all()` (커스텀) | 여러 작업 동시 대기 |
-| **취소** | `AbortController` | `CancellationToken` | 작업 중단 메커니즘 |
+|**생성**| `new Promise()` | `std::async()` | 비동기 작업 시작 |
+|**체이닝**| `.then()` | `.then()` (커스텀) | 결과 변환과 연결 |
+|**에러 처리**| `.catch()` | `try-catch` | 예외 전파와 처리 |
+|**조합**| `Promise.all()` | `when_all()` (커스텀) | 여러 작업 동시 대기 |
+|**취소**| `AbortController` | `CancellationToken` | 작업 중단 메커니즘 |
 
 ## 🚀 실전 활용 시나리오
 
@@ -110,9 +110,9 @@ Promise와 Future는 현대 비동기 프로그래밍의 핵심 패턴입니다.
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

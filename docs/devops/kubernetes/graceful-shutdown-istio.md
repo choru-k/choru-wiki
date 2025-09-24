@@ -13,7 +13,7 @@ tags:
 
 ## 들어가며
 
-"배포할 때마다 일부 요청이 실패한대?" Production 환경에서 가장 중요한 것 중 하나가 바로 **무중단 배포**입니다. 하지만 Kubernetes, Istio, Load Balancer가 복합적으로 얽힌 환경에서는 완벽한 Graceful Shutdown이 생각보다 복잡합니다. **"정말로 트래픽이 안 들어올까?"**라는 의구심이 생기는 이유와 이를 확실하게 검증하는 방법을 살펴보겠습니다.
+"배포할 때마다 일부 요청이 실패한대?" Production 환경에서 가장 중요한 것 중 하나가 바로**무중단 배포**입니다. 하지만 Kubernetes, Istio, Load Balancer가 복합적으로 얽힌 환경에서는 완벽한 Graceful Shutdown이 생각보다 복잡합니다.**"정말로 트래픽이 안 들어올까?"**라는 의구심이 생기는 이유와 이를 확실하게 검증하는 방법을 살펴보겠습니다.
 
 ## Graceful Shutdown의 복잡성
 
@@ -88,7 +88,7 @@ HealthyThresholdCount: 3              # 3회 성공시 healthy
 UnhealthyThresholdCount: 3            # 3회 실패시 unhealthy
 ```
 
-**문제점**: Pod가 종료되어도 NLB가 인식하기까지 **최대 90초** 소요 가능!
+**문제점**: Pod가 종료되어도 NLB가 인식하기까지**최대 90초**소요 가능!
 
 ```text
 Pod Deletion (T=0) → ... → NLB Detection (T=90s)
@@ -109,7 +109,7 @@ kubectl logs -f deployment/istiod -n istio-system | grep "Push debounce stable"
 
 ### 실시간 트래픽 모니터링
 
-가장 확실한 방법은 **실제 트래픽이 들어오는지 실시간으로 확인**하는 것입니다:
+가장 확실한 방법은**실제 트래픽이 들어오는지 실시간으로 확인**하는 것입니다:
 
 ```bash
 #!/bin/bash
@@ -523,9 +523,9 @@ groups:
 
 ### 2. 다층 방어 전략
 
-- **Application 레벨**: PreStop hook + Health check endpoint
-- **Service Mesh 레벨**: Connection pool + Outlier detection
-- **Load Balancer 레벨**: Connection draining + 빠른 health check
+-**Application 레벨**: PreStop hook + Health check endpoint
+-**Service Mesh 레벨**: Connection pool + Outlier detection
+-**Load Balancer 레벨**: Connection draining + 빠른 health check
 
 ### 3. 실시간 검증
 

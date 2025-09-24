@@ -13,9 +13,9 @@ tags:
 
 ## 들어가며
 
-"Scale-out하면 문제가 해결될 거야!" 하지만 Production에서 로드테스트 중 ProxySQL Pod을 늘렸더니 오히려 **전체 서비스가 다운**되는 경험을 해봤나요?
+"Scale-out하면 문제가 해결될 거야!" 하지만 Production에서 로드테스트 중 ProxySQL Pod을 늘렸더니 오히려**전체 서비스가 다운**되는 경험을 해봤나요?
 
-이는 ProxySQL의 Connection Pool 특성과 Health Check 메커니즘, 그리고 Kubernetes Readiness Probe가 만들어내는 **악순환 고리** 때문입니다. 실제 Production 장애를 통해 분석한 ProxySQL Scale-out의 함정과 해결책을 살펴보겠습니다.
+이는 ProxySQL의 Connection Pool 특성과 Health Check 메커니즘, 그리고 Kubernetes Readiness Probe가 만들어내는**악순환 고리**때문입니다. 실제 Production 장애를 통해 분석한 ProxySQL Scale-out의 함정과 해결책을 살펴보겠습니다.
 
 ## 문제 상황: Partial Outage → Complete Outage
 
@@ -46,10 +46,10 @@ graph TB
 
 ### 실제 발생한 문제
 
-1. **초기 상황**: Noti DB 크기 부족으로 connection limit 도달
-2. **잘못된 대응**: API, Edge, Worker Pod 증가로 Frontend Connection 급증
-3. **악화**: 새로운 ProxySQL Pod들이 같은 DB에 Health Check
-4. **완전 장애**: 소수의 Ready Pod에 트래픽 집중, 노드 네트워크 대역폭 초과
+1.**초기 상황**: Noti DB 크기 부족으로 connection limit 도달
+2.**잘못된 대응**: API, Edge, Worker Pod 증가로 Frontend Connection 급증
+3.**악화**: 새로운 ProxySQL Pod들이 같은 DB에 Health Check
+4.**완전 장애**: 소수의 Ready Pod에 트래픽 집중, 노드 네트워크 대역폭 초과
 
 ```bash
 # 장애 당시 Prometheus 쿼리로 확인된 네트워크 Drop
@@ -78,8 +78,8 @@ readinessProbe:
 
 **문제점:**
 
-- 모든 ProxySQL Pod이 **동일한 Noti DB**에 Health Check
-- DB의 `max_connections`에 도달하면 **모든 신규 Pod이 Not Ready**
+- 모든 ProxySQL Pod이**동일한 Noti DB**에 Health Check
+- DB의 `max_connections`에 도달하면**모든 신규 Pod이 Not Ready**
 - Scale-out이 오히려 Health Check 부하를 증가
 
 ### 2. Connection Pool의 Thunder Herd
@@ -413,22 +413,22 @@ ProxySQL Scale-out 장애를 통해 배운 핵심 교훈들:
 ### 1. 공유 리소스 의존성 주의
 
 - Health Check가 Backend DB에 의존하면 Scale-out이 역효과
-- **독립적인 Health Check** 메커니즘 필요
+-**독립적인 Health Check**메커니즘 필요
 
 ### 2. Connection Pool은 적을수록 좋다
 
 - 과도한 Free Connection은 메모리 낭비이자 성능 저해 요소
-- **Thunder Herd 방지**를 위한 적극적인 Connection 제한 필요
+-**Thunder Herd 방지**를 위한 적극적인 Connection 제한 필요
 
 ### 3. Zone별 균등 배치가 핵심
 
 - 소수 Pod에 트래픽 집중되면 노드 레벨 장애로 확산
-- **Topology Spread Constraints** 필수 적용
+-**Topology Spread Constraints**필수 적용
 
 ### 4. 점진적 Load Testing
 
 - 급격한 부하 증가는 예상치 못한 Cascade Failure 유발
-- **Gradual Ramp-up**으로 시스템 한계 정확히 파악
+-**Gradual Ramp-up**으로 시스템 한계 정확히 파악
 
 **Production 운영 체크리스트:**
 

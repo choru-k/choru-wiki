@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 480](https://leetcode.com/problems/sliding-window-median/) • **Medium**
+[LeetCode 480](https://leetcode.com/problems/sliding-window-median/) •**Medium**
 
 ## 그냥 무작정 size-k 배열 유지
 

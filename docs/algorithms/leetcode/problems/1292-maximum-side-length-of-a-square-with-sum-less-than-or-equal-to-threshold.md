@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1292](https://leetcode.com/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/) • **Medium**
+[LeetCode 1292](https://leetcode.com/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/) •**Medium**
 
 무식한 방법 O(NM*min(NM))
 

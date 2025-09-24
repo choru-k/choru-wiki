@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 2742](https://leetcode.com/problems/painting-the-walls/description/) • **Medium**
+[LeetCode 2742](https://leetcode.com/problems/painting-the-walls/description/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -65,8 +65,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

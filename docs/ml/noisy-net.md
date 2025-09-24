@@ -17,8 +17,8 @@ tags:
 
 **탐색 방법:**
 
-1. **epsilon-greedy**: 지금까지 보통 써왔던 방법으로 특정 확률로 랜덤한 액션을 선택하게 합니다.
-2. **entropy regularisation**: 일반적으로 policy-gradient 방법에 자주 사용됩니다.
+1.**epsilon-greedy**: 지금까지 보통 써왔던 방법으로 특정 확률로 랜덤한 액션을 선택하게 합니다.
+2.**entropy regularisation**: 일반적으로 policy-gradient 방법에 자주 사용됩니다.
 
 이 논문에서는 신경망 전체에 noisy 을 주는 방법을 제안하고 있습니다. 이 noisy 을 통해서 탐색을 한다는 것 입니다. 이 방법이 전통적인 탐색 방법 보다 더 좋다는 것은 논문에서 증명되어 있지 않은 것 같습니다. (제가 논문을 잘 이해를 못한 부분 일 수도 있습니다) 결과론적으로 봤을 때 더 잘됬네 라는 느낌인것 같습니다만 제 느낌적인 부분으로는 일반적으로 epsilon-greedy 는 점점 decay 되면서 탐험의 의미가 사라지고 state 나 network 에 상관없이 무작위라는 특성이 있습니다. 그에 비해 noisy-net 은 그때그때 다르기 때문에 좀더 의미 있는 탐색을 하는 것 같습니다. 만약 action A,B 의 Q 값이 100, 10 등 확연히 차이가 날 때에는 무조건 A를 선택하는게 좋고 B를 선택하는 경험은 큰 필요가 없습니다만 A,B 의 값이 51, 50 일 경우 거의 비슷하기 때문에 많은 탐험을 하는게 중요할 것 같습니다. nosiy-net 은 전체 신경망에 대해서 nosie 을 주기 때문에 이러한 의미 있는 탐색을 더 하는 것 같습니다. 또한 epsilon-greedy 의 경우 decay 의 값과 최소 epsilon 값 등 hyper-parameter 가 존재하는데 그에 비해 noisy net 은 그런 hyper-parameter 에 의한 차이가 적다고 생각됩니다.
 
@@ -38,8 +38,8 @@ $u, w \ are \ leanable, \ \epsilon \ is \ random$
 
 **Noise 정의 방법:**
 
-1. **Independent Gaussian noise**: 모든 요소에 대해서 랜덤을 사용하는 방식입니다. 이 식에서 필요한 epsilon 변수는 총 pq+q 개 입니다.(p: input_size, q: output_size) 계산량이 많기 때문에 DQN 등에서는 사용하지 않고 A3C 에서 사용한다고 논문에서는 말합니다.
-2. **Factorised Gaussian noise**: 랜덤한 변수를 (p+q) 개만 만들고 나머지는 계산을 통해서 만듭니다.
+1.**Independent Gaussian noise**: 모든 요소에 대해서 랜덤을 사용하는 방식입니다. 이 식에서 필요한 epsilon 변수는 총 pq+q 개 입니다.(p: input_size, q: output_size) 계산량이 많기 때문에 DQN 등에서는 사용하지 않고 A3C 에서 사용한다고 논문에서는 말합니다.
+2.**Factorised Gaussian noise**: 랜덤한 변수를 (p+q) 개만 만들고 나머지는 계산을 통해서 만듭니다.
 
 $\epsilon^w_{i,j} = f(\epsilon_i)f(\epsilon_j), \epsilon^b_j=f(\epsilon_j)$
 

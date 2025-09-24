@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1467](https://leetcode.com/problems/probability-of-a-two-boxes-having-the-same-number-of-distinct-balls/) • **Medium**
+[LeetCode 1467](https://leetcode.com/problems/probability-of-a-two-boxes-having-the-same-number-of-distinct-balls/) •**Medium**
 
 ## 문제 설명
 
@@ -24,8 +24,8 @@ tags:
 
 ## 복잡도 분석
 
-- **Time Complexity:** TBD
-- **Space Complexity:** TBD
+-**Time Complexity:**TBD
+-**Space Complexity:**TBD
 
 ## 핵심 포인트
 

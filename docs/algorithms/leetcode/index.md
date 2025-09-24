@@ -12,9 +12,9 @@ A comprehensive collection of LeetCode problem solutions with detailed explanati
 
 ## Statistics
 
-- **Total Problems**: 200+
-- **Most Common Patterns**: Greedy (61), Dynamic Programming (52), DFS (22)
-- **Coverage**: Easy to Hard difficulty levels
+-**Total Problems**: 200+
+-**Most Common Patterns**: Greedy (61), Dynamic Programming (52), DFS (22)
+-**Coverage**: Easy to Hard difficulty levels
 
 ## Featured Problems
 
@@ -71,11 +71,11 @@ A comprehensive collection of LeetCode problem solutions with detailed explanati
 
 ## Tips for Success
 
-1. **Understand the pattern** - Don't just memorize solutions
-2. **Multiple approaches** - Try brute force, then optimize
-3. **Time/Space complexity** - Always analyze and mention complexities
-4. **Edge cases** - Consider empty inputs, single elements, duplicates
-5. **Practice regularly** - Consistency is key
+1.**Understand the pattern**- Don't just memorize solutions
+2.**Multiple approaches**- Try brute force, then optimize
+3.**Time/Space complexity**- Always analyze and mention complexities
+4.**Edge cases**- Consider empty inputs, single elements, duplicates
+5.**Practice regularly**- Consistency is key
 
 ## Resources
 

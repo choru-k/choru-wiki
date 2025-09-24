@@ -13,7 +13,7 @@ tags:
 
 ## 들어가며
 
-"Dockerfile 작성은 쉽다"고 생각하다가 production에서 고통받은 경험이 있나요? **1GB 넘는 이미지 크기**, **보안 취약점 가득한 base image**, **빌드 시간 30분**과 같은 문제들 말입니다.
+"Dockerfile 작성은 쉽다"고 생각하다가 production에서 고통받은 경험이 있나요?**1GB 넘는 이미지 크기**,**보안 취약점 가득한 base image**,**빌드 시간 30분**과 같은 문제들 말입니다.
 
 Production-grade 컨테이너 이미지를 구축하려면 단순히 동작하는 것을 넘어서 보안, 성능, 유지보수성을 모두 고려해야 합니다. 실제 DevOps 팀에서 사용하는 enterprise-level Dockerfile 작성 노하우를 완전히 공개합니다.
 
@@ -647,16 +647,16 @@ docker exec myapp-container ps aux
 
 ### 배포 전 필수 체크포인트
 
-- [ ] **이미지 크기 < 500MB** (언어별 기준 적용)
-- [ ] **CVE HIGH/CRITICAL = 0**
-- [ ] **Non-root 사용자로 실행**
-- [ ] **Health check 구현**
-- [ ] **Graceful shutdown 지원**
-- [ ] **리소스 제한 설정**
-- [ ] **로그 구조화** (JSON format)
-- [ ] **메트릭 엔드포인트 제공**
-- [ ] **Secrets를 환경변수로 주입**
-- [ ] **빌드 재현성 보장** (lock files)
+- [ ]**이미지 크기 < 500MB**(언어별 기준 적용)
+- [ ]**CVE HIGH/CRITICAL = 0**
+- [ ]**Non-root 사용자로 실행**
+- [ ]**Health check 구현**
+- [ ]**Graceful shutdown 지원**
+- [ ]**리소스 제한 설정**
+- [ ]**로그 구조화**(JSON format)
+- [ ]**메트릭 엔드포인트 제공**
+- [ ]**Secrets를 환경변수로 주입**
+- [ ]**빌드 재현성 보장**(lock files)
 
 ### Runtime Configuration
 
@@ -704,18 +704,18 @@ spec:
 
 Production-ready Dockerfile 작성의 핵심은 다음 요소들의 균형입니다:
 
-1. **Multi-stage builds**: 이미지 크기 최적화와 보안 강화
-2. **Layer caching**: 빌드 시간 단축과 CI/CD 효율성
-3. **Security hardening**: 최소 권한 원칙과 공격 범위 최소화
-4. **Performance optimization**: 런타임 리소스 사용 최적화
-5. **Observability**: 모니터링과 디버깅 지원
+1.**Multi-stage builds**: 이미지 크기 최적화와 보안 강화
+2.**Layer caching**: 빌드 시간 단축과 CI/CD 효율성
+3.**Security hardening**: 최소 권한 원칙과 공격 범위 최소화
+4.**Performance optimization**: 런타임 리소스 사용 최적화
+5.**Observability**: 모니터링과 디버깅 지원
 
 **Enterprise 환경에서 추가로 고려할 사항**:
 
-- **Supply chain security**: SBOM 관리와 의존성 추적
-- **Compliance**: 보안 스캔과 정책 준수
-- **Multi-platform builds**: AMD64/ARM64 크로스 플랫폼 지원
-- **Registry security**: 이미지 서명과 접근 제어
+-**Supply chain security**: SBOM 관리와 의존성 추적
+-**Compliance**: 보안 스캔과 정책 준수
+-**Multi-platform builds**: AMD64/ARM64 크로스 플랫폼 지원
+-**Registry security**: 이미지 서명과 접근 제어
 
 이러한 모범 사례를 따르면 안전하고 효율적이며 유지보수가 용이한 컨테이너 이미지를 구축할 수 있습니다.
 

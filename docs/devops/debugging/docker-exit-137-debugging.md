@@ -13,7 +13,7 @@ tags:
 
 ## 들어가며
 
-"새로운 서비스를 배포했는데 계속 Exit Code 137로 죽네? OOM이 발생한 건가?" Production 환경에서 가장 빈번하게 만나는 미스터리 중 하나가 바로 Docker Exit Code 137입니다. **대부분 OOM으로 알려져 있지만, 실제로는 SIGKILL 신호의 다양한 원인들이 숨어있습니다.** 진짜 원인을 찾는 체계적인 디버깅 방법을 살펴보겠습니다.
+"새로운 서비스를 배포했는데 계속 Exit Code 137로 죽네? OOM이 발생한 건가?" Production 환경에서 가장 빈번하게 만나는 미스터리 중 하나가 바로 Docker Exit Code 137입니다.**대부분 OOM으로 알려져 있지만, 실제로는 SIGKILL 신호의 다양한 원인들이 숨어있습니다.**진짜 원인을 찾는 체계적인 디버깅 방법을 살펴보겠습니다.
 
 ## Docker Exit Code의 이해
 
@@ -567,11 +567,11 @@ kubectl get events --sort-by='.lastTimestamp' | grep -E "(OOMKilled|Evicted)"
 
 Docker Exit Code 137의 진단 우선순위:
 
-1. **OOM Killer 확인**: `journalctl -k | grep oom` (가장 흔한 원인)
-2. **SystemD 의존성**: `systemctl show service | grep PartOf` (연쇄 실패)
-3. **리소스 제한**: `docker inspect | jq .HostConfig.Memory`
-4. **디스크 공간**: `df -h` (로그 파일 급증)
-5. **사용자 개입**: `history | grep kill`
+1.**OOM Killer 확인**: `journalctl -k | grep oom` (가장 흔한 원인)
+2.**SystemD 의존성**: `systemctl show service | grep PartOf` (연쇄 실패)
+3.**리소스 제한**: `docker inspect | jq .HostConfig.Memory`
+4.**디스크 공간**: `df -h` (로그 파일 급증)
+5.**사용자 개입**: `history | grep kill`
 
 **예방 전략:**
 

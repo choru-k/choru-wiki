@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1146](https://leetcode.com/problems/snapshot-array/) • **Medium**
+[LeetCode 1146](https://leetcode.com/problems/snapshot-array/) •**Medium**
 
 ## 기본적인 방법
 

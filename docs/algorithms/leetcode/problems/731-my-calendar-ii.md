@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 731](https://leetcode.com/problems/my-calendar-ii/) • **Medium**
+[LeetCode 731](https://leetcode.com/problems/my-calendar-ii/) •**Medium**
 
 일단 가장 간단한 방법부터 생각해보자.
 
@@ -147,8 +147,8 @@ class MyCalendarTwo:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

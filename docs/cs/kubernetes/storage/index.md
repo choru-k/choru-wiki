@@ -21,7 +21,7 @@ tags:
 
 ### 충격적인 딜레마: 컨테이너 vs 데이터
 
-컨테이너의 핵심 철학은 **"불변성과 일회성"**입니다. 하지만 현실 세계의 애플리케이션은 **"상태와 영속성"**이 필요합니다.
+컨테이너의 핵심 철학은**"불변성과 일회성"**입니다. 하지만 현실 세계의 애플리케이션은**"상태와 영속성"**이 필요합니다.
 
 ```python
 # 우버의 실시간 위치 데이터 딜레마
@@ -56,22 +56,32 @@ print("💡 깨달음: Kubernetes Storage는 상태 있는 세계와 상태 없�
 ```mermaid
 graph TB
     subgraph "전통적인 스토리지 (2010년)"
-        TRAD_SAN["🏢 SAN/NAS<br/>중앙집중식 스토리지"]
-        TRAD_MOUNT["📁 Static Mount<br/>/mnt/data"]
-        TRAD_BACKUP["💾 Tape Backup<br/>수동 백업"]
+        TRAD_SAN["🏢 SAN/NAS
+중앙집중식 스토리지"]
+        TRAD_MOUNT["📁 Static Mount
+/mnt/data"]
+        TRAD_BACKUP["💾 Tape Backup
+수동 백업"]
     end
     
     subgraph "가상화 스토리지 (2015년)"
-        VM_DISK["💿 Virtual Disk<br/>VMDK/VHD"]
-        SNAPSHOT["📸 Snapshots<br/>포인트 백업"]
-        THIN["📏 Thin Provisioning<br/>필요시 확장"]
+        VM_DISK["💿 Virtual Disk
+VMDK/VHD"]
+        SNAPSHOT["📸 Snapshots
+포인트 백업"]
+        THIN["📏 Thin Provisioning
+필요시 확장"]
     end
     
     subgraph "Kubernetes Storage (2018년+)"
-        PV["📦 PersistentVolume<br/>추상화된 스토리지"]
-        PVC["📋 PersistentVolumeClaim<br/>사용자 요청"]
-        SC["⚙️ StorageClass<br/>동적 프로비저닝"]
-        CSI["🔌 CSI Driver<br/>표준화된 인터페이스"]
+        PV["📦 PersistentVolume
+추상화된 스토리지"]
+        PVC["📋 PersistentVolumeClaim
+사용자 요청"]
+        SC["⚙️ StorageClass
+동적 프로비저닝"]
+        CSI["🔌 CSI Driver
+표준화된 인터페이스"]
     end
     
     TRAD_SAN --> VM_DISK --> PV
@@ -85,7 +95,7 @@ graph TB
     style CSI fill:#FF6B6B
 ```
 
-**핵심 통찰**: Kubernetes Storage는 **물리적 스토리지를 논리적으로 추상화**하여 개발자가 스토리지 인프라를 몰라도 데이터를 안전하게 관리할 수 있게 합니다.
+**핵심 통찰**: Kubernetes Storage는**물리적 스토리지를 논리적으로 추상화**하여 개발자가 스토리지 인프라를 몰라도 데이터를 안전하게 관리할 수 있게 합니다.
 
 ## Kubernetes Storage 완벽 마스터 📚
 
@@ -95,7 +105,7 @@ graph TB
 
 Spotify가 어떻게 3억 사용자의 플레이리스트와 음악 메타데이터를 안전하게 보관하면서도 Pod 재시작과 노드 장애에 대응하는지, Volume의 다양한 타입과 실제 활용법을 탐험합니다.
 
-💿 **핵심 내용**:
+💿**핵심 내용**:
 
 - emptyDir vs hostPath vs configMap 활용 패턴
 - Volume과 VolumeMount의 관계
@@ -110,7 +120,7 @@ Spotify가 어떻게 3억 사용자의 플레이리스트와 음악 메타데이
 
 우버가 어떻게 실시간 위치 데이터를 페타바이트 규모로 관리하면서도 Pod 재배포와 노드 교체 시에도 데이터 무결성을 보장하는지, PV/PVC 아키텍처의 깊은 원리를 알아봅니다.
 
-📦 **핵심 내용**:
+📦**핵심 내용**:
 
 - PV Lifecycle: Available → Bound → Released → Failed
 - Access Modes: ReadWriteOnce, ReadOnlyMany, ReadWriteMany
@@ -125,7 +135,7 @@ Spotify가 어떻게 3억 사용자의 플레이리스트와 음악 메타데이
 
 Netflix가 어떻게 AWS EBS, Google Persistent Disk, Azure Disk를 하나의 통일된 인터페이스로 관리하면서도 각 클라우드의 고유 기능을 최대한 활용하는지, CSI의 혁신적 설계를 탐구합니다.
 
-🔌 **핵심 내용**:
+🔌**핵심 내용**:
 
 - CSI 아키텍처: Controller vs Node Plugin
 - Dynamic Provisioning과 StorageClass 설계
@@ -602,14 +612,14 @@ storage_performance = {
 
 ## 마치며: Storage는 상태의 수호자
 
-Kubernetes Storage를 깊이 이해하면, **일시적인 컨테이너 세계에서 영구적인 데이터를 안전하게 관리하는 정교한 메커니즘**을 경험하게 됩니다.
+Kubernetes Storage를 깊이 이해하면,**일시적인 컨테이너 세계에서 영구적인 데이터를 안전하게 관리하는 정교한 메커니즘**을 경험하게 됩니다.
 
 **Storage가 가르쳐주는 교훈들**:
 
-1. 💾 **추상화의 힘**: 복잡한 스토리지 인프라를 간단한 PVC 요청으로 사용
-2. 🔄 **생명주기 관리**: 데이터의 생성부터 삭제까지 완전한 생명주기 제어
-3. 📈 **동적 확장**: 애플리케이션 요구에 따라 스토리지가 자동으로 프로비저닝
-4. 🛡️ **내구성 보장**: 노드/존 장애에도 데이터가 안전하게 보호됨
+1. 💾**추상화의 힘**: 복잡한 스토리지 인프라를 간단한 PVC 요청으로 사용
+2. 🔄**생명주기 관리**: 데이터의 생성부터 삭제까지 완전한 생명주기 제어
+3. 📈**동적 확장**: 애플리케이션 요구에 따라 스토리지가 자동으로 프로비저닝
+4. 🛡️**내구성 보장**: 노드/존 장애에도 데이터가 안전하게 보호됨
 
 이제 기본 Volume부터 시작해서 고급 CSI Driver까지 완전히 마스터해보세요! 🚀
 

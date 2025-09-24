@@ -559,12 +559,12 @@ jcmd [pid] VM.native_memory summary
 
 JVM 메모리 관리는 복잡하지만 체계적입니다:
 
-1. **전체 메모리 = Heap + Metaspace + Native**: Heap만 계산하면 OOM
-2. **Young/Old 비율 중요**: 대부분 객체는 Young에서 죽어야 함
-3. **GC 선택은 워크로드 따라**: 지연 vs 처리량 트레이드오프
-4. **Metaspace는 Native 메모리**: 클래스로더 누수 주의
-5. **컨테이너 환경 필수 설정**: UseContainerSupport + 명시적 제한
-6. **모니터링 없이 튜닝 없음**: JMX, 힙 덤프, Native 추적 활용
+1.**전체 메모리 = Heap + Metaspace + Native**: Heap만 계산하면 OOM
+2.**Young/Old 비율 중요**: 대부분 객체는 Young에서 죽어야 함
+3.**GC 선택은 워크로드 따라**: 지연 vs 처리량 트레이드오프
+4.**Metaspace는 Native 메모리**: 클래스로더 누수 주의
+5.**컨테이너 환경 필수 설정**: UseContainerSupport + 명시적 제한
+6.**모니터링 없이 튜닝 없음**: JMX, 힙 덤프, Native 추적 활용
 
 이제 여러분은 프로세스 메모리부터 GC까지, 메모리 관리의 모든 것을 이해했습니다. 실전에서 이 지식을 활용해 안정적이고 효율적인 시스템을 구축하시기 바랍니다!
 

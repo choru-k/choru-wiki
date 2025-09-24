@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 121](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) • **Easy**
+[LeetCode 121](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) •**Easy**
 
 ## 핵심 아이디어
 
@@ -38,8 +38,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

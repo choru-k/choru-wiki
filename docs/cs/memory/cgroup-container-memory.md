@@ -501,11 +501,11 @@ def adjust_cache_size():
 
 Cgroup은 컨테이너 메모리 격리의 핵심입니다:
 
-1. **Cgroup은 다양한 메모리 타입 추적** (RSS, Cache, Kernel 등)
-2. **v2는 통합 계층으로 관리 단순화**
-3. **Kubernetes QoS는 Cgroup 설정에 직접 매핑**
-4. **memory.high로 점진적 제한, memory.max로 하드 제한**
-5. **컨테이너 내부에서는 Cgroup 정보 직접 확인 필요**
+1.**Cgroup은 다양한 메모리 타입 추적**(RSS, Cache, Kernel 등)
+2.**v2는 통합 계층으로 관리 단순화**
+3.**Kubernetes QoS는 Cgroup 설정에 직접 매핑**
+4.**memory.high로 점진적 제한, memory.max로 하드 제한**
+5.**컨테이너 내부에서는 Cgroup 정보 직접 확인 필요**
 
 다음 글에서는 가비지 컬렉션의 기초 이론과 알고리즘을 살펴보겠습니다.
 

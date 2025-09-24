@@ -194,7 +194,7 @@ void measure_cache_effects(void) {
 
 스포티파이 엔지니어의 비밀:
 
-> "초당 100만 명이 음악을 듣는데 어떻게 끔김이 없을까요? 핵심은 **컨텍스트 스위칭 최소화**입니다. CPU 친화도, lock-free 알고리즘, 그리고 코루틴을 활용하죠."
+> "초당 100만 명이 음악을 듣는데 어떻게 끔김이 없을까요? 핵심은**컨텍스트 스위칭 최소화**입니다. CPU 친화도, lock-free 알고리즘, 그리고 코루틴을 활용하죠."
 
 최적화 전후 비교:
 
@@ -265,7 +265,7 @@ typedef struct {
 
     // 작업 큐
     void (**task_queue)(void*);
-    void **arg_queue;
+    void**arg_queue;
     int queue_size;
     int queue_head;
     int queue_tail;
@@ -487,9 +487,9 @@ coroutine_t* coroutine_create(void (*func)(void*), void *arg) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

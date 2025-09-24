@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 834](https://leetcode.com/problems/sum-of-distances-in-tree/) • **Hard**
+[LeetCode 834](https://leetcode.com/problems/sum-of-distances-in-tree/) •**Hard**
 
 ## 핵심 아이디어
 
@@ -58,8 +58,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

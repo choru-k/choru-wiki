@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 312](https://leetcode.com/problems/burst-balloons/) • **Hard**
+[LeetCode 312](https://leetcode.com/problems/burst-balloons/) •**Hard**
 
 ## 핵심 아이디어
 
@@ -98,8 +98,8 @@ def maxCoins(self, iNums):
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

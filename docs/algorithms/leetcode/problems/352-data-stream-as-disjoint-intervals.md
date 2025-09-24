@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 352](https://leetcode.com/problems/data-stream-as-disjoint-intervals/) • **Medium**
+[LeetCode 352](https://leetcode.com/problems/data-stream-as-disjoint-intervals/) •**Medium**
 
 ## HashMap 을 사용한다
 

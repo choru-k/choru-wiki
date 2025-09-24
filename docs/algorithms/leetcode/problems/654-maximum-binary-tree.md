@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 654](https://leetcode.com/problems/maximum-binary-tree/) • **Hard**
+[LeetCode 654](https://leetcode.com/problems/maximum-binary-tree/) •**Hard**
 
 일단 가장 쉬운 방법은 dfs 을 사용해서 구현 하는 방법이다. 하라는 그대로 가장 큰 값을 찾고, 그것을 기준으로 왼쪽, 오른쪽을 다시 트리로 만든다.
 
@@ -83,8 +83,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

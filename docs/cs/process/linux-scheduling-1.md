@@ -521,12 +521,12 @@ $ echo 12345 > /sys/fs/cgroup/cpu/db_group/cgroup.procs
 
 Linux 스케줄링의 기초를 이해했습니다:
 
-1. **스케줄링 = CPU 시간 분배**: 공정성과 효율성의 균형
-2. **프로세스 상태**: Running, Sleeping, Waiting이 스케줄링 대상 결정
-3. **진화**: O(n) → O(1) → CFS (O(log n))
-4. **컨텍스트 스위칭**: 1-2 마이크로초의 비용
-5. **모니터링 포인트**: Load Average, 런큐, CS 횟수
-6. **튜닝 포인트**: Nice 값, 타임슬라이스, CPU affinity
+1.**스케줄링 = CPU 시간 분배**: 공정성과 효율성의 균형
+2.**프로세스 상태**: Running, Sleeping, Waiting이 스케줄링 대상 결정
+3.**진화**: O(n) → O(1) → CFS (O(log n))
+4.**컨텍스트 스위칭**: 1-2 마이크로초의 비용
+5.**모니터링 포인트**: Load Average, 런큐, CS 횟수
+6.**튜닝 포인트**: Nice 값, 타임슬라이스, CPU affinity
 
 다음 편에서는 CFS의 핵심인 vruntime과 Red-Black Tree를 깊이 파헤쳐보겠습니다!
 

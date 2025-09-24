@@ -30,15 +30,21 @@ tags:
 ```mermaid
 graph TB
     subgraph "구글의 일주일 (2017년)"
-        SEARCH["🔍 검색 요청<br/>35억 건/일"]
-        YOUTUBE["📺 YouTube 시청<br/>10억 시간/일"]
-        GMAIL["📧 Gmail 이메일<br/>15억 계정"]
-        MAPS["🗺️ Maps 탐색<br/>10억 km/일"]
+        SEARCH["🔍 검색 요청
+35억 건/일"]
+        YOUTUBE["📺 YouTube 시청
+10억 시간/일"]
+        GMAIL["📧 Gmail 이메일
+15억 계정"]
+        MAPS["🗺️ Maps 탐색
+10억 km/일"]
     end
 
     subgraph "보이지 않는 뒷단"
-        K8S["🎼 Kubernetes<br/>20억 컨테이너/주"]
-        BORG["🤖 Borg (Kubernetes 조상)<br/>수십만 애플리케이션"]
+        K8S["🎼 Kubernetes
+20억 컨테이너/주"]
+        BORG["🤖 Borg (Kubernetes 조상)
+수십만 애플리케이션"]
     end
 
     SEARCH --> K8S
@@ -52,7 +58,7 @@ graph TB
     style BORG fill:#FF6B6B
 ```
 
-**하지만 여기서 진짜 충격은**: 구글 엔지니어들조차 **개별 컨테이너가 어디서 실행되는지 모른다**는 사실입니다.
+**하지만 여기서 진짜 충격은**: 구글 엔지니어들조차**개별 컨테이너가 어디서 실행되는지 모른다**는 사실입니다.
 
 ## 🔍 이 가이드가 특별한 이유
 
@@ -64,10 +70,10 @@ graph TB
 
 ### 읽고 나면 이런 변화가 생깁니다
 
-- 🚀 **"파드가 왜 죽었지?"** → 10초 만에 원인 파악과 해결책 제시
-- 💰 **"리소스 비용이 너무 많이 나와"** → HPA/VPA로 50% 비용 절감
-- 🌊 **"트래픽 급증 시 장애"** → 오토스케일링으로 무중단 서비스
-- 👥 **"팀원들과의 기술 소통"** → K8s 내부 동작을 설명하며 시니어 엔지니어로 성장
+- 🚀**"파드가 왜 죽었지?"**→ 10초 만에 원인 파악과 해결책 제시
+- 💰**"리소스 비용이 너무 많이 나와"**→ HPA/VPA로 50% 비용 절감
+- 🌊**"트래픽 급증 시 장애"**→ 오토스케일링으로 무중단 서비스
+- 👥**"팀원들과의 기술 소통"**→ K8s 내부 동작을 설명하며 시니어 엔지니어로 성장
 
 ## 🎭 실제 기업들의 Kubernetes 대서사시
 
@@ -75,26 +81,41 @@ graph TB
 graph LR
     subgraph "🎼 현대 인터넷의 오케스트라"
         subgraph "🎪 사용자 경험 (무대)"
-            USER["😊 당신<br/>(앱/웹 사용자)"]
+            USER["😊 당신
+(앱/웹 사용자)"]
         end
 
         subgraph "⚖️ 트래픽 분배"
-            ING["🚪 Ingress Controller<br/>GitHub Pages 스타일<br/>10만 도메인 라우팅"]
-            SVC["🎯 Services<br/>Netflix 로드밸런싱<br/>마이크로초 단위 분산"]
+            ING["🚪 Ingress Controller
+GitHub Pages 스타일
+10만 도메인 라우팅"]
+            SVC["🎯 Services
+Netflix 로드밸런싱
+마이크로초 단위 분산"]
         end
 
         subgraph "🏃 워크로드 실행"
-            POD["📦 Pods<br/>Airbnb 10K bookings/sec<br/>초단위 생성/소멸"]
-            DEP["🔄 Deployments<br/>Spotify 무중단 배포<br/>1일 50회 릴리스"]
+            POD["📦 Pods
+Airbnb 10K bookings/sec
+초단위 생성/소멸"]
+            DEP["🔄 Deployments
+Spotify 무중단 배포
+1일 50회 릴리스"]
         end
 
         subgraph "🧠 제어 시스템"
-            API["🎛️ API Server<br/>Cloudflare DDoS 방어<br/>초당 100만 요청"]
-            ETCD["💾 etcd<br/>Discord 1B 메시지<br/>분산 합의 알고리즘"]
+            API["🎛️ API Server
+Cloudflare DDoS 방어
+초당 100만 요청"]
+            ETCD["💾 etcd
+Discord 1B 메시지
+분산 합의 알고리즘"]
         end
 
         subgraph "🗄️ 저장소"
-            PV["💿 Persistent Volumes<br/>Uber 위치 데이터<br/>페타바이트 상태 관리"]
+            PV["💿 Persistent Volumes
+Uber 위치 데이터
+페타바이트 상태 관리"]
         end
     end
 
@@ -120,11 +141,11 @@ graph LR
 
 ## 🎬 대기업들의 위기와 해결 스토리로 배우는 Kubernetes
 
-각 섹션은 실제 기업이 겪은 **극한 상황과 해결** 드라마를 중심으로 구성되었습니다.
+각 섹션은 실제 기업이 겪은**극한 상황과 해결**드라마를 중심으로 구성되었습니다.
 
 ### 🏗️ [Architecture: 구글이 20억 컨테이너를 관리하는 법](architecture/index.md)
 
-**"어떻게 한 번에 20억 개의 컨테이너를 관리할 수 있을까?"** 🏗️🤖
+**"어떻게 한 번에 20억 개의 컨테이너를 관리할 수 있을까?"**🏗️🤖
 
 ```text
 🎯 이런 궁금증이 있다면 필독:
@@ -140,7 +161,7 @@ graph LR
 
 ### 📦 [Workloads: 에어비앤비가 10K 예약/초를 처리하는 비밀](workloads/index.md)
 
-**"어떻게 파드 하나가 죽어도 서비스는 멈추지 않을까?"** 📦⚡
+**"어떻게 파드 하나가 죽어도 서비스는 멈추지 않을까?"**📦⚡
 
 ```text
 🔥 이런 경험이 있다면 꼭 읽어보세요:
@@ -156,7 +177,7 @@ graph LR
 
 ### 🌐 [Networking: 넷플릭스가 마이크로초 로드밸런싱을 구현한 방법](networking/index.md)
 
-**"마이크로서비스 100개가 어떻게 서로를 찾아 통신할까?"** 🌐🎯
+**"마이크로서비스 100개가 어떻게 서로를 찾아 통신할까?"**🌐🎯
 
 ```text
 💫 이런 의문이 든 적 있다면:
@@ -172,7 +193,7 @@ graph LR
 
 ### 💾 [Storage: 우버가 페타바이트 상태 데이터를 관리하는 기술](storage/index.md)
 
-**"컨테이너가 재시작돼도 데이터가 사라지지 않는 이유는?"** 💾🔒
+**"컨테이너가 재시작돼도 데이터가 사라지지 않는 이유는?"**💾🔒
 
 ```text
 🗄️ 이런 스토리지 고민이 있다면:
@@ -188,7 +209,7 @@ graph LR
 
 ### 📈 [Scaling: 타겟이 블랙 프라이데이를 버틴 자동 확장의 과학](scaling/index.md)
 
-**"트래픽이 갑자기 10배 늘어나도 서비스가 안정적인 이유는?"** 📈🚀
+**"트래픽이 갑자기 10배 늘어나도 서비스가 안정적인 이유는?"**📈🚀
 
 ```text
 🚀 이런 확장성 도전에 직면했다면:
@@ -218,16 +239,23 @@ flowchart TD
     START --> SCALE
     START --> NETWORK
 
-    CRASH --> WORKLOAD["📦 Workloads: Pod 생명주기<br/>자가치유 메커니즘"]
-    CRASH --> ARCH["🏗️ Architecture: 컨트롤러<br/>장애 감지 시스템"]
+    CRASH --> WORKLOAD["📦 Workloads: Pod 생명주기
+자가치유 메커니즘"]
+    CRASH --> ARCH["🏗️ Architecture: 컨트롤러
+장애 감지 시스템"]
 
-    SLOW --> NET["🌐 Networking: Service<br/>로드밸런싱 최적화"]
-    SLOW --> STOR["💾 Storage: 스토리지<br/>I/O 성능 튜닝"]
+    SLOW --> NET["🌐 Networking: Service
+로드밸런싱 최적화"]
+    SLOW --> STOR["💾 Storage: 스토리지
+I/O 성능 튜닝"]
 
-    SCALE --> AUTO["📈 Scaling: HPA/VPA<br/>자동 확장 설정"]
-    SCALE --> CA["📈 Scaling: Cluster Autoscaler<br/>노드 확장"]
+    SCALE --> AUTO["📈 Scaling: HPA/VPA
+자동 확장 설정"]
+    SCALE --> CA["📈 Scaling: Cluster Autoscaler
+노드 확장"]
 
-    NETWORK --> CNI["🌐 Networking: CNI<br/>네트워크 플러그인 진단"]
+    NETWORK --> CNI["🌐 Networking: CNI
+네트워크 플러그인 진단"]
 
     style CRASH fill:#FFE6E6
     style SLOW fill:#E6F3FF
@@ -250,7 +278,8 @@ flowchart TD
 
 ```mermaid
 mindmap
-  root(("🧠 Kubernetes Deep Dive<br/>완주 후 당신"))
+  root(("🧠 Kubernetes Deep Dive
+완주 후 당신"))
     운영 자동화 마스터
       HPA로 리소스 50% 절약
       무중단 배포 파이프라인
@@ -282,7 +311,7 @@ mindmap
 **- DevOps 팀장, 김○○님**
 
 **📊 이 가이드의 규모:**
-✨ **25개 심층 문서** | 🎬 **5개 기업 스토리 섹션** | 🐍 **200+ YAML/Go 코드 예제** | 📊 **60+ 아키텍처 다이어그램**
+✨**25개 심층 문서**| 🎬**5개 기업 스토리 섹션**| 🐍**200+ YAML/Go 코드 예제**| 📊**60+ 아키텍처 다이어그램**
 
 **🎯 첫 번째 섹션부터 바로 내부 동작 원리를 경험하세요:**
-👉 **[🏗️ Architecture: 구글이 20억 컨테이너를 관리하는 법 시작하기 →](architecture/index.md)**
+👉**[🏗️ Architecture: 구글이 20억 컨테이너를 관리하는 법 시작하기 →](architecture/index.md)**

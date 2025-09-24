@@ -276,7 +276,7 @@ public:
     }
 
 private:
-    Object* copy_object(Object* obj, uint8_t** free_ptr) {
+    Object* copy_object(Object* obj, uint8_t**free_ptr) {
         // 이미 복사됨?
         if (obj->forwarding_ptr) {
             return obj->forwarding_ptr;
@@ -320,9 +320,9 @@ void benchmark_copying_gc() {
 
 **Copying GC의 혁신적 장점:**
 
-1. **할당이 매우 빠름**: Bump pointer로 O(1)
-2. **단편화 전혀 없음**: 살아있는 객체를 연속으로 배치
-3. **GC 시간이 예측 가능**: 살아있는 객체 수에만 비례
+1.**할당이 매우 빠름**: Bump pointer로 O(1)
+2.**단편화 전혀 없음**: 살아있는 객체를 연속으로 배치
+3.**GC 시간이 예측 가능**: 살아있는 객체 수에만 비례
 
 **단점:**
 
@@ -530,9 +530,9 @@ void compare_gc_algorithms() {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

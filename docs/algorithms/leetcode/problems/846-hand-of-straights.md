@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 846](https://leetcode.com/problems/hand-of-straights/) • **Hard**
+[LeetCode 846](https://leetcode.com/problems/hand-of-straights/) •**Hard**
 
 ## 핵심 아이디어
 

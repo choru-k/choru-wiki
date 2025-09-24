@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 135](https://leetcode.com/problems/candy/) • **Medium**
+[LeetCode 135](https://leetcode.com/problems/candy/) •**Medium**
 
 ## 2 Array Method
 
@@ -113,8 +113,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

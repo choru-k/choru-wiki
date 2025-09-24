@@ -143,7 +143,7 @@ private:
 
     // Load Barrier: 모든 객체 참조 시 자동으로 호출되는 핵심 메커니즘
     template<typename T>
-    T* load_barrier(T** addr) {
+    T* load_barrier(T**addr) {
         T* ptr = *addr;  // 포인터 읽기
 
         // "Bad color" 체크 - 포인터의 색상이 현재 GC 단계와 맞지 않는가?
@@ -558,9 +558,9 @@ Colored pointer, Multi-mapping 등 하드웨어 특성을 적극 활용한 최�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 6-8시간
+-**난이도**: ADVANCED
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 6-8시간
 
 ### 🎯 학습 경로
 

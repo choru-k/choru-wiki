@@ -20,7 +20,7 @@ tags:
 
 ## 들어가며
 
-"어떻게 Node.js는 단일 스레드인데도 10,000개의 동시 연결을 처리할 수 있을까?" 이 질문의 답이 바로 **이벤트 루프(Event Loop)**입니다.
+"어떻게 Node.js는 단일 스레드인데도 10,000개의 동시 연결을 처리할 수 있을까?" 이 질문의 답이 바로**이벤트 루프(Event Loop)**입니다.
 
 2024년 현재, 대부분의 모던 애플리케이션은 이벤트 기반 비동기 프로그래밍 모델을 사용합니다:
 
@@ -35,7 +35,7 @@ tags:
 
 ### 핵심 개념
 
-이벤트 루프는 **단일 스레드에서 I/O 작업을 비동기적으로 처리하기 위한 프로그래밍 패턴**입니다. 운영체제의 I/O multiplexing 기능(`epoll`, `kqueue`, `IOCP`)을 활용하여 블로킹 없이 수많은 I/O 작업을 동시에 처리할 수 있습니다.
+이벤트 루프는**단일 스레드에서 I/O 작업을 비동기적으로 처리하기 위한 프로그래밍 패턴**입니다. 운영체제의 I/O multiplexing 기능(`epoll`, `kqueue`, `IOCP`)을 활용하여 블로킹 없이 수많은 I/O 작업을 동시에 처리할 수 있습니다.
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
@@ -862,8 +862,8 @@ class CoroutineEventLoop(SimpleEventLoop):
 # async/await 시뮬레이션
 def async_function(func):
     """async 함수 데코레이터"""
-    def wrapper(*args, **kwargs):
-        gen = func(*args, **kwargs)
+    def wrapper(*args,**kwargs):
+        gen = func(*args,**kwargs)
         return gen
     return wrapper
 
@@ -1303,22 +1303,22 @@ if (process.env.NODE_ENV === 'development') {
 
 **핵심 원리:**
 
-1. **Non-blocking I/O**: 운영체제의 `epoll`, `kqueue`, `IOCP` 활용
-2. **Event-driven**: I/O 완료 시점에 콜백 실행
-3. **Single-threaded**: 동시성 문제 없이 높은 처리량 달성
+1.**Non-blocking I/O**: 운영체제의 `epoll`, `kqueue`, `IOCP` 활용
+2.**Event-driven**: I/O 완료 시점에 콜백 실행
+3.**Single-threaded**: 동시성 문제 없이 높은 처리량 달성
 
 **성능 특성:**
 
-- **메모리 효율성**: 스레드당 8MB vs 이벤트 루프 ~50MB 전체
-- **컨텍스트 스위치 오버헤드 없음**: 사용자 공간에서 스케줄링
-- **C10K 문제 해결**: 10,000개 이상의 동시 연결 처리 가능
+-**메모리 효율성**: 스레드당 8MB vs 이벤트 루프 ~50MB 전체
+-**컨텍스트 스위치 오버헤드 없음**: 사용자 공간에서 스케줄링
+-**C10K 문제 해결**: 10,000개 이상의 동시 연결 처리 가능
 
 ### Production 환경에서 주의사항
 
-1. **CPU 집약적 작업 분리**: Worker Threads 또는 별도 프로세스 사용
-2. **메모리 관리**: 리스너, 타이머, 스트림의 적절한 해제
-3. **에러 처리**: Unhandled Promise Rejection으로 인한 프로세스 종료 방지
-4. **모니터링**: 이벤트 루프 지연, 메모리 사용량, GC 패턴 추적
+1.**CPU 집약적 작업 분리**: Worker Threads 또는 별도 프로세스 사용
+2.**메모리 관리**: 리스너, 타이머, 스트림의 적절한 해제
+3.**에러 처리**: Unhandled Promise Rejection으로 인한 프로세스 종료 방지
+4.**모니터링**: 이벤트 루프 지연, 메모리 사용량, GC 패턴 추적
 
 ## 관련 문서
 

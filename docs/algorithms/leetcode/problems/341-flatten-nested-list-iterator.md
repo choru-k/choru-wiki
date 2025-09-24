@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 341](https://leetcode.com/problems/flatten-nested-list-iterator/) • **Medium**
+[LeetCode 341](https://leetcode.com/problems/flatten-nested-list-iterator/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -59,8 +59,8 @@ class NestedIterator(object):
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

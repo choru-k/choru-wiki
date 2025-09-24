@@ -4,10 +4,10 @@
 
 LeetCode serves as an essential tool for:
 
-- **Interview Preparation**: Most tech companies use algorithmic problems in interviews
-- **Problem-Solving Skills**: Develops systematic thinking and pattern recognition
-- **Code Quality**: Improves ability to write clean, efficient code under constraints
-- **Knowledge Reinforcement**: Solidifies understanding of data structures and algorithms
+-**Interview Preparation**: Most tech companies use algorithmic problems in interviews
+-**Problem-Solving Skills**: Develops systematic thinking and pattern recognition
+-**Code Quality**: Improves ability to write clean, efficient code under constraints
+-**Knowledge Reinforcement**: Solidifies understanding of data structures and algorithms
 
 ## Essential Algorithms & Data Structures
 
@@ -15,14 +15,14 @@ LeetCode serves as an essential tool for:
 
 #### Sorting & Searching
 
-- **Merge Sort** - Divide and Conquer paradigm
-- **Quick Sort** - In-place sorting, partition logic
-- **Binary Search** - Logarithmic search in sorted arrays
+-**Merge Sort**- Divide and Conquer paradigm
+-**Quick Sort**- In-place sorting, partition logic
+-**Binary Search**- Logarithmic search in sorted arrays
 
 #### Graph Traversal
 
-- **BFS (Breadth-First Search)** - Level-order traversal, shortest path
-- **DFS (Depth-First Search)** - Recursion, backtracking
+-**BFS (Breadth-First Search)**- Level-order traversal, shortest path
+-**DFS (Depth-First Search)**- Recursion, backtracking
 
 #### Dynamic Programming
 
@@ -32,32 +32,34 @@ LeetCode serves as an essential tool for:
 
 #### Tree Traversal
 
-- **Inorder** - Left → Root → Right
-- **Preorder** - Root → Left → Right  
-- **Postorder** - Left → Right → Root
-- **Level-order** - BFS on trees
+-**Inorder**- Left → Root → Right
+-**Preorder**- Root → Left → Right  
+-**Postorder**- Left → Right → Root
+-**Level-order**- BFS on trees
 
 #### Advanced Structures
 
-- **Trie** - Prefix trees for string problems
-- **Heap/Priority Queue** - For k-th element problems
-- **Self-Balanced Trees** - Understand concepts (Red-Black, AVL)
-  - Implementation rarely required
-  - Know when to use TreeMap/TreeSet
+-**Trie**- Prefix trees for string problems
+-**Heap/Priority Queue**- For k-th element problems
+-**Self-Balanced Trees**- Understand concepts (Red-Black, AVL)
+
+- Implementation rarely required
+- Know when to use TreeMap/TreeSet
 
 ### Advanced Topics
 
-- **KMP Algorithm** - String pattern matching
-- **Union-Find** - Disjoint set operations
-- **Topological Sort** - DAG ordering
-- **Segment Tree** - Range queries and updates
-- **Monotonic Stack/Queue** - For next greater/smaller element problems
+-**KMP Algorithm**- String pattern matching
+-**Union-Find**- Disjoint set operations
+-**Topological Sort**- DAG ordering
+-**Segment Tree**- Range queries and updates
+-**Monotonic Stack/Queue**- For next greater/smaller element problems
 
 ## Memory & Complexity Estimation
 
 ### Quick Memory Calculations
 
-- **1 billion integers = 4GB** (int is 4 bytes)
+-**1 billion integers = 4GB**(int is 4 bytes)
+
 - If problem mentions "2 billion integers in 4GB memory" → Use compression/streaming
 - HashMap overhead: ~2x the data size
 - Even at 90% capacity, HashMap operations remain O(1) average
@@ -107,13 +109,13 @@ LeetCode serves as an essential tool for:
 **Most Important**: Review is more valuable than solving
 
 - Problems solved correctly on first try: Skip review
-- Problems requiring hints/multiple attempts: **Must review**
+- Problems requiring hints/multiple attempts:**Must review**
 
 Focus on:
 
-- **Why** this approach works
-- **How** to recognize similar patterns
-- **When** to apply this technique
+-**Why**this approach works
+-**How**to recognize similar patterns
+-**When**to apply this technique
 
 ### 4. Retention Strategy
 
@@ -138,18 +140,18 @@ Focus on:
 
 ### Communication
 
-- **Think aloud** - Verbalize your thought process
-- **Ask questions** - Clarify requirements
-- **Discuss trade-offs** - Show you understand complexity
+-**Think aloud**- Verbalize your thought process
+-**Ask questions**- Clarify requirements
+-**Discuss trade-offs**- Show you understand complexity
 
 ### Problem Approach
 
-1. **Clarify** - Understand the problem completely
-2. **Examples** - Work through simple cases
-3. **Brute Force** - Start with naive solution
-4. **Optimize** - Improve time/space complexity
-5. **Code** - Implement cleanly
-6. **Test** - Walk through edge cases
+1.**Clarify**- Understand the problem completely
+2.**Examples**- Work through simple cases
+3.**Brute Force**- Start with naive solution
+4.**Optimize**- Improve time/space complexity
+5.**Code**- Implement cleanly
+6.**Test**- Walk through edge cases
 
 ### Common Pitfalls to Avoid
 
@@ -162,9 +164,9 @@ Focus on:
 
 ### Practice Platforms
 
-- **LeetCode** - Primary platform
-- **HackerRank** - Good for basics
-- **Codeforces** - Competitive programming
+-**LeetCode**- Primary platform
+-**HackerRank**- Good for basics
+-**Codeforces**- Competitive programming
 
 ### Learning Resources
 
@@ -174,9 +176,9 @@ Focus on:
 
 ### Study Plans
 
-- **Beginners**: 2-3 problems/day, focus on Easy
-- **Intermediate**: 1-2 Medium/day, occasional Hard
-- **Interview Prep**: Mock interviews, timed practice
+-**Beginners**: 2-3 problems/day, focus on Easy
+-**Intermediate**: 1-2 Medium/day, occasional Hard
+-**Interview Prep**: Mock interviews, timed practice
 
 ## Success Metrics
 
@@ -187,7 +189,7 @@ Track your progress:
 - Time to optimal solution
 - Pattern recognition speed
 
-Remember: **Quality > Quantity**
+Remember:**Quality > Quantity**
 
 - 100 problems with deep understanding > 500 problems memorized
 - Focus on patterns, not just solutions

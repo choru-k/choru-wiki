@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1136](https://leetcode.com/problems/parallel-courses/) • **Medium**
+[LeetCode 1136](https://leetcode.com/problems/parallel-courses/) •**Medium**
 
 간단하게 Topological Sort + BFS 로 해결된다.
 

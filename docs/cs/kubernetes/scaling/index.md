@@ -21,7 +21,7 @@ tags:
 
 ### 충격적인 현실: 트래픽은 예측불가능하다
 
-현대 서비스들의 트래픽 패턴을 보면 **"언제 어떤 규모로 급증할지 예측할 수 없다"**는 사실을 깨닫게 됩니다.
+현대 서비스들의 트래픽 패턴을 보면**"언제 어떤 규모로 급증할지 예측할 수 없다"**는 사실을 깨닫게 됩니다.
 
 ```python
 # 타겟 2023년 블랙 프라이데이 실시간 트래픽
@@ -55,22 +55,32 @@ print("🤯 깨달음: Kubernetes는 블랙 프라이데이를 사람 개입 없
 ```mermaid
 graph TB
     subgraph "전통적인 스케일링 (2010년)"
-        MANUAL["👨‍💻 수동 스케일링<br/>트래픽 모니터링 → 서버 추가"]
-        ALERT["🚨 알람 기반<br/>80% CPU → 담당자 호출"]
-        WEEKEND["😴 새벽/주말 긴급대응<br/>담당자 깨워서 서버 늘리기"]
+        MANUAL["👨‍💻 수동 스케일링
+트래픽 모니터링 → 서버 추가"]
+        ALERT["🚨 알람 기반
+80% CPU → 담당자 호출"]
+        WEEKEND["😴 새벽/주말 긴급대응
+담당자 깨워서 서버 늘리기"]
     end
     
     subgraph "클라우드 오토스케일링 (2015년)"
-        ASG["📊 Auto Scaling Group<br/>CPU/메모리 기반"]
-        LB["⚖️ Load Balancer<br/>헬스체크 기반"]
-        METRIC["📈 CloudWatch<br/>단순 임계값"]
+        ASG["📊 Auto Scaling Group
+CPU/메모리 기반"]
+        LB["⚖️ Load Balancer
+헬스체크 기반"]
+        METRIC["📈 CloudWatch
+단순 임계값"]
     end
     
     subgraph "Kubernetes 지능형 스케일링 (2020년+)"
-        HPA["🎯 HPA<br/>다차원 메트릭"]
-        VPA["📏 VPA<br/>리소스 최적화"]
-        CA["🏗️ Cluster Autoscaler<br/>노드 레벨 확장"]
-        CUSTOM["🧠 Custom Metrics<br/>비즈니스 메트릭 기반"]
+        HPA["🎯 HPA
+다차원 메트릭"]
+        VPA["📏 VPA
+리소스 최적화"]
+        CA["🏗️ Cluster Autoscaler
+노드 레벨 확장"]
+        CUSTOM["🧠 Custom Metrics
+비즈니스 메트릭 기반"]
     end
     
     MANUAL --> ASG --> HPA
@@ -84,7 +94,7 @@ graph TB
     style CUSTOM fill:#FF6B6B
 ```
 
-**핵심 통찰**: Kubernetes Scaling은 **반응적(Reactive)**에서 **예측적(Predictive)**으로, **단일 메트릭**에서 **다차원 지능형 분석**으로 진화했습니다.
+**핵심 통찰**: Kubernetes Scaling은**반응적(Reactive)**에서**예측적(Predictive)**으로,**단일 메트릭**에서**다차원 지능형 분석**으로 진화했습니다.
 
 ## Kubernetes Scaling 완벽 마스터 📚
 
@@ -94,7 +104,7 @@ graph TB
 
 타겟이 어떻게 HPA를 통해 블랙 프라이데이 16배 트래픽 급증을 사람 개입 없이 자동으로 처리했는지, 메트릭 수집부터 스케일링 결정까지의 전체 과정을 탐험합니다.
 
-🎯 **핵심 내용**:
+🎯**핵심 내용**:
 
 - CPU/메모리 기반 기본 스케일링
 - Custom Metrics (QPS, 응답시간) 활용
@@ -109,7 +119,7 @@ graph TB
 
 Spotify가 어떻게 VPA를 활용해 각 Pod의 최적 리소스를 자동으로 찾아 50% 비용 절감과 동시에 성능 향상을 달성했는지, VPA의 추천 엔진과 실제 적용 전략을 알아봅니다.
 
-📏 **핵심 내용**:
+📏**핵심 내용**:
 
 - VPA Recommender의 머신러닝 알고리즘
 - UpdateMode: Off, Initial, Recreation, Auto
@@ -124,7 +134,7 @@ Spotify가 어떻게 VPA를 활용해 각 Pod의 최적 리소스를 자동으�
 
 에어비앤비가 어떻게 Cluster Autoscaler를 통해 예약 급증 시 필요한 만큼만 노드를 추가하고, 한적한 시간에는 비용 절감을 위해 자동으로 축소하는지, 인프라 자동화의 완성형을 탐구합니다.
 
-🏗️ **핵심 내용**:
+🏗️**핵심 내용**:
 
 - Node Scaling 결정 알고리즘
 - Pod Priority와 Preemption 메커니즘
@@ -587,14 +597,14 @@ cost_optimization_results = {
 
 ## 마치며: Scaling은 탄력성의 과학
 
-Kubernetes Scaling을 완전히 마스터하면, **예측 불가능한 트래픽 변화에도 서비스 품질을 유지하면서 비용을 최적화하는 자동화 시스템**을 구축할 수 있게 됩니다.
+Kubernetes Scaling을 완전히 마스터하면,**예측 불가능한 트래픽 변화에도 서비스 품질을 유지하면서 비용을 최적화하는 자동화 시스템**을 구축할 수 있게 됩니다.
 
 **Scaling이 가르쳐주는 교훈들**:
 
-1. 📈 **예측적 대응**: 과거 데이터와 패턴을 통해 미래 요구사항 예측
-2. 🎯 **다차원 최적화**: CPU, 메모리, 네트워크, 비즈니스 메트릭 종합 고려
-3. 💰 **비용 효율성**: 성능과 비용의 완벽한 균형점 자동 탐색
-4. 🛡️ **안정성 보장**: 급격한 변화 상황에서도 서비스 연속성 유지
+1. 📈**예측적 대응**: 과거 데이터와 패턴을 통해 미래 요구사항 예측
+2. 🎯**다차원 최적화**: CPU, 메모리, 네트워크, 비즈니스 메트릭 종합 고려
+3. 💰**비용 효율성**: 성능과 비용의 완벽한 균형점 자동 탐색
+4. 🛡️**안정성 보장**: 급격한 변화 상황에서도 서비스 연속성 유지
 
 이제 기본 HPA부터 시작해서 예측 기반 스케일링까지 완전히 마스터해보세요! 🚀
 

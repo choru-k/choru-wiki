@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 373](https://leetcode.com/problems/find-k-pairs-with-smallest-sums/) • **Medium**
+[LeetCode 373](https://leetcode.com/problems/find-k-pairs-with-smallest-sums/) •**Medium**
 
 ## 핵심 아이디어
 

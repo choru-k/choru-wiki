@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 308](https://leetcode.com/problems/range-sum-query-2d-mutable/) • **Medium**
+[LeetCode 308](https://leetcode.com/problems/range-sum-query-2d-mutable/) •**Medium**
 
 총 2가지의 풀이법이 있다.
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 106](https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/) • **Medium**
+[LeetCode 106](https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/) •**Medium**
 
 ## 핵심 아이디어
 

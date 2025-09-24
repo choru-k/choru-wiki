@@ -35,22 +35,30 @@ google_weekly_stats = {
 print("🤯 깨달음: 구글 엔지니어들도 개별 컨테이너 위치를 모른다!")
 ```
 
-**어떻게 이게 가능할까요?** 바로 Kubernetes Architecture의 **추상화 마법** 덕분입니다.
+**어떻게 이게 가능할까요?**바로 Kubernetes Architecture의**추상화 마법**덕분입니다.
 
 ### Kubernetes 탄생: Borg에서 배운 15년의 교훈
 
 ```mermaid
 graph LR
     subgraph "구글 내부 진화 (2004-2014)"
-        BORG1["2004년: Borg 1.0<br/>🤖 컨테이너 오케스트레이터"]
-        OMEGA["2013년: Omega<br/>⚡ 차세대 스케줄러"]
-        LESSONS["💎 15년간의 교훈<br/>- 선언적 API<br/>- 불변 인프라<br/>- 자가 치유"]
+        BORG1["2004년: Borg 1.0
+🤖 컨테이너 오케스트레이터"]
+        OMEGA["2013년: Omega
+⚡ 차세대 스케줄러"]
+        LESSONS["💎 15년간의 교훈
+- 선언적 API
+- 불변 인프라
+- 자가 치유"]
     end
     
     subgraph "오픈소스 탄생 (2014년)"
-        K8S["🎼 Kubernetes<br/>모든 사람을 위한 Borg"]
-        CNCF["🏛️ CNCF<br/>생태계 확장"]
-        ENTERPRISE["🏢 Enterprise 채택<br/>Netflix, Airbnb, Spotify..."]
+        K8S["🎼 Kubernetes
+모든 사람을 위한 Borg"]
+        CNCF["🏛️ CNCF
+생태계 확장"]
+        ENTERPRISE["🏢 Enterprise 채택
+Netflix, Airbnb, Spotify..."]
     end
     
     BORG1 --> OMEGA --> LESSONS
@@ -68,7 +76,7 @@ graph LR
 
 2017년 Google I/O에서 공개된 충격적인 사실부터, Kubernetes가 어떻게 전 세계 데이터센터를 하나의 거대한 컴퓨터처럼 다루는지 알아봅니다. 당신도 Google 엔지니어처럼 "컨테이너 위치를 몰라도" 서비스를 운영할 수 있게 됩니다.
 
-🏗️ **핵심 내용**:
+🏗️**핵심 내용**:
 
 - Control Plane vs Data Plane 완벽 분리
 - Master-Worker 아키텍처의 숨은 장점
@@ -83,7 +91,7 @@ graph LR
 
 Cloudflare가 어떻게 Kubernetes API Server를 활용해 대규모 DDoS 공격을 막았는지, API Server가 모든 클러스터 통신의 중심이 되면서도 단일 장애점이 되지 않는 비밀을 탐험합니다.
 
-🎛️ **핵심 내용**:
+🎛️**핵심 내용**:
 
 - API Server의 3단계 요청 처리 파이프라인
 - Authentication, Authorization, Admission 체인
@@ -98,7 +106,7 @@ Cloudflare가 어떻게 Kubernetes API Server를 활용해 대규모 DDoS 공격
 
 Discord가 어떻게 etcd 장애 상황에서도 10억 개의 메시지 데이터를 안전하게 복구했는지, Raft 합의 알고리즘이 어떻게 분산 환경에서 데이터 일관성을 보장하는지 깊이 있게 다룹니다.
 
-💾 **핵심 내용**:
+💾**핵심 내용**:
 
 - Raft 합의 알고리즘의 실제 동작 원리
 - etcd의 Watch 메커니즘과 이벤트 스트리밍
@@ -339,14 +347,14 @@ scalability_limits = {
 
 ## 마치며: Architecture는 Kubernetes의 심장
 
-Kubernetes Architecture를 깊이 이해하면, 단순한 컨테이너 관리 도구가 아닌 **분산 시스템의 걸작**임을 알게 됩니다.
+Kubernetes Architecture를 깊이 이해하면, 단순한 컨테이너 관리 도구가 아닌**분산 시스템의 걸작**임을 알게 됩니다.
 
 **Architecture가 가르쳐주는 교훈들**:
 
-1. 🎯 **선언적 설계**: 원하는 상태만 정의하면 시스템이 알아서 달성
-2. 🔄 **자가 치유**: 장애를 감지하고 자동으로 복구
-3. 📈 **무한 확장**: 수평적 확장의 한계가 없는 설계
-4. 🛡️ **견고한 추상화**: 복잡성을 숨기고 단순한 인터페이스 제공
+1. 🎯**선언적 설계**: 원하는 상태만 정의하면 시스템이 알아서 달성
+2. 🔄**자가 치유**: 장애를 감지하고 자동으로 복구
+3. 📈**무한 확장**: 수평적 확장의 한계가 없는 설계
+4. 🛡️**견고한 추상화**: 복잡성을 숨기고 단순한 인터페이스 제공
 
 이제 Control Plane의 깊은 내부로 들어가 볼 준비가 되셨나요? 🚀
 

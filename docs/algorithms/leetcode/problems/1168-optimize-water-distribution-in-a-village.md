@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1168](https://leetcode.com/problems/optimize-water-distribution-in-a-village/) • **Medium**
+[LeetCode 1168](https://leetcode.com/problems/optimize-water-distribution-in-a-village/) •**Medium**
 
 ## 핵심 아이디어
 

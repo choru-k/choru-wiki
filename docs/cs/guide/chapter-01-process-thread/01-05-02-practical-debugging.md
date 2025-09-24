@@ -44,29 +44,59 @@ int* __errno_location() {
 ```mermaid
 graph TD
     subgraph PROCESS["프로세스 메모리 공간"]
-        GLOBAL["전역 변수 영역<br/>• 모든 스레드 공유<br/>• 동기화 필요<br/>• 경쟁 조건 위험"]
-        HEAP["힙 영역<br/>• 동적 할당<br/>• 공유 메모리<br/>• malloc/free"]
+        GLOBAL["전역 변수 영역
+• 모든 스레드 공유
+• 동기화 필요
+• 경쟁 조건 위험"]
+        HEAP["힙 영역
+• 동적 할당
+• 공유 메모리
+• malloc/free"]
     end
     
     subgraph THREAD1["스레드 1"]
-        STACK1["스택<br/>• 지역 변수<br/>• 함수 호출"]
-        TLS1["TLS 영역<br/>• errno_tls<br/>• tls_buffer[8192]<br/>• thread_id"]
+        STACK1["스택
+• 지역 변수
+• 함수 호출"]
+        TLS1["TLS 영역
+• errno_tls
+• tls_buffer[8192]
+• thread_id"]
     end
     
     subgraph THREAD2["스레드 2"]
-        STACK2["스택<br/>• 지역 변수<br/>• 함수 호출"]
-        TLS2["TLS 영역<br/>• errno_tls<br/>• tls_buffer[8192]<br/>• thread_id"]
+        STACK2["스택
+• 지역 변수
+• 함수 호출"]
+        TLS2["TLS 영역
+• errno_tls
+• tls_buffer[8192]
+• thread_id"]
     end
     
     subgraph THREAD3["스레드 3"]
-        STACK3["스택<br/>• 지역 변수<br/>• 함수 호출"]
-        TLS3["TLS 영역<br/>• errno_tls<br/>• tls_buffer[8192]<br/>• thread_id"]
+        STACK3["스택
+• 지역 변수
+• 함수 호출"]
+        TLS3["TLS 영역
+• errno_tls
+• tls_buffer[8192]
+• thread_id"]
     end
     
     subgraph TLS_BENEFITS["TLS 장점"]
-        NO_SYNC["동기화 불필요<br/>• 락 없음<br/>• 경쟁 조건 없음<br/>• 고성능"]
-        ISOLATION["완전 격리<br/>• 스레드별 독립<br/>• 사이드 이펙트 없음<br/>• 디버깅 용이"]
-        PERFORMANCE["성능 최적화<br/>• 메모리 재사용<br/>• malloc 오버헤드 제거<br/>• 캐시 지역성"]
+        NO_SYNC["동기화 불필요
+• 락 없음
+• 경쟁 조건 없음
+• 고성능"]
+        ISOLATION["완전 격리
+• 스레드별 독립
+• 사이드 이펙트 없음
+• 디버깅 용이"]
+        PERFORMANCE["성능 최적화
+• 메모리 재사용
+• malloc 오버헤드 제거
+• 캐시 지역성"]
     end
     
     GLOBAL -.->|"동기화 필요"| THREAD1
@@ -114,7 +144,8 @@ sequenceDiagram
     Global->>TLS2: return TLS2.errno_tls
     TLS2->>T2: 13 (EACCES)
     
-    Note over T1,T2: 각 스레드는 독립된 errno 값을 유지<br/>동기화 없이도 안전!
+    Note over T1,T2: "각 스레드는 독립된 errno 값을 유지
+동기화 없이도 안전!"
 ```
 
 ### 7.1 TLS 구현: 성능 최적화의 비밀 무기
@@ -229,10 +260,14 @@ void parallel_image_filter(image_t *img) {
 
 ```mermaid
 sequenceDiagram
-    participant T1 as "Thread 1<br/>(이미지 1/4)"
-    participant T2 as "Thread 2<br/>(이미지 2/4)"
-    participant T3 as "Thread 3<br/>(이미지 3/4)"
-    participant T4 as "Thread 4<br/>(이미지 4/4)"
+    participant T1 as "Thread 1
+(이미지 1/4)"
+    participant T2 as "Thread 2
+(이미지 2/4)"
+    participant T3 as "Thread 3
+(이미지 3/4)"
+    participant T4 as "Thread 4
+(이미지 4/4)"
     participant Barrier as "Barrier"
     
     Note over T1,Barrier: Phase 1: 개별 필터링 작업 (250ms)
@@ -445,22 +480,44 @@ void benchmark_locks() {
 ```mermaid
 graph TD
     subgraph CRITICAL_SECTION_TIME["Critical Section 길이별 성능"]
-        VERY_SHORT["매우 짧음<br/>(< 100ns)<br/>원자적 연산"]
-        SHORT["짧음<br/>(100ns - 1μs)<br/>간단한 계산"]
-        MEDIUM["중간<br/>(1μs - 100μs)<br/>작은 I/O"]
-        LONG["김<br/>(> 100μs)<br/>파일/네트워크 I/O"]
+        VERY_SHORT["매우 짧음
+(< 100ns)
+원자적 연산"]
+        SHORT["짧음
+(100ns - 1μs)
+간단한 계산"]
+        MEDIUM["중간
+(1μs - 100μs)
+작은 I/O"]
+        LONG["김
+(> 100μs)
+파일/네트워크 I/O"]
     end
     
     subgraph PERFORMANCE_COMPARISON["성능 비교 (상대적)"]
-        ATOMIC_PERF["Lock-free<br/>⭐⭐⭐⭐⭐<br/>25ns"]
-        SPIN_PERF["Spinlock<br/>⭐⭐⭐⭐<br/>45ns"]
-        MUTEX_PERF["Mutex<br/>⭐⭐⭐<br/>120ns"]
-        ADAPTIVE_PERF["Adaptive<br/>⭐⭐⭐⭐<br/>상황별 최적"]
+        ATOMIC_PERF["Lock-free
+⭐⭐⭐⭐⭐
+25ns"]
+        SPIN_PERF["Spinlock
+⭐⭐⭐⭐
+45ns"]
+        MUTEX_PERF["Mutex
+⭐⭐⭐
+120ns"]
+        ADAPTIVE_PERF["Adaptive
+⭐⭐⭐⭐
+상황별 최적"]
     end
     
     subgraph SYSTEM_IMPACT["시스템 영향"]
-        LOW_IMPACT["낮은 영향<br/>• CPU 효율적<br/>• 스케일 가능<br/>• 예측 가능"]
-        HIGH_IMPACT["높은 영향<br/>• CPU 낭비<br/>• 시스템 지연<br/>• 예측 불가"]
+        LOW_IMPACT["낮은 영향
+• CPU 효율적
+• 스케일 가능
+• 예측 가능"]
+        HIGH_IMPACT["높은 영향
+• CPU 낭비
+• 시스템 지연
+• 예측 불가"]
     end
     
     VERY_SHORT --> ATOMIC_PERF
@@ -490,24 +547,39 @@ graph TD
 
 ```mermaid
 flowchart TD
-    START["스레드가 락 요청"] --> TRY_LOCK{"원자적 락 시도<br/>atomic_exchange(locked, 1)"}
+    START["스레드가 락 요청"] --> TRY_LOCK{"원자적 락 시도
+atomic_exchange(locked, 1)"}
     
-    TRY_LOCK -->|"성공 (이전값 0)"| ACQUIRED["🎉 락 획득!<br/>Critical Section 진입"]
-    TRY_LOCK -->|"실패 (이전값 1)"| INCREMENT["spins++<br/>스핀 횟수 증가"]
+    TRY_LOCK -->|"성공 (이전값 0)"| ACQUIRED["🎉 락 획득!
+Critical Section 진입"]
+    TRY_LOCK -->|"실패 (이전값 1)"| INCREMENT["spins++
+스핀 횟수 증가"]
     
-    INCREMENT --> CHECK_SPIN{"스핀 한도 체크<br/>spins < spin_count?"}
+    INCREMENT --> CHECK_SPIN{"스핀 한도 체크
+spins < spin_count?"}
     
-    CHECK_SPIN -->|"한도 내"| SPIN_WAIT["💫 바쁜 대기<br/>pause() - CPU 친화적<br/>하이퍼스레딩 최적화"]
-    CHECK_SPIN -->|"한도 초과"| YIELD_CPU["😴 CPU 양보<br/>sched_yield()<br/>다른 스레드에게 기회"]
+    CHECK_SPIN -->|"한도 내"| SPIN_WAIT["💫 바쁜 대기
+pause() - CPU 친화적
+하이퍼스레딩 최적화"]
+    CHECK_SPIN -->|"한도 초과"| YIELD_CPU["😴 CPU 양보
+sched_yield()
+다른 스레드에게 기회"]
     
     SPIN_WAIT --> TRY_LOCK
-    YIELD_CPU --> RESET_SPIN["spins = 0<br/>다음 사이클 준비"]
+    YIELD_CPU --> RESET_SPIN["spins = 0
+다음 사이클 준비"]
     RESET_SPIN --> TRY_LOCK
     
     subgraph TUNING["튜닝 가이드"]
-        SPIN_COUNT_CALC["spin_count 계산<br/>CPU 코어 수 × 40<br/>(경험적 최적값)"]
-        WORKLOAD_ADAPT["워크로드별 조정<br/>• CPU 바운드: 적게<br/>• I/O 바운드: 많게"]
-        MONITOR["성능 모니터링<br/>• lock contention 시간<br/>• context switch 횟수"]
+        SPIN_COUNT_CALC["spin_count 계산
+CPU 코어 수 × 40
+(경험적 최적값)"]
+        WORKLOAD_ADAPT["워크로드별 조정
+• CPU 바운드: 적게
+• I/O 바운드: 많게"]
+        MONITOR["성능 모니터링
+• lock contention 시간
+• context switch 횟수"]
     end
     
     CHECK_SPIN -.-> SPIN_COUNT_CALC
@@ -607,7 +679,7 @@ void adaptive_lock(adaptive_spinlock_t *lock) {
 
 2년차 때, 프로덕션 서버가 매주 금요일 오후 3시에 멈추는 버그가 있었습니다.
 
-원인? **순서가 다른 락 획득 + 금요일 백업 작업**
+원인?**순서가 다른 락 획득 + 금요일 백업 작업**
 
 ```c
 // Thread A: 일반 요청 처리
@@ -651,8 +723,10 @@ void safe_lock(mutex_t *m, int order) {
 
 ```mermaid
 sequenceDiagram
-    participant TA as "Thread A<br/>(일반 요청)"
-    participant TB as "Thread B<br/>(백업 작업)"
+    participant TA as "Thread A
+(일반 요청)"
+    participant TB as "Thread B
+(백업 작업)"
     participant UserMutex as "User Mutex"
     participant SessionMutex as "Session Mutex"
     
@@ -673,16 +747,22 @@ sequenceDiagram
     
     par 교차 락 요청 - 데드락!
         TA->>SessionMutex: lock(session_mutex) 🚫 대기...
-        Note over TA: Thread A 블로킹<br/>Thread B가 session_mutex 보유 중
+        Note over TA: "Thread A 블로킹
+Thread B가 session_mutex 보유 중"
         
         TB->>UserMutex: lock(user_mutex) 🚫 대기...
-        Note over TB: Thread B 블로킹<br/>Thread A가 user_mutex 보유 중
+        Note over TB: "Thread B 블로킹
+Thread A가 user_mutex 보유 중"
     end
     
-    Note over TA,TB: 🔄 순환 대기 상태<br/>둘 다 영원히 대기...
+    Note over TA,TB: "🔄 순환 대기 상태
+둘 다 영원히 대기..."
     
     rect rgb(255, 205, 210)
-        Note over TA,SessionMutex: 시스템 멈춤!<br/>• 새로운 요청 처리 불가<br/>• CPU 사용률 급락<br/>• 서비스 장애
+        Note over TA,SessionMutex: "시스템 멈춤!
+• 새로운 요청 처리 불가
+• CPU 사용률 급락
+• 서비스 장애"
     end
 ```
 
@@ -690,31 +770,54 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    LOCK_REQUEST["락 요청 발생"] --> GET_ORDER{"락 순서 확인<br/>current_order vs<br/>new_lock_order"}
+    LOCK_REQUEST["락 요청 발생"] --> GET_ORDER{"락 순서 확인
+current_order vs
+new_lock_order"}
     
-    GET_ORDER -->|"올바른 순서"| VALID_ORDER["✅ 정상 락 순서<br/>ORDER_USER(1) → ORDER_SESSION(2)"]
-    GET_ORDER -->|"잘못된 순서"| VIOLATION["🚨 락 순서 위반 감지!<br/>ORDER_SESSION(2) → ORDER_USER(1)"]
+    GET_ORDER -->|"올바른 순서"| VALID_ORDER["✅ 정상 락 순서
+ORDER_USER(1) → ORDER_SESSION(2)"]
+    GET_ORDER -->|"잘못된 순서"| VIOLATION["🚨 락 순서 위반 감지!
+ORDER_SESSION(2) → ORDER_USER(1)"]
     
-    VALID_ORDER --> ACQUIRE_LOCK["락 획득 진행<br/>thread_local_last_order 업데이트"]
-    VIOLATION --> LOG_ERROR["에러 로깅<br/>• 스택 트레이스<br/>• 락 순서 정보<br/>• 스레드 ID"]
+    VALID_ORDER --> ACQUIRE_LOCK["락 획득 진행
+thread_local_last_order 업데이트"]
+    VIOLATION --> LOG_ERROR["에러 로깅
+• 스택 트레이스
+• 락 순서 정보
+• 스레드 ID"]
     
     LOG_ERROR --> PREVENTION{"데드락 예방 조치"}
     
-    PREVENTION -->|"개발 환경"| PANIC["assert() 실행<br/>즉시 프로그램 중단"]
-    PREVENTION -->|"프로덕션 환경"| GRACEFUL["우아한 처리<br/>• 에러 반환<br/>• 재시도 로직<br/>• 모니터링 알람"]
+    PREVENTION -->|"개발 환경"| PANIC["assert() 실행
+즉시 프로그램 중단"]
+    PREVENTION -->|"프로덕션 환경"| GRACEFUL["우아한 처리
+• 에러 반환
+• 재시도 로직
+• 모니터링 알람"]
     
-    ACQUIRE_LOCK --> SUCCESS["락 획득 성공<br/>Critical Section 실행"]
+    ACQUIRE_LOCK --> SUCCESS["락 획득 성공
+Critical Section 실행"]
     
     subgraph LOCK_ORDERING["락 순서 정의"]
-        ORDER_SYSTEM["ORDER_SYSTEM = 0<br/>시스템 전역 락"]
-        ORDER_USER["ORDER_USER = 1<br/>사용자 관련 락"]  
-        ORDER_SESSION["ORDER_SESSION = 2<br/>세션 관련 락"]
-        ORDER_DATABASE["ORDER_DATABASE = 3<br/>데이터베이스 락"]
+        ORDER_SYSTEM["ORDER_SYSTEM = 0
+시스템 전역 락"]
+        ORDER_USER["ORDER_USER = 1
+사용자 관련 락"]  
+        ORDER_SESSION["ORDER_SESSION = 2
+세션 관련 락"]
+        ORDER_DATABASE["ORDER_DATABASE = 3
+데이터베이스 락"]
     end
     
     subgraph MONITORING["실시간 모니터링"]
-        TRACK_LOCKS["락 추적<br/>• 현재 보유 락 목록<br/>• 획득 순서 기록<br/>• 대기 시간 측정"]
-        DETECT_CYCLES["순환 대기 감지<br/>• Wait-For Graph<br/>• 실시간 사이클 탐지<br/>• 데드락 확률 계산"]
+        TRACK_LOCKS["락 추적
+• 현재 보유 락 목록
+• 획득 순서 기록
+• 대기 시간 측정"]
+        DETECT_CYCLES["순환 대기 감지
+• Wait-For Graph
+• 실시간 사이클 탐지
+• 데드락 확률 계산"]
     end
     
     GET_ORDER -.-> ORDER_USER
@@ -794,9 +897,9 @@ void track_unlock(pthread_mutex_t *mutex) {
 
 제가 만든 락 프로파일러로 찾아낸 놀라운 사실들:
 
-1. **Hot Lock**: 전체 대기 시간의 80%가 단 하나의 뮤텍스에서 발생
-2. **False Sharing**: 다른 변수인데 같은 캐시 라인에 있어서 성능 저하
-3. **Lock Convoy**: 한 스레드가 락을 놓자마자 다시 가져가는 현상
+1.**Hot Lock**: 전체 대기 시간의 80%가 단 하나의 뮤텍스에서 발생
+2.**False Sharing**: 다른 변수인데 같은 캐시 라인에 있어서 성능 저하
+3.**Lock Convoy**: 한 스레드가 락을 놓자마자 다시 가져가는 현상
 
 ```c
 // 실제 프로덕션에서 발견한 False Sharing
@@ -914,30 +1017,30 @@ void print_lock_stats(instrumented_mutex_t *m) {
 
 ### 스레드란?
 
-- **정의**: 프로세스 내의 실행 단위
-- **특징**: 메모리 공유, 빠른 생성, 가벼움
-- **위험**: 동기화 필요, 경쟁 조건
+-**정의**: 프로세스 내의 실행 단위
+-**특징**: 메모리 공유, 빠른 생성, 가벼움
+-**위험**: 동기화 필요, 경쟁 조건
 
 ### 동기화 메커니즘
 
-1. **뮤텍스**: 상호 배제, 단일 소유자
-2. **세마포어**: 카운팅, 자원 관리
-3. **조건 변수**: 조건 대기, 신호
-4. **RWLock**: 읽기 다중, 쓰기 단독
-5. **Lock-free**: 원자적 연산, 무대기
+1.**뮤텍스**: 상호 배제, 단일 소유자
+2.**세마포어**: 카운팅, 자원 관리
+3.**조건 변수**: 조건 대기, 신호
+4.**RWLock**: 읽기 다중, 쓰기 단독
+5.**Lock-free**: 원자적 연산, 무대기
 
 ### 왜 중요한가?
 
-1. **정확성**: 데이터 일관성 보장
-2. **성능**: 병렬 처리로 속도 향상
-3. **확장성**: 멀티코어 활용
-4. **안정성**: 경쟁 조건과 데드락 방지
+1.**정확성**: 데이터 일관성 보장
+2.**성능**: 병렬 처리로 속도 향상
+3.**확장성**: 멀티코어 활용
+4.**안정성**: 경쟁 조건과 데드락 방지
 
 ### 기억해야 할 점
 
 #### 1. "Premature optimization is the root of all evil" - Donald Knuth
 
-하지만 동시성에서는 **"Premature threading is the root of all bugs"**
+하지만 동시성에서는**"Premature threading is the root of all bugs"**
 
 #### 2. 동기화 선택 가이드
 
@@ -945,37 +1048,81 @@ void print_lock_stats(instrumented_mutex_t *m) {
 
 ```mermaid
 flowchart TD
-    START["동기화 필요성 분석"] --> SHARE_CHECK{"데이터 공유<br/>필요한가?"}
+    START["동기화 필요성 분석"] --> SHARE_CHECK{"데이터 공유
+필요한가?"}
     
-    SHARE_CHECK -->|"공유 불필요"| TLS_CHOICE["🎒 Thread Local Storage<br/>• 각 스레드 독립 데이터<br/>• 동기화 오버헤드 없음<br/>• 최고 성능"]
+    SHARE_CHECK -->|"공유 불필요"| TLS_CHOICE["🎒 Thread Local Storage
+• 각 스레드 독립 데이터
+• 동기화 오버헤드 없음
+• 최고 성능"]
     
-    SHARE_CHECK -->|"공유 필요"| ACCESS_PATTERN{"접근 패턴<br/>분석"}
+    SHARE_CHECK -->|"공유 필요"| ACCESS_PATTERN{"접근 패턴
+분석"}
     
-    ACCESS_PATTERN -->|"읽기 위주<br/>(80% 이상)"| RWLOCK_CHOICE["📚 Reader-Writer Lock<br/>• 동시 읽기 허용<br/>• 쓰기 시에만 배타적<br/>• 읽기 집약적 워크로드"]
+    ACCESS_PATTERN -->|"읽기 위주
+(80% 이상)"| RWLOCK_CHOICE["📚 Reader-Writer Lock
+• 동시 읽기 허용
+• 쓰기 시에만 배타적
+• 읽기 집약적 워크로드"]
     
-    ACCESS_PATTERN -->|"쓰기 위주<br/>또는 혼합"| SECTION_TIME{"Critical Section<br/>실행 시간"}
+    ACCESS_PATTERN -->|"쓰기 위주
+또는 혼합"| SECTION_TIME{"Critical Section
+실행 시간"}
     
-    SECTION_TIME -->|"매우 짧음<br/>(< 100ns)"| ATOMIC_OR_SPIN{"경쟁 빈도"}
-    SECTION_TIME -->|"중간<br/>(100ns - 1μs)"| SPIN_OR_ADAPTIVE{"시스템 부하<br/>고려"}
-    SECTION_TIME -->|"김<br/>(> 1μs)"| MUTEX_OR_SEM{"자원 관리<br/>필요성"}
+    SECTION_TIME -->|"매우 짧음
+(< 100ns)"| ATOMIC_OR_SPIN{"경쟁 빈도"}
+    SECTION_TIME -->|"중간
+(100ns - 1μs)"| SPIN_OR_ADAPTIVE{"시스템 부하
+고려"}
+    SECTION_TIME -->|"김
+(> 1μs)"| MUTEX_OR_SEM{"자원 관리
+필요성"}
     
-    ATOMIC_OR_SPIN -->|"경쟁 거의 없음"| ATOMIC_CHOICE["⚡ Lock-free (Atomic)<br/>• CAS 연산 활용<br/>• 무대기 알고리즘<br/>• 최고 성능, 복잡함"]
-    ATOMIC_OR_SPIN -->|"경쟁 빈번"| SPINLOCK_CHOICE["🌀 Spinlock<br/>• 바쁜 대기<br/>• 짧은 대기에만 적합<br/>• CPU 집약적"]
+    ATOMIC_OR_SPIN -->|"경쟁 거의 없음"| ATOMIC_CHOICE["⚡ Lock-free (Atomic)
+• CAS 연산 활용
+• 무대기 알고리즘
+• 최고 성능, 복잡함"]
+    ATOMIC_OR_SPIN -->|"경쟁 빈번"| SPINLOCK_CHOICE["🌀 Spinlock
+• 바쁜 대기
+• 짧은 대기에만 적합
+• CPU 집약적"]
     
     SPIN_OR_ADAPTIVE -->|"낮은 부하"| SPINLOCK_CHOICE
-    SPIN_OR_ADAPTIVE -->|"높은 부하"| ADAPTIVE_CHOICE["🧠 Adaptive Lock<br/>• 스핀 + 양보 조합<br/>• 상황별 최적화<br/>• 균형잡힌 성능"]
+    SPIN_OR_ADAPTIVE -->|"높은 부하"| ADAPTIVE_CHOICE["🧠 Adaptive Lock
+• 스핀 + 양보 조합
+• 상황별 최적화
+• 균형잡힌 성능"]
     
-    MUTEX_OR_SEM -->|"단순 상호배제"| MUTEX_CHOICE["🔒 Mutex<br/>• 일반적 용도<br/>• 커널 지원<br/>• 안정적 성능"]
-    MUTEX_OR_SEM -->|"자원 개수 관리"| SEMAPHORE_CHOICE["🎫 Semaphore<br/>• 카운팅 세마포어<br/>• 자원 풀 관리<br/>• 생산자-소비자"]
+    MUTEX_OR_SEM -->|"단순 상호배제"| MUTEX_CHOICE["🔒 Mutex
+• 일반적 용도
+• 커널 지원
+• 안정적 성능"]
+    MUTEX_OR_SEM -->|"자원 개수 관리"| SEMAPHORE_CHOICE["🎫 Semaphore
+• 카운팅 세마포어
+• 자원 풀 관리
+• 생산자-소비자"]
     
-    MUTEX_CHOICE --> CONDITION_CHECK{"조건 대기<br/>필요한가?"}
-    CONDITION_CHECK -->|"필요"| CONDVAR_CHOICE["⏰ Condition Variable<br/>• 조건 기반 대기<br/>• 이벤트 통지<br/>• 뮤텍스와 함께 사용"]
+    MUTEX_CHOICE --> CONDITION_CHECK{"조건 대기
+필요한가?"}
+    CONDITION_CHECK -->|"필요"| CONDVAR_CHOICE["⏰ Condition Variable
+• 조건 기반 대기
+• 이벤트 통지
+• 뮤텍스와 함께 사용"]
     CONDITION_CHECK -->|"불필요"| MUTEX_FINAL["기본 Mutex 사용"]
     
     subgraph PERFORMANCE_GUIDE["성능 가이드"]
-        MEASURE["1. 측정이 우선<br/>• 프로파일링<br/>• 병목 지점 식별<br/>• 실제 성능 비교"]
-        SIMPLE["2. 단순함 추구<br/>• 복잡성 최소화<br/>• 유지보수성<br/>• 디버깅 용이성"]
-        OPTIMIZE["3. 점진적 최적화<br/>• 정확성 먼저<br/>• 성능은 나중에<br/>• A/B 테스트"]
+        MEASURE["1. 측정이 우선
+• 프로파일링
+• 병목 지점 식별
+• 실제 성능 비교"]
+        SIMPLE["2. 단순함 추구
+• 복잡성 최소화
+• 유지보수성
+• 디버깅 용이성"]
+        OPTIMIZE["3. 점진적 최적화
+• 정확성 먼저
+• 성능은 나중에
+• A/B 테스트"]
     end
     
     style TLS_CHOICE fill:#E8F5E8
@@ -992,10 +1139,22 @@ flowchart TD
 flowchart TD
     BUG_REPORT["🐛 스레드 관련 버그 발생"] --> SYMPTOMS{"증상 분류"}
     
-    SYMPTOMS -->|"프로그램 멈춤"| DEADLOCK_CHECK["데드락 의심<br/>• gdb attach<br/>• 스레드 상태 확인<br/>• 락 보유 현황"]
-    SYMPTOMS -->|"잘못된 결과"| RACE_CONDITION["경쟁 조건 의심<br/>• ThreadSanitizer<br/>• Helgrind<br/>• 원자성 검사"]
-    SYMPTOMS -->|"성능 저하"| CONTENTION["락 경쟁 의심<br/>• 락 프로파일링<br/>• False sharing<br/>• Hot lock 분석"]
-    SYMPTOMS -->|"크래시/세그폴트"| MEMORY_ISSUE["메모리 문제<br/>• Valgrind<br/>• AddressSanitizer<br/>• 스택 오버플로우"]
+    SYMPTOMS -->|"프로그램 멈춤"| DEADLOCK_CHECK["데드락 의심
+• gdb attach
+• 스레드 상태 확인
+• 락 보유 현황"]
+    SYMPTOMS -->|"잘못된 결과"| RACE_CONDITION["경쟁 조건 의심
+• ThreadSanitizer
+• Helgrind
+• 원자성 검사"]
+    SYMPTOMS -->|"성능 저하"| CONTENTION["락 경쟁 의심
+• 락 프로파일링
+• False sharing
+• Hot lock 분석"]
+    SYMPTOMS -->|"크래시/세그폴트"| MEMORY_ISSUE["메모리 문제
+• Valgrind
+• AddressSanitizer
+• 스택 오버플로우"]
     
     DEADLOCK_CHECK --> DEADLOCK_TOOLS["데드락 분석 도구"]
     RACE_CONDITION --> RACE_TOOLS["경쟁 조건 분석 도구"]
@@ -1003,23 +1162,53 @@ flowchart TD
     MEMORY_ISSUE --> MEMORY_TOOLS["메모리 분석 도구"]
     
     subgraph DEBUGGING_ARSENAL["디버깅 도구 군단"]
-        STATIC_TOOLS["정적 분석<br/>• Clang Static Analyzer<br/>• PVS-Studio<br/>• Coverity"]
-        DYNAMIC_TOOLS["동적 분석<br/>• ThreadSanitizer<br/>• Helgrind<br/>• Intel Inspector"]
-        PROFILING_TOOLS["성능 분석<br/>• perf<br/>• VTune<br/>• 커스텀 프로파일러"]
-        DEBUG_TOOLS["디버깅<br/>• gdb<br/>• lldb<br/>• 코어 덤프 분석"]
+        STATIC_TOOLS["정적 분석
+• Clang Static Analyzer
+• PVS-Studio
+• Coverity"]
+        DYNAMIC_TOOLS["동적 분석
+• ThreadSanitizer
+• Helgrind
+• Intel Inspector"]
+        PROFILING_TOOLS["성능 분석
+• perf
+• VTune
+• 커스텀 프로파일러"]
+        DEBUG_TOOLS["디버깅
+• gdb
+• lldb
+• 코어 덤프 분석"]
     end
     
-    DEADLOCK_TOOLS --> PREVENTION["예방 코드 적용<br/>• 락 순서 정의<br/>• 타임아웃 설정<br/>• 자동 검증"]
-    RACE_TOOLS --> SYNCHRONIZATION["동기화 강화<br/>• 원자적 연산<br/>• 메모리 배리어<br/>• 락 범위 확대"]
-    PERF_TOOLS --> OPTIMIZATION["성능 최적화<br/>• 락 분할<br/>• Lock-free 전환<br/>• 캐시 최적화"]
-    MEMORY_TOOLS --> FIXES["메모리 수정<br/>• 경계 검사<br/>• 초기화<br/>• 생명주기 관리"]
+    DEADLOCK_TOOLS --> PREVENTION["예방 코드 적용
+• 락 순서 정의
+• 타임아웃 설정
+• 자동 검증"]
+    RACE_TOOLS --> SYNCHRONIZATION["동기화 강화
+• 원자적 연산
+• 메모리 배리어
+• 락 범위 확대"]
+    PERF_TOOLS --> OPTIMIZATION["성능 최적화
+• 락 분할
+• Lock-free 전환
+• 캐시 최적화"]
+    MEMORY_TOOLS --> FIXES["메모리 수정
+• 경계 검사
+• 초기화
+• 생명주기 관리"]
     
-    PREVENTION --> TESTING["테스트 강화<br/>• 스트레스 테스트<br/>• 동시성 테스트<br/>• 엣지 케이스"]
+    PREVENTION --> TESTING["테스트 강화
+• 스트레스 테스트
+• 동시성 테스트
+• 엣지 케이스"]
     SYNCHRONIZATION --> TESTING
     OPTIMIZATION --> TESTING
     FIXES --> TESTING
     
-    TESTING --> MONITORING["지속적 모니터링<br/>• 프로덕션 메트릭<br/>• 자동 알람<br/>• 트렌드 분석"]
+    TESTING --> MONITORING["지속적 모니터링
+• 프로덕션 메트릭
+• 자동 알람
+• 트렌드 분석"]
     
     style BUG_REPORT fill:#FFCDD2
     style DEADLOCK_CHECK fill:#FFF3E0
@@ -1061,12 +1250,12 @@ flowchart TD
 
 **기억하세요:**
 
-- **정확성이 성능보다 중요**
-- **간단한 것부터 시작**
-- **항상 테스트와 디버깅 도구 활용**
-- **동료 코드 리뷰는 필수**
+-**정확성이 성능보다 중요**
+-**간단한 것부터 시작**
+-**항상 테스트와 디버깅 도구 활용**
+-**동료 코드 리뷰는 필수**
 
-10년 경험자로서 드리는 조언: 멀티스레딩을 마스터하면 **시스템의 진정한 힘**을 발휘할 수 있습니다. 하지만 그 길은 험난하니, 한 걸음씩 착실하게 나아가세요! 💪
+10년 경험자로서 드리는 조언: 멀티스레딩을 마스터하면**시스템의 진정한 힘**을 발휘할 수 있습니다. 하지만 그 길은 험난하니, 한 걸음씩 착실하게 나아가세요! 💪
 
 ---
 
@@ -1077,9 +1266,9 @@ flowchart TD
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 413](https://leetcode.com/problems/find-right-interval/description/) • **Hard**
+[LeetCode 413](https://leetcode.com/problems/find-right-interval/description/) •**Hard**
 
 ## 핵심 아이디어
 
@@ -30,8 +30,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

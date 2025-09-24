@@ -21,10 +21,10 @@ priority_score: 4
 
 소켓을 선택하는 건 마치 교통수단을 선택하는 것과 같습니다:
 
-- **TCP (SOCK_STREAM)**: 안전한 택배 서비스 (도착 보장, 순서 보장)
-- **UDP (SOCK_DGRAM)**: 빠른 우편 (빠르지만 분실 가능)
-- **Raw Socket**: 직접 운전 (모든 제어 가능, 위험할 수 있음)
-- **Unix Socket**: 지하철 (같은 도시 내에서만, 매우 빠름)
+-**TCP (SOCK_STREAM)**: 안전한 택배 서비스 (도착 보장, 순서 보장)
+-**UDP (SOCK_DGRAM)**: 빠른 우편 (빠르지만 분실 가능)
+-**Raw Socket**: 직접 운전 (모든 제어 가능, 위험할 수 있음)
+-**Unix Socket**: 지하철 (같은 도시 내에서만, 매우 빠름)
 
 제가 실제로 사용한 예:
 
@@ -431,9 +431,9 @@ int validate_and_create_socket(const char *ip, uint16_t port) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: FUNDAMENTALS
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 3-5시간
+-**난이도**: FUNDAMENTALS
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 3-5시간
 
 ### 🎯 학습 경로
 

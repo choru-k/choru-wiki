@@ -14,13 +14,21 @@ ASCII 아트 대신 Mermaid 다이어그램을 사용하면 더 안정적이고 
 ```mermaid
 graph TB
     subgraph "Process Memory Layout"
-        A["Kernel Space<br/>0xFFFFFFFF"]
-        B["Stack<br/>↓ grows downward"]
-        C["Memory Mapped Region<br/>shared libs, mmap"]
-        D["Heap<br/>↑ grows upward"]
-        E["BSS Segment<br/>uninitialized data"]
-        F["Data Segment<br/>initialized data"]
-        G["Text Segment<br/>code<br/>0x00000000"]
+        A["Kernel Space
+0xFFFFFFFF"]
+        B["Stack
+↓ grows downward"]
+        C["Memory Mapped Region
+shared libs, mmap"]
+        D["Heap
+↑ grows upward"]
+        E["BSS Segment
+uninitialized data"]
+        F["Data Segment
+initialized data"]
+        G["Text Segment
+code
+0x00000000"]
 
         A --> B
         B --> C
@@ -178,12 +186,12 @@ erDiagram
 
 ## Mermaid 사용 장점
 
-1. **안정성**: 렌더링이 일관되고 깨지지 않음
-2. **반응형**: 화면 크기에 따라 자동 조정
-3. **스타일링**: 테마에 맞춰 자동으로 색상 적용
-4. **유지보수**: 수정이 쉽고 버전 관리 용이
-5. **접근성**: 스크린 리더 지원
-6. **Export**: SVG, PNG 등으로 내보내기 가능
+1.**안정성**: 렌더링이 일관되고 깨지지 않음
+2.**반응형**: 화면 크기에 따라 자동 조정
+3.**스타일링**: 테마에 맞춰 자동으로 색상 적용
+4.**유지보수**: 수정이 쉽고 버전 관리 용이
+5.**접근성**: 스크린 리더 지원
+6.**Export**: SVG, PNG 등으로 내보내기 가능
 
 ## ASCII Art vs Mermaid 비교
 

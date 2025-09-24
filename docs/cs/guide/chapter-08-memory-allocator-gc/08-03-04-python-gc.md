@@ -1153,20 +1153,23 @@ def dropbox_style_optimization():
 
 **Python GC 15년 사용 경험에서 얻은 현실적 지혜:**
 
-1. **"Reference Counting은 친구, Cycle Detection은 필요악"**
-   - 대부분 객체는 Reference Counting으로 즉시 해제
-   - 순환 참조만 주의하면 90% 문제 해결
-   - `weakref` 모듈을 적극 활용하자
+1.**"Reference Counting은 친구, Cycle Detection은 필요악"**
 
-2. **"GC 최적화보다 코드 최적화가 더 중요"**
-   - Object pooling, `__slots__` 사용이 더 효과적
-   - 불필요한 객체 생성을 줄이는 것이 핵심
-   - 프로파일링으로 hotspot을 찾아 집중 개선
+- 대부분 객체는 Reference Counting으로 즉시 해제
+- 순환 참조만 주의하면 90% 문제 해결
+- `weakref` 모듈을 적극 활용하자
 
-3. **"배치 작업에서는 GC 제어가 게임 체인저"**
-   - 대량 데이터 처리 시 일시적 GC 비활성화 고려
-   - 작업 완료 후 명시적 `gc.collect()` 실행
-   - 메모리 사용량 모니터링은 필수
+2.**"GC 최적화보다 코드 최적화가 더 중요"**
+
+- Object pooling, `__slots__` 사용이 더 효과적
+- 불필요한 객체 생성을 줄이는 것이 핵심
+- 프로파일링으로 hotspot을 찾아 집중 개선
+
+3.**"배치 작업에서는 GC 제어가 게임 체인저"**
+
+- 대량 데이터 처리 시 일시적 GC 비활성화 고려
+- 작업 완료 후 명시적 `gc.collect()` 실행
+- 메모리 사용량 모니터링은 필수
 
 ### 🚀 Python 메모리 관리의 미래
 

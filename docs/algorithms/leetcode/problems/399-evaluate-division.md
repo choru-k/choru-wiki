@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 399](https://leetcode.com/problems/evaluate-division/) • **Medium**
+[LeetCode 399](https://leetcode.com/problems/evaluate-division/) •**Medium**
 
 이 문제는 두가지 방법으로 풀 수가 있다.
 
@@ -22,8 +22,8 @@ query 가 존재한다는건 미리 계산해놔도 좋다는 뜻.
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

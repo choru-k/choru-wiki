@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 483](https://leetcode.com/problems/smallest-good-base/) • **Medium**
+[LeetCode 483](https://leetcode.com/problems/smallest-good-base/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -39,18 +39,18 @@ class Solution:
         n = int(n);
         k = 2
         while True:
-            a = int(n ** k ** -1)                  # kth-root of n
+            a = int(n**k**-1)                  # kth-root of n
             if a == 1:
                 return str(n-1)
-            if (1 - a ** (k + 1)) // (1 - a) == n: # [a^0 + a^1 + ... + a^k] == n
+            if (1 - a**(k + 1)) // (1 - a) == n: # [a^0 + a^1 + ... + a^k] == n
                 return str(a)
             k+=1
 ```
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

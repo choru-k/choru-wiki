@@ -494,9 +494,9 @@ void forwarding_unit(pipeline_t* pipe) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: FUNDAMENTALS
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 3-4시간
+-**난이도**: FUNDAMENTALS
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 3-4시간
 
 ### 🎯 학습 경로
 

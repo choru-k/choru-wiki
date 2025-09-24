@@ -8,7 +8,7 @@ tags:
 
 ## 문제
 
-[LeetCode 2030](https://leetcode.com/problems/smallest-k-length-subsequence-with-occurrences-of-a-letter/description/) • **Medium**
+[LeetCode 2030](https://leetcode.com/problems/smallest-k-length-subsequence-with-occurrences-of-a-letter/description/) •**Medium**
 
 ```python
 class Solution:
@@ -55,8 +55,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

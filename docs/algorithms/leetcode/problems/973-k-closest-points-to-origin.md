@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 973](https://leetcode.com/problems/k-closest-points-to-origin/) • **Medium**
+[LeetCode 973](https://leetcode.com/problems/k-closest-points-to-origin/) •**Medium**
 
 가장 간단한 방법은 길이를 기준으로 각각을 소팅 하는 방법이다.
 

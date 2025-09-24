@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 200](https://leetcode.com/problems/number-of-islands/) • **Medium**
+[LeetCode 200](https://leetcode.com/problems/number-of-islands/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -59,8 +59,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

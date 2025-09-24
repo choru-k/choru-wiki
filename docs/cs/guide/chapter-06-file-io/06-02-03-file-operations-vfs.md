@@ -21,7 +21,7 @@ priority_score: 4
 
 ### 🎭 다형성의 교과서적 구현
 
-C언어에는 클래스가 없는데 어떻게 다형성을 구현할까요? 답은 **함수 포인터 테이블**입니다!
+C언어에는 클래스가 없는데 어떻게 다형성을 구현할까요? 답은**함수 포인터 테이블**입니다!
 
 제가 처음 이 코드를 봤을 때 감탄했습니다:
 
@@ -138,7 +138,7 @@ struct file_operations {
     int (*flock) (struct file *, int, struct file_lock *);
     ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
     ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int);
-    int (*setlease)(struct file *, long, struct file_lock **, void **);
+    int (*setlease)(struct file *, long, struct file_lock**, void**);
     long (*fallocate)(struct file *file, int mode, loff_t offset, loff_t len);
     void (*show_fdinfo)(struct seq_file *m, struct file *f);
     ssize_t (*copy_file_range)(struct file *, loff_t, struct file *, loff_t, size_t, unsigned int);
@@ -375,9 +375,9 @@ struct file은 열린 파일의 모든 상태를 중앙집중식으로 관리하
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

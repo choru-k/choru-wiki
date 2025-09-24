@@ -51,10 +51,10 @@ DP solves complex problems by breaking them into simpler subproblems.
 
 ### Problem-Solving Framework
 
-1. **Define state**: What do we need to know at each step?
-2. **Recurrence relation**: How do states relate?
-3. **Base cases**: What are the simplest cases?
-4. **Optimization**: Can we reduce space complexity?
+1.**Define state**: What do we need to know at each step?
+2.**Recurrence relation**: How do states relate?
+3.**Base cases**: What are the simplest cases?
+4.**Optimization**: Can we reduce space complexity?
 
 ## Graph Traversal
 

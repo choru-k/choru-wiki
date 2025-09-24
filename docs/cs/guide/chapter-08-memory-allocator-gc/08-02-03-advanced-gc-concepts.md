@@ -218,7 +218,7 @@ public:
     }
 
     // Write Barrier: Old->Young 참조를 추적하는 핵심 메커니즘
-    void write_barrier(Object** field_addr, Object* new_value) {
+    void write_barrier(Object**field_addr, Object* new_value) {
         // 실제 참조 업데이트
         *field_addr = new_value;
         
@@ -449,7 +449,7 @@ private:
     }
 
     // SATB Write Barrier (Snapshot At The Beginning)
-    void write_barrier_satb(Object** field, Object* new_value) {
+    void write_barrier_satb(Object**field, Object* new_value) {
         Object* old_value = *field;
 
         // 이전 값이 있고 마킹이 진행 중이면
@@ -468,7 +468,7 @@ private:
     }
 
     // Incremental Update Write Barrier (다른 방식)
-    void write_barrier_incremental(Object** field, Object* new_value) {
+    void write_barrier_incremental(Object**field, Object* new_value) {
         *field = new_value;
 
         // 마킹 중이고, Black 객체가 White 객체를 참조하게 되는 경우
@@ -767,21 +767,21 @@ public class CMSCollector {
 
 ### 1. Weak Generational Hypothesis의 실증적 가치
 
-- **95% 이상의 객체가 젊어서 죽음**: 웹 요청, 함수 호출 등 대부분의 임시 객체
-- **Young generation 집중 최적화**: Minor GC는 빠르고 빈번, Major GC는 느리고 드물게
-- **Write barrier로 성능 향상**: Card table을 통한 Old->Young 참조 효율적 추적
+-**95% 이상의 객체가 젊어서 죽음**: 웹 요청, 함수 호출 등 대부분의 임시 객체
+-**Young generation 집중 최적화**: Minor GC는 빠르고 빈번, Major GC는 느리고 드물게
+-**Write barrier로 성능 향상**: Card table을 통한 Old->Young 참조 효율적 추적
 
 ### 2. Tri-color Marking의 동시성 혁신
 
-- **애플리케이션과 GC의 동시 실행**: Stop-the-world 시간 획기적 단축
-- **Write barrier의 핵심 역할**: Tri-color invariant 유지를 통한 안전성 보장
-- **Trade-off 이해**: CPU 오버헤드 증가 vs 응답 시간 개선
+-**애플리케이션과 GC의 동시 실행**: Stop-the-world 시간 획기적 단축
+-**Write barrier의 핵심 역할**: Tri-color invariant 유지를 통한 안전성 보장
+-**Trade-off 이해**: CPU 오버헤드 증가 vs 응답 시간 개선
 
 ### 3. CMS의 실용적 교훈
 
-- **6단계 프로세스**: Initial Mark → Concurrent Mark → Preclean → Remark → Concurrent Sweep → Reset
-- **실제 운영 고려사항**: Concurrent Mode Failure, 메모리 단편화, CPU 사용량
-- **적절한 튜닝의 중요성**: 워크로드별 임계값 조정
+-**6단계 프로세스**: Initial Mark → Concurrent Mark → Preclean → Remark → Concurrent Sweep → Reset
+-**실제 운영 고려사항**: Concurrent Mode Failure, 메모리 단편화, CPU 사용량
+-**적절한 튜닝의 중요성**: 워크로드별 임계값 조정
 
 ---
 
@@ -792,9 +792,9 @@ public class CMSCollector {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 6-10시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 6-10시간
 
 ### 🎯 학습 경로
 

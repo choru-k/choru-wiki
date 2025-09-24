@@ -72,23 +72,23 @@ priority_score: 4
 
 ### 정보 조회가 목적일 때
 
-- **단순한 시스템 정보**: procfs 사용 (`/proc/cpuinfo`, `/proc/meminfo` 등)
-- **디바이스 상태 확인**: sysfs 사용 (`/sys/class/net/*/statistics` 등)
+-**단순한 시스템 정보**: procfs 사용 (`/proc/cpuinfo`, `/proc/meminfo` 등)
+-**디바이스 상태 확인**: sysfs 사용 (`/sys/class/net/*/statistics` 등)
 
 ### 실시간 이벤트 처리가 필요할 때  
 
-- **네트워크 변화 감지**: netlink 소켓 사용
-- **단순한 알림**: signal 또는 eventfd 사용
+-**네트워크 변화 감지**: netlink 소켓 사용
+-**단순한 알림**: signal 또는 eventfd 사용
 
 ### 고성능 데이터 처리가 필요할 때
 
-- **대용량 데이터 교환**: 공유메모리 + mmap 사용
-- **커널 레벨 최적화**: eBPF 프로그램 사용
+-**대용량 데이터 교환**: 공유메모리 + mmap 사용
+-**커널 레벨 최적화**: eBPF 프로그램 사용
 
 ### 설정 변경이 목적일 때
 
-- **시스템 매개변수**: sysfs 또는 procfs 사용
-- **동적 커널 동작**: eBPF 사용
+-**시스템 매개변수**: sysfs 또는 procfs 사용
+-**동적 커널 동작**: eBPF 사용
 
 ## 실습 환경 준비
 
@@ -110,18 +110,18 @@ pip install psutil pandas numpy
 
 ## 더 깊이 있는 학습을 위한 자료
 
-- **Linux Kernel Documentation**: 공식 커널 문서에서 각 서브시스템별 상세 설명
-- **"Linux System Programming" (Robert Love)**: 시스템 프로그래밍 전반에 대한 심화 내용
-- **"BPF Performance Tools" (Brendan Gregg)**: eBPF를 활용한 성능 분석 기법
-- **"The Linux Programming Interface" (Michael Kerrisk)**: 리눅스 API 완전 가이드
+-**Linux Kernel Documentation**: 공식 커널 문서에서 각 서브시스템별 상세 설명
+-**"Linux System Programming" (Robert Love)**: 시스템 프로그래밍 전반에 대한 심화 내용
+-**"BPF Performance Tools" (Brendan Gregg)**: eBPF를 활용한 성능 분석 기법
+-**"The Linux Programming Interface" (Michael Kerrisk)**: 리눅스 API 완전 가이드
 
 ## 📚 관련 문서
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

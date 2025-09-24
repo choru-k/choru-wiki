@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 732](https://leetcode.com/problems/my-calendar-iii/) • **Medium**
+[LeetCode 732](https://leetcode.com/problems/my-calendar-iii/) •**Medium**
 
 가장 쉬운 방법은 모든 날짜를 배열로 만들고 하나하나 직접 해보는 것이다.
 

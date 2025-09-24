@@ -6,7 +6,9 @@
     "lint": "markdownlint 'docs/**/*.md' --fix",
     "lint:check": "markdownlint 'docs/**/*.md'",
     "lint:mermaid": "node scripts/validate-mermaid.js",
-    "lint:all": "npm run lint:check && npm run lint:mermaid",
+    "lint:links": "node scripts/quick-link-check.js",
+    "lint:links:verbose": "VERBOSE=true bash scripts/check-invalid-links.sh docs",
+    "lint:all": "npm run lint:check && npm run lint:mermaid && npm run lint:links",
     "format": "prettier --write 'docs/**/*.md'",
     "format:check": "prettier --check 'docs/**/*.md'",
     "prepare": "husky"

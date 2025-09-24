@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 786](https://leetcode.com/problems/k-th-smallest-prime-fraction/) • **Hard**
+[LeetCode 786](https://leetcode.com/problems/k-th-smallest-prime-fraction/) •**Hard**
 
 ## 핵심 아이디어
 

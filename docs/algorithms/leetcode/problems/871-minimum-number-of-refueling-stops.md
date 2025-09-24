@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 871](https://leetcode.com/problems/minimum-number-of-refueling-stops/) • **Hard**
+[LeetCode 871](https://leetcode.com/problems/minimum-number-of-refueling-stops/) •**Hard**
 
 ## DP
 
@@ -75,8 +75,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

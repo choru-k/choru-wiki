@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 932](https://leetcode.com/problems/beautiful-array/) • **Hard**
+[LeetCode 932](https://leetcode.com/problems/beautiful-array/) •**Hard**
 
 이 문제의 핵심은 `length = 4` 의 beautiful array 에서 `length > 4` 의 beautiful array 을 만들 수 있을까 가 아이디어의 핵심이다.
 
@@ -58,8 +58,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

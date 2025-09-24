@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 136](https://leetcode.com/problems/single-number/) • **Easy**
+[LeetCode 136](https://leetcode.com/problems/single-number/) •**Easy**
 
 일단 문제를 처음 봤을 때, 가장 쉽게 생각 날 수 있는 방법 부터 풀어보자.
 

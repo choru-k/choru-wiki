@@ -21,11 +21,11 @@ priority_score: 4
 
 이 문서를 마스터하면, 여러분은:
 
-1. **Weak Generational Hypothesis** - "대부분의 객체는 젊어서 죽는다"는 관찰과 그 활용법
-2. **Young/Old Generation 구조** - 세대별 메모리 관리의 핵심 아키텍처
-3. **Minor/Major GC의 차이** - 각각의 동작 원리와 성능 특성
-4. **Write Barrier와 Card Table** - 세대 간 참조 추적의 핵심 메커니즘
-5. **실제 성능 개선 효과** - 기존 GC 대비 10배 성능 향상의 비밀
+1.**Weak Generational Hypothesis**- "대부분의 객체는 젊어서 죽는다"는 관찰과 그 활용법
+2.**Young/Old Generation 구조**- 세대별 메모리 관리의 핵심 아키텍처
+3.**Minor/Major GC의 차이**- 각각의 동작 원리와 성능 특성
+4.**Write Barrier와 Card Table**- 세대 간 참조 추적의 핵심 메커니즘
+5.**실제 성능 개선 효과**- 기존 GC 대비 10배 성능 향상의 비밀
 
 ## 1. Weak Generational Hypothesis
 
@@ -179,7 +179,7 @@ public:
 
 ```c++
     // Write Barrier: Old->Young 참조 추적
-    void write_barrier(Object** field, Object* new_value) {
+    void write_barrier(Object**field, Object* new_value) {
         *field = new_value;
 
         // Old 객체가 Young 객체를 참조하게 됨?
@@ -436,9 +436,9 @@ Thread-Local Allocation Buffer로 멀티스레드 환경에서도 빠른 객체 
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 3-4시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 3-4시간
 
 ### 🎯 학습 경로
 

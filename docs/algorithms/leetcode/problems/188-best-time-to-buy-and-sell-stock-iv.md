@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 188](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/) • **Medium**
+[LeetCode 188](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/) •**Medium**
 
 ## 핵심 아이디어
 

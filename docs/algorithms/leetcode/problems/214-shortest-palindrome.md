@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 214](https://leetcode.com/problems/shortest-palindrome/) • **Hard**
+[LeetCode 214](https://leetcode.com/problems/shortest-palindrome/) •**Hard**
 
 [https://koosaga.com/156](https://koosaga.com/156)
 
@@ -20,8 +20,8 @@ Failu
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

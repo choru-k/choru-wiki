@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 818](https://leetcode.com/problems/race-car/) • **Hard**
+[LeetCode 818](https://leetcode.com/problems/race-car/) •**Hard**
 
 ## BFS
 

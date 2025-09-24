@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 2188](https://leetcode.com/problems/minimum-time-to-finish-the-race/description/) • **Medium**
+[LeetCode 2188](https://leetcode.com/problems/minimum-time-to-finish-the-race/description/) •**Medium**
 
 ## 핵심 아이디어
 

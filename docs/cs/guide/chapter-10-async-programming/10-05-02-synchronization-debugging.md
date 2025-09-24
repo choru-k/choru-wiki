@@ -21,10 +21,10 @@ priority_score: 4
 
 코루틴 환경에서의 동기화와 디버깅은 특별한 도전과제입니다:
 
-1. **메모리 모델**: Happens-Before 관계와 언어별 특성 이해
-2. **Lock-Free 알고리즘**: CAS 기반의 고성능 자료구조 구현
-3. **디버깅 기법**: Goroutine/Asyncio 누수 발견과 해결
-4. **성능 최적화**: 코루틴 풀과 하이브리드 접근법
+1.**메모리 모델**: Happens-Before 관계와 언어별 특성 이해
+2.**Lock-Free 알고리즘**: CAS 기반의 고성능 자료구조 구현
+3.**디버깅 기법**: Goroutine/Asyncio 누수 발견과 해결
+4.**성능 최적화**: 코루틴 풀과 하이브리드 접근법
 
 ## 5. 메모리 모델과 동기화
 
@@ -255,9 +255,9 @@ logging.basicConfig(level=logging.DEBUG)
 def slow_callback_detector(loop):
     def wrapper(callback):
         @functools.wraps(callback)
-        def wrapped(*args, **kwargs):
+        def wrapped(*args,**kwargs):
             start = time.time()
-            result = callback(*args, **kwargs)
+            result = callback(*args,**kwargs)
             duration = time.time() - start
 
             if duration > 0.1:  # 100ms 이상
@@ -448,9 +448,9 @@ CAS 기반의 Lock-free 자료구조로 Mutex 대비 3배 이상의 성능 향�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 8-12시간
+-**난이도**: ADVANCED
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 8-12시간
 
 ### 🎯 학습 경로
 

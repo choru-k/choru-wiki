@@ -195,12 +195,12 @@ echo 1 > /sys/kernel/debug/slub_debug  # SLUB 디버깅
 
 | 목적 | 1순위 | 2순위 | 3순위 |
 |------|----------|----------|----------|
-| **성능 분석** | perf | eBPF/bpftrace | Intel VTune |
-| **메모리 누수** | Valgrind | AddressSanitizer | eBPF 추적기 |
-| **락 문제** | lockdep | ThreadSanitizer | 우리 자체 eBPF |
-| **I/O 분석** | iotop/iostat | blktrace | SystemTap |
-| **커널 크래시** | crash + kdump | gdb + vmlinux | KGDB |
-| **실시간 모니터링** | eBPF | ftrace | LTTng |
+|**성능 분석**| perf | eBPF/bpftrace | Intel VTune |
+|**메모리 누수**| Valgrind | AddressSanitizer | eBPF 추적기 |
+|**락 문제**| lockdep | ThreadSanitizer | 우리 자체 eBPF |
+|**I/O 분석**| iotop/iostat | blktrace | SystemTap |
+|**커널 크래시**| crash + kdump | gdb + vmlinux | KGDB |
+|**실시간 모니터링**| eBPF | ftrace | LTTng |
 
 ### 도구별 장단점
 
@@ -251,17 +251,20 @@ echo 1 > /sys/kernel/debug/slub_debug  # SLUB 디버깅
 
 ### 핵심 추천 도서
 
-1. **"Linux Kernel Development"** - Robert Love
-   - 커널 개발의 기초부터 고급까지
-   - 실제 커널 코드 분석을 통한 내부 구조 이해
+1.**"Linux Kernel Development"**- Robert Love
 
-2. **"Systems Performance"** - Brendan Gregg  
-   - 시스템 성능 분석의 바이블
-   - eBPF, perf, ftrace 등 모든 도구의 실용적 사용법
+- 커널 개발의 기초부터 고급까지
+- 실제 커널 코드 분석을 통한 내부 구조 이해
 
-3. **"Linux Performance Tools"** - Brendan Gregg
-   - 50가지 이상의 리눅스 성능 도구 소개
-   - 각 도구의 실전적 활용 사례
+2.**"Systems Performance"**- Brendan Gregg  
+
+- 시스템 성능 분석의 바이블
+- eBPF, perf, ftrace 등 모든 도구의 실용적 사용법
+
+3.**"Linux Performance Tools"**- Brendan Gregg
+
+- 50가지 이상의 리눅스 성능 도구 소개
+- 각 도구의 실전적 활용 사례
 
 ### 온라인 리소스
 
@@ -361,37 +364,43 @@ sudo yum install -y babeltrace
 
 #### 초급자 (1-2개월)
 
-1. **기본 도구 습득**
-   - dmesg, /proc, /sys 파일 시스템 이해
-   - top, ps, lsof 등 기본 모니터링 도구
-   - strace로 시스템 호출 추적 연습
+1.**기본 도구 습득**
 
-2. **간단한 사례 따라하기**
-   - 이 문서의 사례 1-3을 직접 실습
-   - 가상머신에서 문제 상황 재현
+- dmesg, /proc, /sys 파일 시스템 이해
+- top, ps, lsof 등 기본 모니터링 도구
+- strace로 시스템 호출 추적 연습
+
+2.**간단한 사례 따라하기**
+
+- 이 문서의 사례 1-3을 직접 실습
+- 가상머신에서 문제 상황 재현
 
 #### 중급자 (3-6개월)
 
-1. **perf와 ftrace 마스터**
-   - 다양한 perf 서브컴맨드 활용
-   - ftrace 이벤트 필터링과 분석
-   - flame graph 생성과 해석
+1.**perf와 ftrace 마스터**
 
-2. **eBPF 기초 프로그램 작성**
-   - BCC를 사용한 간단한 추적기 개발
-   - bpftrace 스크립트 작성
+- 다양한 perf 서브컴맨드 활용
+- ftrace 이벤트 필터링과 분석
+- flame graph 생성과 해석
+
+2.**eBPF 기초 프로그램 작성**
+
+- BCC를 사용한 간단한 추적기 개발
+- bpftrace 스크립트 작성
 
 #### 고급자 (6개월+)
 
-1. **커널 소스 분석**
-   - 커널 소스 코드 직접 분석
-   - crash 덤프 고급 분석 기법
-   - 커널 드라이버 개발 및 디버깅
+1.**커널 소스 분석**
 
-2. **프로덕션 비정상 상황 대응**
-   - 실시간 성능 대시보드 구축
-   - 자동화된 문제 감지 시스템 개발
-   - 커널 기여 및 패치 작성
+- 커널 소스 코드 직접 분석
+- crash 덤프 고급 분석 기법
+- 커널 드라이버 개발 및 디버깅
+
+2.**프로덕션 비정상 상황 대응**
+
+- 실시간 성능 대시보드 구축
+- 자동화된 문제 감지 시스템 개발
+- 커널 기여 및 패치 작성
 
 ---
 
@@ -402,9 +411,9 @@ sudo yum install -y babeltrace
 
 ### 📖 현재 문서 정보
 
-- **난이도**: ADVANCED
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 20-40시간
+-**난이도**: ADVANCED
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 20-40시간
 
 ### 🎯 학습 경로
 

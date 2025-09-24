@@ -527,12 +527,12 @@ size_t huffman_decode(const uint8_t *input, size_t input_len,
 
 | 특성 | HTTP/1.1 | HTTP/2 | HTTP/3 |
 |------|----------|---------|---------|
-| **전송 프로토콜** | TCP | TCP | UDP (QUIC) |
-| **연결당 요청** | 1개 (파이프라인 시 순차) | 무제한 (멀티플렉싱) | 무제한 (멀티플렉싱) |
-| **헤더 압축** | None | HPACK | QPACK |
-| **서버 푸시** | 불가능 | 지원 | 지원 |
-| **연결 설정** | 3-way handshake | 3-way + TLS | 0-RTT |
-| **HoL 블로킹** | 있음 | TCP 레벨에만 | 없음 |
+|**전송 프로토콜**| TCP | TCP | UDP (QUIC) |
+|**연결당 요청**| 1개 (파이프라인 시 순차) | 무제한 (멀티플렉싱) | 무제한 (멀티플렉싱) |
+|**헤더 압축**| None | HPACK | QPACK |
+|**서버 푸시**| 불가능 | 지원 | 지원 |
+|**연결 설정**| 3-way handshake | 3-way + TLS | 0-RTT |
+|**HoL 블로킹**| 있음 | TCP 레벨에만 | 없음 |
 
 ### 실제 성능 측정
 
@@ -741,9 +741,9 @@ void chat_protocol_handler(struct websocket_client *client,
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 애플리케이션 개발
-- **예상 시간**: 6-8시간
+-**난이도**: INTERMEDIATE
+-**주제**: 애플리케이션 개발
+-**예상 시간**: 6-8시간
 
 ### 🎯 학습 경로
 

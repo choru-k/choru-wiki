@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 294](https://leetcode.com/problems/flip-game-ii/) • **Medium**
+[LeetCode 294](https://leetcode.com/problems/flip-game-ii/) •**Medium**
 
 ## 핵심 아이디어
 

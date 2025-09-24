@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 418](https://leetcode.com/problems/sentence-screen-fitting/) • **Hard**
+[LeetCode 418](https://leetcode.com/problems/sentence-screen-fitting/) •**Hard**
 
 # 직접 Col 을 구해서 풀기
 

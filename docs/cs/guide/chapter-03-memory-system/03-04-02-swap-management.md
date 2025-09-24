@@ -29,7 +29,7 @@ priority_score: 4
 
 "메모리가 부족해서 스왑을 켰는데, 오히려 더 느려졌어요..."
 
-스왑은 시스템의 **안전망**이지만 동시에 **성능의 적**이기도 합니다. 제대로 이해하지 못하면 오히려 독이 됩니다.
+스왑은 시스템의**안전망**이지만 동시에**성능의 적**이기도 합니다. 제대로 이해하지 못하면 오히려 독이 됩니다.
 
 ```mermaid
 sequenceDiagram
@@ -167,7 +167,7 @@ void test_memory_allocation(size_t total_size) {
     // 청크 단위로 나누어 점진적 할당 (스왑 발생 지점 관산)
     const size_t chunk_size = 256 * 1024 * 1024;  // 256MB 청크
     const int num_chunks = total_size / chunk_size;
-    void **chunks = malloc(sizeof(void*) * num_chunks);
+    void**chunks = malloc(sizeof(void*) * num_chunks);
 
     printf(", 점진적 메모리 할당 시작 (%d개 청크, %dMB씩)..., ",
            num_chunks, (int)(chunk_size / 1024 / 1024));
@@ -1467,9 +1467,9 @@ graph TD
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 4-6시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 4-6시간
 
 ### 🎯 학습 경로
 

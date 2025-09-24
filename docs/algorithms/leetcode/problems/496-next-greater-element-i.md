@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 496](https://leetcode.com/problems/next-greater-element-i/) • **Medium**
+[LeetCode 496](https://leetcode.com/problems/next-greater-element-i/) •**Medium**
 
 ## Brute force
 

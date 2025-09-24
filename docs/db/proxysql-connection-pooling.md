@@ -35,10 +35,10 @@ FROM stats_mysql_connection_pool;
 
 **증상:**
 
-- **Memory 사용량 급증**: ProxySQL Pod 메모리가 512Mi → 2Gi로 폭증
-- **Connection Leak**: Free Connection이 지속적으로 증가
-- **성능 저하**: Connection 관리 오버헤드로 응답 시간 증가
-- **재시작 필요**: 메모리 부족으로 주기적 Pod 재시작 발생
+-**Memory 사용량 급증**: ProxySQL Pod 메모리가 512Mi → 2Gi로 폭증
+-**Connection Leak**: Free Connection이 지속적으로 증가
+-**성능 저하**: Connection 관리 오버헤드로 응답 시간 증가
+-**재시작 필요**: 메모리 부족으로 주기적 Pod 재시작 발생
 
 ### Connection Pool 생성 패턴 분석
 
@@ -625,27 +625,27 @@ watch kubectl exec -it proxysql-0 -- mysql -h127.0.0.1 -P6032 -uadmin -padmin \
 
 ## 정리
 
-ProxySQL Connection Pool 최적화의 핵심은 **"적은 Connection으로 최대 효율"**입니다:
+ProxySQL Connection Pool 최적화의 핵심은**"적은 Connection으로 최대 효율"**입니다:
 
 ### 최적화 원칙
 
-1. **Connection Pool 크기 최소화**: Little's Law로 필요 최소량 계산
-2. **Free Connection 비율 제한**: 1-10% 수준으로 유지
-3. **Connection Warming 활용**: 미리 준비해서 Thunder Herd 방지
-4. **Lifecycle 관리 강화**: Idle Connection 적극적 정리
+1.**Connection Pool 크기 최소화**: Little's Law로 필요 최소량 계산
+2.**Free Connection 비율 제한**: 1-10% 수준으로 유지
+3.**Connection Warming 활용**: 미리 준비해서 Thunder Herd 방지
+4.**Lifecycle 관리 강화**: Idle Connection 적극적 정리
 
 ### Production 적용 가이드
 
-- **점진적 적용**: 설정 변경은 단계별로 진행
-- **실시간 모니터링**: Free Connection 비율, 메모리 사용량 추적
-- **A/B Testing**: 설정 변경 전 성능 비교 필수
-- **Fallback Plan**: 문제 발생 시 즉시 이전 설정으로 롤백
+-**점진적 적용**: 설정 변경은 단계별로 진행
+-**실시간 모니터링**: Free Connection 비율, 메모리 사용량 추적
+-**A/B Testing**: 설정 변경 전 성능 비교 필수
+-**Fallback Plan**: 문제 발생 시 즉시 이전 설정으로 롤백
 
 ### 성과 지표
 
-- **메모리 사용량**: 70-80% 감소 가능
-- **Connection 효율성**: 90% 이상 활용률 달성
-- **응답 시간**: Connection 대기 시간 제거로 5-10% 개선
+-**메모리 사용량**: 70-80% 감소 가능
+-**Connection 효율성**: 90% 이상 활용률 달성
+-**응답 시간**: Connection 대기 시간 제거로 5-10% 개선
 
 Connection Pool은 ProxySQL의 핵심이면서도 가장 주의가 필요한 영역입니다. 올바른 이해와 설정을 통해 안정적이고 효율적인 Database Proxy를 구축할 수 있습니다.
 

@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 527](https://leetcode.com/problems/word-abbreviation/) • **Medium**
+[LeetCode 527](https://leetcode.com/problems/word-abbreviation/) •**Medium**
 
 가장 간단한 방법은 하나하나 직접 해보는 것이다.
 

@@ -24,29 +24,41 @@ priority_score: 4
 
 ```mermaid
 stateDiagram-v2
-    [*] --> CREATED : "프로세스 생성<br/>fork() 시스템 콜"
+    [*] --> CREATED : "프로세스 생성
+fork() 시스템 콜"
     
-    CREATED --> READY : "스케줄러에 등록<br/>대기 상태"
+    CREATED --> READY : "스케줄러에 등록
+대기 상태"
     
-    READY --> RUNNING : "CPU 할당<br/>스케줄러 선택"
+    READY --> RUNNING : "CPU 할당
+스케줄러 선택"
     
-    RUNNING --> READY : "시간 할당량 소진<br/>또는 선점 발생"
+    RUNNING --> READY : "시간 할당량 소진
+또는 선점 발생"
     
-    RUNNING --> INTERRUPTIBLE_SLEEP : "I/O 대기<br/>시그널 처리 가능"
+    RUNNING --> INTERRUPTIBLE_SLEEP : "I/O 대기
+시그널 처리 가능"
     
-    RUNNING --> UNINTERRUPTIBLE_SLEEP : "디스크 I/O 대기<br/>시그널 방해 금지"
+    RUNNING --> UNINTERRUPTIBLE_SLEEP : "디스크 I/O 대기
+시그널 방해 금지"
     
-    RUNNING --> STOPPED : "SIGSTOP 받음<br/>또는 디버거 연결"
+    RUNNING --> STOPPED : "SIGSTOP 받음
+또는 디버거 연결"
     
-    RUNNING --> ZOMBIE : "exit() 호출<br/>부모 wait() 대기"
+    RUNNING --> ZOMBIE : "exit() 호출
+부모 wait() 대기"
     
-    INTERRUPTIBLE_SLEEP --> READY : "이벤트 발생<br/>또는 시그널 수신"
+    INTERRUPTIBLE_SLEEP --> READY : "이벤트 발생
+또는 시그널 수신"
     
-    UNINTERRUPTIBLE_SLEEP --> READY : "I/O 완료<br/>커널이 깨움"
+    UNINTERRUPTIBLE_SLEEP --> READY : "I/O 완료
+커널이 깨움"
     
-    STOPPED --> READY : "SIGCONT 수신<br/>실행 재개"
+    STOPPED --> READY : "SIGCONT 수신
+실행 재개"
     
-    ZOMBIE --> [*] : "부모 wait() 호출<br/>리소스 정리"
+    ZOMBIE --> [*] : "부모 wait() 호출
+리소스 정리"
     
     note right of INTERRUPTIBLE_SLEEP
         타임아웃 가능
@@ -72,37 +84,65 @@ stateDiagram-v2
 ```mermaid
 graph TB
     subgraph NORMAL_STATES["정상 상태"]
-        R["🟢 R - Running<br/>실행 중 또는 대기<br/>CPU를 사용 중이거나 사용 대기"]
-        S["🔵 S - Interruptible Sleep<br/>인터럽트 가능한 대기<br/>I/O, 네트워크, 사용자 입력 대기"]
-        I["🟡 I - Idle<br/>유휴 상태<br/>커널 스레드 대기"]
+        R["🟢 R - Running
+실행 중 또는 대기
+CPU를 사용 중이거나 사용 대기"]
+        S["🔵 S - Interruptible Sleep
+인터럽트 가능한 대기
+I/O, 네트워크, 사용자 입력 대기"]
+        I["🟡 I - Idle
+유휴 상태
+커널 스레드 대기"]
     end
     
     subgraph WARNING_STATES["주의 상태"]
-        D["🟠 D - Uninterruptible Sleep<br/>인터럽트 불가능한 대기<br/>디스크 I/O, 커널 작업 대기"]
-        T["🟣 T - Stopped<br/>정지된 상태<br/>SIGSTOP, SIGTSTP 신호로 정지"]
-        t["🟣 t - Tracing Stop<br/>디버거 추적 중<br/>ptrace(), gdb 디버깅"]
+        D["🟠 D - Uninterruptible Sleep
+인터럽트 불가능한 대기
+디스크 I/O, 커널 작업 대기"]
+        T["🟣 T - Stopped
+정지된 상태
+SIGSTOP, SIGTSTP 신호로 정지"]
+        t["🟣 t - Tracing Stop
+디버거 추적 중
+ptrace(), gdb 디버깅"]
     end
     
     subgraph PROBLEM_STATES["문제 상태"]
-        Z["🔴 Z - Zombie<br/>좌비 프로세스<br/>자식 종료, 부모 wait() 대기"]
-        X["⚫ X - Dead<br/>죽은 상태<br/>ps에서 보이지 않음"]
+        Z["🔴 Z - Zombie
+좌비 프로세스
+자식 종료, 부모 wait() 대기"]
+        X["⚫ X - Dead
+죽은 상태
+ps에서 보이지 않음"]
     end
     
     subgraph DETAILED_INFO["상태별 세부 정보"]
         subgraph R_INFO["🟢 Running 상세"]
-            R_DESC["• 런큐에서 대기 중<br/>• 실제 CPU 사용 중<br/>• 정상적인 상태<br/>• 시스템 로드에 기여"]
+            R_DESC["• 런큐에서 대기 중
+• 실제 CPU 사용 중
+• 정상적인 상태
+• 시스템 로드에 기여"]
         end
         
         subgraph S_INFO["🔵 Sleep 상세"]
-            S_DESC["• 시그널 수신 가능<br/>• kill 명령어로 종료 가능<br/>• 대부분의 대기 상태<br/>• 메모리에서 스왓 아웃 가능"]
+            S_DESC["• 시그널 수신 가능
+• kill 명령어로 종료 가능
+• 대부분의 대기 상태
+• 메모리에서 스왓 아웃 가능"]
         end
         
         subgraph D_INFO["🟠 D-State 상세"]
-            D_DESC["⚠️ 시그널 방해 금지<br/>⚠️ kill -9도 무효<br/>⚠️ 시스템 성능 저하<br/>⚠️ 커널 작업 완료 대기"]
+            D_DESC["⚠️ 시그널 방해 금지
+⚠️ kill -9도 무효
+⚠️ 시스템 성능 저하
+⚠️ 커널 작업 완료 대기"]
         end
         
         subgraph Z_INFO["🔴 Zombie 상세"]
-            Z_DESC["⚠️ 부모 wait() 대기<br/>⚠️ PID 테이블 점유<br/>⚠️ 메모리 누수 원인<br/>⚠️ 자원 정리 필요"]
+            Z_DESC["⚠️ 부모 wait() 대기
+⚠️ PID 테이블 점유
+⚠️ 메모리 누수 원인
+⚠️ 자원 정리 필요"]
         end
     end
     
@@ -149,30 +189,47 @@ $ ps axo pid,ppid,state,comm | head -20
 graph TB
     subgraph DASHBOARD["시스템 프로세스 대시보드"]
         subgraph HEALTHY["정상 상태"]
-            RUNNING_COUNT["🟢 Running: 12개<br/>실행 중 프로세스<br/>CPU 사용 중"]
-            SLEEPING_COUNT["🔵 Sleeping: 284개<br/>대기 중 프로세스<br/>정상 유휴 상태"]
-            IDLE_COUNT["🟡 Idle: 8개<br/>커널 스레드<br/>작업 대기 중"]
+            RUNNING_COUNT["🟢 Running: 12개
+실행 중 프로세스
+CPU 사용 중"]
+            SLEEPING_COUNT["🔵 Sleeping: 284개
+대기 중 프로세스
+정상 유휴 상태"]
+            IDLE_COUNT["🟡 Idle: 8개
+커널 스레드
+작업 대기 중"]
         end
         
         subgraph WARNING["경고 상태"]
-            DSTATE_COUNT["🟠 D-State: 2개<br/>⚠️ I/O 대기 중<br/>시그널 방해 금지"]
-            STOPPED_COUNT["🟣 Stopped: 1개<br/>정지된 프로세스<br/>사용자 개입 필요"]
+            DSTATE_COUNT["🟠 D-State: 2개
+⚠️ I/O 대기 중
+시그널 방해 금지"]
+            STOPPED_COUNT["🟣 Stopped: 1개
+정지된 프로세스
+사용자 개입 필요"]
         end
         
         subgraph CRITICAL["중요 문제"]
-            ZOMBIE_COUNT["🔴 Zombie: 5개<br/>⚠️ 좌비 프로세스<br/>즐시 정리 필요"]
+            ZOMBIE_COUNT["🔴 Zombie: 5개
+⚠️ 좌비 프로세스
+즐시 정리 필요"]
         end
     end
     
     subgraph ANALYSIS["상태 분석"]
-        NORMAL_RATIO["정상 비율: 98.4%<br/>(304/309 프로세스)"]
-        PROBLEM_RATIO["문제 비율: 1.6%<br/>(5/309 프로세스)"]
+        NORMAL_RATIO["정상 비율: 98.4%
+(304/309 프로세스)"]
+        PROBLEM_RATIO["문제 비율: 1.6%
+(5/309 프로세스)"]
     end
     
     subgraph ACTIONS["권장 조치"]
-        ACTION_D["D-State 프로세스:<br/>lsof로 I/O 분석"]
-        ACTION_Z["Zombie 프로세스:<br/>부모 프로세스 재시작"]
-        ACTION_T["Stopped 프로세스:<br/>SIGCONT 신호 전송"]
+        ACTION_D["D-State 프로세스:
+lsof로 I/O 분석"]
+        ACTION_Z["Zombie 프로세스:
+부모 프로세스 재시작"]
+        ACTION_T["Stopped 프로세스:
+SIGCONT 신호 전송"]
     end
     
     DSTATE_COUNT --> ACTION_D
@@ -200,45 +257,68 @@ graph TB
 graph TB
     subgraph STAT_FILE["/proc/[pid]/stat 파일 구조"]
         subgraph BASIC_INFO["기본 식별 정보 (1-8번 필드)"]
-            FIELD_1["1. PID<br/>프로세스 ID"]
-            FIELD_2["2. COMM<br/>명령어 이름 (괄호)"]
-            FIELD_3["3. STATE<br/>프로세스 상태"]
-            FIELD_4["4. PPID<br/>부모 프로세스 ID"]
-            FIELD_5["5. PGRP<br/>프로세스 그룹 ID"]
-            FIELD_6["6. SID<br/>세션 ID"]
-            FIELD_7["7. TTY<br/>제어 터미널"]
-            FIELD_8["8. TPGID<br/>터미널 그룹 ID"]
+            FIELD_1["1. PID
+프로세스 ID"]
+            FIELD_2["2. COMM
+명령어 이름 (괄호)"]
+            FIELD_3["3. STATE
+프로세스 상태"]
+            FIELD_4["4. PPID
+부모 프로세스 ID"]
+            FIELD_5["5. PGRP
+프로세스 그룹 ID"]
+            FIELD_6["6. SID
+세션 ID"]
+            FIELD_7["7. TTY
+제어 터미널"]
+            FIELD_8["8. TPGID
+터미널 그룹 ID"]
         end
         
         subgraph MEMORY_INFO["메모리 정보 (9-25번 필드)"]
-            FIELD_10["10. MINFLT<br/>마이너 페이지 폴트"]
-            FIELD_12["12. MAJFLT<br/>메이저 페이지 폴트"]
-            FIELD_23["23. VSIZE<br/>가상 메모리 크기"]
-            FIELD_24["24. RSS<br/>실제 메모리 사용량"]
+            FIELD_10["10. MINFLT
+마이너 페이지 폴트"]
+            FIELD_12["12. MAJFLT
+메이저 페이지 폴트"]
+            FIELD_23["23. VSIZE
+가상 메모리 크기"]
+            FIELD_24["24. RSS
+실제 메모리 사용량"]
         end
         
         subgraph CPU_INFO["CPU 시간 정보 (14-17번 필드)"]
-            FIELD_14["14. UTIME<br/>사용자 모드 CPU 시간"]
-            FIELD_15["15. STIME<br/>커널 모드 CPU 시간"]
-            FIELD_16["16. CUTIME<br/>자식 사용자 시간"]
-            FIELD_17["17. CSTIME<br/>자식 커널 시간"]
+            FIELD_14["14. UTIME
+사용자 모드 CPU 시간"]
+            FIELD_15["15. STIME
+커널 모드 CPU 시간"]
+            FIELD_16["16. CUTIME
+자식 사용자 시간"]
+            FIELD_17["17. CSTIME
+자식 커널 시간"]
         end
         
         subgraph SCHED_INFO["스케줄링 정보 (18-20번 필드)"]
-            FIELD_18["18. PRIORITY<br/>스케줄링 우선순위"]
-            FIELD_19["19. NICE<br/>Nice 값 (-20~19)"]
-            FIELD_20["20. NUM_THREADS<br/>스레드 개수"]
+            FIELD_18["18. PRIORITY
+스케줄링 우선순위"]
+            FIELD_19["19. NICE
+Nice 값 (-20~19)"]
+            FIELD_20["20. NUM_THREADS
+스레드 개수"]
         end
         
         subgraph TIME_INFO["시간 정보 (22번 필드)"]
-            FIELD_22["22. STARTTIME<br/>프로세스 시작 시간"]
+            FIELD_22["22. STARTTIME
+프로세스 시작 시간"]
         end
     end
     
     subgraph PARSING_CHALLENGE["파싱 도전 과제"]
-        CHALLENGE_1["특수 문자 처리<br/>COMM 필드에 공백, 괄호 포함"]
-        CHALLENGE_2["버전 호환성<br/>커널 버전별 필드 추가"]
-        CHALLENGE_3["실시간 변화<br/>프로세스 종료 시 파일 사라짐"]
+        CHALLENGE_1["특수 문자 처리
+COMM 필드에 공백, 괄호 포함"]
+        CHALLENGE_2["버전 호환성
+커널 버전별 필드 추가"]
+        CHALLENGE_3["실시간 변화
+프로세스 종료 시 파일 사라짐"]
     end
     
     style BASIC_INFO fill:#E3F2FD
@@ -255,26 +335,48 @@ graph TB
 graph LR
     subgraph PROC_FS["/proc 파일시스템"]
         subgraph PID_DIR["/proc/[PID]/ 디렉토리"]
-            STAT["📄 stat<br/>숫자로 된 원시 데이터<br/>기계 처리용"]
-            STATUS["📄 status<br/>사람이 읽기 쉬운 형태<br/>가독성 중시"]
-            IO["📄 io<br/>I/O 통계 정보<br/>디스크 사용량"]
-            MAPS["📄 maps<br/>메모리 맵핑 정보<br/>가상 메모리 레이아웃"]
-            STACK["📄 stack<br/>커널 스택 덕프<br/>디버깅용"]
+            STAT["📄 stat
+숫자로 된 원시 데이터
+기계 처리용"]
+            STATUS["📄 status
+사람이 읽기 쉬운 형태
+가독성 중시"]
+            IO["📄 io
+I/O 통계 정보
+디스크 사용량"]
+            MAPS["📄 maps
+메모리 맵핑 정보
+가상 메모리 레이아웃"]
+            STACK["📄 stack
+커널 스택 덕프
+디버깅용"]
         end
         
         subgraph SYSTEM_WIDE["시스템 전체 정보"]
-            LOADAVG["📄 /proc/loadavg<br/>시스템 로드"]
-            MEMINFO["📄 /proc/meminfo<br/>메모리 사용량"]
-            CPUINFO["📄 /proc/cpuinfo<br/>CPU 정보"]
-            UPTIME["📄 /proc/uptime<br/>시스템 가동 시간"]
+            LOADAVG["📄 /proc/loadavg
+시스템 로드"]
+            MEMINFO["📄 /proc/meminfo
+메모리 사용량"]
+            CPUINFO["📄 /proc/cpuinfo
+CPU 정보"]
+            UPTIME["📄 /proc/uptime
+시스템 가동 시간"]
         end
     end
     
     subgraph TOOLS["시스템 모니터링 도구"]
-        PS["🔍 ps<br/>stat/status 파싱<br/>프로세스 목록"]
-        TOP["🔍 top<br/>실시간 모니터링<br/>동적 업데이트"]
-        HTOP["🔍 htop<br/>사용자 친화적 UI<br/>색상 표시"]
-        SYSTEMD["🔍 systemd<br/>서비스 관리<br/>자동 재시작"]
+        PS["🔍 ps
+stat/status 파싱
+프로세스 목록"]
+        TOP["🔍 top
+실시간 모니터링
+동적 업데이트"]
+        HTOP["🔍 htop
+사용자 친화적 UI
+색상 표시"]
+        SYSTEMD["🔍 systemd
+서비스 관리
+자동 재시작"]
     end
     
     %% 데이터 흐름
@@ -649,22 +751,35 @@ fi
 
 ```mermaid
 flowchart TD
-    START["프로세스 문제 발생"] --> IDENTIFY{"문제 유형<br/>식별"}
+    START["프로세스 문제 발생"] --> IDENTIFY{"문제 유형
+식별"}
     
-    IDENTIFY -->|"높은 CPU 사용"| HIGH_CPU["ps aux --sort=-pcpu로<br/>CPU 사용량 확인"]
-    IDENTIFY -->|"높은 메모리 사용"| HIGH_MEM["ps aux --sort=-pmem로<br/>메모리 사용량 확인"]
-    IDENTIFY -->|"프로세스 메답"| HUNG_PROC["ps axo pid,state,comm로<br/>D-state 프로세스 찾기"]
-    IDENTIFY -->|"좌비 프로세스"| ZOMBIE["ps axo pid,ppid,state,comm로<br/>Z-state 프로세스 찾기"]
+    IDENTIFY -->|"높은 CPU 사용"| HIGH_CPU["ps aux --sort=-pcpu로
+CPU 사용량 확인"]
+    IDENTIFY -->|"높은 메모리 사용"| HIGH_MEM["ps aux --sort=-pmem로
+메모리 사용량 확인"]
+    IDENTIFY -->|"프로세스 메답"| HUNG_PROC["ps axo pid,state,comm로
+D-state 프로세스 찾기"]
+    IDENTIFY -->|"좌비 프로세스"| ZOMBIE["ps axo pid,ppid,state,comm로
+Z-state 프로세스 찾기"]
     
-    HIGH_CPU --> ANALYZE_CPU["top, htop, iotop으로<br/>리얼타임 모니터링"]
-    HIGH_MEM --> ANALYZE_MEM["/proc/[pid]/status로<br/>메모리 맵핑 또세 분석"]
-    HUNG_PROC --> ANALYZE_HUNG["/proc/[pid]/stack로<br/>커널 스택 덤프"]
-    ZOMBIE --> ANALYZE_ZOMBIE["/proc/[pid]/status로<br/>부모 프로세스 확인"]
+    HIGH_CPU --> ANALYZE_CPU["top, htop, iotop으로
+리얼타임 모니터링"]
+    HIGH_MEM --> ANALYZE_MEM["/proc/[pid]/status로
+메모리 맵핑 또세 분석"]
+    HUNG_PROC --> ANALYZE_HUNG["/proc/[pid]/stack로
+커널 스택 덤프"]
+    ZOMBIE --> ANALYZE_ZOMBIE["/proc/[pid]/status로
+부모 프로세스 확인"]
     
-    ANALYZE_CPU --> CPU_ACTION["strace, perf로<br/>시스템 콜 추적"]
-    ANALYZE_MEM --> MEM_ACTION["valgrind, pmap으로<br/>메모리 누수 추적"]
-    ANALYZE_HUNG --> HUNG_ACTION["lsof로 I/O 대기<br/>또는 리부트 고려"]
-    ANALYZE_ZOMBIE --> ZOMBIE_ACTION["부모 프로세스에<br/>SIGCHLD 전송 또는 재시작"]
+    ANALYZE_CPU --> CPU_ACTION["strace, perf로
+시스템 콜 추적"]
+    ANALYZE_MEM --> MEM_ACTION["valgrind, pmap으로
+메모리 누수 추적"]
+    ANALYZE_HUNG --> HUNG_ACTION["lsof로 I/O 대기
+또는 리부트 고려"]
+    ANALYZE_ZOMBIE --> ZOMBIE_ACTION["부모 프로세스에
+SIGCHLD 전송 또는 재시작"]
     
     style START fill:#FFCDD2
     style HIGH_CPU fill:#FFF3E0
@@ -682,27 +797,51 @@ flowchart TD
 ```mermaid
 graph TB
     subgraph BASIC_COMMANDS["기본 버깅 명령어"]
-        PS_CMD["🔍 ps aux<br/>모든 프로세스 목록<br/>CPU, 메모리 사용량"]
-        TOP_CMD["🔍 top<br/>리얼타임 모니터링<br/>동적 정렬, 필터링"]
-        PSTREE_CMD["🔍 pstree<br/>프로세스 계층 구조<br/>부모-자식 관계"]
+        PS_CMD["🔍 ps aux
+모든 프로세스 목록
+CPU, 메모리 사용량"]
+        TOP_CMD["🔍 top
+리얼타임 모니터링
+동적 정렬, 필터링"]
+        PSTREE_CMD["🔍 pstree
+프로세스 계층 구조
+부모-자식 관계"]
     end
     
     subgraph ADVANCED_COMMANDS["고급 디버깅 명령어"]
-        LSOF_CMD["🔍 lsof -p [PID]<br/>열린 파일 목록<br/>I/O 대기 원인 추적"]
-        STRACE_CMD["🔍 strace -p [PID]<br/>시스템 콜 추적<br/>실시간 동작 관찰"]
-        GDB_CMD["🔍 gdb -p [PID]<br/>디버거 연결<br/>소스 레벨 디버깅"]
+        LSOF_CMD["🔍 lsof -p [PID]
+열린 파일 목록
+I/O 대기 원인 추적"]
+        STRACE_CMD["🔍 strace -p [PID]
+시스템 콜 추적
+실시간 동작 관찰"]
+        GDB_CMD["🔍 gdb -p [PID]
+디버거 연결
+소스 레벨 디버깅"]
     end
     
     subgraph SPECIALIZED_COMMANDS["전문 분석 명령어"]
-        PERF_CMD["🔍 perf top<br/>성능 프로파일링<br/>CPU 핫스팏 분석"]
-        IOTOP_CMD["🔍 iotop<br/>I/O 사용량 모니터링<br/>디스크 병목 발견"]
-        PMAP_CMD["🔍 pmap [PID]<br/>메모리 맵 시각화<br/>메모리 누수 추적"]
+        PERF_CMD["🔍 perf top
+성능 프로파일링
+CPU 핫스팏 분석"]
+        IOTOP_CMD["🔍 iotop
+I/O 사용량 모니터링
+디스크 병목 발견"]
+        PMAP_CMD["🔍 pmap [PID]
+메모리 맵 시각화
+메모리 누수 추적"]
     end
     
     subgraph PROC_ANALYSIS["/proc 기반 분석"]
-        CAT_STAT["📄 cat /proc/[PID]/stat<br/>원시 데이터 파싱<br/>언전 머신 처리"]
-        CAT_STATUS["📄 cat /proc/[PID]/status<br/>가독성 높은 정보<br/>인간 인터펙이스"]
-        CAT_STACK["📄 cat /proc/[PID]/stack<br/>커널 스택 덤프<br/>D-state 원인 분석"]
+        CAT_STAT["📄 cat /proc/[PID]/stat
+원시 데이터 파싱
+언전 머신 처리"]
+        CAT_STATUS["📄 cat /proc/[PID]/status
+가독성 높은 정보
+인간 인터펙이스"]
+        CAT_STACK["📄 cat /proc/[PID]/stack
+커널 스택 덤프
+D-state 원인 분석"]
     end
     
     style BASIC_COMMANDS fill:#E8F5E8
@@ -737,9 +876,9 @@ graph TB
 
 ### 📖 현재 문서 정보
 
-- **난이도**: FUNDAMENTALS
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 3-5시간
+-**난이도**: FUNDAMENTALS
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 3-5시간
 
 ### 🎯 학습 경로
 

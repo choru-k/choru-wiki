@@ -11,7 +11,7 @@ tags:
 
 ## 문제
 
-[LeetCode 240](https://leetcode.com/problems/search-a-2d-matrix-ii/) • **Medium**
+[LeetCode 240](https://leetcode.com/problems/search-a-2d-matrix-ii/) •**Medium**
 
 2가지 방법이 존재한다.
 
@@ -111,36 +111,36 @@ class Solution:
 
 Certainly! Let's compare the three approaches to solve the "search a 2D matrix" problem in terms of their time complexity. The three methods are:
 
-1. **Linear Search from Top-Right Corner (or Bottom-Left Corner)**
-2. **Your First Divide-and-Conquer Approach with DFS**
-3. **Your Second Divide-and-Conquer Approach with Binary Search**
+1.**Linear Search from Top-Right Corner (or Bottom-Left Corner)**
+2.**Your First Divide-and-Conquer Approach with DFS**
+3.**Your Second Divide-and-Conquer Approach with Binary Search**
 
 ### 1. Linear Search from Top-Right Corner
 
-- **Time Complexity**: O(m + n), where m is the number of rows, and n is the number of columns.
-- **Characteristics**: This approach involves linearly moving either down the rows or left across the columns, depending on the comparison with the target. It's simple and doesn't require additional space or recursion.
+-**Time Complexity**: O(m + n), where m is the number of rows, and n is the number of columns.
+-**Characteristics**: This approach involves linearly moving either down the rows or left across the columns, depending on the comparison with the target. It's simple and doesn't require additional space or recursion.
 
 ### 2. Your First Divide-and-Conquer Approach with DFS
 
-- **Time Complexity**: Approximately O(n^{\log_4{3}}), based on the recurrence relation T(n) = 3T(n/4) + O(1). This is more efficient than linear but not as efficient as binary search.
-- **Characteristics**: This method uses a divide-and-conquer strategy, recursively dividing the matrix into up to three smaller submatrices. It's more complex and utilizes recursion, potentially being more efficient than linear search for large matrices.
+-**Time Complexity**: Approximately O(n^{\log_4{3}}), based on the recurrence relation T(n) = 3T(n/4) + O(1). This is more efficient than linear but not as efficient as binary search.
+-**Characteristics**: This method uses a divide-and-conquer strategy, recursively dividing the matrix into up to three smaller submatrices. It's more complex and utilizes recursion, potentially being more efficient than linear search for large matrices.
 
 ### 3. Your Second Divide-and-Conquer Approach with Binary Search
 
-- **Time Complexity**: Roughly O(log n * log m), where the matrix is divided using a binary search in the middle column, reducing the search area significantly with each recursive call.
-- **Characteristics**: This approach combines binary search with divide-and-conquer, reducing the problem size logarithmically in both dimensions. It's more complex due to recursion and binary searches but can be very efficient for large matrices.
+-**Time Complexity**: Roughly O(log n * log m), where the matrix is divided using a binary search in the middle column, reducing the search area significantly with each recursive call.
+-**Characteristics**: This approach combines binary search with divide-and-conquer, reducing the problem size logarithmically in both dimensions. It's more complex due to recursion and binary searches but can be very efficient for large matrices.
 
 ### Comparison and Contextual Use
 
-- **Best for Simplicity and Small Matrices**: The linear search from the top-right corner is the simplest and most straightforward. It is best used for smaller matrices or when simplicity is preferred.
-- **Best for Large Matrices with Effective Pruning**: Your first divide-and-conquer approach can be more efficient than linear search in scenarios where the divide-and-conquer strategy significantly reduces the search space quickly. It's suited for larger matrices.
-- **Best for Very Large Matrices and Complex Scenarios**: Your second divide-and-conquer approach with binary search is potentially the most efficient for very large matrices. The use of binary search optimizes the division process, making it suitable for complex and large-scale problems.
+-**Best for Simplicity and Small Matrices**: The linear search from the top-right corner is the simplest and most straightforward. It is best used for smaller matrices or when simplicity is preferred.
+-**Best for Large Matrices with Effective Pruning**: Your first divide-and-conquer approach can be more efficient than linear search in scenarios where the divide-and-conquer strategy significantly reduces the search space quickly. It's suited for larger matrices.
+-**Best for Very Large Matrices and Complex Scenarios**: Your second divide-and-conquer approach with binary search is potentially the most efficient for very large matrices. The use of binary search optimizes the division process, making it suitable for complex and large-scale problems.
 
 ### Conclusion
 
-- **Linear Search**: Best for simplicity and smaller matrices.
-- **First Divide-and-Conquer (DFS)**: More efficient than linear for large matrices, especially where effective pruning is possible.
-- **Second Divide-and-Conquer (Binary Search)**: Likely the most efficient for very large matrices, combining the benefits of binary search and divide-and-conquer.
+-**Linear Search**: Best for simplicity and smaller matrices.
+-**First Divide-and-Conquer (DFS)**: More efficient than linear for large matrices, especially where effective pruning is possible.
+-**Second Divide-and-Conquer (Binary Search)**: Likely the most efficient for very large matrices, combining the benefits of binary search and divide-and-conquer.
 
 ---
 

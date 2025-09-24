@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 313](https://leetcode.com/problems/super-ugly-number/) • **Medium**
+[LeetCode 313](https://leetcode.com/problems/super-ugly-number/) •**Medium**
 
 n 과 소수 primes 가 주어질 때, n 번째 super ugly number 을 구하세요.
 

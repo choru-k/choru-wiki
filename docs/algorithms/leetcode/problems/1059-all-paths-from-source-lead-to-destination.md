@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1059](https://leetcode.com/problems/all-paths-from-source-lead-to-destination/) • **Hard**
+[LeetCode 1059](https://leetcode.com/problems/all-paths-from-source-lead-to-destination/) •**Hard**
 
 전형적인 Cycle detection 문제이다.
 
@@ -20,8 +20,8 @@ Cycle detection 은 vertex 을 white, grey, black 3개 나누어서 할수 있�
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

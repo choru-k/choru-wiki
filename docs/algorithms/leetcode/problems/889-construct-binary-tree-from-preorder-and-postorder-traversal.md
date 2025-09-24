@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 889](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-postorder-traversal/) • **Hard**
+[LeetCode 889](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-postorder-traversal/) •**Hard**
 
 ## 핵심 아이디어
 

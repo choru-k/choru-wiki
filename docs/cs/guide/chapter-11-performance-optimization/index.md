@@ -52,7 +52,7 @@ Load Average: 16.24, 18.33, 20.45
 - CPU가 뭘 하는지 알 수 없음
 - 메모리 누수인지 확신 없음
 - Database가 문제인지 애플리케이션이 문제인지 불분명
-- **"일단 서버를 늘려보자"** ← 최악의 선택
+-**"일단 서버를 늘려보자"**← 최악의 선택
 
 ### 🚑 체계적 접근으로 30분 만에 해결
 
@@ -80,19 +80,19 @@ $ perf script | flamegraph.pl > flame.svg
 - 응답시간: 15초 → 180ms (83배 개선!)
 - CPU 사용률: 99% → 15%
 - 서버 추가 없이 트래픽 10배 처리 가능
-- 💰 **하드웨어 비용 1억원 절약**
+- 💰**하드웨어 비용 1억원 절약**
 
 ### 실무에서 마주치는 성능 문제들
 
 이런 상황들 겪어보셨나요?
 
-- 🐌 **"어제까지 빨랐는데 오늘 갑자기 느려졌어요"**
-- 💥 **"서버를 늘렸는데도 여전히 느려요"**
-- 🤔 **"개발 환경에서는 빠른데 운영에서만 느려요"**
-- 📊 **"어떤 부분을 최적화해야 할지 모르겠어요"**
-- 🔄 **"최적화했는데 별로 빨라지지 않았어요"**
+- 🐌**"어제까지 빨랐는데 오늘 갑자기 느려졌어요"**
+- 💥**"서버를 늘렸는데도 여전히 느려요"**
+- 🤔**"개발 환경에서는 빠른데 운영에서만 느려요"**
+- 📊**"어떤 부분을 최적화해야 할지 모르겠어요"**
+- 🔄**"최적화했는데 별로 빨라지지 않았어요"**
 
-이런 문제들의 90%는 **체계적인 성능 분석 방법론**을 모르기 때문입니다.
+이런 문제들의 90%는**체계적인 성능 분석 방법론**을 모르기 때문입니다.
 
 ## 성능 최적화의 전체 여정
 
@@ -126,67 +126,42 @@ graph TD
     style J fill:#cce5ff
 ```
 
-## 이 장의 구성
+## 📚 이 챕터의 구성
 
-### [11.1 성능 분석 방법론](11-30-performance-methodology.md)
+### 11.1 기초 및 방법론
 
-**"어디서부터 시작해야 할까?"**
+- [11-01-01: I/O 기초 및 동기 vs 비동기](./11-01-01-io-fundamentals.md)
+- [11-01-02: 성능 분석 방법론](./11-01-02-performance-methodology.md)
 
-- 🎯 **USE Method**: Utilization, Saturation, Errors - 체계적 분석의 시작점
-- 🛠 **도구 체인**: top → htop → perf → flamegraph 의 단계적 활용
-- 📏 **성능 목표**: P50, P95, P99 - 무엇을 측정할 것인가?
-- ⚖️ **Trade-off 이해**: Latency vs Throughput, 무엇을 선택할까?
+### 11.2 메모리 성능 최적화
 
-```mermaid
-graph LR
-    subgraph "성능 분석 3단계"
-        L1[Level 1, 전체 시스템, htop, glances]
-        L2[Level 2, 리소스별 분석, perf, iostat]
-        L3[Level 3, 심층 프로파일링, flamegraph, strace]
-    end
+- [11-02-01: 메모리 계층구조와 캐시 최적화](./11-02-01-memory-hierarchy-cache.md)
+- [11-02-02: 메모리 할당 최적화](./11-02-02-memory-allocation.md)
+- [11-02-03: 메모리 누수 탐지 및 방지](./11-02-03-memory-leak-detection.md)
+- [11-02-04: 메모리 성능 최적화](./11-02-04-memory-optimization.md)
+- [11-02-05: 고급 메모리 라이브러리](./11-02-05-advanced-memory-libs.md)
 
-    L1 --> L2 --> L3
+### 11.3 CPU 성능 최적화
 
-    style L1 fill:#e1f5fe
-    style L2 fill:#fff3e0
-    style L3 fill:#f3e5f5
-```
+- [11-03-01: CPU 성능 최적화](./11-03-01-cpu-optimization.md)
 
-### [11.2 CPU 성능 최적화](11-31-cpu-optimization.md)
+### 11.4 I/O 성능 최적화
 
-**"CPU 100%인데 뭘 하는지 모르겠어요"**
+- [11-04-01: I/O 최적화](./11-04-01-io-optimization.md)
+- [11-04-02: 비동기 I/O 최적화](./11-04-02-async-io-optimization.md)
+- [11-04-03: 네트워크 I/O 최적화](./11-04-03-network-io-optimization.md)
 
-- 🔥 **FlameGraph 마스터**: CPU 시간을 시각적으로 분석하는 최고의 도구
-- 🎯 **Hot Path 찾기**: 80%의 시간을 쓰는 20%의 코드 발견하기
-- ⚡ **알고리즘 최적화**: O(n²) → O(n log n) 개선으로 100배 빨라지기
-- 🏗 **컴파일러 활용**: -O2, LTO, PGO로 무료 성능 향상 얻기
+### 11.5 시스템 튜닝 및 애플리케이션 최적화
 
-### [11.3 메모리 성능 최적화](11-32-memory-optimization.md)
+- [11-05-01: 시스템 튜닝](./11-05-01-system-tuning.md)
+- [11-05-02: OS 커널 튜닝](./11-05-02-os-kernel-tuning.md)
+- [11-05-03: 애플리케이션 최적화](./11-05-03-application-optimization.md)
 
-**"같은 연산인데 왜 100배 차이가 날까?"**
+### 11.6 모니터링 및 분석
 
-- 🧠 **Cache 이해하기**: L1, L2, L3 캐시와 메모리 계층 구조
-- 🚫 **False Sharing**: 멀티코어 성능의 숨은 적 찾아내기
-- 🏃 **Memory Access Pattern**: Sequential vs Random, 어떤 게 빠를까?
-- 🗺 **NUMA 최적화**: 대용량 서버에서의 메모리 지역성
-
-### [11.4 I/O 성능 최적화](11-33-io-optimization.md)
-
-**"Database는 빠른데 애플리케이션이 느려요"**
-
-- 💾 **Disk I/O 패턴**: HDD vs SSD, Sequential vs Random의 성능 차이
-- 🌐 **Network I/O**: sendfile, zero-copy, TCP_NODELAY의 실제 효과
-- ⚡ **Async I/O**: epoll, io_uring을 활용한 고성능 서버 구현
-- 🔧 **Buffer 튜닝**: 커널 버퍼 크기 최적화로 처리량 향상
-
-### [11.5 시스템 튜닝](11-36-system-tuning.md)
-
-**"언어/프레임워크별 특화 최적화"**
-
-- ☕ **JVM 튜닝**: GC 최적화, JIT 컴파일러 활용법
-- 🐹 **Go 최적화**: goroutine profiling, garbage collector 튜닝
-- 🟨 **Node.js**: V8 엔진 최적화, Worker threads 활용
-- 🗃 **Database**: 쿼리 최적화, 인덱스 전략, Connection pooling
+- [11-06-01: 디스크 I/O 모니터링](./11-06-01-disk-io-monitoring.md)
+- [11-06-02: 시스템 성능 분석](./11-06-02-system-performance-analysis.md)
+- [11-06-03: 로드 밸런싱 및 캐싱](./11-06-03-load-balancing-caching.md)
 
 ## 🚀 실습 프로젝트: Performance Optimization Lab
 
@@ -268,10 +243,10 @@ $ perf report  # 데이터 기반 최적화
 
 ## 🎯 이 장을 마스터하면
 
-✅ **성능 문제 진단**: 체계적인 방법론으로 병목점을 빠르게 찾을 수 있습니다
-✅ **최적화 도구 활용**: perf, flamegraph, strace 등을 자유자재로 사용할 수 있습니다
-✅ **측정 기반 개선**: 추측이 아닌 데이터로 성능을 개선할 수 있습니다
-✅ **비용 효율적 확장**: 서버 추가 없이 10배 성능 향상을 달성할 수 있습니다
+✅**성능 문제 진단**: 체계적인 방법론으로 병목점을 빠르게 찾을 수 있습니다
+✅**최적화 도구 활용**: perf, flamegraph, strace 등을 자유자재로 사용할 수 있습니다
+✅**측정 기반 개선**: 추측이 아닌 데이터로 성능을 개선할 수 있습니다
+✅**비용 효율적 확장**: 서버 추가 없이 10배 성능 향상을 달성할 수 있습니다
 
 ## 실습 환경 준비
 
@@ -311,7 +286,7 @@ Doom, Quake 같은 게임을 386 CPU에서 60fps로 실행하게 만든 최적�
 
 ## 다음 단계
 
-준비되셨나요? [11.1 성능 분석 방법론](11-30-performance-methodology.md)에서 체계적인 성능 분석의 여정을 시작합니다.
+준비되셨나요? [11.1.1 I/O 기초 및 동기 vs 비동기](./11-01-01-io-fundamentals.md)에서 성능 최적화의 여정을 시작합니다.
 
 "느려서 못 쓰겠다"는 시스템을 "너무 빨라서 놀랍다"는 시스템으로 바꿔보겠습니다! 🚀
 
@@ -319,9 +294,9 @@ Doom, Quake 같은 게임을 386 CPU에서 60fps로 실행하게 만든 최적�
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 12-20시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 12-20시간
 
 ### 🎯 학습 경로
 
@@ -329,29 +304,9 @@ Doom, Quake 같은 게임을 386 CPU에서 60fps로 실행하게 만든 최적�
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-11-performance-optimization)
-
-- [Chapter 11-01: Io Fundamentals](./11-01-io-fundamentals.md)
-- [Chapter 11-10: Memory Hierarchy Cache](./11-10-memory-hierarchy-cache.md)
-- [Chapter 11-11: Memory Allocation](./11-11-memory-allocation.md)
-- [Chapter 11-12: Memory Leak Detection](./11-12-memory-leak-detection.md)
-- [Chapter 11-13: Load Balancing Caching](./11-13-load-balancing-caching.md)
-- [Chapter 11-20: Advanced Memory Libs](./11-20-advanced-memory-libs.md)
-- [Chapter 11-30: Performance Methodology](./11-30-performance-methodology.md)
-- [Chapter 11-31: Cpu Optimization](./11-31-cpu-optimization.md)
-- [Chapter 11-32: Memory Optimization](./11-32-memory-optimization.md)
-- [Chapter 11-33: Io Optimization](./11-33-io-optimization.md)
-- [Chapter 11-34: Async Io Optimization](./11-34-async-io-optimization.md)
-- [Chapter 11-35: Network Io Optimization](./11-35-network-io-optimization.md)
-- [Chapter 11-36: System Tuning](./11-36-system-tuning.md)
-- [Chapter 11-37: Os Kernel Tuning](./11-37-os-kernel-tuning.md)
-- [Chapter 11-38: Application Optimization](./11-38-application-optimization.md)
-- [Chapter 11-40: Disk Io Monitoring](./11-40-disk-io-monitoring.md)
-- [Chapter 11-41: System Performance Analysis](./11-41-system-performance-analysis.md)
-
 ### 🏷️ 관련 키워드
 
-`FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+`Performance`, `Optimization`, `Profiling`, `SystemProgramming`, `Benchmarking`
 
 ## 🔗 관련 챕터
 
@@ -372,8 +327,3 @@ Doom, Quake 같은 게임을 386 CPU에서 60fps로 실행하게 만든 최적�
 
 - [Chapter 12: 관찰 가능성과 디버깅](../chapter-12-observability-debugging/index.md)
 - [Chapter 13: 컨테이너와 Kubernetes](../chapter-13-container-kubernetes/index.md)
-
-### ⏭️ 다음 단계 가이드
-
-- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
-- 관련 도구들을 직접 사용해보는 것이 중요합니다

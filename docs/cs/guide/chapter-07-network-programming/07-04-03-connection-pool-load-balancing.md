@@ -238,7 +238,7 @@ void release_connection(struct backend *backend, struct connection *conn) {
     pthread_mutex_lock(&backend->lock);
 
     // busy 리스트에서 제거
-    struct connection **pp = &backend->busy_conns;
+    struct connection**pp = &backend->busy_conns;
     while (*pp && *pp != conn) {
         pp = &(*pp)->next;
     }
@@ -353,11 +353,11 @@ health_check_failed:
 
 | 알고리즘 | 복잡도 | 공평성 | 세션 유지 | 적합한 환경 |
 |---------|--------|--------|-----------|-------------|
-| **Round Robin** | O(1) | 높음 | 어려움 | 동질적 서버, 무상태 |
-| **Weighted RR** | O(n) | 높음 | 어려움 | 이질적 서버, 무상태 |
-| **Least Connections** | O(n) | 보통 | 어려움 | 연결 지속시간이 다양 |
-| **IP Hash** | O(1) | 낮음 | 쉬움 | 세션 기반 애플리케이션 |
-| **Consistent Hash** | O(log n) | 높음 | 쉬움 | 분산 캐시, 확장성 중요 |
+|**Round Robin**| O(1) | 높음 | 어려움 | 동질적 서버, 무상태 |
+|**Weighted RR**| O(n) | 높음 | 어려움 | 이질적 서버, 무상태 |
+|**Least Connections**| O(n) | 보통 | 어려움 | 연결 지속시간이 다양 |
+|**IP Hash**| O(1) | 낮음 | 쉬움 | 세션 기반 애플리케이션 |
+|**Consistent Hash**| O(log n) | 높음 | 쉬움 | 분산 캐시, 확장성 중요 |
 
 ### 실제 성능 비교
 
@@ -559,9 +559,9 @@ void report_metrics(struct load_balancer_metrics *metrics) {
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 네트워크 프로그래밍
-- **예상 시간**: 8-12시간
+-**난이도**: INTERMEDIATE
+-**주제**: 네트워크 프로그래밍
+-**예상 시간**: 8-12시간
 
 ### 🎯 학습 경로
 

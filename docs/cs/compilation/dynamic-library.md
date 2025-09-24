@@ -455,11 +455,11 @@ $ LD_LIBRARY_PATH=. ./client
 
 Dynamic linker가 라이브러리를 찾는 순서:
 
-1. **DT_RPATH** (deprecated)
-2. **LD_LIBRARY_PATH** 환경 변수
-3. **DT_RUNPATH**
-4. **/etc/ld.so.cache** (ldconfig로 생성)
-5. **/lib, /usr/lib** (기본 시스템 경로)
+1.**DT_RPATH**(deprecated)
+2.**LD_LIBRARY_PATH**환경 변수
+3.**DT_RUNPATH**
+4.**/etc/ld.so.cache**(ldconfig로 생성)
+5.**/lib, /usr/lib**(기본 시스템 경로)
 
 ```bash
 # 현재 라이브러리 캐시 확인
@@ -540,14 +540,14 @@ int main() {
     dlerror();
 
     // 3. 함수 심볼 로딩
-    *(void **) (&add_func) = dlsym(handle, "add");
+    *(void**) (&add_func) = dlsym(handle, "add");
     if ((error = dlerror()) != NULL) {
         fprintf(stderr, "dlsym error: %s, ", error);
         dlclose(handle);
         exit(EXIT_FAILURE);
     }
 
-    *(void **) (&info_func) = dlsym(handle, "get_library_info");
+    *(void**) (&info_func) = dlsym(handle, "get_library_info");
     if ((error = dlerror()) != NULL) {
         fprintf(stderr, "dlsym error: %s, ", error);
         dlclose(handle);

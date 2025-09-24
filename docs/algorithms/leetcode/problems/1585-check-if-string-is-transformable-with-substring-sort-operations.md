@@ -8,7 +8,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1585](https://leetcode.com/problems/check-if-string-is-transformable-with-substring-sort-operations/) • **Medium**
+[LeetCode 1585](https://leetcode.com/problems/check-if-string-is-transformable-with-substring-sort-operations/) •**Medium**
 
 ## 핵심 아이디어
 
@@ -64,8 +64,8 @@ class Solution:
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

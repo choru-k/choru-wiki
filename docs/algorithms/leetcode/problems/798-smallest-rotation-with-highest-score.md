@@ -10,7 +10,7 @@ tags:
 
 ## 문제
 
-[LeetCode 798](https://leetcode.com/problems/smallest-rotation-with-highest-score/) • **Hard**
+[LeetCode 798](https://leetcode.com/problems/smallest-rotation-with-highest-score/) •**Hard**
 
 ## 핵심 아이디어
 

@@ -469,8 +469,8 @@ from memory_profiler import profile
 
 @profile  # 줄 단위 메모리 사용량
 def my_func():
-    a = [1] * (10 ** 6)
-    b = [2] * (2 * 10 ** 7)
+    a = [1] * (10**6)
+    b = [2] * (2 * 10**7)
     del b
     return a
 
@@ -574,11 +574,11 @@ resources:
 
 각 언어는 고유한 메모리 관리 특성을 가집니다:
 
-1. **Python**: Arena 기반, OS에 잘 반환 안 함, 객체 오버헤드 큼
-2. **Go**: 동시 GC, 힙 2배 증가 경향, GOMEMLIMIT 필수
-3. **Java**: 정교한 GC, 큰 초기 오버헤드, 컨테이너 인식 필요
-4. **Node.js**: V8 힙 + Native, Buffer 주의, 힙 제한 설정 필수
-5. **모든 언어**: 컨테이너 메모리 제한 명시적 인식 필요
+1.**Python**: Arena 기반, OS에 잘 반환 안 함, 객체 오버헤드 큼
+2.**Go**: 동시 GC, 힙 2배 증가 경향, GOMEMLIMIT 필수
+3.**Java**: 정교한 GC, 큰 초기 오버헤드, 컨테이너 인식 필요
+4.**Node.js**: V8 힙 + Native, Buffer 주의, 힙 제한 설정 필수
+5.**모든 언어**: 컨테이너 메모리 제한 명시적 인식 필요
 
 다음 글에서는 JVM의 메모리 구조와 GC를 더 자세히 다루겠습니다.
 

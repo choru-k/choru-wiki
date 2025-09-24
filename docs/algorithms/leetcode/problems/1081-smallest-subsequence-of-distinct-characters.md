@@ -9,7 +9,7 @@ tags:
 
 ## 문제
 
-[LeetCode 1081](https://leetcode.com/problems/smallest-subsequence-of-distinct-characters/description/) • **Hard**
+[LeetCode 1081](https://leetcode.com/problems/smallest-subsequence-of-distinct-characters/description/) •**Hard**
 
 ## 핵심 아이디어
 
@@ -39,8 +39,8 @@ stack 을 쓴다면?
 
 ## 복잡도 분석
 
-- **Time Complexity:** 분석 필요
-- **Space Complexity:** 분석 필요
+-**Time Complexity:**분석 필요
+-**Space Complexity:**분석 필요
 
 ---
 

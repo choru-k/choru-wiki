@@ -1,17 +1,21 @@
 ---
 tags:
-  - FileDescriptor
-  - FileSystem
-  - IO
-  - SystemProgramming
-  - VFS
+  - Observability
+  - Monitoring
+  - Logging
+  - Tracing
+  - Debugging
+  - Metrics
+  - Prometheus
+  - Grafana
+  - OpenTelemetry
   - deep-study
   - hands-on
   - intermediate
-  - 시스템프로그래밍
+  - 인프라스트럭처
 difficulty: INTERMEDIATE
-learning_time: "12-20시간"
-main_topic: "시스템 프로그래밍"
+learning_time: "15-25시간"
+main_topic: "인프라스트럭처"
 priority_score: 4
 ---
 
@@ -61,7 +65,7 @@ $ mysql -e "SHOW PROCESSLIST"
 😰 개발팀: "뭐가 문제인지 모르겠어요..."
 ```
 
-**문제**: **관찰 가능성(Observability)**이 전혀 없었습니다.
+**문제**:**관찰 가능성(Observability)**이 전혀 없었습니다.
 
 - 어떤 서비스에서 에러가 발생하는지 알 수 없음
 - 에러의 근본 원인을 추적할 방법 없음
@@ -119,7 +123,7 @@ data:
 # 서비스 정상화!
 ```
 
-**총 해결 시간: 5분** ⚡
+**총 해결 시간: 5분**⚡
 
 ## Observability의 3 Pillars
 
@@ -220,91 +224,45 @@ Request ID: abc123def456
    └─ Stripe API: timeout
 ```
 
-## 이 장의 구성
+## 📚 이 챕터의 구성
 
-### [13.1 로깅 및 모니터링 시스템](13-40-logging-monitoring.md)
+### 12.1 기초 및 개념
 
-**"시스템이 건강한가?"**
+- [12-01-01: Observability 기초](./12-01-01-observability-foundations.md)
+- [12-01-02: 분산 추적 기초](./12-01-02-tracing-fundamentals.md)
 
-- 📊 **Prometheus 완전 정복**: 메트릭 수집, PromQL 쿼리 마스터
-- 📈 **Grafana 대시보드**: 시각화와 알림 설정
-- ⚡ **Golden Signals**: Latency, Traffic, Errors, Saturation 구현
-- 🎯 **Custom Metrics**: 비즈니스 메트릭 정의와 수집
+### 12.2 핵심 구현 기법
 
-```prometheus
-# 실제 사용하는 핵심 쿼리들
-# API 에러율 (지난 5분)
-rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100
+- [12-02-01: 구조화된 로깅](./12-02-01-structured-logging.md)
+- [12-02-02: 메트릭 수집](./12-02-02-metrics-collection.md)
+- [12-02-03: 로깅 및 모니터링 시스템](./12-02-03-logging-monitoring.md)
+- [12-02-04: 알림 관리](./12-02-04-alert-management.md)
 
-# P95 응답 시간
-histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+### 12.3 고급 기법 및 도구
 
-# 서비스별 처리량
-sum(rate(http_requests_total[1m])) by (service)
-```
+- [12-03-01: 분산 추적 시스템](./12-03-01-distributed-tracing.md)
+- [12-03-02: OpenTelemetry 구현](./12-03-02-opentelemetry-implementation.md)
+- [12-03-03: 메트릭과 알림 통합](./12-03-03-metrics-alerts.md)
+- [12-03-04: 고급 구조화된 로깅](./12-03-04-advanced-structured-logging.md)
+- [12-03-05: 고급 메트릭 수집](./12-03-05-advanced-metrics-collection.md)
+- [12-03-06: 고급 알림 관리](./12-03-06-advanced-alert-management.md)
 
-### [13.2 분산 추적 시스템](13-17-distributed-tracing.md)
+### 12.4 성능 최적화
 
-**"무슨 일이 벌어졌나?"**
+- [12-04-01: 샘플링 최적화](./12-04-01-sampling-optimization.md)
+- [12-04-02: 성능 프로파일링](./12-04-02-performance-profiling.md)
 
-- 📝 **구조화된 로깅**: JSON 로그, Correlation ID 활용
-- 🔍 **ELK Stack**: Elasticsearch, Logstash, Kibana 구축
-- 🚀 **로그 파이프라인**: Fluentd, Vector를 활용한 실시간 수집
-- 💡 **로그 분석**: 패턴 인식, 이상 탐지, 알림 설정
+### 12.5 디버깅 및 분석
 
-**실제 운영 사례**: 초당 10만 건 로그 처리 시스템 구축
+- [12-05-01: 디버깅 및 문제 해결](./12-05-01-debugging-troubleshooting.md)
+- [12-05-02: 체계적 디버깅 프레임워크](./12-05-02-systematic-debugging-frameworks.md)
+- [12-05-03: 분산 시스템 디버깅](./12-05-03-distributed-debugging.md)
+- [12-05-04: 지능형 디버깅 도구](./12-05-04-smart-debugging-tools.md)
+- [12-05-05: 로그 분석 디버깅](./12-05-05-log-analysis-debugging.md)
 
-### [13.3 메트릭 수집 및 알림](13-19-metrics-alerts.md)
+### 12.6 모범 사례 및 확장 주제
 
-**"요청이 어디서 느려졌나?"**
-
-- 🔗 **OpenTelemetry**: 표준 계측 라이브러리 활용
-- 🕵️ **Jaeger 구축**: 분산 추적 시스템 운영
-- 📍 **Trace 분석**: Span, Context Propagation 이해
-- ⚖️ **Sampling 전략**: 성능 vs 관찰 가능성 트레이드오프
-
-```go
-// OpenTelemetry 계측 예시
-func handleOrder(ctx context.Context, order Order) error {
-    // 새로운 span 생성
-    ctx, span := tracer.Start(ctx, "process-order")
-    defer span.End()
-
-    // 속성 추가
-    span.SetAttributes(
-        attribute.String("order.id", order.ID),
-        attribute.Int("order.amount", order.Amount),
-    )
-
-    // 하위 서비스 호출 (자동으로 연결됨)
-    err := paymentService.Charge(ctx, order.Amount)
-    if err != nil {
-        span.RecordError(err)
-        span.SetStatus(codes.Error, err.Error())
-        return err
-    }
-
-    return nil
-}
-```
-
-### [13.4 성능 프로파일링](13-31-performance-profiling.md)
-
-**"Production에서 어떻게 디버깅하나?"**
-
-- 🛠 **Live Debugging**: Production에서 안전한 디버깅 방법
-- 📊 **Performance Profiling**: 실시간 성능 분석
-- 🔄 **Chaos Engineering**: 장애 상황 시뮬레이션
-- 📋 **Runbook 작성**: 장애 대응 플레이북
-
-### [13.5 디버깅 기법 및 문제 해결](13-41-debugging-troubleshooting.md)
-
-**"장애가 발생하면 어떻게 대응하나?"**
-
-- 🚨 **On-call 문화**: 효과적인 장애 대응 조직
-- 📱 **Alert Management**: PagerDuty, OpsGenie 활용
-- 🔍 **Post-mortem**: 장애 분석과 개선 방안 도출
-- 📈 **SLI/SLO**: 서비스 수준 목표 설정과 관리
+- [12-06-01: 모범 사례와 경험 공유](./12-06-01-best-practices-lessons.md)
 
 ## 🚀 실습 프로젝트: Full-Stack Observability
 
@@ -521,14 +479,14 @@ http_requests_total{method="POST", endpoint="/api/orders", status="201"}
 
 ## 🎯 이 장을 마스터하면
 
-✅ **장애 조기 감지**: 고객보다 먼저 문제를 발견할 수 있습니다
-✅ **빠른 원인 분석**: 분산 추적으로 병목점을 즉시 식별할 수 있습니다
-✅ **효과적인 알림**: 노이즈 없는 의미 있는 알림 시스템을 구축할 수 있습니다
-✅ **데이터 기반 의사결정**: 메트릭과 로그를 바탕으로 시스템을 개선할 수 있습니다
+✅**장애 조기 감지**: 고객보다 먼저 문제를 발견할 수 있습니다
+✅**빠른 원인 분석**: 분산 추적으로 병목점을 즉시 식별할 수 있습니다
+✅**효과적인 알림**: 노이즈 없는 의미 있는 알림 시스템을 구축할 수 있습니다
+✅**데이터 기반 의사결정**: 메트릭과 로그를 바탕으로 시스템을 개선할 수 있습니다
 
 ## 다음 단계
 
-준비되셨나요? [13.1 로깅 및 모니터링 시스템](13-40-logging-monitoring.md)에서 구조화된 로깅부터 지능적인 알림 시스템까지 체계적인 관찰 가능성을 구축해보겠습니다.
+준비되셨나요? [12-01-01: Observability 기초](./12-01-01-observability-foundations.md)에서 관찰 가능성의 핵심 개념부터 체계적으로 시작해보겠습니다.
 
 "보이지 않으면 관리할 수 없습니다." 시스템에 눈과 귀를 달아 완벽한 관찰 가능성을 확보해봅시다! 👀🔍
 
@@ -536,9 +494,9 @@ http_requests_total{method="POST", endpoint="/api/orders", status="201"}
 
 ### 📖 현재 문서 정보
 
-- **난이도**: INTERMEDIATE
-- **주제**: 시스템 프로그래밍
-- **예상 시간**: 12-20시간
+-**난이도**: INTERMEDIATE
+-**주제**: 시스템 프로그래밍
+-**예상 시간**: 12-20시간
 
 ### 🎯 학습 경로
 
@@ -546,32 +504,9 @@ http_requests_total{method="POST", endpoint="/api/orders", status="201"}
 - [🏠 메인 학습 경로](../learning-paths/)
 - [📋 전체 가이드 목록](../README.md)
 
-### 📂 같은 챕터 (chapter-13-observability-debugging)
-
-- [Chapter 13-01: Tracing Fundamentals](./13-01-tracing-fundamentals.md)
-- [Chapter 13-10: Observability Foundations](./13-10-observability-foundations.md)
-- [Chapter 13-11: Structured Logging](./13-11-structured-logging.md)
-- [Chapter 13-12: Metrics Collection](./13-12-metrics-collection.md)
-- [Chapter 13-13: Structured Logging](./13-13-structured-logging.md)
-- [Chapter 13-14: Alert Management](./13-14-alert-management.md)
-- [Chapter 13-15: Metrics Collection](./13-15-metrics-collection.md)
-- [Chapter 13-16: Alert Management](./13-16-alert-management.md)
-- [Chapter 13-17: Distributed Tracing](./13-17-distributed-tracing.md)
-- [Chapter 13-18: Opentelemetry Implementation](./13-18-opentelemetry-implementation.md)
-- [Chapter 13-19: Metrics Alerts](./13-19-metrics-alerts.md)
-- [Chapter 13-30: Sampling Optimization](./13-30-sampling-optimization.md)
-- [Chapter 13-31: Performance Profiling](./13-31-performance-profiling.md)
-- [Chapter 13-40: Logging Monitoring](./13-40-logging-monitoring.md)
-- [Chapter 13-41: Debugging Troubleshooting](./13-41-debugging-troubleshooting.md)
-- [Chapter 13-42: Systematic Debugging Frameworks](./13-42-systematic-debugging-frameworks.md)
-- [Chapter 13-43: Distributed Debugging](./13-43-distributed-debugging.md)
-- [Chapter 13-44: Smart Debugging Tools](./13-44-smart-debugging-tools.md)
-- [Chapter 13-45: Log Analysis Debugging](./13-45-log-analysis-debugging.md)
-- [Chapter 13-50: Best Practices Lessons](./13-50-best-practices-lessons.md)
-
 ### 🏷️ 관련 키워드
 
-`FileDescriptor`, `VFS`, `IO`, `FileSystem`, `SystemProgramming`
+`Observability`, `Monitoring`, `Logging`, `Tracing`, `Debugging`
 
 ## 🔗 관련 챕터
 
@@ -589,8 +524,3 @@ http_requests_total{method="POST", endpoint="/api/orders", status="201"}
 
 - [Chapter 10: 비동기 프로그래밍](../chapter-10-async-programming/index.md)
 - [Chapter 16: 분산 시스템 패턴](../chapter-16-distributed-system-patterns/index.md)
-
-### ⏭️ 다음 단계 가이드
-
-- 실무 적용을 염두에 두고 프로젝트에 적용해보세요
-- 관련 도구들을 직접 사용해보는 것이 중요합니다
