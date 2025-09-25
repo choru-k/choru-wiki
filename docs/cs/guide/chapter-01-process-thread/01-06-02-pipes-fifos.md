@@ -608,12 +608,9 @@ compiler | linker | packager"]
 
 ```mermaid
 sequenceDiagram
-    participant Downloader as "Video Downloader
-(독립 프로세스)"
-    participant FIFO as "FIFO
-/tmp/video_stream"
-    participant Player as "Video Player
-(독립 프로세스)"
+    participant Downloader as "Video Downloader(독립 프로세스)"
+    participant FIFO as "FIFO /tmp/video_stream"
+    participant Player as "Video Player (독립 프로세스)"
     participant FS as "File System"
 
     Note over Downloader,FS: 초기 설정 단계
