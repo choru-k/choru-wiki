@@ -1278,6 +1278,7 @@ void worker_pool_with_queues() {
     distribute_tasks(task_queue);
     collect_results(result_queue);
 }
+```
 
 ### IPC 조합 패턴: 현실적인 아키텍처
 
