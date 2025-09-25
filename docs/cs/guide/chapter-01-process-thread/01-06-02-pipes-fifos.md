@@ -161,6 +161,7 @@ void basic_pipe_example() {
         wait(NULL);
     }
 }
+```
 
 ### 익명 파이프 통신 시각화: 부모-자식 단방향 통신
 
